@@ -1,5 +1,5 @@
 STUID = 100019871
-STUNAME = 闭睿德
+STUNAME = Bi RuiDe
 
 # DO NOT modify the following code!!!
 
