@@ -1,4 +1,4 @@
-FLAGS=-Wall -g
+CFLAGS=-Wall -g
 
 SRCS = $(wildcard ex*.c)
 
