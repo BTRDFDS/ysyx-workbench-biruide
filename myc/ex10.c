@@ -25,5 +25,10 @@ int main(int argc, char *argv[])
     *states = *argv;
     printf("%s\n",*states);
 
+    for(i = 0; i < num_states; i++) {
+        if(states[i]==NULL){break;}
+        printf("state %d: %s\n", i, states[i]);
+    }
+    
     return 0;
 }

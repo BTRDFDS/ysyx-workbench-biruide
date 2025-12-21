@@ -55,5 +55,11 @@ int main(int argc, char *argv[])
         printf("state %d: %p\n", i, states[i]);
         i++;
     }
+	i = 0;
+    while(i < num_states) {
+    	if(i==num_states || i==argc){break;}
+        printf("state %d: %p\n", i, states[i]);
+        i++;
+    }
     return 0;
 }
