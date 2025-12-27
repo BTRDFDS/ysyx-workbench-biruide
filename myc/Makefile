@@ -8,7 +8,12 @@ BINS = $(SRCS:.c=)
 # 3. 默认目标（执行 make 时，自动执行该目标）
 all: $(BINS)
 	git add -f *
+#清理所有的.o文件
 
 # 4. 清理命令：删除所有生成的可执行文件（执行 make clean 触发）
 clean:
-	rm -f $(BINS)
+	rm -f $(BINS) *.o
+ex19: object.o
+ex19a: object.o
+test: ex19
+	./ex19
