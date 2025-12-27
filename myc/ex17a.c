@@ -8,7 +8,6 @@
 // #define MAX_ROWS 100
 
 
-
 struct Address {
     int id;
     int set;
@@ -29,7 +28,9 @@ struct Connection {
     FILE *file;
     struct Database *db;
 };
-void Database_close(struct Connection *conn)
+
+struct Connection *conn = NULL;
+void Database_close()
 {
     if(conn) {
         if(conn->file) fclose(conn->file);
@@ -48,12 +49,12 @@ void Database_close(struct Connection *conn)
 }
 
 
-void die(struct Connection *conn,const char *message)
+void die(const char *message)
 {
     if(errno){perror(message);}
     else{printf("ERROR: %s\n", message);}
 
-    if(conn){Database_close(conn);}
+    if(conn){Database_close();}
     exit(1);
 }
 
@@ -64,110 +65,109 @@ void Address_print(struct Address *addr)
     }
 }
 
-void Database_load(struct Connection *conn)
+void Database_load()
 {
-    if(!conn) die(NULL, "errL0");
-    if(!conn->db) die(NULL, "errL1");
-    if(!conn->file) die(NULL, "errL2");
-    if(fread(&conn->db->max_data, sizeof(int), 1, conn->file) != 1){die(conn, "errL3");}
-    if(fread(&conn->db->max_rows, sizeof(int), 1, conn->file) != 1){die(conn, "errL4");}
+    if(!conn) die("errL0");
+    if(!conn->db) die("errL1");
+    if(!conn->file) die("errL2");
+    if(fread(&conn->db->max_data, sizeof(int), 1, conn->file) != 1){die("errL3");}
+    if(fread(&conn->db->max_rows, sizeof(int), 1, conn->file) != 1){die("errL4");}
     //AA
     conn->db->rows = malloc(sizeof(struct Address) * conn->db->max_rows);
-    if(!conn->db->rows){die(conn, "errL5");}
+    if(!conn->db->rows){die("errL5");}
 
     int rc = fread(conn->db->rows, sizeof(struct Address), conn->db->max_rows, conn->file);
-    if(rc != conn->db->max_rows) die(conn, "errL6");
+    if(rc != conn->db->max_rows) die("errL6");
 
     for(int i = 0; i < conn->db->max_rows; i++) {
         conn->db->rows[i].name = malloc(conn->db->max_data);
         conn->db->rows[i].email = malloc(conn->db->max_data);
 
-        if(conn->db->rows[i].name==NULL){die(conn, "errL7");}
-        if(conn->db->rows[i].email==NULL){die(conn, "errL8");}
+        if(conn->db->rows[i].name==NULL){die("errL7");}
+        if(conn->db->rows[i].email==NULL){die("errL8");}
         
-        if(fread(conn->db->rows[i].name, conn->db->max_data, 1, conn->file) != 1){die(conn, "errL9");}
-        if(fread(conn->db->rows[i].email, conn->db->max_data, 1, conn->file) != 1){die(conn, "errL10");}
+        if(fread(conn->db->rows[i].name, conn->db->max_data, 1, conn->file) != 1){die("errL9");}
+        if(fread(conn->db->rows[i].email, conn->db->max_data, 1, conn->file) != 1){die("errL10");}
     }
 }
 
 
 
-struct Connection *Database_open(const char *filename, char mode, int max_data, int max_rows)
+ void Database_open(const char *filename, char mode, int max_data, int max_rows)
 {
-    if(!filename) die(NULL, "errO0");
+    if(!filename) die("errO0");
 
-    struct Connection *conn = malloc(sizeof(struct Connection));
-    if(!conn) die(NULL, "errO1");
+    conn = malloc(sizeof(struct Connection));
+    if(!conn) die("errO1");
 
     conn->db = malloc(sizeof(struct Database));
     if(!conn->db) {
         free(conn);
-        die(NULL, "errO2");
+        die("errO2");
     }
 
     if(mode == 'c') {
-        if(max_data <= 0){die(NULL, "errO3");}
-        if(max_rows <= 0){die(NULL, "errO4");}
+        if(max_data <= 0){die("errO3");}
+        if(max_rows <= 0){die("errO4");}
         conn->db->max_data = max_data;
         conn->db->max_rows = max_rows;
         conn->file = fopen(filename, "w");
     } else {
         conn->file = fopen(filename, "r+");
         if(conn->file) {
-            Database_load(conn);
+            Database_load();
         } else {
             free(conn->db);
             free(conn);
-            die(NULL, "errO5");
+            die("errO5");
         }
     }
-    return conn;
 }
 
 
 
 
-void Database_write(struct Connection *conn)
+void Database_write()
 {
-    if(!conn){die(conn, "errW0");}
-    if(!conn->db){die(conn, "errW1");}
-    if(!conn->file){die(conn, "errW2");}
+    if(!conn){die("errW0");}
+    if(!conn->db){die("errW1");}
+    if(!conn->file){die("errW2");}
 
     rewind(conn->file);
 
-    if(fwrite(&conn->db->max_data, sizeof(int), 1, conn->file) != 1){die(conn, "errW3");}
-    if(fwrite(&conn->db->max_rows, sizeof(int), 1, conn->file) != 1){die(conn, "errW4");}
-    if(conn->db->max_data<=0){die(conn, "errW5");}
-    if(conn->db->max_rows<=0){die(conn, "errW6");}
+    if(fwrite(&conn->db->max_data, sizeof(int), 1, conn->file) != 1){die("errW3");}
+    if(fwrite(&conn->db->max_rows, sizeof(int), 1, conn->file) != 1){die("errW4");}
+    if(conn->db->max_data<=0){die("errW5");}
+    if(conn->db->max_rows<=0){die("errW6");}
     int rc = fwrite(conn->db->rows, sizeof(struct Address), conn->db->max_rows, conn->file);
-    if(rc != conn->db->max_rows){die(conn, "errW7");}
+    if(rc != conn->db->max_rows){die("errW7");}
 
     for(int i = 0; i < conn->db->max_rows; i++) {
         if(fwrite(conn->db->rows[i].name, conn->db->max_data, 1, conn->file) != 1){
-            die(conn, "errW8");}
+            die("errW8");}
         if(fwrite(conn->db->rows[i].email, conn->db->max_data, 1, conn->file) != 1){
-            die(conn, "errW9");}
+            die("errW9");}
     }
 
     rc = fflush(conn->file);
-    if(rc == -1) die(conn, "errW10");
+    if(rc == -1) die("errW10");
 }
 
 
 
-void Database_create(struct Connection *conn)
+void Database_create()
 {
-    if(!conn){die(conn, "errC0");}
-    if(!conn->db){die(conn, "errC1");}
+    if(!conn){die("errC0");}
+    if(!conn->db){die("errC1");}
 
     conn->db->rows = malloc(sizeof(struct Address) * conn->db->max_rows);
-    if(!conn->db->rows){die(conn, "errC2");}
+    if(!conn->db->rows){die("errC2");}
 
     for(int i = 0; i < conn->db->max_rows; i++) {
         conn->db->rows[i].name = malloc(conn->db->max_data);
         conn->db->rows[i].email = malloc(conn->db->max_data);
         if(!conn->db->rows[i].name || !conn->db->rows[i].email){
-            die(conn, "errC3");}
+            die("errC3");}
 
         conn->db->rows[i].id = i;
         conn->db->rows[i].set = 0;
@@ -179,18 +179,18 @@ void Database_create(struct Connection *conn)
 }
 
 
-void Database_set(struct Connection *conn, int id, const char *name, const char *email, int phone,int QQ)
+void Database_set(int id, const char *name, const char *email, int phone,int QQ)
 {
-    if(!conn){die(conn, "errS0");}
-    if(!conn->db){die(conn, "errS1");}
-    if(!conn->db->rows){die(conn, "errS2");}
-    if(id < 0){die(conn, "errS3");}
-    if(id >= conn->db->max_rows){die(conn, "errS4");}
-    if(!name){die(conn, "errS5");}
-    if(!email){die(conn, "errS6");}
+    if(!conn){die("errS0");}
+    if(!conn->db){die("errS1");}
+    if(!conn->db->rows){die("errS2");}
+    if(id < 0){die("errS3");}
+    if(id >= conn->db->max_rows){die("errS4");}
+    if(!name){die("errS5");}
+    if(!email){die("errS6");}
 
     struct Address *addr = &conn->db->rows[id];
-    if(addr->set){die(conn, "errS7");}
+    if(addr->set){die("errS7");}
     addr->set = 1;
     addr->phone = phone;
     addr->QQ = QQ;
@@ -202,26 +202,26 @@ void Database_set(struct Connection *conn, int id, const char *name, const char 
 
 
 
-void Database_get(struct Connection *conn, int id)
+void Database_get(int id)
 {
-    if(!conn){die(conn, "errG0");}
-    if(!conn->db){die(conn, "errG1");}
+    if(!conn){die("errG0");}
+    if(!conn->db){die("errG1");}
     struct Address *addr = &conn->db->rows[id];
-    if(!addr){die(conn, "errG2");}
+    if(!addr){die("errG2");}
     if(addr->set) {
         Address_print(addr);
     } else {
-        die(conn,"errG3");
+        die("errG3");
     }
 }
 
-void Database_delete(struct Connection *conn, int id)
+void Database_delete(int id)
 {
-    if(!conn){die(conn, "errD0");}
-    if(!conn->db){die(conn, "errD1");}
-    if(!conn->db->rows){die(conn, "errD2");}
-    if(id < 0){die(conn, "errD3");}
-    if(id >= conn->db->max_rows){die(conn, "errD4");}
+    if(!conn){die("errD0");}
+    if(!conn->db){die("errD1");}
+    if(!conn->db->rows){die("errD2");}
+    if(id < 0){die("errD3");}
+    if(id >= conn->db->max_rows){die("errD4");}
     
     if(conn->db->rows[id].name){
         free(conn->db->rows[id].name);
@@ -233,8 +233,8 @@ void Database_delete(struct Connection *conn, int id)
     }
     conn->db->rows[id].name = malloc(conn->db->max_data);
     conn->db->rows[id].email = malloc(conn->db->max_data);
-    if(!conn->db->rows[id].name) {die(conn, "errD5");}
-    if(!conn->db->rows[id].email){die(conn, "errD6");}
+    if(!conn->db->rows[id].name) {die("errD5");}
+    if(!conn->db->rows[id].email){die("errD6");}
     
     conn->db->rows[id].id = id;
     conn->db->rows[id].set = 0;
@@ -245,10 +245,10 @@ void Database_delete(struct Connection *conn, int id)
 }
 
 
-void Database_list(struct Connection *conn)
+void Database_list()
 {
-    if(!conn){die(conn, "errL0");}
-    if(!conn->db){die(conn, "errL1");}
+    if(!conn){die("errL0");}
+    if(!conn->db){die("errL1");}
 
     for(int i = 0; i < conn->db->max_rows; i++) {
         struct Address *cur = &conn->db->rows[i];
@@ -258,14 +258,14 @@ void Database_list(struct Connection *conn)
     }
 }
 
-void dataFind(struct Connection *conn, int idFind, char* nameFind, char* emailFind,int phoneFind, int QQFind)
+void dataFind(int idFind, char* nameFind, char* emailFind,int phoneFind, int QQFind)
 {
-    if(!conn){die(conn, "errF0");}
-    if(!conn->db){die(conn, "errF1");}
-    if(!conn->db->rows){die(conn, "errF2");}
+    if(!conn){die("errF0");}
+    if(!conn->db){die("errF1");}
+    if(!conn->db->rows){die("errF2");}
     for(int i = 0; i < conn->db->max_rows; i++) {
         struct Address *cur = &conn->db->rows[i];
-        if(!cur){die(conn, "errF3");}
+        if(!cur){die("errF3");}
         if(cur->set) {
             int nameMatch=0;
             int emailMatch=0;
@@ -296,67 +296,66 @@ int main(int argc, char *argv[])
         printf("-max_rows: %zu\n", sizeof(int));
         printf("-rows: %zu\n", sizeof(struct Address*));
     }
-    if(argc < 3) die(NULL,"USAGE: ex17 <dbfile> <action> [action params]");
+    if(argc < 3) die("USAGE: ex17 <dbfile> <action> [action params]");
 
     char *filename = argv[1];
     char action = argv[2][0];
-    struct Connection *conn = NULL;
     int id = 0;
     int phone = 0;
     int QQ = 0;
 
     if(action == 'c') {
-        if(argc < 5) die(NULL, "Need max_data and max_rows to create database");
+        if(argc < 5) die("Need max_data and max_rows to create database");
         int max_data = atoi(argv[3]);
         int max_rows = atoi(argv[4]);
-        if(max_data <= 0 || max_rows <= 0) die(NULL, "Invalid database size parameters");
-        conn = Database_open(filename, action, max_data, max_rows);
+        if(max_data <= 0 || max_rows <= 0) die("Invalid database size parameters");
+        Database_open(filename, action, max_data, max_rows);
     } else {
-        conn = Database_open(filename, action, 0, 0);
+        Database_open(filename, action, 0, 0);
         if(argc > 3) id = atoi(argv[3]);
-        if(id >= conn->db->max_rows) die(conn, "There's not that many records.");
+        if(id >= conn->db->max_rows) die("There's not that many records.");
     }
 
     if(argc>=7){ phone = atoi(argv[6]);}
     if(argc>=8){ QQ = atoi(argv[7]);}
     switch(action) {
         case 'c':
-            Database_create(conn);
-            Database_write(conn);
+            Database_create();
+            Database_write();
             break;
 
         case 'g':
-            if(argc != 4) die(conn,"Need an id to get");
+            if(argc != 4) die("Need an id to get");
 
-            Database_get(conn, id);
+            Database_get(id);
             break;
 
         case 's':
-            if(argc < 6) die(conn,"Need id, name, email to set");
+            if(argc < 6) die("Need id, name, email to set");
 
-            Database_set(conn, id, argv[4], argv[5],phone, QQ);
-            Database_write(conn);
+            Database_set(id, argv[4], argv[5],phone, QQ);
+            Database_write();
             break;
 
         case 'd':
-            if(argc < 4) die(conn,"Need id to delete");
+            if(argc < 4) die("Need id to delete");
 
-            Database_delete(conn, id);
-            Database_write(conn);
+            Database_delete(id);
+            Database_write();
             break;
 
         case 'l':
-            Database_list(conn);
+            Database_list();
             break;
         case 'f':
-            if(argc < 4) die(conn,"Need something to find");
-            dataFind(conn, id, argv[4], argv[5] ,phone, QQ);
+            if(argc < 4) die("Need something to find");
+            dataFind(id, argv[4], argv[5] ,phone, QQ);
             break;
         default:
-            die(conn,"Invalid action, only: c=create, g=get, s=set, d=del, l=list, f=find");
+            die("Invalid action, only: c=create, g=get, s=set, d=del, l=list, f=find");
     }
 
-    Database_close(conn);
+    Database_close();
 
     return 0;
 }
