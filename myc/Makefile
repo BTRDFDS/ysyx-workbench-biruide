@@ -17,3 +17,4 @@ ex19: object.o
 ex19a: object.o
 test: ex19
 	./ex19
+ex22: exn22.o
