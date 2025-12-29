@@ -18,3 +18,5 @@ ex19a: object.o
 test: ex19
 	./ex19
 ex22: exn22.o
+log:
+	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2025-01-01"
