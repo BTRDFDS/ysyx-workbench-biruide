@@ -39,6 +39,40 @@ error:
     return -1;
 }
 
+int printfString(char *out_string, int max_buffer)
+{
+    for(int i = 0; i < max_buffer && out_string[i] != '\0'; i++){
+        fputc(out_string[i],stdout);
+    }
+
+    return 0;
+}
+
+int printfInt(int out_int)
+{
+    #define MAX 11
+    char number[MAX] = {0};
+    int idx = MAX-1;
+
+    if(out_int == 0){
+        fputc('0', stdout);
+        return 0;
+    }else if(out_int < 0){
+        fputc('-', stdout);
+        out_int = -out_int;
+    }
+    while(out_int > 0 && idx >= 0){
+        number[idx] = (out_int % 10) + '0';
+        out_int /= 10;
+        idx--;
+    }
+    for(int i = idx + 1; i < MAX; i++){
+        if(number[i] != '\0'){
+            fputc(number[i], stdout);
+        }
+    }
+    return 0;
+}
 int read_scan(const char *fmt, ...)
 {
     int i = 0;
@@ -94,8 +128,50 @@ error:
     va_end(argp);
     return -1;
 }
+int myPrintf(const char *fmt, ...)
+{
+    int i = 0;
+    int out_int = 0;
+    char out_char = '\0';
+    char *out_string = NULL;
+    va_list argp;
+    va_start(argp, fmt);
 
+    for(i = 0; fmt[i] != '\0'; i++) {
+        if(fmt[i] == '%') {
+            i++;
+            switch(fmt[i]) {
+                case '\0':
+                    sentinel("Invalid format, you ended with %%.");
+                    break;
+                case 'd':
+                    out_int = va_arg(argp, int);
+                    //fputc(out_int,stdout);
+                    printfInt(out_int);
+                    break;
+                case 'c':
+                    out_char = (char)va_arg(argp, int);
+                    fputc(out_char,stdout);
+                    break;
+                case 's':
+                    out_string = va_arg(argp, char*);
+                    printfString(out_string, MAX_DATA);
+                    //fputc(*out_string,stdout);
+                    break;
+                default:
+                    sentinel("Invalid format.");
+            }
+        } else {
+            fputc(fmt[i],stdout);
+        }
+    }
+    va_end(argp);
+    return 0;
 
+error:
+    va_end(argp);
+    return -1;
+}
 
 int main(int argc, char *argv[])
 {
@@ -124,7 +200,10 @@ int main(int argc, char *argv[])
     printf("Initial: '%c'\n", initial);
     printf("Last Name: %s", last_name);
     printf("Age: %d\n", age);
-
+    myPrintf("First Name: %s", first_name);
+    myPrintf("Initial: '%c'\n", initial);
+    myPrintf("Last Name: %s", last_name);
+    myPrintf("Age: %d\n", age);
     free(first_name);
     free(last_name);
     return 0;
