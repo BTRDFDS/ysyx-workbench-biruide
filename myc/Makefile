@@ -1,22 +1,25 @@
-CFLAGS=-Wall -g
+CFLAGS=-Wall -g -Isrc
 
-SRCS = $(wildcard ex*.c)
+SOURCES=$(wildcard src/ex*.c)
+OBJECTS=$(patsubst src/%.c,bin/%.o,$(SOURCES))
+BINS = $(patsubst src/%.c,bin/%,$(SOURCES))
 
-# 2. 将所有 .c 后缀的源文件，转换为同名可执行文件（如 ex1.c → ex1）
-BINS = $(SRCS:.c=)
-
-# 3. 默认目标（执行 make 时，自动执行该目标）
 all: $(BINS)
 	git add -f *
-#清理所有的.o文件
 
-# 4. 清理命令：删除所有生成的可执行文件（执行 make clean 触发）
+bin/%.o: src/%.c
+	gcc $(CFLAGS) -c $< -o $@
+
 clean:
-	rm -f $(BINS) *.o
-ex19: object.o
-ex19a: object.o
-test: ex19
-	./ex19
-ex22: exn22.o
+	rm -f $(BINS) $(OBJECTS)
+test: bin/ex19
+bin/ex19:bin/object.o bin/ex19.o
+	gcc $(CFLAGS) bin/ex19.o bin/object.o -o $@
+bin/ex19a: bin/object.o bin/ex19.o
+	gcc $(CFLAGS) bin/ex19.o bin/object.o -o $@
+bin/ex22: bin/ex22.o bin/exn22.o
+	gcc $(CFLAGS) bin/ex22.o bin/exn22.o -o $@
+
+
 log:
 	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2025-01-01"
