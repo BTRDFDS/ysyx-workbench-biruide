@@ -1,6 +1,6 @@
 CFLAGS=-Wall -g -Isrc
 
-SOURCES=$(wildcard src/ex*.c)
+SOURCES=$(filter-out src/ex32.c, $(wildcard src/ex*.c))
 TEST_SOURCES=$(wildcard tests/ex*Test.c)
 OBJECTS=$(patsubst src/%.c,build/%.o,$(SOURCES))
 TEST_OBJECTS=$(patsubst tests/%.c,build/%.o,$(TEST_SOURCES))
@@ -9,7 +9,6 @@ TEST_BINS = $(patsubst tests/%.c,bin/%,$(TEST_SOURCES))
 
 all: $(BINS) $(TEST_BINS)
 	git add -f *
-
 
 build/%.o: src/%.c
 	@mkdir -p build
@@ -22,8 +21,6 @@ build/%.o: tests/%.c
 bin/%: build/%.o
 	@mkdir -p bin
 	gcc $(CFLAGS) $< -o $@
-
-
 
 clean:
 	rm -f $(BINS) $(OBJECTS)
@@ -40,6 +37,11 @@ build/ex29lib.so: build/ex29lib.o
 	cc -shared -o $@ $<
 bin/ex29: bin/ex29.o build/ex29lib.so
 	gcc $(CFLAGS) $< -ldl -o $@
+
+build/ex32.o: src/ex32.c
+	gcc $(CFLAGS) -c $< -o $@
+bin/ex32a: build/ex32a.o build/ex32.o
+	gcc $(CFLAGS) build/ex32a.o build/ex32.o -o $@
 
 
 log:
