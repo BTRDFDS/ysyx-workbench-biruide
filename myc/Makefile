@@ -6,26 +6,23 @@ OBJECTS=$(patsubst src/%.c,build/%.o,$(SOURCES))
 TEST_OBJECTS=$(patsubst tests/%.c,build/%.o,$(TEST_SOURCES))
 BINS = $(patsubst src/%.c,bin/%,$(SOURCES))
 TEST_BINS = $(patsubst tests/%.c,bin/%,$(TEST_SOURCES))
-SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
 
-all: $(BINS) $(TEST_BINS) $(SO_TARGET)
+all: $(BINS) $(TEST_BINS)
 	git add -f *
 
-build:
-	@mkdir -p build
-	@mkdir -p bin
-
-$(SO_TARGET): $(OBJECTS)
-	$(CC) -shared -o $@ $(OBJECTS)
 
 build/%.o: src/%.c
+	@mkdir -p build
 	gcc $(CFLAGS) -c $< -o $@
 
 build/%.o: tests/%.c
+	@mkdir -p build
 	gcc $(CFLAGS) -c $< -o $@
 
-bin/%Test: build/%Test.o
+bin/%: build/%.o
+	@mkdir -p bin
 	gcc $(CFLAGS) $< -o $@
+
 
 
 clean:
