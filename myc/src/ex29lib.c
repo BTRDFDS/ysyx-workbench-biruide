@@ -2,7 +2,6 @@
 #include <ctype.h>
 #include "dbg.h"
 
-#define maxData 512
 
 int print_a_message(const char *msg)
 {

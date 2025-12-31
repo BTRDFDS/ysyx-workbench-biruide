@@ -1,14 +1,15 @@
-ex29 ./libex29.so print_a_message "hello there"
-/bin/sh: 1: eval: ex29: not found
-./ex29 ./ex29lib.so print_a_message "hello there"
+./ex29Test: ./libex29.so print_a_message hello there 512
+command cannot foundFailed to open the library ./libex29.so: ./libex29.so: cannot open shared object file: No such file or directory
+./ex29Test: ./ex29lib.so print_a_message hello there 512
 A STRING: hello there
-./ex29 ./ex29lib.so uppercase "hello there"
+./ex29Test: ./ex29lib.so uppercase hello there 512
 HELLO THERE
-./ex29 ./ex29lib.so lowercase "HELLO tHeRe"
+./ex29Test: ./ex29lib.so lowercase HELLO tHeRe 512
 hello there
-./ex29 ./ex29lib.so fail_on_purpose "i fail"
-[ERROR]	src/ex29.c:25:main() (errno:None) Function fail_on_purpose return 1 for data: i fail
-./ex29 ./ex29lib.so fail_on_purpose
-[ERROR]	src/ex29.c:12:main() (errno:None) USAGE: ex29 libex29.so function data
-./ex29 ./ex29lib.so adfasfasdf asdfadff
-[ERROR]	src/ex29.c:22:main() (errno:None) Did not find adfasfasdf function in the library ./ex29lib.so: ./ex29lib.so: undefined symbol: adfasfasdf
+./ex29Test: ./ex29lib.so fail_on_purpose i fail 512
+Function fail_on_purpose return 1 for data: i fail
+./ex29Test: ./ex29lib.so fail_on_purpose (null) 512
+USAGE: ex29 libex29.so function data./ex29Test: ./ex29lib.so adfasfasdf asdfadff 512
+Did not find adfasfasdf function in the library ./ex29lib.so: ./ex29lib.so: undefined symbol: adfasfasdf
+./ex29Test: ./libex.so adfasfasdf asdfadfas 512
+Failed to open the library ./libex.so: ./libex.so: cannot open shared object file: No such file or directory
