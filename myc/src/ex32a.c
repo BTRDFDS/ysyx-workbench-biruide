@@ -17,9 +17,9 @@ char *test7 = "test7 data";
 char *test_create()
 {
     list = List_create();
-    list2 = List_create();  // 新增
+    list2 = List_create();
     mu_assert(list != NULL, "Failed to create list.");
-    mu_assert(list2 != NULL, "Failed to create list2.");  // 新增
+    mu_assert(list2 != NULL, "Failed to create list2.");
 
     return NULL;
 }
@@ -203,9 +203,9 @@ char *all_tests() {
     mu_run_test(test_unshift);
     mu_run_test(test_remove);
     mu_run_test(test_shift);
-    mu_run_test(test_copy);
+    //mu_run_test(test_copy);
     //mu_run_test(test_link);
-    //mu_run_test(test_split);
+    mu_run_test(test_split);
     mu_run_test(test_destroy);
 
     return NULL;

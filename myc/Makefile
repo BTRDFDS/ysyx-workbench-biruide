@@ -42,6 +42,8 @@ build/ex32.o: src/ex32.c
 	gcc $(CFLAGS) -c $< -o $@
 bin/ex32a: build/ex32a.o build/ex32.o
 	gcc $(CFLAGS) build/ex32a.o build/ex32.o -o $@
+bin/ex32b: build/ex32b.o build/ex32.o
+	gcc $(CFLAGS) build/ex32a.o build/ex32.o -o $@
 
 
 log:
