@@ -21,6 +21,7 @@ void List_destroy(List *list)
 
 void List_clear(List *list)
 {
+    if(list==NULL) return;
     while(list->count>0){
         List_pop(list);
     }
@@ -142,12 +143,9 @@ error:
 void ListLink(List *list1, List *list2) {
     check(list1 != NULL, "list1 is NULL");
     check(list2 != NULL, "list2 is NULL");
-    
-    if(list2->count == 0) {
-        List_destroy(list2);
-        return;
-    }
-    
+
+    if(list2->count == 0) return;
+
     if(list1->last) {
         list1->last->next = list2->first;
         if(list2->first) {
@@ -160,8 +158,10 @@ void ListLink(List *list1, List *list2) {
     list1->last = list2->last;
     list1->count += list2->count;
     
-    free(list2);
-
+    list2->first = NULL;
+    list2->last = NULL;
+    list2->count = 0;
+    
 error:
     return;
 }

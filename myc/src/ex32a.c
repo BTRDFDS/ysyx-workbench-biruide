@@ -225,7 +225,7 @@ char *all_tests() {
     mu_run_test(test_remove);
     mu_run_test(test_shift);
     mu_run_test(testCopy);
-    //mu_run_test(test_link);
+    mu_run_test(test_link);
     //mu_run_test(test_split);
     mu_run_test(test_destroy);
 
