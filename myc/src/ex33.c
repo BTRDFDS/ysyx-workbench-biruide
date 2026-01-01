@@ -20,7 +20,7 @@ List *create_words()
 }
 List *create_wordsB()
 {
-    #define max 1000
+    #define max 10000
     List *words = List_create();
     for(int i = 0; i < max; i++) {
         char str[20];
@@ -48,10 +48,16 @@ char *test_bubble_sort()
     List *words = List_create();
     ListCopy(testWord, words);
 
+    clock_t start, end;
+    double cpu_time_used;
+    start = clock();
     // should work on a list that needs sorting
     int rc = List_bubble_sort(words, (List_compare)strcmp);
     mu_assert(rc == 0, "Bubble sort failed.");
     mu_assert(is_sorted(words), "Words are not sorted after bubble sort.");
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("%f s\n", cpu_time_used);
 
     // should work on an already sorted list
     rc = List_bubble_sort(words, (List_compare)strcmp);
@@ -77,9 +83,15 @@ char *test_merge_sort()
     List *words = List_create();
     ListCopy(testWord, words);
 
+    clock_t start, end;
+    double cpu_time_used;
+    start = clock();
     // should work on a list that needs sorting
     List *res = List_merge_sort(words, (List_compare)strcmp);
     mu_assert(is_sorted(res), "Words are not sorted after merge sort.");
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("%f s\n", cpu_time_used);
 
     List *res2 = List_merge_sort(res, (List_compare)strcmp);
     mu_assert(is_sorted(res), "Should still be sorted after merge sort.");
@@ -149,25 +161,87 @@ char *test_list_insert_sorted()
     return NULL;
 }
 
+List *listMergeBottom(List *list, List_compare cmp)
+{
+    if (!list || !cmp) {
+        return NULL;
+    }
+    if(List_count(list)<=1) return list;
+    int count = List_count(list);
+    List *myList = list;
+    List *newList = NULL;
+    List *left = List_create();
+    List *right = List_create();
+    
+    void *val = NULL;
+    for(int size = 1;size < count; size *= 2){
+        newList = List_create();
+        while (myList && List_count(myList) > 0) {
+            for (int i = 0; i < size && myList; i++){
+                val = List_shift(myList);
+                if (val) List_push(left, val);
+            }
+            for (int i = 0; i < size && myList; i++){
+                val = List_shift(myList);
+                if (val) List_push(right, val);
+            }
+            while (List_count(left) > 0 || List_count(right) > 0) {
+                if (List_count(left) > 0 && List_count(right) > 0) {
+                    if (cmp(List_first(left), List_first(right)) <= 0) {
+                        List_push(newList, List_shift(left));
+                    } else {
+                        List_push(newList, List_shift(right));
+                    }
+                } else if (List_count(left) > 0) {
+                    List_push(newList, List_shift(left));
+                } else {
+                    List_push(newList, List_shift(right));
+                }
+            }
+        }
+        myList = newList;
+    }
+    
+    List_destroy(left);
+    List_destroy(right);
+
+    return myList;
+}
+
+
+char *testMergeBottom()
+{
+    List *words = List_create();
+    ListCopy(testWord, words);
+    
+    clock_t start, end;
+    double cpu_time_used;
+    start = clock();
+    List *res = listMergeBottom(words, (List_compare)strcmp);
+    mu_assert(is_sorted(res), "Words are not sorted after bottom-up merge sort.");
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("%f s\n", cpu_time_used);
+    
+    List *res2 = listMergeBottom(res, (List_compare)strcmp);
+    mu_assert(is_sorted(res2), "Should still be sorted after bottom-up merge sort.");
+    
+    List_destroy(res);
+    List_destroy(res2);
+    List_destroy(words);
+    
+    return NULL;
+}
+
 char *all_tests()
 {
     testWord = create_wordsB();
     mu_suite_start();
-    clock_t start, end;
-    double cpu_time_used;
-    start = clock();
-    mu_run_test(test_bubble_sort);
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("%f s\n", cpu_time_used);
 
-    start = clock();
+    //mu_run_test(test_bubble_sort);
     mu_run_test(test_merge_sort);
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("%f s\n", cpu_time_used);
-
-    mu_run_test(test_list_insert_sorted);
+    mu_run_test(testMergeBottom);
+    //mu_run_test(test_list_insert_sorted);
 
     return NULL;
 }
