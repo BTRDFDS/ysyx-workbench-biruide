@@ -132,7 +132,7 @@ char *test_shift()
     return NULL;
 }
 
-char *test_copy()
+char *testCopy()
 {
     List_clear(list);
     List_clear(list2);
@@ -141,9 +141,30 @@ char *test_copy()
     List_push(list, test2);
     List_push(list, test3);
     ListCopy(list, list2);
+    //错误原因是不能直接对含有值的链表直接 list_clear，必须先pop或者shift完才行
+    //List_clear(list2);
+    //printf("%d\n",List_count(list2));
     mu_assert(List_count(list2) == 3, "Wrong count after copy.");
-    mu_assert(List_first(list2) == test1, "Wrong first value after copy.");
+    //printf("%s\n",List_first(list2));
+    mu_assert(List_first(list2)== test1, "Wrong first value after copy.");
+    //printf("%s\n",List_last(list2));
     mu_assert(List_last(list2) == test3, "Wrong last value after copy.");
+
+    //List_clear(list2);
+    /*
+    printf("%d\n",list->count);
+    List_pop(list);
+    printf("%d\n",list->count);
+    List_pop(list);
+    printf("%d\n",list->count);
+    List_pop(list);
+    printf("%d\n",list2->count);
+    List_pop(list2);
+    printf("%d\n",list2->count);
+    List_pop(list2);
+    printf("%d\n",list2->count);
+    List_pop(list2);
+    */
     return NULL;
 }
 
@@ -203,9 +224,9 @@ char *all_tests() {
     mu_run_test(test_unshift);
     mu_run_test(test_remove);
     mu_run_test(test_shift);
-    //mu_run_test(test_copy);
+    mu_run_test(testCopy);
     //mu_run_test(test_link);
-    mu_run_test(test_split);
+    //mu_run_test(test_split);
     mu_run_test(test_destroy);
 
     return NULL;

@@ -21,10 +21,11 @@ void List_destroy(List *list)
 
 void List_clear(List *list)
 {
+    while(list->count>0){
+        List_pop(list);
+    }
     LIST_FOREACH(list, first, next, cur) {
-        if(cur->next) {
         free(cur->value);
-        }
     }
 }
 
@@ -127,14 +128,17 @@ error:
 void ListCopy(List *listFrom, List *listTo){
     check(listFrom != NULL, "ListFrom is NULL");
     check(listTo != NULL, "ListTo is NULL");
+
+    List_clear(listTo);
+
     LIST_FOREACH(listFrom, first, next, cur) {
-        List_push(listTo,cur->value);
+        List_push(listTo, cur->value);
     }
-    listTo->count = listFrom->count;
 
 error:
     return;
 }
+
 void ListLink(List *list1, List *list2) {
     check(list1 != NULL, "list1 is NULL");
     check(list2 != NULL, "list2 is NULL");
