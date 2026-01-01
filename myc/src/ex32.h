@@ -37,6 +37,12 @@ void *List_remove(List *list, ListNode *node);
 void ListCopy(List *listFrom, List *listTo);
 void ListLink(List *list1, List *list2);
 List *ListSplit(List *list, int count);
+
+typedef int (*List_compare)(const void *a, const void *b);
+int List_bubble_sort(List *list, List_compare cmp);
+List *List_merge_sort(List *list, List_compare cmp);
+
+
 #define LIST_FOREACH(L, S, M, V) ListNode *_node = NULL;\
     ListNode *V = NULL;\
     for(V = _node = L->S; _node != NULL; V = _node = _node->M)

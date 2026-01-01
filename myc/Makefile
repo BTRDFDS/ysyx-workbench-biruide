@@ -43,8 +43,10 @@ build/ex32.o: src/ex32.c
 bin/ex32a: build/ex32a.o build/ex32.o
 	gcc $(CFLAGS) build/ex32a.o build/ex32.o -o $@
 bin/ex32b: build/ex32b.o build/ex32.o
-	gcc $(CFLAGS) build/ex32a.o build/ex32.o -o $@
+	gcc $(CFLAGS) build/ex32b.o build/ex32.o -o $@
 
+bin/ex33: build/ex33.o build/ex32.o
+	gcc $(CFLAGS) $< build/ex32.o -o $@
 
 log:
 	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2025-01-01"
