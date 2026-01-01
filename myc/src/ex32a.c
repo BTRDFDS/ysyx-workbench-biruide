@@ -168,7 +168,7 @@ char *testCopy()
     return NULL;
 }
 
-char *test_link()
+char *testLink()
 {
     List_clear(list);
     List_clear(list2);
@@ -192,7 +192,7 @@ char *test_link()
 
 
 
-char *test_split()
+char *testSplit()
 {
     List_clear(list);
 
@@ -225,8 +225,8 @@ char *all_tests() {
     mu_run_test(test_remove);
     mu_run_test(test_shift);
     mu_run_test(testCopy);
-    mu_run_test(test_link);
-    //mu_run_test(test_split);
+    mu_run_test(testLink);
+    mu_run_test(testSplit);
     mu_run_test(test_destroy);
 
     return NULL;
