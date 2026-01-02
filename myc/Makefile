@@ -1,6 +1,6 @@
 CFLAGS=-Wall -g -Isrc
 
-SOURCES=$(filter-out src/ex32.c, $(wildcard src/ex*.c))
+SOURCES=$(filter-out src/ex32.c, $(wildcard src/ex*.c src/E4*.c))
 TEST_SOURCES=$(wildcard tests/ex*Test.c)
 OBJECTS=$(patsubst src/%.c,build/%.o,$(SOURCES))
 TEST_OBJECTS=$(patsubst tests/%.c,build/%.o,$(TEST_SOURCES))
@@ -50,6 +50,8 @@ bin/ex33: build/ex33.o build/ex32.o
 
 log:
 	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2025-01-01"
+tree:
+	exa --grid --color=always --sort=name *
 
 test:
 	@if [ -f "bin/$(filter-out $@,$(MAKECMDGOALS))Test" ]; then \
