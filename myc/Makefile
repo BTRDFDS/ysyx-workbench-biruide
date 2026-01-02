@@ -71,7 +71,9 @@ test:
 
 %:
 	@:
-
-
-
+useFile = bin/E4minirvEMU
+run:$(useFile)
+	./$(useFile)
+gdb:$(useFile)
+	gdb -tui ./$(useFile)
 
