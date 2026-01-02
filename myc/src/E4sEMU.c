@@ -1,12 +1,15 @@
 #include <stdint.h>
 #include <stdio.h>
-#define NDEBUG 0
+#include <stdlib.h>
+#define NDEBUG
 #include <dbg.h>
 uint8_t PC = 0;
 uint8_t R[4];
 uint8_t M[16] = {
-    0x8a,0xb1,0x17,0x29,0xc9,0x42,0xdb,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+    0xb1,0x17,0x29,0xc5,0x42,0xd7,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 };
+    //0xb1,0x17,0x29,0xc5,0x42,0xd7,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00   求和1~自定义
+    //0x8a,0xb1,0x17,0x29,0xc9,0x42,0xdb,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00   求和1~10
 int inst_cycle(){
     uint8_t code = M[PC];
     uint8_t op = code>>6;
@@ -18,7 +21,7 @@ int inst_cycle(){
 
     // printf("PC:%d\tcode:%x\n",PC,code);
     // printf("\tR[0]:%d\tR[1]:%d\tR[2]:%d\tR[3]:%d\n",R[0],R[1],R[2],R[3]);
-    debug("PC:%d\tcode:%x",PC,code);
+    debug("PC:%d\tcode:%x\tpo:%d",PC,code,op);
     debug("\tR[0]:%d\tR[1]:%d\tR[2]:%d\tR[3]:%d",R[0],R[1],R[2],R[3]);
 
     switch(op){
@@ -70,7 +73,13 @@ int inst_cycle(){
     }
     return 0;
 }
-int main(){
+int main(int argc, char *argv[]){
+    if(argc >= 2){
+        R[0] = atoi(argv[1]);
+        if(R[0]==0){R[0] = 10;}
+    }else{
+        R[0] = 10;
+    }
     while (1){if(inst_cycle()==1){break;}}
     return 0;
 }
