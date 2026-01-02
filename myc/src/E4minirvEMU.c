@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#define NDEBUG
+#define NDEBUG
 #include <dbg.h>
 
 #define max 262143
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
     //printf("%ld %ld\n",file_size,words_read);
     check(words_read == file_size/sizeof(uint32_t),"can't read file");
     fclose(file);
-    for (int i = 0; i < 16; i++){printf("%8x\n",M[i]);}
+    debug(for (int i = 0; i < 16; i++){printf("%8x\n",M[i]);});
 
     
 //初始化特殊值

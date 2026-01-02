@@ -1,6 +1,6 @@
 CFLAGS=-Wall -g -Isrc
 
-SOURCES=$(filter-out src/ex32.c, $(wildcard src/ex*.c src/E4*.c))
+SOURCES=$(filter-out src/ex32.c src/ex29lib src/exn22, $(wildcard src/ex*.c src/E4*.c))
 TEST_SOURCES=$(wildcard tests/ex*Test.c)
 OBJECTS=$(patsubst src/%.c,build/%.o,$(SOURCES))
 TEST_OBJECTS=$(patsubst tests/%.c,build/%.o,$(TEST_SOURCES))
