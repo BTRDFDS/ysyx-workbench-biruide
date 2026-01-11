@@ -20,7 +20,7 @@ uint32_t M[max];
 int main(int argc, char *argv[]){
 
 //加载指令
-    FILE *file = fopen("sum.bin","rb");
+    FILE *file = fopen("mem.bin","rb");
     check(file != NULL,"can't open file");
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
     
 //初始化特殊值
     R[0]= 0;//初始化R0=1
-    M[137] = 0b1110011;//改成ebreak
+    M[1158] = 0b1110011;//改成ebreak
     //函数主循环开始
     while(1){
         int32_t code,cRd,im,cR1,cR2,op7,op3,up7,addr,move,temp;
