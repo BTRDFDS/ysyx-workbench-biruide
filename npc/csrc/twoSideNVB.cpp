@@ -9,7 +9,6 @@
 #define time 100
 int a,b;
 int main(int argc, char** argv) {
-	nvboard_init();
 	VerilatedContext* contextp = new VerilatedContext;
     // Verilated::traceEverOn(true);
 	contextp->commandArgs(argc, argv);
@@ -19,6 +18,7 @@ int main(int argc, char** argv) {
 	nvboard_bind_pin(&top->a,1,SW0);
 	nvboard_bind_pin(&top->b,1,SW1);
 	nvboard_bind_pin(&top->f,1,LD0);
+	nvboard_init();
 
     // VerilatedVcdC* tfp = new VerilatedVcdC;
     // top->trace(tfp, 99);

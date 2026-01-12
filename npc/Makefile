@@ -13,9 +13,9 @@ INC_PATH ?=
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS)
 
-all: $(BINS) $(NVBOARD_ARCHIVE)
+all: $(BINS)
 bin/%: vsrc/%.v csrc/%.cpp | build/% bin
-	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build \
+	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	
