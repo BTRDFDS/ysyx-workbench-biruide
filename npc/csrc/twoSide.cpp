@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include "verilated_vcd_c.h"
-#define sim_time 10
+#define sim_time 100
 int main(int argc, char** argv) {
 
 	VerilatedContext* contextp = new VerilatedContext;
