@@ -1,13 +1,23 @@
-FLAGS=  --debug --cc --trace
+include $(NVBOARD_HOME)/scripts/nvboard.mk
+
+FLAGS=  --debug --cc --trace -MMD
+VERILATOR_CFLAGS += $(FLAGS)
 
 vFile  = $(wildcard vsrc/*.v)
 cFile  = $(patsubst vsrc/%.v,csrc/%.cpp,$(vFile))
 BINS   = $(patsubst vsrc/%.v,bin/%,   $(vFile))
 BUILDS = $(patsubst vsrc/%.v,build/%, $(vFile))
+TOPNAME= $(patsubst vsrc/%.v,%,$(vFile))
 
-all: $(BINS)
+INC_PATH ?=
+INCFLAGS = $(addprefix -I, $(INC_PATH))
+CXXFLAGS += $(INCFLAGS)
+
+all: $(BINS) $(NVBOARD_ARCHIVE)
 bin/%: vsrc/%.v csrc/%.cpp | build/% bin
-	verilator $(FLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build
+	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build \
+	$(addprefix -CFLAGS , $(CXXFLAGS)) \
+	$(addprefix -LDFLAGS , $(LDFLAGS))
 	
 # 	cd build/$* && make -f V$*.mk
 	cp build/$*/V$* $@
