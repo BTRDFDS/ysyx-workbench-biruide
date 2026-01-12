@@ -20,8 +20,8 @@ build/%:
 
 sim:all
 	./bin/$(t)
-	gtkwave wave/$(t).vcd
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	gtkwave wave/$(t).vcd
 # 	@echo "Write this Makefile by your self."
 
 clean:
