@@ -80,7 +80,7 @@ Verilator Tree Dump (format 0x3900) from <e1793> to <e1826>
     1:2:2:2: CFUNC 0x5555573442c0 <e1793#> {e1ai}  trace_init_top [SLOW] [METHOD] [LOOSE]
     1:2:2:2:3: STMTEXPR 0x5555573d0a00 <e1790> {a0aa}
     1:2:2:2:3:1: CCALL 0x555557316540 <e1791> {a0aa} @dt=0x5555573864d0@(w0)void trace_init_sub__TOP__0 => CFUNC 0x555557344000 <e1723> {e1ai}  trace_init_sub__TOP__0 [SLOW] [METHOD] [LOOSE]
-    3: TYPETABLE 0x5555572e8800 <e2> {a0aa}
+    3: TYPETABLE 0x5555572e8600 <e2> {a0aa}
 		detailed  ->  BASICDTYPE 0x555557384840 <e104> {d53aw} @dt=this@(G/w1)  logic [GENERIC] kwd=logic
 		detailed  ->  BASICDTYPE 0x5555573989c0 <e1192> {e10bi} @dt=this@(G/sw4)  logic [GENERIC] kwd=logic range=[3:0]
 		detailed  ->  BASICDTYPE 0x555557398900 <e1180> {e10bi} @dt=this@(G/w15)  logic [GENERIC] kwd=logic range=[14:0]

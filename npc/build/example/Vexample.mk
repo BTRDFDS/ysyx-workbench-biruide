@@ -37,17 +37,9 @@ VM_PREFIX = Vexample
 VM_MODPREFIX = Vexample
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
-  -MMD \
-  -O3 \
-  -I/usr/include/SDL2 \
-  -D_REENTRANT \
-  -I/home/biruide/ysyx-workbench/nvboard/usr/include \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
-  -lSDL2 \
-  -lSDL2_image \
-  -lSDL2_ttf \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \

@@ -61,7 +61,7 @@ Verilator Tree Dump (format 0x3900) from <e1606> to <e1609>
     1:2:2:2:2:3:1:3:1: CONST 0x5555573b30e0 <e1365> {e11ca} @dt=0x5555573992c0@(G/sw32)  32'sh1
     1:2:2:2:2:3:1:3:2: VARREF 0x5555573c6d00 <e1366> {e11bs} @dt=0x55555738db00@(G/w32)  light__DOT__count [RV] <- VARSCOPE 0x555557399e00 <e1553> {e6ao} @dt=0x55555738db00@(G/w32)  TOP->light__DOT__count [T] [scopep=0x555557316460] -> VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
     1:2:2:2:2:3:2: VARREF 0x5555573c6dd0 <e1248> {e11ah} @dt=0x55555738db00@(G/w32)  light__DOT__count [LV] => VARSCOPE 0x555557399e00 <e1553> {e6ao} @dt=0x55555738db00@(G/w32)  TOP->light__DOT__count [T] [scopep=0x555557316460] -> VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
-    3: TYPETABLE 0x5555572e8800 <e2> {a0aa}
+    3: TYPETABLE 0x5555572e8600 <e2> {a0aa}
 		detailed  ->  BASICDTYPE 0x555557384840 <e104> {d53aw} @dt=this@(G/w1)  logic [GENERIC] kwd=logic
 		detailed  ->  BASICDTYPE 0x5555573989c0 <e1192> {e10bi} @dt=this@(G/sw4)  logic [GENERIC] kwd=logic range=[3:0]
 		detailed  ->  BASICDTYPE 0x555557398900 <e1180> {e10bi} @dt=this@(G/w15)  logic [GENERIC] kwd=logic range=[14:0]
