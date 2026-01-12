@@ -1,0 +1,8 @@
+DFG 'scoped' patterns with depth 1
+
+DFG 'scoped' patterns with depth 2
+
+DFG 'scoped' patterns with depth 3
+
+DFG 'scoped' patterns with depth 4
+

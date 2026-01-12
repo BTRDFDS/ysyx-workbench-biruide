@@ -1,8 +1,36 @@
-all:
-	@echo "Write this Makefile by your self."
+FLAGS=  --debug --cc --trace
 
-sim:
+vFile  = $(wildcard vsrc/*.v)
+cFile  = $(patsubst vsrc/%.v,csrc/%.cpp,$(vFile))
+BINS   = $(patsubst vsrc/%.v,bin/%,   $(vFile))
+BUILDS = $(patsubst vsrc/%.v,build/%, $(vFile))
+
+all: $(BINS)
+bin/%: vsrc/%.v csrc/%.cpp | build/% bin
+	verilator $(FLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build
+	
+# 	cd build/$* && make -f V$*.mk
+	cp build/$*/V$* $@
+	git add -f Makefile vsrc/* csrc/* bin/*
+
+bin:
+	mkdir -p bin
+build/%:
+	mkdir -p $@
+
+sim:all
+	./bin/$(t)
+	gtkwave wave/$(t).vcd
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo "Write this Makefile by your self."
+# 	@echo "Write this Makefile by your self."
+
+clean:
+	rm bin/* build/* -rf
+run:
+	./bin/$(t)
+log:
+	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2026-01-01"
+tree:
+	exa --grid --color=always --sort=name *
 
 include ../Makefile

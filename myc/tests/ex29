@@ -1,0 +1,8 @@
+ex29 ./libex29.so print_a_message "hello there"
+./ex29 ./ex29lib.so print_a_message "hello there"
+./ex29 ./ex29lib.so uppercase "hello there"
+./ex29 ./ex29lib.so lowercase "HELLO tHeRe"
+./ex29 ./ex29lib.so fail_on_purpose "i fail"
+./ex29 ./ex29lib.so fail_on_purpose
+./ex29 ./ex29lib.so adfasfasdf asdfadff
+./ex29 ./libex.so adfasfasdf asdfadfas
