@@ -15,6 +15,7 @@ CXXFLAGS += $(INCFLAGS)
 
 all: $(BINS)
 bin/%: vsrc/%.v csrc/%.cpp | build/% bin
+	verilator --lint-only -Wall $<
 	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
@@ -38,11 +39,16 @@ sim:all wave
 
 clean:
 	rm bin/* build/* -rf
-run:
+run:bin/$(t)
 	./bin/$(t)
+gtk:
+	gtkwave wave/$(t).vcd
 log:
 	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2026-01-01"
 tree:
 	exa --grid --color=always --sort=name *
+
+chk:
+	verilator --lint-only -Wall vsrc/$(t).v
 
 include ../Makefile
