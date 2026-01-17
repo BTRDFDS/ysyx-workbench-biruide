@@ -1,6 +1,6 @@
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 
-FLAGS=  --debug --cc --trace -MMD
+FLAGS=  --debug --cc --trace -MMD -O0
 VERILATOR_CFLAGS += $(FLAGS)
 
 vFile  = $(wildcard vsrc/*.v)
@@ -12,6 +12,7 @@ TOPNAME= $(patsubst vsrc/%.v,%,$(vFile))
 INC_PATH ?=
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS)
+t?=water
 
 all: $(BINS)
 bin/%: vsrc/%.v csrc/%.cpp | build/% bin
@@ -22,7 +23,7 @@ bin/%: vsrc/%.v csrc/%.cpp | build/% bin
 	
 # 	cd build/$* && make -f V$*.mk
 	cp build/$*/V$* $@
-	git add -f Makefile vsrc/* csrc/* bin/*
+	git add -f Makefile vsrc/* csrc/* bin/* syn/*
 
 bin:
 	mkdir -p bin
@@ -50,5 +51,12 @@ tree:
 
 chk:
 	verilator --lint-only -Wall vsrc/$(t).v
+
+include $(YOSYS_STA_HOME)/Makefile
+systa:
+	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES=/home/biruide/ysyx-workbench/npc/vsrc/$(t).v
+
+symy:
+	yosys yosys.tcl
 
 include ../Makefile
