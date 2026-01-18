@@ -1,0 +1,439 @@
+I20260117 13:51:13.349929 30598 Sta.cc:383] read verilog file /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz/water.netlist.v start
+I20260117 13:51:13.351995 30598 VerilogParserRustC.cc:41] load verilog file /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz/water.netlist.v
+r str /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz/water.netlist.v
+I20260117 13:51:13.356142 30598 Sta.cc:391] read verilog end
+I20260117 13:51:13.356237 30598 Sta.cc:309] load lib start
+I20260117 13:51:13.360389 30634 Sta.cc:287] read liberty /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib start 
+I20260117 13:51:13.360469 30634 LibParserRustC.cc:1285] load liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+rust read lib file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+I20260117 13:51:17.976172 30634 LibParserRustC.cc:1294] load liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib success.
+I20260117 13:51:17.976295 30634 Sta.cc:297] read liberty /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib end 
+I20260117 13:51:17.976730 30598 Sta.cc:328] load lib end
+I20260117 13:51:17.976858 30598 Sta.cc:417] link design water start
+I20260117 13:51:17.984393 30737 LibParserRustC.cc:1304] link liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib start.
+I20260117 13:51:17.987865 30737 LibParserRustC.cc:666] unkown attri name: voltage_map in /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib line no 28
+I20260117 13:51:38.815799 30737 LibParserRustC.cc:1310] link liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib success.
+I20260117 13:51:38.826465 30598 Sta.cc:1106] link design water end
+I20260117 13:51:38.826509 30598 Sta.cc:1108] design water inst num: 140
+I20260117 13:51:38.827435 30598 Sta.cc:1110] design water net num: 142
+I20260117 13:51:38.827461 30598 Sta.cc:1112] design water port num: 12
+I20260117 13:51:38.827498 30598 Sta.cc:181] read sdc /home/biruide/ysyx-workbench/yosys-sta/scripts/default.sdc start 
+I20260117 13:51:38.838332 30598 CmdCreateClock.cc:124] create clock core_clock for pin/port: clk
+I20260117 13:51:38.838400 30598 Sta.cc:198] read sdc /home/biruide/ysyx-workbench/yosys-sta/scripts/default.sdc end 
+I20260117 13:51:38.839116 30598 StaBuildGraph.cc:315] build graph start
+I20260117 13:51:38.843189 30598 StaBuildGraph.cc:332] build graph end
+I20260117 13:51:38.843354 30598 Sta.cc:2834] update timing start
+I20260117 13:51:38.843438 30598 StaApplySdc.cc:698] apply sdc start
+I20260117 13:51:38.843464 30598 StaApplySdc.cc:729] apply sdc end
+I20260117 13:51:38.843475 30598 StaClockPropagation.cc:324] ideal clock propagation start
+I20260117 13:51:38.843482 30598 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260117 13:51:38.843505 30598 StaClockPropagation.cc:203] clock propagate end to vertex out[0]_reg_p:CK
+I20260117 13:51:38.843580 30598 StaClockPropagation.cc:422] ideal clock propagation end
+I20260117 13:51:38.843590 30598 StaCheck.cc:129] found loop fwd start
+I20260117 13:51:38.843640 30598 StaCheck.cc:148] found loop fwd end
+I20260117 13:51:38.843647 30598 StaCheck.cc:150] found loop bwd start
+I20260117 13:51:38.843690 30598 StaCheck.cc:172] found loop bwd end
+I20260117 13:51:38.843744 30598 StaClockSlewDelayPropagation.cc:112] clock slew delay propagation start
+I20260117 13:51:38.844534 30598 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 1
+I20260117 13:51:38.845245 30598 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 33
+I20260117 13:51:38.845409 30598 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 1
+I20260117 13:51:38.845485 30598 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 10
+I20260117 13:51:38.845525 30598 StaClockSlewDelayPropagation.cc:163] clock slew delay propagation end
+I20260117 13:51:38.845571 30598 StaClockSlewDelayPropagation.cc:166] clock slew delay propagation memory usage 0MB
+I20260117 13:51:38.845608 30598 StaClockSlewDelayPropagation.cc:169] clock slew delay propagation time elapsed 0.001864s
+I20260117 13:51:38.845724 30598 StaClockPropagation.cc:326] propagated(kNormal) clock propagation start
+I20260117 13:51:38.845752 30598 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260117 13:51:38.845762 30598 StaClockPropagation.cc:424] propagated(kNormal) clock propagation end
+I20260117 13:51:38.845769 30598 StaApplySdc.cc:698] apply sdc start
+I20260117 13:51:38.845774 30598 StaApplySdc.cc:729] apply sdc end
+I20260117 13:51:38.845779 30598 StaClockPropagation.cc:328] propagated(kGenerated) clock propagation start
+I20260117 13:51:38.845783 30598 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260117 13:51:38.845788 30598 StaClockPropagation.cc:426] propagated(kGenerated) clock propagation end
+I20260117 13:51:38.845791 30598 StaApplySdc.cc:698] apply sdc start
+I20260117 13:51:38.845795 30598 StaApplySdc.cc:729] apply sdc end
+I20260117 13:51:38.845799 30598 StaBuildPropTag.cc:325] build propagation tag start
+I20260117 13:51:38.846032 30598 StaBuildPropTag.cc:338] build propagation tag end
+I20260117 13:51:38.846096 30598 StaDataPropagation.cc:676] data fwd propagation start
+I20260117 13:51:38.846146 30598 StaDataPropagationBFS.cc:166] data fwd propagation bfs start
+I20260117 13:51:38.846203 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 43
+I20260117 13:51:38.852550 30844 StaDataPropagationBFS.cc:82] Thread 126564604196416 date fwd propagate found start vertex.myTime_10__reg_p:CK
+I20260117 13:51:38.852752 30850 StaDataPropagationBFS.cc:82] Thread 126564780443200 date fwd propagate found start vertex.myTime_16__reg_p:CK
+[0;31mE20260117 13:51:38.852737 30844 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260117 13:51:38.852802 30850 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260117 13:51:38.852813 30851 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260117 13:51:38.852829 30863 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260117 13:51:38.852839 30861 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260117 13:51:38.852885 30864 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260117 13:51:38.852605 30846 StaDataPropagationBFS.cc:82] Thread 126564814014016 date fwd propagate found start vertex.myTime_13__reg_p:CK
+I20260117 13:51:38.852510 30843 StaDataPropagationBFS.cc:82] Thread 126564595803712 date fwd propagate found start vertex.reset
+[0;31mE20260117 13:51:38.852852 30865 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260117 13:51:38.852715 30848 StaDataPropagationBFS.cc:82] Thread 126564797228608 date fwd propagate found start vertex.myTime_15__reg_p:CK
+I20260117 13:51:38.853137 30849 StaDataPropagationBFS.cc:82] Thread 126564788835904 date fwd propagate found start vertex.myTime_17__reg_p:CK
+[0;31mE20260117 13:51:38.853312 30853 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260117 13:51:38.853410 30866 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260117 13:51:38.852510 30873 StaDataPropagationBFS.cc:82] Thread 126563265791552 date fwd propagate found start vertex.myTime_0__reg_p:CK
+I20260117 13:51:38.852543 30842 StaDataPropagationBFS.cc:82] Thread 126564587411008 date fwd propagate found start vertex.myTime_11__reg_p:CK
+I20260117 13:51:38.852656 30847 StaDataPropagationBFS.cc:82] Thread 126564805621312 date fwd propagate found start vertex.myTime_14__reg_p:CK
+I20260117 13:51:38.852586 30845 StaDataPropagationBFS.cc:82] Thread 126564612589120 date fwd propagate found start vertex.myTime_12__reg_p:CK
+[0;31mE20260117 13:51:38.853214 30852 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260117 13:51:38.857051 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 52
+I20260117 13:51:38.860850 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 119
+I20260117 13:51:38.865361 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 32
+I20260117 13:51:38.869642 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 68
+I20260117 13:51:38.873558 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 18
+I20260117 13:51:38.876291 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 39
+I20260117 13:51:38.879905 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 24
+I20260117 13:51:38.882735 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 25
+I20260117 13:51:38.887694 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 4
+I20260117 13:51:38.890236 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 21
+I20260117 13:51:38.893677 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 18
+I20260117 13:51:38.896997 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 18
+I20260117 13:51:38.900089 30598 StaDataPropagationBFS.cc:229] data fwd propagation bfs end
+I20260117 13:51:38.900199 30598 StaDataPropagationBFS.cc:232] data fwd propagation bfs memory usage 1506.66MB
+I20260117 13:51:38.900239 30598 StaDataPropagationBFS.cc:234] data fwd propagation bfs time elapsed 0.054093s
+I20260117 13:51:38.900251 30598 StaDataPropagation.cc:695] data fwd propagation end
+I20260117 13:51:38.900260 30598 StaDataPropagation.cc:676] data fwd propagation start
+I20260117 13:51:38.900279 30598 StaDataPropagationBFS.cc:166] data fwd propagation bfs start
+I20260117 13:51:38.900312 30598 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 0
+I20260117 13:51:38.902839 30598 StaDataPropagationBFS.cc:229] data fwd propagation bfs end
+I20260117 13:51:38.902917 30598 StaDataPropagationBFS.cc:232] data fwd propagation bfs memory usage 0MB
+I20260117 13:51:38.902928 30598 StaDataPropagationBFS.cc:234] data fwd propagation bfs time elapsed 0.002649s
+I20260117 13:51:38.902935 30598 StaDataPropagation.cc:695] data fwd propagation end
+I20260117 13:51:38.902941 30598 StaAnalyze.cc:557] analyze timing path start
+I20260117 13:51:38.902947 30598 StaAnalyze.cc:565] analyze timing path end vertex 1 total 53 start
+[0;31mE20260117 13:51:38.902958 30598 StaAnalyze.cc:328] The output port out_0_ is not constrained
+[m[0;31mE20260117 13:51:38.902999 30598 StaAnalyze.cc:328] The output port out_0_ is not constrained
+[mI20260117 13:51:38.903005 30598 StaAnalyze.cc:599] analyze timing path end vertex 1 total 53 end
+[0;31mE20260117 13:51:38.903009 30598 StaAnalyze.cc:328] The output port out_1_ is not constrained
+[m[0;31mE20260117 13:51:38.903015 30598 StaAnalyze.cc:328] The output port out_1_ is not constrained
+[m[0;31mE20260117 13:51:38.903020 30598 StaAnalyze.cc:328] The output port out_2_ is not constrained
+[m[0;31mE20260117 13:51:38.903025 30598 StaAnalyze.cc:328] The output port out_2_ is not constrained
+[m[0;31mE20260117 13:51:38.903030 30598 StaAnalyze.cc:328] The output port out_3_ is not constrained
+[m[0;31mE20260117 13:51:38.903035 30598 StaAnalyze.cc:328] The output port out_3_ is not constrained
+[m[0;31mE20260117 13:51:38.903040 30598 StaAnalyze.cc:328] The output port out_4_ is not constrained
+[m[0;31mE20260117 13:51:38.903045 30598 StaAnalyze.cc:328] The output port out_4_ is not constrained
+[mI20260117 13:51:38.903074 30598 StaAnalyze.cc:565] analyze timing path end vertex 11 total 53 start
+I20260117 13:51:38.903121 30598 StaAnalyze.cc:599] analyze timing path end vertex 11 total 53 end
+I20260117 13:51:38.903138 30598 StaAnalyze.cc:303] add path data num 2 to myTime_0__reg_p:D
+I20260117 13:51:38.903183 30598 StaAnalyze.cc:565] analyze timing path end vertex 21 total 53 start
+I20260117 13:51:38.903194 30598 StaAnalyze.cc:599] analyze timing path end vertex 21 total 53 end
+I20260117 13:51:38.903220 30598 StaAnalyze.cc:565] analyze timing path end vertex 31 total 53 start
+I20260117 13:51:38.903229 30598 StaAnalyze.cc:599] analyze timing path end vertex 31 total 53 end
+I20260117 13:51:38.903263 30598 StaAnalyze.cc:565] analyze timing path end vertex 41 total 53 start
+I20260117 13:51:38.903275 30598 StaAnalyze.cc:599] analyze timing path end vertex 41 total 53 end
+I20260117 13:51:38.903714 30598 StaAnalyze.cc:565] analyze timing path end vertex 51 total 53 start
+I20260117 13:51:38.903731 30598 StaAnalyze.cc:599] analyze timing path end vertex 51 total 53 end
+I20260117 13:51:38.903751 30598 StaAnalyze.cc:603] analyze timing path end
+I20260117 13:51:38.903756 30598 StaApplySdc.cc:698] apply sdc start
+I20260117 13:51:38.903761 30598 StaApplySdc.cc:729] apply sdc end
+I20260117 13:51:38.903765 30598 StaDataPropagation.cc:698] data bwd propagation start
+I20260117 13:51:38.905896 30598 StaDataPropagation.cc:249] propagate start vertex myTime_0__reg_p:CK
+I20260117 13:51:38.905959 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_0__reg_p:D
+I20260117 13:51:38.905994 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_1__reg_p:D
+I20260117 13:51:38.906016 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.is_ICGX0P5H7L_E:E
+I20260117 13:51:38.906050 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_6__reg_p:D
+I20260117 13:51:38.906086 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_10__reg_p:D
+I20260117 13:51:38.906098 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_11__reg_p:D
+I20260117 13:51:38.906112 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_12__reg_p:D
+I20260117 13:51:38.906123 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_13__reg_p:D
+I20260117 13:51:38.906132 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_14__reg_p:D
+I20260117 13:51:38.906142 30598 StaDataPropagation.cc:172] Thread 126564843118720 data bwd propagate found end vertex.myTime_15__reg_p:D
+I20260117 13:51:38.908272 30598 StaDataPropagation.cc:703] data bwd propagation end
+I20260117 13:51:38.908319 30598 Sta.cc:2895] update timing end
+I20260117 13:51:38.908406 30598 Sta.cc:2898] update timing memory usage 1506.66MB
+I20260117 13:51:38.908428 30598 Sta.cc:2900] update timing time elapsed 0.065075s
+I20260117 13:51:38.908655 30598 Sta.cc:2998] start write sta report.
+I20260117 13:51:38.908663 30598 Sta.cc:2999] output sta report path: /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz
+I20260117 13:51:38.911438 30598 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260117 13:51:38.911479 30598 StaReport.cc:206] report the clock group **clock_gating_default** 2 timing paths.
+I20260117 13:51:38.912720 30598 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260117 13:51:38.912952 30598 StaReport.cc:206] report the clock group **clock_gating_default** 2 timing paths.
+I20260117 13:51:38.912974 30598 StaReport.cc:211] report the clock group core_clock 1 timing paths.
+I20260117 13:51:38.912979 30598 StaReport.cc:206] report the clock group **clock_gating_default** 1 timing paths.
+I20260117 13:51:38.913014 30598 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260117 13:51:38.913043 30598 StaReport.cc:206] report the clock group **clock_gating_default** 2 timing paths.
+I20260117 13:51:38.913544 30598 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260117 13:51:38.913698 30598 StaReport.cc:206] report the clock group **clock_gating_default** 2 timing paths.
+I20260117 13:51:38.913717 30598 StaReport.cc:211] report the clock group core_clock 1 timing paths.
+I20260117 13:51:38.913722 30598 StaReport.cc:206] report the clock group **clock_gating_default** 1 timing paths.
+I20260117 13:51:38.913725 30598 Sta.cc:1885] 
++--------------------+--------------------------+------------+------------+---------------+-------+-------+-----------+
+| Endpoint           | Clock Group              | Delay Type | Path Delay | Path Required | CPPR  | Slack | Freq(MHz) |
++--------------------+--------------------------+------------+------------+---------------+-------+-------+-----------+
+| myTime_12__reg_p:D | core_clock               | max        | 0.416f     | 1.955         | 0.000 | 1.539 | 2168.073  |
+| myTime_10__reg_p:D | core_clock               | max        | 0.416f     | 1.956         | 0.000 | 1.540 | 2175.081  |
+| myTime_3__reg_p:D  | core_clock               | max        | 0.416f     | 1.956         | 0.000 | 1.540 | 2175.081  |
+| myTime_4__reg_p:D  | core_clock               | max        | 0.416f     | 1.956         | 0.000 | 1.540 | 2175.081  |
+| myTime_16__reg_p:D | core_clock               | max        | 0.416f     | 1.956         | 0.000 | 1.540 | 2175.081  |
+| is_ICGX0P5H7L_E:E  | **clock_gating_default** | max        | 0.388r     | 1.936         | 0.000 | 1.548 | NA        |
+| is_ICGX0P5H7L_E:E  | **clock_gating_default** | max        | 0.230f     | 1.965         | 0.000 | 1.735 | NA        |
+| out[0]_reg_p:D     | core_clock               | min        | 0.092f     | -0.009        | 0.000 | 0.100 | NA        |
+| out[4]_reg_p:D     | core_clock               | min        | 0.092f     | -0.009        | 0.000 | 0.100 | NA        |
+| out[3]_reg_p:D     | core_clock               | min        | 0.092f     | -0.009        | 0.000 | 0.100 | NA        |
+| out[1]_reg_p:D     | core_clock               | min        | 0.092f     | -0.009        | 0.000 | 0.100 | NA        |
+| out[2]_reg_p:D     | core_clock               | min        | 0.092f     | -0.009        | 0.000 | 0.100 | NA        |
+| is_ICGX0P5H7L_E:E  | **clock_gating_default** | min        | 0.124f     | -0.002        | 0.000 | 0.126 | NA        |
+| is_ICGX0P5H7L_E:E  | **clock_gating_default** | min        | 0.158r     | -0.025        | 0.000 | 0.183 | NA        |
++--------------------+--------------------------+------------+------------+---------------+-------+-------+-----------+
+I20260117 13:51:38.913910 30598 Sta.cc:1886] 
++------------+------------+-------+
+| Clock      | Delay Type | TNS   |
++------------+------------+-------+
+| core_clock | max        | 0.000 |
+| core_clock | min        | 0.000 |
++------------+------------+-------+
+I20260117 13:51:38.923386 30598 NetlistWriter.cc:52] start write verilog file /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz/water.v
+I20260117 13:51:38.925204 30598 NetlistWriter.cc:71] finish write verilog file /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz/water.v
+I20260117 13:51:38.925244 30598 Sta.cc:3111] used lib: /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+I20260117 13:51:38.925249 30598 Sta.cc:3096] The timing engine run success.
+I20260117 13:51:38.926879 30598 Power.cc:854] build graph and seq graph start
+I20260117 13:51:38.927557 30598 PwrBuildGraph.cc:80] build power graph start
+I20260117 13:51:38.928095 30598 PwrBuildGraph.cc:170] build power graph end
+I20260117 13:51:38.928121 30598 PwrBuildGraph.cc:172] build power graph memory usage 0MB
+I20260117 13:51:38.928130 30598 PwrBuildGraph.cc:174] build power graph time elapsed 0.000575s
+I20260117 13:51:38.928151 30598 PwrBuildSeqGraph.cc:326] build seq graph start
+I20260117 13:51:39.172214 30598 PwrBuildSeqGraph.cc:330] build seq graph end
+I20260117 13:51:39.172281 30598 PwrBuildSeqGraph.cc:332] seq inst num: 42
+I20260117 13:51:39.172287 30598 PwrBuildSeqGraph.cc:333] input port num: 2
+I20260117 13:51:39.172291 30598 PwrBuildSeqGraph.cc:334] output port num: 10
+I20260117 13:51:39.172297 30598 PwrBuildSeqGraph.cc:335] seq macro num: 0
+I20260117 13:51:39.172314 30598 PwrBuildSeqGraph.cc:336] seq arc num: 669
+I20260117 13:51:39.172319 30598 PwrBuildSeqGraph.cc:339] seq vertex max fanout: 20
+I20260117 13:51:39.172324 30598 PwrBuildSeqGraph.cc:340] seq vertex max fanin: 32
+I20260117 13:51:39.172392 30598 PwrBuildSeqGraph.cc:343] build seq graph memory usage 132.06MB
+I20260117 13:51:39.172441 30598 PwrBuildSeqGraph.cc:345] build seq graph time elapsed 0.244288s
+I20260117 13:51:39.172456 30598 Power.cc:861] build graph and seq graph end
+I20260117 13:51:39.172482 30598 Power.cc:863] build graph and seq graph memory usage 132.06MB
+I20260117 13:51:39.172489 30598 Power.cc:866] build graph and seq graph time elapsed 0.245613s
+I20260117 13:51:39.172564 30598 Power.cc:871] power annotate vcd start
+I20260117 13:51:39.172621 30598 Power.cc:128] annotate toggle sp start
+I20260117 13:51:39.172632 30598 Power.cc:134] annotate toggle sp end
+I20260117 13:51:39.172637 30598 Power.cc:878] power vcd annotate end
+I20260117 13:51:39.172675 30598 Power.cc:880] power vcd annotate memory usage 0MB
+I20260117 13:51:39.172688 30598 Power.cc:882] power vcd annotate time elapsed 0.000131s
+I20260117 13:51:39.172709 30598 Power.cc:896] power propagation start
+I20260117 13:51:39.172751 30598 PwrCheckPipelineLoop.cc:122] check pipeline loop start
+I20260117 13:51:39.172791 30598 PwrCheckPipelineLoop.cc:129] check pipeline loop end
+I20260117 13:51:39.172833 30598 PwrCheckPipelineLoop.cc:137] check pipeline loop memory usage 0MB
+I20260117 13:51:39.172866 30598 PwrCheckPipelineLoop.cc:139] check pipeline loop time elapsed 0.000115s
+I20260117 13:51:39.172896 30598 PwrLevelizeSeqGraph.cc:93] seq levelization start
+I20260117 13:51:39.172931 30598 PwrLevelizeSeqGraph.cc:101] seq levelization end
+I20260117 13:51:39.172942 30598 PwrLevelizeSeqGraph.cc:103] the seq graph's level depth 12
+I20260117 13:51:39.172968 30598 PwrLevelizeSeqGraph.cc:116] levelization memory usage 0MB
+I20260117 13:51:39.172974 30598 PwrLevelizeSeqGraph.cc:118] levelization time elapsed 7.9e-05s
+I20260117 13:51:39.173060 30598 PwrPropagateConst.cc:184] propagate const start
+I20260117 13:51:39.173102 30598 PwrPropagateConst.cc:109] set tie cell fanout from myTime_20__reg_p_D_TIELOH7L_Z:Z data in vertex myTime_21__reg_p:D
+I20260117 13:51:39.173223 30598 PwrPropagateConst.cc:288] propagate const end
+I20260117 13:51:39.173266 30598 PwrPropagateConst.cc:290] propagate const memory usage 0MB
+I20260117 13:51:39.173275 30598 PwrPropagateConst.cc:292] propagate const time elapsed 0.000215s
+I20260117 13:51:39.173295 30598 PwrPropagateToggleSP.cc:202] propagate toggle sp start
+I20260117 13:51:39.179219 30598 PwrPropagateToggleSP.cc:316] propagate toggle sp end
+I20260117 13:51:39.179299 30598 PwrPropagateToggleSP.cc:319] propagate toggle sp memory usage 0MB
+I20260117 13:51:39.179311 30598 PwrPropagateToggleSP.cc:321] propagate toggle sp time elapsed 0.006017s
+I20260117 13:51:39.179333 30598 PwrPropagateClock.cc:68] propagate clock start
+I20260117 13:51:39.179368 30598 PwrPropagateClock.cc:80] propagate clock end
+I20260117 13:51:39.179383 30598 PwrPropagateClock.cc:82] propagate clock memory usage 0MB
+I20260117 13:51:39.179388 30598 PwrPropagateClock.cc:84] propagate clock time elapsed 5.4e-05s
+I20260117 13:51:39.179394 30598 Power.cc:914] power propagation end
+I20260117 13:51:39.179406 30598 Power.cc:916] power propagation memory usage 0MB
+I20260117 13:51:39.179411 30598 Power.cc:918] power propagation time elapsed 0.006702s
+I20260117 13:51:39.179430 30598 Power.cc:267] power calculation start
+I20260117 13:51:39.179442 30598 PwrCalcLeakagePower.cc:85] calc leakage power start
+I20260117 13:51:39.202852 30598 PwrCalcLeakagePower.cc:119] calc leakage power result 0.000403798mw
+I20260117 13:51:39.203048 30598 PwrCalcLeakagePower.cc:122] calc leakage power end
+I20260117 13:51:39.203141 30598 PwrCalcLeakagePower.cc:124] calc leakage power memory usage 0MB
+I20260117 13:51:39.203152 30598 PwrCalcLeakagePower.cc:126] calc leakage power time elapsed 0.023709s
+I20260117 13:51:39.203181 30598 PwrCalcInternalPower.cc:565] calc internal power start
+[0;31mE20260117 13:51:39.233834 30598 PwrCalcInternalPower.cc:97] out[0]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234226 30598 PwrCalcInternalPower.cc:97] out[0]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234262 30598 PwrCalcInternalPower.cc:205] out[0]_reg_p_D_NOR2BX1P4H7L_Z:B input slew is not exist.
+[m[0;31mE20260117 13:51:39.234333 30598 PwrCalcInternalPower.cc:97] out[1]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234342 30598 PwrCalcInternalPower.cc:97] out[1]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234401 30598 PwrCalcInternalPower.cc:97] out[2]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234414 30598 PwrCalcInternalPower.cc:97] out[2]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234432 30598 PwrCalcInternalPower.cc:205] out[2]_reg_p_D_NOR2BX1P4H7L_Z:B input slew is not exist.
+[m[0;31mE20260117 13:51:39.234483 30598 PwrCalcInternalPower.cc:97] out[3]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234495 30598 PwrCalcInternalPower.cc:97] out[3]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234555 30598 PwrCalcInternalPower.cc:97] out[4]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234567 30598 PwrCalcInternalPower.cc:97] out[4]_reg_p_D_NOR2BX1P4H7L_Z:B rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234607 30598 PwrCalcInternalPower.cc:97] out[5]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234614 30598 PwrCalcInternalPower.cc:97] out[5]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234649 30598 PwrCalcInternalPower.cc:205] out[5]_reg_p_D_OR2X0P7H7L_Y:A input slew is not exist.
+[m[0;31mE20260117 13:51:39.234730 30598 PwrCalcInternalPower.cc:97] out[6]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234736 30598 PwrCalcInternalPower.cc:97] out[6]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234788 30598 PwrCalcInternalPower.cc:97] out[7]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234802 30598 PwrCalcInternalPower.cc:97] out[7]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234831 30598 PwrCalcInternalPower.cc:205] out[7]_reg_p_D_OR2X0P7H7L_Y:A input slew is not exist.
+[m[0;31mE20260117 13:51:39.234861 30598 PwrCalcInternalPower.cc:97] out[8]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234872 30598 PwrCalcInternalPower.cc:97] out[8]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234926 30598 PwrCalcInternalPower.cc:97] out[9]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[m[0;31mE20260117 13:51:39.234936 30598 PwrCalcInternalPower.cc:97] out[9]_reg_p_D_OR2X0P7H7L_Y:A rise slew is not exist.
+[mI20260117 13:51:39.234970 30598 PwrCalcInternalPower.cc:605] calc internal power result 0.0817228mW
+I20260117 13:51:39.234988 30598 PwrCalcInternalPower.cc:607] calc internal power end
+I20260117 13:51:39.235657 30598 PwrCalcInternalPower.cc:609] calc internal power memory usage 0MB
+I20260117 13:51:39.235678 30598 PwrCalcInternalPower.cc:611] calc internal power time elapsed 0.032498s
+I20260117 13:51:39.235707 30598 PwrCalcSwitchPower.cc:89] calc switch power start
+I20260117 13:51:39.235886 30598 PwrCalcSwitchPower.cc:173] calc switch power result 0mw
+I20260117 13:51:39.235898 30598 PwrCalcSwitchPower.cc:175] calc switch power end
+I20260117 13:51:39.235917 30598 PwrCalcSwitchPower.cc:177] calc switch power memory usage 0MB
+I20260117 13:51:39.235922 30598 PwrCalcSwitchPower.cc:179] calc switch power time elapsed 0.000215s
+I20260117 13:51:39.236567 30598 Power.cc:275] power calculation end
+I20260117 13:51:39.236601 30598 Power.cc:277] power calculation memory usage 0MB
+I20260117 13:51:39.236624 30598 Power.cc:279] power calculation time elapsed 0.057194s
+I20260117 13:51:39.236641 30598 Power.cc:981] power report start, output dir: /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz
+I20260117 13:51:39.238023 30598 Power.cc:491] 
++---------------+----------------+--------------+---------------+-------------+-----------+
+| Power Group   | Internal Power | Switch Power | Leakage Power | Total Power | (%)       |
++---------------+----------------+--------------+---------------+-------------+-----------+
+| combinational | 4.178e-05      | 0.000e+00    | 1.203e-07     | 4.190e-05   | (51.016%) |
+| sequential    | 3.995e-05      | 0.000e+00    | 2.835e-07     | 4.023e-05   | (48.984%) |
++---------------+----------------+--------------+---------------+-------------+-----------+
+I20260117 13:51:39.238245 30598 Power.cc:543] Total Power   ==  8.21266e-05 W
+I20260117 13:51:39.238929 30598 Power.cc:669] Instance Power Report: 
+I20260117 13:51:39.238945 30598 Power.cc:670] 
++-----------------------------------------------------------------------------------------------+-----------------+----------------+--------------+---------------+-------------+
+| Instance Name                                                                                 | Nominal Voltage | Internal Power | Switch Power | Leakage Power | Total Power |
++-----------------------------------------------------------------------------------------------+-----------------+----------------+--------------+---------------+-------------+
+| out[9]_reg_p                                                                                  | 1.2             | 3.964e-06      | 0.000e+00    | 6.757e-09     | 3.970e-06   |
+| out[8]_reg_p                                                                                  | 1.2             | 3.320e-06      | 0.000e+00    | 6.757e-09     | 3.327e-06   |
+| out[7]_reg_p                                                                                  | 1.2             | 2.527e-06      | 0.000e+00    | 6.757e-09     | 2.534e-06   |
+| out[6]_reg_p                                                                                  | 1.2             | 1.734e-06      | 0.000e+00    | 6.757e-09     | 1.741e-06   |
+| myTime_2__NAND4X6H7L_C                                                                        | 1.2             | 1.680e-06      | 0.000e+00    | 1.229e-09     | 1.681e-06   |
+| out[9]_reg_p_D_OR2X0P7H7L_Y                                                                   | 1.2             | 1.670e-06      | 0.000e+00    | 1.531e-09     | 1.671e-06   |
+| myTime_10__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y_B_NOR3X0P5H7L_Y_A_OR4X3H7L_B                | 1.2             | 1.365e-06      | 0.000e+00    | 2.815e-09     | 1.368e-06   |
+| myTime_15__reg_p_D_AOI21X2H7L_Y_A1_OR3X1P4H7L_Y_C_NOR4X4H7L_C                                 | 1.2             | 1.354e-06      | 0.000e+00    | 1.127e-09     | 1.356e-06   |
+| out[8]_reg_p_D_OR2X0P7H7L_Y                                                                   | 1.2             | 1.348e-06      | 0.000e+00    | 1.531e-09     | 1.349e-06   |
+| myTime_5__NAND4X4H7L_B                                                                        | 1.2             | 1.273e-06      | 0.000e+00    | 8.196e-10     | 1.274e-06   |
+| out[7]_reg_p_D_OR2X0P7H7L_Y                                                                   | 1.2             | 1.026e-06      | 0.000e+00    | 1.531e-09     | 1.027e-06   |
+| myTime_6__reg_p_D_NOR3X0P5H7L_Y_A_OAI21X0P5H7L_Y_A0_OAI221X1P4H7L_A0                          | 1.2             | 1.004e-06      | 0.000e+00    | 8.988e-10     | 1.005e-06   |
+| out[5]_reg_p                                                                                  | 1.2             | 9.415e-07      | 0.000e+00    | 6.757e-09     | 9.482e-07   |
+| myTime_19__NAND4X1P4H7L_D_Y_OR4X1P4H7L_C                                                      | 1.2             | 9.256e-07      | 0.000e+00    | 1.614e-09     | 9.272e-07   |
+| myTime_19__INVX0P5H7L_A_Y_AO31X0P5H7L_B0                                                      | 1.2             | 8.708e-07      | 0.000e+00    | 1.450e-09     | 8.723e-07   |
+| myTime_11__reg_p_D_NOR2X3H7L_Y_B_XNOR2X3H7L_Y                                                 | 1.2             | 8.364e-07      | 0.000e+00    | 4.139e-09     | 8.405e-07   |
+| myTime_0__reg_p                                                                               | 1.2             | 7.947e-07      | 0.000e+00    | 6.757e-09     | 8.014e-07   |
+| myTime_6__reg_p                                                                               | 1.2             | 7.943e-07      | 0.000e+00    | 6.757e-09     | 8.011e-07   |
+| myTime_3__reg_p                                                                               | 1.2             | 7.941e-07      | 0.000e+00    | 6.757e-09     | 8.008e-07   |
+| myTime_2__reg_p                                                                               | 1.2             | 7.941e-07      | 0.000e+00    | 6.757e-09     | 8.008e-07   |
+| myTime_7__reg_p                                                                               | 1.2             | 7.940e-07      | 0.000e+00    | 6.757e-09     | 8.008e-07   |
+| myTime_1__reg_p                                                                               | 1.2             | 7.940e-07      | 0.000e+00    | 6.757e-09     | 8.008e-07   |
+| myTime_4__reg_p                                                                               | 1.2             | 7.940e-07      | 0.000e+00    | 6.757e-09     | 8.007e-07   |
+| myTime_16__reg_p                                                                              | 1.2             | 7.938e-07      | 0.000e+00    | 6.757e-09     | 8.006e-07   |
+| myTime_12__reg_p                                                                              | 1.2             | 7.938e-07      | 0.000e+00    | 6.757e-09     | 8.006e-07   |
+| myTime_8__reg_p                                                                               | 1.2             | 7.938e-07      | 0.000e+00    | 6.757e-09     | 8.005e-07   |
+| myTime_5__reg_p                                                                               | 1.2             | 7.937e-07      | 0.000e+00    | 6.757e-09     | 8.004e-07   |
+| myTime_14__reg_p                                                                              | 1.2             | 7.935e-07      | 0.000e+00    | 6.757e-09     | 8.003e-07   |
+| myTime_13__reg_p                                                                              | 1.2             | 7.935e-07      | 0.000e+00    | 6.757e-09     | 8.002e-07   |
+| myTime_18__reg_p                                                                              | 1.2             | 7.935e-07      | 0.000e+00    | 6.757e-09     | 8.002e-07   |
+| myTime_9__reg_p                                                                               | 1.2             | 7.934e-07      | 0.000e+00    | 6.757e-09     | 8.002e-07   |
+| myTime_10__reg_p                                                                              | 1.2             | 7.934e-07      | 0.000e+00    | 6.757e-09     | 8.002e-07   |
+| myTime_15__reg_p                                                                              | 1.2             | 7.934e-07      | 0.000e+00    | 6.757e-09     | 8.002e-07   |
+| myTime_11__reg_p                                                                              | 1.2             | 7.934e-07      | 0.000e+00    | 6.757e-09     | 8.002e-07   |
+| myTime_17__reg_p                                                                              | 1.2             | 7.930e-07      | 0.000e+00    | 6.757e-09     | 7.997e-07   |
+| myTime_24__reg_p                                                                              | 1.2             | 7.929e-07      | 0.000e+00    | 6.544e-09     | 7.995e-07   |
+| myTime_28__reg_p                                                                              | 1.2             | 7.929e-07      | 0.000e+00    | 6.544e-09     | 7.995e-07   |
+| myTime_23__reg_p                                                                              | 1.2             | 7.929e-07      | 0.000e+00    | 6.544e-09     | 7.995e-07   |
+| myTime_20__reg_p                                                                              | 1.2             | 7.929e-07      | 0.000e+00    | 6.544e-09     | 7.995e-07   |
+| myTime_27__reg_p                                                                              | 1.2             | 7.929e-07      | 0.000e+00    | 6.544e-09     | 7.995e-07   |
+| myTime_26__reg_p                                                                              | 1.2             | 7.929e-07      | 0.000e+00    | 6.544e-09     | 7.994e-07   |
+| myTime_29__reg_p                                                                              | 1.2             | 7.929e-07      | 0.000e+00    | 6.544e-09     | 7.994e-07   |
+| myTime_22__reg_p                                                                              | 1.2             | 7.929e-07      | 0.000e+00    | 6.544e-09     | 7.994e-07   |
+| myTime_31__reg_p                                                                              | 1.2             | 7.928e-07      | 0.000e+00    | 6.544e-09     | 7.994e-07   |
+| myTime_30__reg_p                                                                              | 1.2             | 7.928e-07      | 0.000e+00    | 6.544e-09     | 7.994e-07   |
+| myTime_25__reg_p                                                                              | 1.2             | 7.928e-07      | 0.000e+00    | 6.544e-09     | 7.994e-07   |
+| out[0]_reg_p                                                                                  | 1.2             | 7.927e-07      | 0.000e+00    | 6.417e-09     | 7.992e-07   |
+| myTime_19__reg_p                                                                              | 1.2             | 7.922e-07      | 0.000e+00    | 6.757e-09     | 7.989e-07   |
+| out[6]_reg_p_D_OR2X0P7H7L_Y                                                                   | 1.2             | 7.041e-07      | 0.000e+00    | 1.531e-09     | 7.056e-07   |
+| is_ICGX0P5H7L_E                                                                               | 1.2             | 6.838e-07      | 0.000e+00    | 4.747e-09     | 6.885e-07   |
+| myTime_2__AND3X1P4H7L_C                                                                       | 1.2             | 6.058e-07      | 0.000e+00    | 7.947e-10     | 6.066e-07   |
+| myTime_3__AND3X1P4H7L_A                                                                       | 1.2             | 6.037e-07      | 0.000e+00    | 7.947e-10     | 6.045e-07   |
+| out[1]_reg_p                                                                                  | 1.2             | 5.946e-07      | 0.000e+00    | 6.203e-09     | 6.008e-07   |
+| myTime_15__reg_p_D_AOI21X2H7L_Y_A1_OR3X1P4H7L_Y                                               | 1.2             | 5.720e-07      | 0.000e+00    | 1.697e-09     | 5.737e-07   |
+| myTime_20__NOR4X0P5H7L_A_Y_AND3X1H7L_A                                                        | 1.2             | 5.723e-07      | 0.000e+00    | 7.595e-10     | 5.730e-07   |
+| myTime_14__reg_p_D_AOI21X2H7L_Y_A1_OR3X1P4H7L_Y                                               | 1.2             | 5.674e-07      | 0.000e+00    | 1.697e-09     | 5.691e-07   |
+| myTime_13__reg_p_D_AOI21X2H7L_Y_A1_OR3X1P4H7L_Y                                               | 1.2             | 5.669e-07      | 0.000e+00    | 1.697e-09     | 5.686e-07   |
+| myTime_3__AND3X1P4H7L_A_Y_AOI211X1H7L_A1                                                      | 1.2             | 5.679e-07      | 0.000e+00    | 7.063e-10     | 5.686e-07   |
+| myTime_16__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y                                             | 1.2             | 5.562e-07      | 0.000e+00    | 3.095e-09     | 5.593e-07   |
+| myTime_1__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y                                              | 1.2             | 5.540e-07      | 0.000e+00    | 3.095e-09     | 5.571e-07   |
+| myTime_3__XNOR2X0P5H7L_A                                                                      | 1.2             | 5.506e-07      | 0.000e+00    | 3.095e-09     | 5.537e-07   |
+| myTime_8__reg_p_D_AOI21X1P4H7L_Y_A1_OR3X1H7L_Y                                                | 1.2             | 5.517e-07      | 0.000e+00    | 1.585e-09     | 5.533e-07   |
+| myTime_9__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y                                              | 1.2             | 5.496e-07      | 0.000e+00    | 3.095e-09     | 5.527e-07   |
+| myTime_10__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y                                             | 1.2             | 5.495e-07      | 0.000e+00    | 3.095e-09     | 5.526e-07   |
+| myTime_5__XNOR2X0P5H7L_A                                                                      | 1.2             | 5.493e-07      | 0.000e+00    | 3.095e-09     | 5.524e-07   |
+| is_NOR4X0P5H7L_Y_C_XOR2X0P5H7L_B                                                              | 1.2             | 5.480e-07      | 0.000e+00    | 3.095e-09     | 5.511e-07   |
+| myTime_19__NAND4X1P4H7L_D_Y_NOR4X1H7L_C_A_OR3X1H7L_Y                                          | 1.2             | 5.490e-07      | 0.000e+00    | 1.585e-09     | 5.506e-07   |
+| myTime_4__reg_p_D_NOR2X1P4H7L_Y_B_XOR2X0P5H7L_Y                                               | 1.2             | 5.473e-07      | 0.000e+00    | 3.095e-09     | 5.504e-07   |
+| myTime_2__XOR2X0P5H7L_A                                                                       | 1.2             | 5.473e-07      | 0.000e+00    | 3.095e-09     | 5.504e-07   |
+| myTime_7__reg_p_D_NOR3X0P5H7L_Y_C_XOR2X0P5H7L_Y                                               | 1.2             | 5.465e-07      | 0.000e+00    | 3.095e-09     | 5.496e-07   |
+| myTime_15__reg_p_D_AOI21X2H7L_Y_A1_OR3X1P4H7L_Y_C_NAND4X1P4H7L_Y                              | 1.2             | 5.024e-07      | 0.000e+00    | 3.513e-10     | 5.027e-07   |
+| myTime_19__NAND4X1P4H7L_D                                                                     | 1.2             | 4.994e-07      | 0.000e+00    | 3.513e-10     | 4.997e-07   |
+| myTime_6__reg_p_D_NOR3X0P5H7L_Y_A_OAI21X0P5H7L_Y_A1_OAI21BX0P5H7L_Y                           | 1.2             | 4.865e-07      | 0.000e+00    | 1.348e-09     | 4.879e-07   |
+| myTime_12__reg_p_D_AOI2XB1X1H7L_Y                                                             | 1.2             | 4.680e-07      | 0.000e+00    | 1.506e-09     | 4.696e-07   |
+| myTime_19__INVX0P5H7L_A_Y_NAND4X1H7L_B                                                        | 1.2             | 4.530e-07      | 0.000e+00    | 3.177e-10     | 4.533e-07   |
+| myTime_19__NAND4X1P4H7L_D_Y_NOR4X1H7L_C                                                       | 1.2             | 4.242e-07      | 0.000e+00    | 3.711e-10     | 4.245e-07   |
+| myTime_6__reg_p_D_NOR3X0P5H7L_Y_A_OAI21X0P5H7L_Y_A0_OAI221X1P4H7L_A0_Y_BUFX5H7L_A             | 1.2             | 4.054e-07      | 0.000e+00    | 3.360e-09     | 4.087e-07   |
+| myTime_15__reg_p_D_AOI21X2H7L_Y_A1_OR3X1P4H7L_Y_C_NOR4X4H7L_C_D_NAND4X0P5H7L_Y                | 1.2             | 4.083e-07      | 0.000e+00    | 2.705e-10     | 4.085e-07   |
+| myTime_18__reg_p_D_AOI21X1P4H7L_Y_A0_OAI2BB1X0P5H7L_Y                                         | 1.2             | 4.017e-07      | 0.000e+00    | 1.127e-09     | 4.029e-07   |
+| myTime_17__reg_p_D_AOI21X1P4H7L_Y_A0_OAI2BB1X0P5H7L_Y                                         | 1.2             | 4.014e-07      | 0.000e+00    | 1.127e-09     | 4.026e-07   |
+| out[2]_reg_p                                                                                  | 1.2             | 3.964e-07      | 0.000e+00    | 6.084e-09     | 4.025e-07   |
+| myTime_15__reg_p_D_AOI21X2H7L_Y                                                               | 1.2             | 3.837e-07      | 0.000e+00    | 1.104e-09     | 3.848e-07   |
+| myTime_14__reg_p_D_AOI21X2H7L_Y                                                               | 1.2             | 3.837e-07      | 0.000e+00    | 1.104e-09     | 3.848e-07   |
+| myTime_13__reg_p_D_AOI21X2H7L_Y                                                               | 1.2             | 3.836e-07      | 0.000e+00    | 1.104e-09     | 3.847e-07   |
+| out[5]_reg_p_D_OR2X0P7H7L_Y                                                                   | 1.2             | 3.822e-07      | 0.000e+00    | 1.625e-09     | 3.838e-07   |
+| myTime_27__NOR4X0P5H7L_A                                                                      | 1.2             | 3.763e-07      | 0.000e+00    | 3.207e-10     | 3.766e-07   |
+| myTime_23__NOR4X0P5H7L_A                                                                      | 1.2             | 3.760e-07      | 0.000e+00    | 3.207e-10     | 3.763e-07   |
+| is_NOR4X0P5H7L_Y                                                                              | 1.2             | 3.707e-07      | 0.000e+00    | 3.207e-10     | 3.710e-07   |
+| myTime_8__reg_p_D_AOI21X1P4H7L_Y                                                              | 1.2             | 3.495e-07      | 0.000e+00    | 9.524e-10     | 3.505e-07   |
+| myTime_19__reg_p_D_AOI21X1P4H7L_Y                                                             | 1.2             | 3.483e-07      | 0.000e+00    | 9.524e-10     | 3.492e-07   |
+| myTime_17__reg_p_D_AOI21X1P4H7L_Y                                                             | 1.2             | 3.482e-07      | 0.000e+00    | 9.524e-10     | 3.491e-07   |
+| myTime_18__reg_p_D_AOI21X1P4H7L_Y                                                             | 1.2             | 3.482e-07      | 0.000e+00    | 9.524e-10     | 3.491e-07   |
+| myTime_6__reg_p_D_NOR3X0P5H7L_Y_A_OAI21X0P5H7L_Y_A0_NOR3BX0P7H7L_Y                            | 1.2             | 3.305e-07      | 0.000e+00    | 1.139e-09     | 3.317e-07   |
+| myTime_9__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y_B_NOR3BX0P5H7L_Y                             | 1.2             | 3.124e-07      | 0.000e+00    | 1.113e-09     | 3.135e-07   |
+| myTime_18__reg_p_D_AOI21X1P4H7L_Y_A1_NAND3BX0P5H7L_Y                                          | 1.2             | 3.116e-07      | 0.000e+00    | 1.045e-09     | 3.127e-07   |
+| myTime_19__NAND4X1P4H7L_D_Y_NOR4X1H7L_C_D_NAND3BX0P5H7L_Y                                     | 1.2             | 3.095e-07      | 0.000e+00    | 1.045e-09     | 3.106e-07   |
+| myTime_17__reg_p_D_AOI21X1P4H7L_Y_A1_NAND3BX0P5H7L_Y                                          | 1.2             | 3.089e-07      | 0.000e+00    | 1.045e-09     | 3.100e-07   |
+| myTime_17__AND2X1H7L_B                                                                        | 1.2             | 3.034e-07      | 0.000e+00    | 1.048e-09     | 3.045e-07   |
+| myTime_19__NAND4X1P4H7L_D_Y_NOR4X1H7L_C_B_OR2X0P5H7L_Y                                        | 1.2             | 3.021e-07      | 0.000e+00    | 1.488e-09     | 3.036e-07   |
+| myTime_6__reg_p_D_NOR3X0P5H7L_Y_A_OAI21X0P5H7L_Y                                              | 1.2             | 2.810e-07      | 0.000e+00    | 7.087e-10     | 2.817e-07   |
+| myTime_15__reg_p_D_AOI21X2H7L_Y_A0_OAI21X0P5H7L_Y                                             | 1.2             | 2.797e-07      | 0.000e+00    | 7.087e-10     | 2.804e-07   |
+| myTime_8__reg_p_D_AOI21X1P4H7L_Y_A0_OAI21X0P5H7L_Y                                            | 1.2             | 2.788e-07      | 0.000e+00    | 7.087e-10     | 2.795e-07   |
+| myTime_13__reg_p_D_AOI21X2H7L_Y_A0_OAI21X0P5H7L_Y                                             | 1.2             | 2.784e-07      | 0.000e+00    | 7.087e-10     | 2.791e-07   |
+| myTime_14__reg_p_D_AOI21X2H7L_Y_A0_OAI21X0P5H7L_Y                                             | 1.2             | 2.784e-07      | 0.000e+00    | 7.087e-10     | 2.791e-07   |
+| myTime_12__reg_p_D_AOI2XB1X1H7L_Y_A0_OAI21X0P5H7L_Y                                           | 1.2             | 2.783e-07      | 0.000e+00    | 7.087e-10     | 2.790e-07   |
+| myTime_12__reg_p_D_AOI2XB1X1H7L_Y_A1N_NOR3X1P4H7L_Y                                           | 1.2             | 2.779e-07      | 0.000e+00    | 6.000e-10     | 2.785e-07   |
+| out[0]_reg_p_D_NOR2BX1P4H7L_Z                                                                 | 1.2             | 2.634e-07      | 0.000e+00    | 1.432e-09     | 2.649e-07   |
+| myTime_11__reg_p_D_NOR2X3H7L_Y                                                                | 1.2             | 2.525e-07      | 0.000e+00    | 1.507e-09     | 2.540e-07   |
+| out[3]_reg_p                                                                                  | 1.2             | 2.477e-07      | 0.000e+00    | 6.022e-09     | 2.538e-07   |
+| myTime_7__reg_p_D_NOR3X0P5H7L_Y                                                               | 1.2             | 2.293e-07      | 0.000e+00    | 4.734e-10     | 2.298e-07   |
+| myTime_6__reg_p_D_NOR3X0P5H7L_Y                                                               | 1.2             | 2.293e-07      | 0.000e+00    | 4.734e-10     | 2.298e-07   |
+| myTime_14__reg_p_D_AOI21X2H7L_Y_A1_OR3X1P4H7L_Y_C_NAND3X0P5H7L_Y                              | 1.2             | 2.276e-07      | 0.000e+00    | 4.054e-10     | 2.280e-07   |
+| myTime_3__AND3X1P4H7L_A_Y_NAND3X0P5H7L_C                                                      | 1.2             | 2.261e-07      | 0.000e+00    | 4.054e-10     | 2.265e-07   |
+| myTime_10__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y_B_NOR3X0P5H7L_Y                             | 1.2             | 2.239e-07      | 0.000e+00    | 4.734e-10     | 2.244e-07   |
+| out[1]_reg_p_D_NOR2BX1P4H7L_Z                                                                 | 1.2             | 1.976e-07      | 0.000e+00    | 1.538e-09     | 1.991e-07   |
+| myTime_5__XNOR2X0P5H7L_A_B_NOR2BX0P5H7L_Z                                                     | 1.2             | 1.913e-07      | 0.000e+00    | 1.269e-09     | 1.925e-07   |
+| myTime_20__NOR4X0P5H7L_A                                                                      | 1.2             | 1.763e-07      | 0.000e+00    | 2.991e-10     | 1.766e-07   |
+| out[4]_reg_p                                                                                  | 1.2             | 1.487e-07      | 0.000e+00    | 5.991e-09     | 1.546e-07   |
+| myTime_0__reg_p_D_NOR2X1P4H7L_Y                                                               | 1.2             | 1.415e-07      | 0.000e+00    | 7.962e-10     | 1.423e-07   |
+| myTime_4__reg_p_D_NOR2X1P4H7L_Y                                                               | 1.2             | 1.381e-07      | 0.000e+00    | 7.962e-10     | 1.389e-07   |
+| myTime_1__reg_p_D_NOR2X1P4H7L_Y                                                               | 1.2             | 1.381e-07      | 0.000e+00    | 7.962e-10     | 1.389e-07   |
+| myTime_2__reg_p_D_NOR2X1P4H7L_Y                                                               | 1.2             | 1.381e-07      | 0.000e+00    | 7.962e-10     | 1.389e-07   |
+| myTime_3__reg_p_D_NOR2X1P4H7L_Y                                                               | 1.2             | 1.381e-07      | 0.000e+00    | 7.962e-10     | 1.389e-07   |
+| myTime_5__reg_p_D_NOR2X1P4H7L_Y                                                               | 1.2             | 1.381e-07      | 0.000e+00    | 7.962e-10     | 1.389e-07   |
+| myTime_10__reg_p_D_NOR2X1P4H7L_Y                                                              | 1.2             | 1.381e-07      | 0.000e+00    | 7.962e-10     | 1.389e-07   |
+| myTime_9__reg_p_D_NOR2X1P4H7L_Y                                                               | 1.2             | 1.381e-07      | 0.000e+00    | 7.962e-10     | 1.389e-07   |
+| myTime_16__reg_p_D_NOR2X1P4H7L_Y                                                              | 1.2             | 1.381e-07      | 0.000e+00    | 7.962e-10     | 1.389e-07   |
+| out[2]_reg_p_D_NOR2BX1P4H7L_Z                                                                 | 1.2             | 1.317e-07      | 0.000e+00    | 1.629e-09     | 1.333e-07   |
+| myTime_10__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y_B_NOR3X0P5H7L_Y_A_NAND2X0P5H7L_Y            | 1.2             | 1.186e-07      | 0.000e+00    | 5.628e-10     | 1.191e-07   |
+| is_NOR4X0P5H7L_Y_D_NAND2X0P5H7L_Y                                                             | 1.2             | 1.183e-07      | 0.000e+00    | 5.628e-10     | 1.188e-07   |
+| is_NOR4X0P5H7L_Y_C_NAND2X0P5H7L_Y                                                             | 1.2             | 1.175e-07      | 0.000e+00    | 5.628e-10     | 1.180e-07   |
+| myTime_2__XOR2X0P5H7L_A_B_NAND2X0P5H7L_Y                                                      | 1.2             | 1.171e-07      | 0.000e+00    | 5.628e-10     | 1.176e-07   |
+| myTime_13__reg_p_D_AOI21X2H7L_Y_A1_OR3X1P4H7L_Y_C_NAND2X0P5H7L_Y                              | 1.2             | 1.166e-07      | 0.000e+00    | 5.628e-10     | 1.172e-07   |
+| out[3]_reg_p_D_NOR2BX1P4H7L_Z                                                                 | 1.2             | 8.232e-08      | 0.000e+00    | 1.684e-09     | 8.401e-08   |
+| out[4]_reg_p_D_NOR2BX1P4H7L_Z                                                                 | 1.2             | 4.939e-08      | 0.000e+00    | 1.714e-09     | 5.111e-08   |
+| myTime_11__reg_p_D_NOR2X3H7L_Y_B_XNOR2X3H7L_Y_A_INVX0P5H7L_Y                                  | 1.2             | 4.052e-08      | 0.000e+00    | 6.395e-10     | 4.116e-08   |
+| myTime_19__INVX0P5H7L_A                                                                       | 1.2             | 3.972e-08      | 0.000e+00    | 6.395e-10     | 4.036e-08   |
+| myTime_10__reg_p_D_NOR2X1P4H7L_Y_B_XNOR2X0P5H7L_Y_B_NOR3X0P5H7L_Y_A_OR4X3H7L_B_A_INVX0P5H7L_Y | 1.2             | 3.915e-08      | 0.000e+00    | 6.395e-10     | 3.979e-08   |
+| myTime_21__reg_p                                                                              | 1.2             | 0.000e+00      | 0.000e+00    | 7.130e-09     | 7.130e-09   |
++-----------------------------------------------------------------------------------------------+-----------------+----------------+--------------+---------------+-------------+
+I20260117 13:51:39.242054 30598 Power.cc:1047] power report end, output dir: /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz
+I20260117 13:51:39.242123 30598 Power.cc:1049] power report memory usage 0MB
+I20260117 13:51:39.242131 30598 Power.cc:1051] power report time elapsed 0.005492s
