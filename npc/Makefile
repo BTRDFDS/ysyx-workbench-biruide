@@ -23,7 +23,7 @@ bin/%: vsrc/%.v csrc/%.cpp | build/% bin
 	
 # 	cd build/$* && make -f V$*.mk
 	cp build/$*/V$* $@
-	git add -f Makefile vsrc/* csrc/* bin/* syn/*
+	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 
 bin:
 	mkdir -p bin
@@ -66,4 +66,6 @@ symy:
 	yosys yosys.tcl
 try:
 	cp -r $(YOSYS_STA_HOME)/result/$(t)* ./result
+git:
+	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 include ../Makefile
