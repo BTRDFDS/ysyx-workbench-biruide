@@ -1,4 +1,4 @@
-module ex3(input signed [3:0]in1,input signed [3:0]in2,input [2:0]code,output reg signed [3:0]out,output [7:0] seg1,output [7:0] seg2,output [7:0] seg3);
+module ex3(input signed [3:0]in1,input signed [3:0]in2,input [2:0]code,output reg signed [3:0]out,output [7:0] seg1,output [7:0] seg2,output [7:0] seg3,output cin);
     always @(*) begin
         case(code)
             3'b000:out=in1+in2;
@@ -11,6 +11,7 @@ module ex3(input signed [3:0]in1,input signed [3:0]in2,input [2:0]code,output re
             3'b111:out=(in1==in2)?4'b1:4'b0;
         endcase
     end
+    assign cin=((code==3'b000)|(code==3'b001))?~((in1[3]&in2[3])^out[3]):1;
     always@(*)begin
         case(in1[3:0])
             4'd0:seg1[7:0]=8'b00000011;

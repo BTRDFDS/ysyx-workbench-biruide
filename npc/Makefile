@@ -61,7 +61,7 @@ mysta:
 	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES=/home/biruide/ysyx-workbench/npc/vsrc/$(t).v
 	cp -r $(YOSYS_STA_HOME)/result/$(t)* ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
-	rm -rf $(YOSYS_STA_HOME)/result/$(t)*
+# 	rm -rf $(YOSYS_STA_HOME)/result/$(t)*
 symy:
 	yosys yosys.tcl
 try:
