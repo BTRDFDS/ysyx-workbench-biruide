@@ -30,7 +30,6 @@ module ex3(input signed [3:0]in1,input signed [3:0]in2,input [2:0]code,output re
             4'b1101:seg1[7:0]=8'b00001100;
             4'b1110:seg1[7:0]=8'b00100100;
             4'b1111:seg1[7:0]=8'b10011110;
-
         default :seg1[7:0]=8'b11111111;
         endcase
     end
