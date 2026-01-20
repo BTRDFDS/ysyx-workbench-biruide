@@ -32,7 +32,7 @@ build/%:
 wave:
 	mkdir -p wave
 
-sim:all wave
+sim:bin/$(t) wave
 	./bin/$(t)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	gtkwave wave/$(t).vcd
