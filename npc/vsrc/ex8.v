@@ -1,7 +1,7 @@
 module ex8(
     input clk,
     input reset,
-    input [18:0]vgaLocate,
+    // input [18:0]vgaLocate,
     output vgaHsync,
     output vgaVsync,
     output vgaBlank,
@@ -28,6 +28,12 @@ wire vValid,hValid;
 // wire [9:0] hAddr;
 // wire [9:0] vAddr;
 reg [23:0] vgaData [307200:0];
+
+integer logFile=$fopen("ex8Log.txt", "w");
+final begin
+    $fclose(logFile);
+end
+
 initial begin
     // vgaData 
     x = 1;
@@ -43,13 +49,26 @@ always @(posedge clk) begin
     end
     else begin
         if(x == hTotal)begin
-            x <= 1;
-            if(y == vTotal) y <= 1;
-            else y <= y + 1;
+            // x <= 1;
+            // if(y == vTotal) y <= 1;
+            if(y == vTotal)begin
+                y <= y;
+                x <=x;
+                // x <= 1;
+                // y <= 1;
+            end else begin
+                y<= y + 1;
+                x <=1;
+            end
         end
-        else x <= x + 1;
+        else begin
+            x <= x + 1;
+        end
     end
+    // $strobe("x:",x," vgaR:",vgaR," vgaG:",vgaG," vgaB:",vgaB," hAddr:",hAddr," vAddr:",vAddr);
+    // $fstrobe(logFile,"x,y:",x,y," vgaR:",vgaR," vgaG:",vgaG," vgaB:",vgaB," hAddr:",hAddr," vAddr:",vAddr);
 end
+always@(posedge clk) if(((vgaBlank)|(x==hActive&vValid))&(x <= hBackporch)) $fstrobe(logFile,"xy",x,y," hv",hAddr,vAddr," ",locate," %x%x%x",vgaR, vgaG, vgaB);
 //生成同步信号    
 assign vgaHsync = (x > hFrontporch);
 assign vgaVsync = (y > vFrontporch);
@@ -58,9 +77,11 @@ assign hValid = (x > hActive) & (x <= hBackporch);
 assign vValid = (y > vActive) & (y <= vBackporch);
 assign vgaBlank = hValid & vValid;
 //设置输出的颜色值
-// assign hAddr = hValid ? (x-10'd145):10'd0;
-// assign vAddr = vValid ? (y-10'd36) :10'd0;
-assign hAddr = x-10'd145;
-assign vAddr = y-10'd036;
-assign {vgaR, vgaG, vgaB} = vgaData[vgaLocate];
+assign hAddr = hValid ? (x-10'd145):10'd0;
+assign vAddr = vValid ? (y-10'd36) :10'd0;
+// assign hAddr = x-10'd145;
+// assign vAddr = y-10'd036;
+wire [18:0] locate;
+assign locate=vAddr*19'd640+{9'b0, hAddr};
+assign {vgaR, vgaG, vgaB} = vgaData[locate];
 endmodule

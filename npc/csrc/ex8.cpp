@@ -17,15 +17,27 @@ int main(int argc, char** argv) {
     nvboard_bind_pin(&top->vgaB,8,VGA_B7,VGA_B6,VGA_B5,VGA_B4,VGA_B3,VGA_B2,VGA_B1,VGA_B0);
 
 
-    int h,v;
+    int h,v,i,max;
+    max = 800*35;
 	nvboard_init();
 	while (!contextp->gotFinish()) {
-  		nvboard_update();
+        // v=top->vAddr;
+        // h=top->hAddr;
+        // top->vgaLocate=v*640+h;
         top->clk=1;top->eval();
-        v=top->vAddr;
-        h=top->hAddr;
-        top->vgaLocate=v*640+h;
+
+        // v=top->vAddr;
+        // h=top->hAddr;
+        // top->vgaLocate=v*640+h;
         top->clk=0;top->eval();
+        // usleep(1);
+        
+        // if(i>max){
+        //     getchar();
+        //     max+=800;
+        // }else i++;
+  		nvboard_update();
+        
 	}
 	delete top;
 	delete contextp;
