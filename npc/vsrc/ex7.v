@@ -4,15 +4,22 @@ module ex7(
     output reg [7:0] key0,
     output reg [7:0] key1,
     output reg [7:0] ascll0,
-    output reg [7:0] ascll1//,
-    // output reg [15:0] number
+    output reg [7:0] ascll1,
+    output reg [7:0] number0,
+    output reg [7:0] number1,
+    output reg [7:0] number2,
+    output reg [7:0] number3
     );
     reg [10:0] data;
+    reg [7:0] keyAscll;
     reg [7:0] keyData;
     reg [3:0] count;
+    reg [15:0] num;
     reg [7:0] rom['hff:0];
-
+    reg [7:0] last;
+    reg isNo;
     initial begin
+        num=0;
         rom['h1C]=8'h41;
         rom['h32]=8'h42;
         rom['h21]=8'h43;
@@ -59,11 +66,38 @@ module ex7(
             count <= 1;
         end else count<=0;
     end
-    always_latch@(*)begin
-        if((data[0]==1'b0|data[10]==1'b1|(^data[9:1]==1'b1))&(count==4'd11)) keyData[7:0]=rom[data[8:1]];
+    always@(ps2_clk,ps2_data,data)begin
+        if((data[0]==1'b0&data[10]==1'b1&(^data[9:1]==1'b1))&(count==4'd11))begin
+            // keyAscll[7:0]=rom[data[8:1]];
+            if(isNo==1)begin
+                isNo=0;
+                keyAscll[7:0]=8'h00;
+                keyData[7:0]=8'h00;
+                data[10:0]=11'h00;
+                // num =num+1;
+            end
+            else if(data[8:1]=='hF0)begin
+                isNo=1;
+                keyAscll[7:0]=8'h00;
+                keyData[7:0]=8'h00;
+                data[10:0]=11'h00;
+            end
+            else begin
+                keyAscll[7:0]=rom[data[8:1]];
+                keyData[7:0]=data[8:1];
+                data[10:0]=11'h00;
+            end
+        end
     end
+    always@(data[8:1])begin
+        if(last!=data[8:1]&data[8:1]!=8'hF0&count==4'd11)begin
+            last<=data[8:1];
+            num<=num+1;
+        end
+    end
+        
     always@(*)begin
-        case(data[4:1])
+        case(keyData[3:0])
             4'h0:key0 = 8'b00000011;
             4'h1:key0 = 8'b10011111;
             4'h2:key0 = 8'b00100101;
@@ -84,7 +118,7 @@ module ex7(
         endcase
     end
     always@(*)begin
-        case(data[8:5])
+        case(keyData[7:4])
             4'h0:key1 = 8'b00000011;
             4'h1:key1 = 8'b10011111;
             4'h2:key1 = 8'b00100101;
@@ -104,8 +138,9 @@ module ex7(
         default :key1 = 8'b11111111;
         endcase
     end
+
     always@(*)begin
-        case(keyData[3:0])
+        case(keyAscll[3:0])
             4'h0:ascll0 = 8'b00000011;
             4'h1:ascll0 = 8'b10011111;
             4'h2:ascll0 = 8'b00100101;
@@ -126,7 +161,7 @@ module ex7(
         endcase
     end
     always@(*)begin
-        case(keyData[7:4])
+        case(keyAscll[7:4])
             4'h0:ascll1 = 8'b00000011;
             4'h1:ascll1 = 8'b10011111;
             4'h2:ascll1 = 8'b00100101;
@@ -144,6 +179,91 @@ module ex7(
             4'he:ascll1 = 8'b01100001;
             4'hf:ascll1 = 8'b01110001;
         default :ascll1 = 8'b11111111;
+        endcase
+    end
+
+    always@(*)begin
+        case(num[3:0])
+            4'h0:number0 = 8'b00000011;
+            4'h1:number0 = 8'b10011111;
+            4'h2:number0 = 8'b00100101;
+            4'h3:number0 = 8'b00001101;
+            4'h4:number0 = 8'b10011001;
+            4'h5:number0 = 8'b01001001;
+            4'h6:number0 = 8'b01000001;
+            4'h7:number0 = 8'b00011111;
+            4'h8:number0 = 8'b00000001;
+            4'h9:number0 = 8'b00001001;
+            4'ha:number0 = 8'b00010001;
+            4'hb:number0 = 8'b11000001;
+            4'hc:number0 = 8'b01100011;
+            4'hd:number0 = 8'b10000101;
+            4'he:number0 = 8'b01100001;
+            4'hf:number0 = 8'b01110001;
+        default :number0 = 8'b11111111;
+        endcase
+    end
+    always@(*)begin
+        case(num[7:4])
+            4'h0:number1 = 8'b00000011;
+            4'h1:number1 = 8'b10011111;
+            4'h2:number1 = 8'b00100101;
+            4'h3:number1 = 8'b00001101;
+            4'h4:number1 = 8'b10011001;
+            4'h5:number1 = 8'b01001001;
+            4'h6:number1 = 8'b01000001;
+            4'h7:number1 = 8'b00011111;
+            4'h8:number1 = 8'b00000001;
+            4'h9:number1 = 8'b00001001;
+            4'ha:number1 = 8'b00010001;
+            4'hb:number1 = 8'b11000001;
+            4'hc:number1 = 8'b01100011;
+            4'hd:number1 = 8'b10000101;
+            4'he:number1 = 8'b01100001;
+            4'hf:number1 = 8'b01110001;
+        default :number1 = 8'b11111111;
+        endcase
+    end
+    always@(*)begin
+        case(num[11:8])
+            4'h0:number2 = 8'b00000011;
+            4'h1:number2 = 8'b10011111;
+            4'h2:number2 = 8'b00100101;
+            4'h3:number2 = 8'b00001101;
+            4'h4:number2 = 8'b10011001;
+            4'h5:number2 = 8'b01001001;
+            4'h6:number2 = 8'b01000001;
+            4'h7:number2 = 8'b00011111;
+            4'h8:number2 = 8'b00000001;
+            4'h9:number2 = 8'b00001001;
+            4'ha:number2 = 8'b00010001;
+            4'hb:number2 = 8'b11000001;
+            4'hc:number2 = 8'b01100011;
+            4'hd:number2 = 8'b10000101;
+            4'he:number2 = 8'b01100001;
+            4'hf:number2 = 8'b01110001;
+        default :number2 = 8'b11111111;
+        endcase
+    end
+    always@(*)begin
+        case(num[15:12])
+            4'h0:number3 = 8'b00000011;
+            4'h1:number3 = 8'b10011111;
+            4'h2:number3 = 8'b00100101;
+            4'h3:number3 = 8'b00001101;
+            4'h4:number3 = 8'b10011001;
+            4'h5:number3 = 8'b01001001;
+            4'h6:number3 = 8'b01000001;
+            4'h7:number3 = 8'b00011111;
+            4'h8:number3 = 8'b00000001;
+            4'h9:number3 = 8'b00001001;
+            4'ha:number3 = 8'b00010001;
+            4'hb:number3 = 8'b11000001;
+            4'hc:number3 = 8'b01100011;
+            4'hd:number3 = 8'b10000101;
+            4'he:number3 = 8'b01100001;
+            4'hf:number3 = 8'b01110001;
+        default :number3 = 8'b11111111;
         endcase
     end
 endmodule
