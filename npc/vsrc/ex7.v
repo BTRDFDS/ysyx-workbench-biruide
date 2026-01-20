@@ -19,7 +19,8 @@ module ex7(
     reg [7:0] last;
     reg isNo;
     initial begin
-        num=0;
+        last=8'h0;
+        num[15:0]=16'h0;
         rom['h1C]=8'h41;
         rom['h32]=8'h42;
         rom['h21]=8'h43;
@@ -66,7 +67,7 @@ module ex7(
             count <= 1;
         end else count<=0;
     end
-    always@(ps2_clk,ps2_data,data)begin
+    always@(data)begin
         if((data[0]==1'b0&data[10]==1'b1&(^data[9:1]==1'b1))&(count==4'd11))begin
             // keyAscll[7:0]=rom[data[8:1]];
             if(isNo==1)begin
@@ -74,6 +75,7 @@ module ex7(
                 keyAscll[7:0]=8'h00;
                 keyData[7:0]=8'h00;
                 data[10:0]=11'h00;
+                last=0;
                 // num =num+1;
             end
             else if(data[8:1]=='hF0)begin
@@ -84,17 +86,30 @@ module ex7(
             end
             else begin
                 keyAscll[7:0]=rom[data[8:1]];
-                keyData[7:0]=data[8:1];
-                data[10:0]=11'h00;
+                if(keyAscll[7:0]!=0)begin
+                    keyData[7:0]=data[8:1];
+                    data[10:0]=11'h00;
+                    //     $strobe("data",data[8:1],"last",last,"count",count,"num",num);
+                    if(last!=keyData&count==4'd11)begin
+                        last=keyData;
+                        num[15:0]=num[15:0]+16'h1;
+                        // $strobe(num);
+                    end
+                end else begin
+                    keyData[7:0]=8'b0;
+                    data[10:0]=11'h00;
+                end
+
             end
         end
     end
-    always@(data[8:1])begin
-        if(last!=data[8:1]&data[8:1]!=8'hF0&count==4'd11)begin
-            last<=data[8:1];
-            num<=num+1;
-        end
-    end
+    // always@(keyData)begin
+    //     if(last!=keyData&count==4'd11&keyData!='hF0)begin
+    //         last=keyData;
+    //         num[15:0]=num[15:0]+16'h1;
+    //         $strobe(num);
+    //     end
+    // end
         
     always@(*)begin
         case(keyData[3:0])
