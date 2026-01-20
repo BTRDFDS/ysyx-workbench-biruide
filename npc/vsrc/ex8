@@ -1,0 +1,10 @@
+module ex8(
+    input reset,
+    output vagHsync,
+    output vagVsync,
+    output vagBlank,
+    output [7:0] vgaR,
+    output [7:0] vgaG,
+    output [7:0] vgaB
+);
+endmodule

@@ -1,5 +1,6 @@
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 
+MAKEFLAGS += -k
 FLAGS=  --debug --cc --trace -MMD -O0
 VERILATOR_CFLAGS += $(FLAGS)
 
@@ -52,7 +53,7 @@ tree:
 chk:
 	verilator --lint-only -Wall vsrc/$(t).v
 
-include $(YOSYS_STA_HOME)/Makefile
+# include $(YOSYS_STA_HOME)/Makefile
 mysyn:chk
 	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES=/home/biruide/ysyx-workbench/npc/vsrc/$(t).v
 	cp -r $(YOSYS_STA_HOME)/result/$(t)* ./result
