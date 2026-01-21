@@ -39,12 +39,14 @@ initial begin
     x = 1;
     y = 1;
     // $readmemh("picture.hex", vgaData);
-    $readmemh("nuaa.hex", vgaData);
+    // $readmemh("nuaa.hex", vgaData);
+    $readmemh("NUAA.hex", vgaData);
 end
 always @(posedge clk) begin
     if(reset == 1'b1) begin
         x <= 1;
         y <= 1;
+        $fseek(logFile,0,0);
         // vgaBlank <=0;
     end
     else begin
@@ -52,10 +54,10 @@ always @(posedge clk) begin
             // x <= 1;
             // if(y == vTotal) y <= 1;
             if(y == vTotal)begin
-                y <= y;
-                x <=x;
-                // x <= 1;
-                // y <= 1;
+                // y <= y;
+                // x <=x;
+                x <= 1;
+                y <= 1;
             end else begin
                 y<= y + 1;
                 x <=1;
@@ -65,23 +67,21 @@ always @(posedge clk) begin
             x <= x + 1;
         end
     end
-    // $strobe("x:",x," vgaR:",vgaR," vgaG:",vgaG," vgaB:",vgaB," hAddr:",hAddr," vAddr:",vAddr);
-    // $fstrobe(logFile,"x,y:",x,y," vgaR:",vgaR," vgaG:",vgaG," vgaB:",vgaB," hAddr:",hAddr," vAddr:",vAddr);
 end
-always@(posedge clk) if(((vgaBlank)|(x==hActive&vValid))&(x <= hBackporch)) $fstrobe(logFile,"xy",x,y," hv",hAddr,vAddr," ",locate," %x%x%x",vgaR, vgaG, vgaB);
+// always@(posedge clk) if(((vgaBlank)|(x==hActive&vValid))&(x <= hBackporch)) $fstrobe(logFile,"xy",x,y," hv",hAddr,vAddr," ",locate," %x%x%x",vgaR, vgaG, vgaB);
 //生成同步信号    
-assign vgaHsync = (x > hFrontporch);
-assign vgaVsync = (y > vFrontporch);
+assign vgaHsync = (x>hFrontporch);
+assign vgaVsync = (y>vFrontporch);
 //生成消隐信号
-assign hValid = (x > hActive) & (x <= hBackporch);
-assign vValid = (y > vActive) & (y <= vBackporch);
-assign vgaBlank = hValid & vValid;
+assign hValid = (x>hActive)&(x <= hBackporch);
+assign vValid = (y>vActive)&(y <= vBackporch);
+assign vgaBlank = hValid&vValid;
 //设置输出的颜色值
-assign hAddr = hValid ? (x-10'd145):10'd0;
-assign vAddr = vValid ? (y-10'd36) :10'd0;
+assign hAddr = hValid?(x-10'd145):10'd0;
+assign vAddr = vValid?(y-10'd36) :10'd0;
 // assign hAddr = x-10'd145;
 // assign vAddr = y-10'd036;
 wire [18:0] locate;
-assign locate=vAddr*19'd640+{9'b0, hAddr};
-assign {vgaR, vgaG, vgaB} = vgaData[locate];
+assign locate={vAddr,9'b0}+{2'b0,vAddr,7'b0}+{9'b0,hAddr};
+assign {vgaR, vgaG, vgaB} = vgaBlank?vgaData[locate]:24'd0;
 endmodule
