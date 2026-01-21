@@ -40,7 +40,7 @@ initial begin
     y = 1;
     // $readmemh("picture.hex", vgaData);
     // $readmemh("nuaa.hex", vgaData);
-    $readmemh("NUAA.hex", vgaData);
+    $readmemh("hex/NUAA.hex", vgaData);
 end
 always @(posedge clk) begin
     if(reset == 1'b1) begin
