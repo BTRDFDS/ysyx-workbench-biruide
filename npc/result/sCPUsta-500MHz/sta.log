@@ -1,0 +1,1232 @@
+I20260121 12:13:49.729691 81737 Sta.cc:383] read verilog file /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz/sCPUsta.netlist.v start
+I20260121 12:13:49.730274 81737 VerilogParserRustC.cc:41] load verilog file /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz/sCPUsta.netlist.v
+r str /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz/sCPUsta.netlist.v
+I20260121 12:13:49.734270 81737 Sta.cc:391] read verilog end
+I20260121 12:13:49.734346 81737 Sta.cc:309] load lib start
+I20260121 12:13:49.736778 81770 Sta.cc:287] read liberty /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib start 
+I20260121 12:13:49.737731 81770 LibParserRustC.cc:1285] load liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+rust read lib file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+I20260121 12:13:54.746707 81770 LibParserRustC.cc:1294] load liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib success.
+I20260121 12:13:54.746845 81770 Sta.cc:297] read liberty /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib end 
+I20260121 12:13:54.747225 81737 Sta.cc:328] load lib end
+I20260121 12:13:54.747308 81737 Sta.cc:417] link design sCPUsta start
+I20260121 12:13:54.751091 81846 LibParserRustC.cc:1304] link liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib start.
+I20260121 12:13:54.753516 81846 LibParserRustC.cc:666] unkown attri name: voltage_map in /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib line no 28
+I20260121 12:14:14.588598 81846 LibParserRustC.cc:1310] link liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib success.
+I20260121 12:14:14.595803 81737 Sta.cc:889] assign seg1_0_ = seg0_0_
+I20260121 12:14:14.596001 81737 Sta.cc:1106] link design sCPUsta end
+I20260121 12:14:14.596033 81737 Sta.cc:1108] design sCPUsta inst num: 242
+I20260121 12:14:14.596050 81737 Sta.cc:1110] design sCPUsta net num: 252
+I20260121 12:14:14.596055 81737 Sta.cc:1112] design sCPUsta port num: 29
+I20260121 12:14:14.596088 81737 Sta.cc:181] read sdc /home/biruide/ysyx-workbench/yosys-sta/scripts/default.sdc start 
+I20260121 12:14:14.600777 81737 CmdCreateClock.cc:124] create clock core_clock for pin/port: clk
+I20260121 12:14:14.600826 81737 Sta.cc:198] read sdc /home/biruide/ysyx-workbench/yosys-sta/scripts/default.sdc end 
+I20260121 12:14:14.601320 81737 StaBuildGraph.cc:315] build graph start
+I20260121 12:14:14.607105 81737 StaBuildGraph.cc:216] net seg1_0_ has no driver.
+I20260121 12:14:14.609211 81737 StaBuildGraph.cc:332] build graph end
+I20260121 12:14:14.609402 81737 Sta.cc:2834] update timing start
+I20260121 12:14:14.609535 81737 StaApplySdc.cc:698] apply sdc start
+I20260121 12:14:14.609556 81737 StaApplySdc.cc:729] apply sdc end
+I20260121 12:14:14.609565 81737 StaClockPropagation.cc:324] ideal clock propagation start
+I20260121 12:14:14.609778 81737 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260121 12:14:14.609822 81737 StaClockPropagation.cc:203] clock propagate end to vertex gpr[0]_0__reg_p:CK
+I20260121 12:14:14.609951 81737 StaClockPropagation.cc:422] ideal clock propagation end
+I20260121 12:14:14.609963 81737 StaCheck.cc:129] found loop fwd start
+I20260121 12:14:14.610095 81737 StaCheck.cc:148] found loop fwd end
+I20260121 12:14:14.610150 81737 StaCheck.cc:150] found loop bwd start
+I20260121 12:14:14.610318 81737 StaCheck.cc:172] found loop bwd end
+I20260121 12:14:14.610363 81737 StaClockSlewDelayPropagation.cc:112] clock slew delay propagation start
+I20260121 12:14:14.610390 81737 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 1
+I20260121 12:14:14.610473 81737 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 9
+I20260121 12:14:14.610519 81737 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 5
+I20260121 12:14:14.610862 81737 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 46
+I20260121 12:14:14.611032 81737 StaClockSlewDelayPropagation.cc:163] clock slew delay propagation end
+I20260121 12:14:14.611106 81737 StaClockSlewDelayPropagation.cc:166] clock slew delay propagation memory usage 0MB
+I20260121 12:14:14.611132 81737 StaClockSlewDelayPropagation.cc:169] clock slew delay propagation time elapsed 0.000769s
+I20260121 12:14:14.611269 81737 StaClockPropagation.cc:326] propagated(kNormal) clock propagation start
+I20260121 12:14:14.611296 81737 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260121 12:14:14.611307 81737 StaClockPropagation.cc:424] propagated(kNormal) clock propagation end
+I20260121 12:14:14.611313 81737 StaApplySdc.cc:698] apply sdc start
+I20260121 12:14:14.611320 81737 StaApplySdc.cc:729] apply sdc end
+I20260121 12:14:14.611323 81737 StaClockPropagation.cc:328] propagated(kGenerated) clock propagation start
+I20260121 12:14:14.611327 81737 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260121 12:14:14.611331 81737 StaClockPropagation.cc:426] propagated(kGenerated) clock propagation end
+I20260121 12:14:14.611335 81737 StaApplySdc.cc:698] apply sdc start
+I20260121 12:14:14.611339 81737 StaApplySdc.cc:729] apply sdc end
+I20260121 12:14:14.611344 81737 StaBuildPropTag.cc:325] build propagation tag start
+I20260121 12:14:14.611351 81737 StaBuildPropTag.cc:338] build propagation tag end
+I20260121 12:14:14.611362 81737 StaDataPropagation.cc:676] data fwd propagation start
+I20260121 12:14:14.611387 81737 StaDataPropagationBFS.cc:166] data fwd propagation bfs start
+I20260121 12:14:14.611461 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 59
+I20260121 12:14:14.614614 81993 StaDataPropagationBFS.cc:82] Thread 132946417677888 date fwd propagate found start vertex.rom_4_
+I20260121 12:14:14.614544 81990 StaDataPropagationBFS.cc:82] Thread 132946392499776 date fwd propagate found start vertex.rom_1_
+I20260121 12:14:14.614784 82009 StaDataPropagationBFS.cc:82] Thread 132948078581312 date fwd propagate found start vertex.gpr[0]_2__reg_p:CK
+I20260121 12:14:14.614580 81991 StaDataPropagationBFS.cc:82] Thread 132946400892480 date fwd propagate found start vertex.rom_2_
+[0;31mE20260121 12:14:14.614893 81999 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260121 12:14:14.614687 81996 StaDataPropagationBFS.cc:82] Thread 132948261578304 date fwd propagate found start vertex.rom_6_
+I20260121 12:14:14.614535 82021 StaDataPropagationBFS.cc:82] Thread 132947977868864 date fwd propagate found start vertex.rom_0_
+I20260121 12:14:14.614742 81993 StaDataPropagationBFS.cc:82] Thread 132946417677888 date fwd propagate found start vertex.gpr[0]_0__reg_p:CK
+[0;31mE20260121 12:14:14.614846 82008 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260121 12:14:14.614826 81990 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260121 12:14:14.614878 81998 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260121 12:14:14.614897 82016 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260121 12:14:14.614827 82009 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260121 12:14:14.614588 81992 StaDataPropagationBFS.cc:82] Thread 132946409285184 date fwd propagate found start vertex.rom_3_
+[0;31mE20260121 12:14:14.614849 82013 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260121 12:14:14.614827 82015 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260121 12:14:14.614740 81997 StaDataPropagationBFS.cc:82] Thread 132948253185600 date fwd propagate found start vertex.rom_7_
+[0;31mE20260121 12:14:14.614825 81995 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260121 12:14:14.614902 82010 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260121 12:14:14.614655 81994 StaDataPropagationBFS.cc:82] Thread 132948278363712 date fwd propagate found start vertex.rom_5_
+I20260121 12:14:14.616742 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 72
+I20260121 12:14:14.622805 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 142
+I20260121 12:14:14.632557 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 79
+I20260121 12:14:14.638163 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 43
+I20260121 12:14:14.652097 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 68
+I20260121 12:14:14.655292 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 21
+I20260121 12:14:14.658792 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 107
+I20260121 12:14:14.662497 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 41
+I20260121 12:14:14.666110 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 79
+I20260121 12:14:14.670996 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 27
+I20260121 12:14:14.680402 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 38
+I20260121 12:14:14.685777 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 23
+I20260121 12:14:14.689618 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 31
+I20260121 12:14:14.692731 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 18
+I20260121 12:14:14.699090 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 27
+I20260121 12:14:14.702533 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 3
+I20260121 12:14:14.706189 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 12
+I20260121 12:14:14.709312 81737 StaDataPropagationBFS.cc:229] data fwd propagation bfs end
+I20260121 12:14:14.709388 81737 StaDataPropagationBFS.cc:232] data fwd propagation bfs memory usage 5.428MB
+I20260121 12:14:14.709400 81737 StaDataPropagationBFS.cc:234] data fwd propagation bfs time elapsed 0.098013s
+I20260121 12:14:14.709406 81737 StaDataPropagation.cc:695] data fwd propagation end
+I20260121 12:14:14.709416 81737 StaDataPropagation.cc:676] data fwd propagation start
+I20260121 12:14:14.709548 81737 StaDataPropagationBFS.cc:166] data fwd propagation bfs start
+I20260121 12:14:14.709604 81737 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 1
+I20260121 12:14:14.712734 81737 StaDataPropagationBFS.cc:229] data fwd propagation bfs end
+I20260121 12:14:14.712824 81737 StaDataPropagationBFS.cc:232] data fwd propagation bfs memory usage 0MB
+I20260121 12:14:14.712837 81737 StaDataPropagationBFS.cc:234] data fwd propagation bfs time elapsed 0.00329s
+I20260121 12:14:14.712844 81737 StaDataPropagation.cc:695] data fwd propagation end
+I20260121 12:14:14.712852 81737 StaAnalyze.cc:557] analyze timing path start
+I20260121 12:14:14.712857 81737 StaAnalyze.cc:565] analyze timing path end vertex 1 total 75 start
+[0;31mE20260121 12:14:14.712865 81737 StaAnalyze.cc:328] The output port pc_0_ is not constrained
+[m[0;31mE20260121 12:14:14.712904 81737 StaAnalyze.cc:328] The output port pc_0_ is not constrained
+[mI20260121 12:14:14.712910 81737 StaAnalyze.cc:599] analyze timing path end vertex 1 total 75 end
+[0;31mE20260121 12:14:14.712914 81737 StaAnalyze.cc:328] The output port pc_1_ is not constrained
+[m[0;31mE20260121 12:14:14.712937 81737 StaAnalyze.cc:328] The output port pc_1_ is not constrained
+[m[0;31mE20260121 12:14:14.712945 81737 StaAnalyze.cc:328] The output port pc_2_ is not constrained
+[m[0;31mE20260121 12:14:14.712951 81737 StaAnalyze.cc:328] The output port pc_2_ is not constrained
+[m[0;31mE20260121 12:14:14.712956 81737 StaAnalyze.cc:328] The output port pc_3_ is not constrained
+[m[0;31mE20260121 12:14:14.712961 81737 StaAnalyze.cc:328] The output port pc_3_ is not constrained
+[m[0;31mE20260121 12:14:14.712966 81737 StaAnalyze.cc:328] The output port seg0_0_ is not constrained
+[m[0;31mE20260121 12:14:14.712971 81737 StaAnalyze.cc:328] The output port seg0_0_ is not constrained
+[mI20260121 12:14:14.713003 81737 StaAnalyze.cc:565] analyze timing path end vertex 11 total 75 start
+I20260121 12:14:14.713011 81737 StaAnalyze.cc:599] analyze timing path end vertex 11 total 75 end
+I20260121 12:14:14.713016 81737 StaAnalyze.cc:565] analyze timing path end vertex 21 total 75 start
+I20260121 12:14:14.713023 81737 StaAnalyze.cc:599] analyze timing path end vertex 21 total 75 end
+I20260121 12:14:14.713058 81737 StaAnalyze.cc:303] add path data num 2 to gpr[0]_0__reg_p:D
+I20260121 12:14:14.713099 81737 StaAnalyze.cc:565] analyze timing path end vertex 31 total 75 start
+I20260121 12:14:14.713109 81737 StaAnalyze.cc:599] analyze timing path end vertex 31 total 75 end
+I20260121 12:14:14.713184 81737 StaAnalyze.cc:565] analyze timing path end vertex 41 total 75 start
+I20260121 12:14:14.713198 81737 StaAnalyze.cc:599] analyze timing path end vertex 41 total 75 end
+I20260121 12:14:14.713259 81737 StaAnalyze.cc:565] analyze timing path end vertex 51 total 75 start
+I20260121 12:14:14.713279 81737 StaAnalyze.cc:599] analyze timing path end vertex 51 total 75 end
+I20260121 12:14:14.713335 81737 StaAnalyze.cc:565] analyze timing path end vertex 61 total 75 start
+I20260121 12:14:14.713351 81737 StaAnalyze.cc:599] analyze timing path end vertex 61 total 75 end
+I20260121 12:14:14.713411 81737 StaAnalyze.cc:565] analyze timing path end vertex 71 total 75 start
+I20260121 12:14:14.713421 81737 StaAnalyze.cc:599] analyze timing path end vertex 71 total 75 end
+I20260121 12:14:14.713452 81737 StaAnalyze.cc:603] analyze timing path end
+I20260121 12:14:14.713457 81737 StaApplySdc.cc:698] apply sdc start
+I20260121 12:14:14.713462 81737 StaApplySdc.cc:729] apply sdc end
+I20260121 12:14:14.713467 81737 StaDataPropagation.cc:698] data bwd propagation start
+I20260121 12:14:14.715103 81737 StaDataPropagation.cc:249] propagate start vertex gpr[0]_0__reg_p:CK
+I20260121 12:14:14.715137 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[0]_0__reg_p:D
+I20260121 12:14:14.715162 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[1]_0__reg_p:D
+I20260121 12:14:14.715222 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[2]_0__reg_p:D
+I20260121 12:14:14.715261 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[3]_0__reg_p:D
+I20260121 12:14:14.715288 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[0]_2__reg_p:D
+I20260121 12:14:14.715297 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[1]_2__reg_p:D
+I20260121 12:14:14.715307 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[2]_2__reg_p:D
+I20260121 12:14:14.715314 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[3]_2__reg_p:D
+I20260121 12:14:14.715343 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[0]_4__reg_p:D
+I20260121 12:14:14.715351 81737 StaDataPropagation.cc:172] Thread 132948307460224 data bwd propagate found end vertex.gpr[1]_4__reg_p:D
+I20260121 12:14:14.718176 81737 StaDataPropagation.cc:703] data bwd propagation end
+I20260121 12:14:14.718232 81737 Sta.cc:2895] update timing end
+I20260121 12:14:14.718299 81737 Sta.cc:2898] update timing memory usage 5.428MB
+I20260121 12:14:14.718339 81737 Sta.cc:2900] update timing time elapsed 0.108941s
+I20260121 12:14:14.718511 81737 Sta.cc:2998] start write sta report.
+I20260121 12:14:14.718523 81737 Sta.cc:2999] output sta report path: /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz
+I20260121 12:14:14.719401 81737 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260121 12:14:14.720758 81737 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260121 12:14:14.720824 81737 StaReport.cc:211] report the clock group core_clock 1 timing paths.
+I20260121 12:14:14.720868 81737 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260121 12:14:14.721451 81737 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260121 12:14:14.721479 81737 StaReport.cc:211] report the clock group core_clock 1 timing paths.
+I20260121 12:14:14.721484 81737 Sta.cc:1885] 
++-------------------+-------------+------------+------------+---------------+-------+-------+-----------+
+| Endpoint          | Clock Group | Delay Type | Path Delay | Path Required | CPPR  | Slack | Freq(MHz) |
++-------------------+-------------+------------+------------+---------------+-------+-------+-----------+
+| gpr[3]_7__reg_p:D | core_clock  | max        | 0.572r     | 1.964         | 0.000 | 1.392 | 1644.285  |
+| gpr[2]_7__reg_p:D | core_clock  | max        | 0.572r     | 1.964         | 0.000 | 1.392 | 1644.285  |
+| gpr[0]_7__reg_p:D | core_clock  | max        | 0.572r     | 1.964         | 0.000 | 1.392 | 1644.285  |
+| gpr[1]_7__reg_p:D | core_clock  | max        | 0.572r     | 1.964         | 0.000 | 1.392 | 1644.285  |
+| gpr[2]_7__reg_p:D | core_clock  | max        | 0.538f     | 1.951         | 0.000 | 1.413 | 1703.659  |
+| pc[0]_reg_p:D     | core_clock  | min        | 0.136r     | -0.018        | 0.000 | 0.154 | NA        |
+| pc[3]_reg_p:D     | core_clock  | min        | 0.160f     | -0.008        | 0.000 | 0.168 | NA        |
+| pc[0]_reg_p:D     | core_clock  | min        | 0.160f     | -0.008        | 0.000 | 0.168 | NA        |
+| pc[2]_reg_p:D     | core_clock  | min        | 0.165f     | -0.008        | 0.000 | 0.173 | NA        |
+| pc[1]_reg_p:D     | core_clock  | min        | 0.167f     | -0.008        | 0.000 | 0.175 | NA        |
++-------------------+-------------+------------+------------+---------------+-------+-------+-----------+
+I20260121 12:14:14.721655 81737 Sta.cc:1886] 
++------------+------------+-------+
+| Clock      | Delay Type | TNS   |
++------------+------------+-------+
+| core_clock | max        | 0.000 |
+| core_clock | min        | 0.000 |
++------------+------------+-------+
+I20260121 12:14:14.734148 81737 NetlistWriter.cc:52] start write verilog file /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz/sCPUsta.v
+I20260121 12:14:14.737006 81737 NetlistWriter.cc:71] finish write verilog file /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz/sCPUsta.v
+I20260121 12:14:14.737098 81737 Sta.cc:3111] used lib: /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+I20260121 12:14:14.737108 81737 Sta.cc:3096] The timing engine run success.
+I20260121 12:14:14.737239 81737 Power.cc:854] build graph and seq graph start
+I20260121 12:14:14.737267 81737 PwrBuildGraph.cc:80] build power graph start
+I20260121 12:14:14.738193 81737 PwrBuildGraph.cc:170] build power graph end
+I20260121 12:14:14.738221 81737 PwrBuildGraph.cc:172] build power graph memory usage 0MB
+I20260121 12:14:14.738230 81737 PwrBuildGraph.cc:174] build power graph time elapsed 0.000963s
+I20260121 12:14:14.738252 81737 PwrBuildSeqGraph.cc:326] build seq graph start
+I20260121 12:14:14.748891 81737 PwrBuildSeqGraph.cc:330] build seq graph end
+I20260121 12:14:14.748937 81737 PwrBuildSeqGraph.cc:332] seq inst num: 50
+I20260121 12:14:14.748942 81737 PwrBuildSeqGraph.cc:333] input port num: 9
+I20260121 12:14:14.748945 81737 PwrBuildSeqGraph.cc:334] output port num: 20
+I20260121 12:14:14.748978 81737 PwrBuildSeqGraph.cc:335] seq macro num: 0
+I20260121 12:14:14.748989 81737 PwrBuildSeqGraph.cc:336] seq arc num: 1196
+I20260121 12:14:14.748993 81737 PwrBuildSeqGraph.cc:339] seq vertex max fanout: 50
+I20260121 12:14:14.748996 81737 PwrBuildSeqGraph.cc:340] seq vertex max fanin: 41
+I20260121 12:14:14.749047 81737 PwrBuildSeqGraph.cc:343] build seq graph memory usage 525.424MB
+I20260121 12:14:14.749063 81737 PwrBuildSeqGraph.cc:345] build seq graph time elapsed 0.010811s
+I20260121 12:14:14.749070 81737 Power.cc:861] build graph and seq graph end
+I20260121 12:14:14.749085 81737 Power.cc:863] build graph and seq graph memory usage 525.424MB
+I20260121 12:14:14.749090 81737 Power.cc:866] build graph and seq graph time elapsed 0.011854s
+I20260121 12:14:14.749102 81737 Power.cc:871] power annotate vcd start
+I20260121 12:14:14.749107 81737 Power.cc:128] annotate toggle sp start
+I20260121 12:14:14.749112 81737 Power.cc:134] annotate toggle sp end
+I20260121 12:14:14.749115 81737 Power.cc:878] power vcd annotate end
+I20260121 12:14:14.749128 81737 Power.cc:880] power vcd annotate memory usage 0MB
+I20260121 12:14:14.749133 81737 Power.cc:882] power vcd annotate time elapsed 3.1e-05s
+I20260121 12:14:14.749147 81737 Power.cc:896] power propagation start
+I20260121 12:14:14.749215 81737 PwrCheckPipelineLoop.cc:122] check pipeline loop start
+I20260121 12:14:14.749318 81737 PwrCheckPipelineLoop.cc:129] check pipeline loop end
+I20260121 12:14:14.749356 81737 PwrCheckPipelineLoop.cc:137] check pipeline loop memory usage 0MB
+I20260121 12:14:14.749362 81737 PwrCheckPipelineLoop.cc:139] check pipeline loop time elapsed 0.000148s
+I20260121 12:14:14.749382 81737 PwrLevelizeSeqGraph.cc:93] seq levelization start
+I20260121 12:14:14.749420 81737 PwrLevelizeSeqGraph.cc:101] seq levelization end
+I20260121 12:14:14.749429 81737 PwrLevelizeSeqGraph.cc:103] the seq graph's level depth 38
+I20260121 12:14:14.749447 81737 PwrLevelizeSeqGraph.cc:116] levelization memory usage 0MB
+I20260121 12:14:14.749452 81737 PwrLevelizeSeqGraph.cc:118] levelization time elapsed 7.1e-05s
+I20260121 12:14:14.749473 81737 PwrPropagateConst.cc:184] propagate const start
+I20260121 12:14:14.749492 81737 PwrPropagateConst.cc:109] set tie cell fanout from seg0_TIEHIH7L_Z:Z data in vertex seg0_0_
+I20260121 12:14:14.749504 81737 PwrPropagateConst.cc:288] propagate const end
+I20260121 12:14:14.749550 81737 PwrPropagateConst.cc:290] propagate const memory usage 0MB
+I20260121 12:14:14.749560 81737 PwrPropagateConst.cc:292] propagate const time elapsed 8.7e-05s
+I20260121 12:14:14.749578 81737 PwrPropagateToggleSP.cc:202] propagate toggle sp start
+I20260121 12:14:14.757423 81737 PwrPropagateToggleSP.cc:316] propagate toggle sp end
+I20260121 12:14:14.757504 81737 PwrPropagateToggleSP.cc:319] propagate toggle sp memory usage 327.68MB
+I20260121 12:14:14.757519 81737 PwrPropagateToggleSP.cc:321] propagate toggle sp time elapsed 0.007941s
+I20260121 12:14:14.757542 81737 PwrPropagateClock.cc:68] propagate clock start
+I20260121 12:14:14.757563 81737 PwrPropagateClock.cc:80] propagate clock end
+I20260121 12:14:14.757578 81737 PwrPropagateClock.cc:82] propagate clock memory usage 0MB
+I20260121 12:14:14.757582 81737 PwrPropagateClock.cc:84] propagate clock time elapsed 4.1e-05s
+I20260121 12:14:14.757588 81737 Power.cc:914] power propagation end
+I20260121 12:14:14.757602 81737 Power.cc:916] power propagation memory usage 327.68MB
+I20260121 12:14:14.757607 81737 Power.cc:918] power propagation time elapsed 0.008461s
+I20260121 12:14:14.757669 81737 Power.cc:267] power calculation start
+I20260121 12:14:14.757691 81737 PwrCalcLeakagePower.cc:85] calc leakage power start
+I20260121 12:14:14.831336 81737 PwrCalcLeakagePower.cc:119] calc leakage power result 0.000699979mw
+I20260121 12:14:14.831439 81737 PwrCalcLeakagePower.cc:122] calc leakage power end
+I20260121 12:14:14.831522 81737 PwrCalcLeakagePower.cc:124] calc leakage power memory usage 0MB
+I20260121 12:14:14.831532 81737 PwrCalcLeakagePower.cc:126] calc leakage power time elapsed 0.07384s
+I20260121 12:14:14.831557 81737 PwrCalcInternalPower.cc:565] calc internal power start
+[0;31mE20260121 12:14:14.831708 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831737 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831744 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831751 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831758 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831764 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831770 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831776 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831782 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831789 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831795 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:C rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831801 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:C rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831807 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:C rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831813 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:C rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831830 81737 PwrCalcInternalPower.cc:205] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:AN input slew is not exist.
+[m[0;31mE20260121 12:14:14.831874 81737 PwrCalcInternalPower.cc:205] clk_ICGX0P5H7L_CK_1_E_NOR3BX0P5H7L_Y:C input slew is not exist.
+[m[0;31mE20260121 12:14:14.831915 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_2_E_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831923 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_2_E_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831929 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_2_E_NOR2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831938 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_2_E_NOR2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.831995 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832006 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832013 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832019 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832029 81737 PwrCalcInternalPower.cc:205] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z:AN input slew is not exist.
+[m[0;31mE20260121 12:14:14.832074 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z_B_NAND2BX0P5H7L_Y:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832085 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z_B_NAND2BX0P5H7L_Y:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832091 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z_B_NAND2BX0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832098 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z_B_NAND2BX0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832116 81737 PwrCalcInternalPower.cc:205] clk_ICGX0P5H7L_CK_3_E_NOR2BX1H7L_Z_B_NAND2BX0P5H7L_Y:AN input slew is not exist.
+[m[0;31mE20260121 12:14:14.832182 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_4_E_NOR2BX1H7L_Z:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832190 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_4_E_NOR2BX1H7L_Z:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832196 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_4_E_NOR2BX1H7L_Z:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832211 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_4_E_NOR2BX1H7L_Z:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832224 81737 PwrCalcInternalPower.cc:205] clk_ICGX0P5H7L_CK_4_E_NOR2BX1H7L_Z:B input slew is not exist.
+[m[0;31mE20260121 12:14:14.832242 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832249 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832255 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832262 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832269 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832276 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832283 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832290 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832299 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832305 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832311 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832319 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832330 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:C rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832337 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:C rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832345 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:C rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832350 81737 PwrCalcInternalPower.cc:97] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:C rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832381 81737 PwrCalcInternalPower.cc:205] clk_ICGX0P5H7L_CK_E_NOR3X0P5H7L_Y:B input slew is not exist.
+[m[0;31mE20260121 12:14:14.832466 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832479 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832485 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832491 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832497 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832504 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832648 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832667 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832728 81737 PwrCalcInternalPower.cc:205] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.832841 81737 PwrCalcInternalPower.cc:205] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.832901 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832908 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832916 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y_B0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832922 81737 PwrCalcInternalPower.cc:97] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y_B0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.832964 81737 PwrCalcInternalPower.cc:205] gpr[0]_0__reg_p_D_OAI21X0P5H7L_Y_B0_NAND2X0P5H7L_Y:B input slew is not exist.
+[m[0;31mE20260121 12:14:14.834223 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834246 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834252 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834259 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834265 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834271 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834278 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834285 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834292 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834298 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834308 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834314 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834321 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834326 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834332 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834345 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834352 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834357 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834363 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834369 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834376 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834383 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834388 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834394 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834400 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834406 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834412 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834419 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.834628 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.834801 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.834995 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.835156 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.835315 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.835404 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.835505 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.836630 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836660 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836668 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836673 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836680 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836686 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836694 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836699 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836704 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836711 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836719 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836725 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836735 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836741 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836747 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836755 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836761 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836773 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836781 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836786 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836794 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836800 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836807 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836812 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836819 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836825 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836834 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836841 81737 PwrCalcInternalPower.cc:97] gpr[1]_0__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.836982 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.837168 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.837287 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.837500 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.837625 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.837707 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.837796 81737 PwrCalcInternalPower.cc:205] gpr[1]_0__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.838765 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838784 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838790 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838800 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838805 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838810 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838817 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838824 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838828 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838835 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838840 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838845 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838850 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838855 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838862 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838867 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838873 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838878 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838884 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838897 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838903 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838908 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838914 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838919 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838924 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838929 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838935 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.838940 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.839010 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.839155 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.839249 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.839370 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.839458 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.839529 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.839802 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.840904 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.840929 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.840936 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.840953 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.840960 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.840966 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841054 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841065 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841073 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.841135 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:B0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.841187 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841194 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841202 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841292 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841305 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260121 12:14:14.841483 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841497 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841503 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841511 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841516 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841522 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841625 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841645 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841660 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:A0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.841715 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1:B0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.841758 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841766 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841780 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841787 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.841799 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260121 12:14:14.842737 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842756 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842763 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842769 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842775 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842782 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842788 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842794 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842800 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842808 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842819 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842826 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842832 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842839 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842845 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842855 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842861 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842867 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842873 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842880 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842886 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842892 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842898 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842905 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842911 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842921 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842926 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.842932 81737 PwrCalcInternalPower.cc:97] gpr[1]_1__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.843046 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.843200 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.843310 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.843477 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.843641 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.843724 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.843806 81737 PwrCalcInternalPower.cc:205] gpr[1]_1__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.844815 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844839 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844847 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844853 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844859 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844866 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844871 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844877 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844883 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844889 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844895 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844902 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844916 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844923 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844928 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844935 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844941 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844947 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844954 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844959 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844969 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844975 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844981 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844987 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.844993 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.845000 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.845005 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.845011 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.845086 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.845284 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.845394 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.845526 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.845628 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.845711 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.845803 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.846784 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846803 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846810 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846817 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846823 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846829 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846834 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846841 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846848 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846853 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846859 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846866 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846873 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846882 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846894 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846899 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846905 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846912 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846918 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846925 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846931 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846937 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846944 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846951 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846961 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846966 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846972 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.846978 81737 PwrCalcInternalPower.cc:97] gpr[1]_2__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.847033 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.847205 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.847322 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.847436 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.847544 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.847627 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.847692 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.847751 81737 PwrCalcInternalPower.cc:205] gpr[1]_2__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.849313 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849380 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849392 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849403 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849413 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849423 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849432 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849442 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849452 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849468 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849478 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849488 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849498 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849575 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849601 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849609 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849638 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849646 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849654 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849663 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849673 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849681 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849689 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849696 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849704 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849712 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849720 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849727 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.849944 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.850091 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.850199 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.850364 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.850596 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.850679 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.850760 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.853103 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853168 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853178 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853184 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853190 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853197 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853295 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853308 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853356 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:B0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.853422 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1:B0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.853449 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853458 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853470 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853479 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.853505 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1_B0_NAND2X0P5H7L_Y:B input slew is not exist.
+[m[0;31mE20260121 12:14:14.854501 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854525 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854532 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854538 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854545 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854552 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854558 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854564 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854571 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854578 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854584 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854590 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854596 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854604 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854611 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854619 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854630 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854637 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854647 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854653 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854687 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854700 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854707 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854719 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854727 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854732 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854738 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854745 81737 PwrCalcInternalPower.cc:97] gpr[1]_3__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.854921 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.855072 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.855182 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.855386 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.855512 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.855579 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.855660 81737 PwrCalcInternalPower.cc:205] gpr[1]_3__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.856817 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856853 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856863 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856869 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856875 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856884 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856890 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856897 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856904 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856910 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856916 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856923 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856930 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856936 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856942 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856948 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856956 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856961 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856974 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856981 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856989 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.856995 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.857002 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.857009 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.857015 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.857023 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.857029 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.857036 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.857192 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.857342 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.857496 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.857710 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.857828 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.857884 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.858047 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.858805 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858821 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858826 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858831 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858836 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858840 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858845 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858850 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858855 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858860 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858865 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858870 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858875 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858880 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858884 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858889 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858894 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858899 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858904 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858915 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858920 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858925 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858930 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858937 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858942 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858947 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858952 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.858958 81737 PwrCalcInternalPower.cc:97] gpr[1]_4__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.859050 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.859170 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.859252 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.859371 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.859457 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.859509 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B_1:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.859570 81737 PwrCalcInternalPower.cc:205] gpr[1]_4__MUX4X1P4H7L_B_1:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.860658 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860687 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860692 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860697 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860702 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860707 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860711 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860716 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860721 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860726 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860731 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860736 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860741 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860746 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860751 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860755 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860761 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860766 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860771 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860776 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.860781 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.861023 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.861061 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.861068 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.861073 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.861079 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.861085 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.861090 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.861231 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.861442 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.861545 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.861666 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.861795 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.862084 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.862468 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.864465 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_A_OR3X1H7L_C_Y_AOI21X0P5H7L_A1:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.864522 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_A_OR3X1H7L_C_Y_AOI21X0P5H7L_A1:B0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.864573 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_A_OR3X1H7L_C_Y_AOI21X0P5H7L_A1:B0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.864642 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_A_OR3X1H7L_C_Y_AOI21X0P5H7L_A1:B0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.866551 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_XNOR2X1H7L_A_Y_NOR2X1P4H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.866596 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_XNOR2X1H7L_A_Y_NOR2X1P4H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867571 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867594 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867600 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867606 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867612 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867617 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867623 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867630 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867637 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867643 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867650 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867655 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867661 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867667 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867745 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867758 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867764 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867770 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867776 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867782 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867789 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867794 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867801 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867806 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867812 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867846 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867856 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867864 81737 PwrCalcInternalPower.cc:97] gpr[1]_5__MUX4X3H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.867918 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.868084 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.868273 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.868399 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.868551 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.868677 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X3H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.868757 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.868822 81737 PwrCalcInternalPower.cc:205] gpr[1]_5__MUX4X3H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.869874 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869900 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869906 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869912 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869918 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869925 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869930 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869936 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869942 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869947 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869953 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869959 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869966 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869972 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869978 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.869997 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870002 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870008 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870014 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870020 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870026 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870033 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870038 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870044 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870050 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870056 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870062 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870071 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.870245 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.870375 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.870565 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.870710 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.870813 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.870877 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.870956 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.871848 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871869 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871876 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871882 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871888 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871893 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871899 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871905 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871912 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871917 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871923 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871929 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871935 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871941 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871950 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871956 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871969 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871975 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871981 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871987 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.871994 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.872007 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.872013 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.872020 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.872025 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.872031 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.872037 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.872043 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.872174 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.872305 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.872398 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.872515 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.872681 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.872745 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B_1:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.872814 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__MUX4X1P4H7L_B_1:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.873103 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_Y_NOR2X0P5H7L_B_Y_INVX0P5H7L_A_Y_NAND2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_NOR2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.873116 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__MUX4X1P4H7L_B_Y_NOR2X0P5H7L_B_Y_INVX0P5H7L_A_Y_NAND2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_NOR2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.874019 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_B_Y_AOAI211X0P5H7L_A1:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.874059 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_B_Y_AOAI211X0P5H7L_A1:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.874071 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_B_Y_AOAI211X0P5H7L_A1:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.874078 81737 PwrCalcInternalPower.cc:97] gpr[1]_6__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_B_Y_AOAI211X0P5H7L_A1:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.874224 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_B_Y_AOAI211X0P5H7L_A1:C0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.874311 81737 PwrCalcInternalPower.cc:205] gpr[1]_6__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_B_Y_AOAI211X0P5H7L_A1:C0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.875264 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875288 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875294 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875300 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875306 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875311 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875329 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875335 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875341 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875347 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875353 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875360 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875366 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875372 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875378 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875384 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875391 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875396 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875402 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875408 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875415 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875442 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875461 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875468 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875474 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875480 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875487 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875494 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.875528 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.875710 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.875823 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.875964 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.876075 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.876181 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.876243 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.876303 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.877182 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877198 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877205 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877210 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877216 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877223 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877228 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877241 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877247 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877254 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877264 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877269 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877276 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877285 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877291 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877297 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877302 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877308 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877314 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877321 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877326 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877332 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877338 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877348 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877354 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877360 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877367 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877372 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_1:S1 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.877552 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.877705 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.877822 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.878101 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.878213 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B_1:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.878268 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B_1:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.878331 81737 PwrCalcInternalPower.cc:205] gpr[1]_7__MUX4X1P4H7L_B_1:S1 input slew is not exist.
+[m[0;31mE20260121 12:14:14.879108 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOA211X2H7L_C0_Y_NOR3X1P4H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.879122 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOA211X2H7L_C0_Y_NOR3X1P4H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.879128 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOA211X2H7L_C0_Y_NOR3X1P4H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.879133 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOA211X2H7L_C0_Y_NOR3X1P4H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.879137 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOA211X2H7L_C0_Y_NOR3X1P4H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.879142 81737 PwrCalcInternalPower.cc:97] gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOA211X2H7L_C0_Y_NOR3X1P4H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880179 81737 PwrCalcInternalPower.cc:97] gpr[2]_0__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880200 81737 PwrCalcInternalPower.cc:97] gpr[2]_0__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880206 81737 PwrCalcInternalPower.cc:97] gpr[2]_0__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880211 81737 PwrCalcInternalPower.cc:97] gpr[2]_0__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880249 81737 PwrCalcInternalPower.cc:205] gpr[2]_0__MUX2X0P5H7L_A:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.880414 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880424 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880429 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880434 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880462 81737 PwrCalcInternalPower.cc:205] gpr[2]_1__MUX2X0P5H7L_A:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.880518 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880532 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880537 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880541 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880605 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880614 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880620 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880625 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880630 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880666 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880908 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.880919 81737 PwrCalcInternalPower.cc:97] gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.881548 81737 PwrCalcInternalPower.cc:97] gpr[2]_2__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.881587 81737 PwrCalcInternalPower.cc:97] gpr[2]_2__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.881614 81737 PwrCalcInternalPower.cc:97] gpr[2]_2__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.881625 81737 PwrCalcInternalPower.cc:97] gpr[2]_2__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.881755 81737 PwrCalcInternalPower.cc:205] gpr[2]_2__MUX2X0P5H7L_A:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.881954 81737 PwrCalcInternalPower.cc:97] gpr[2]_3__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.881966 81737 PwrCalcInternalPower.cc:97] gpr[2]_3__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.881971 81737 PwrCalcInternalPower.cc:97] gpr[2]_3__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.881976 81737 PwrCalcInternalPower.cc:97] gpr[2]_3__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.882007 81737 PwrCalcInternalPower.cc:205] gpr[2]_3__MUX2X0P5H7L_A:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.882139 81737 PwrCalcInternalPower.cc:97] gpr[2]_4__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.882164 81737 PwrCalcInternalPower.cc:97] gpr[2]_4__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.882169 81737 PwrCalcInternalPower.cc:97] gpr[2]_4__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.882174 81737 PwrCalcInternalPower.cc:97] gpr[2]_4__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.882398 81737 PwrCalcInternalPower.cc:205] gpr[2]_4__MUX2X0P5H7L_A:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.883213 81737 PwrCalcInternalPower.cc:97] gpr[2]_5__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883244 81737 PwrCalcInternalPower.cc:97] gpr[2]_5__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883249 81737 PwrCalcInternalPower.cc:97] gpr[2]_5__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883255 81737 PwrCalcInternalPower.cc:97] gpr[2]_5__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883423 81737 PwrCalcInternalPower.cc:97] gpr[2]_6__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883433 81737 PwrCalcInternalPower.cc:97] gpr[2]_6__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883438 81737 PwrCalcInternalPower.cc:97] gpr[2]_6__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883443 81737 PwrCalcInternalPower.cc:97] gpr[2]_6__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883458 81737 PwrCalcInternalPower.cc:205] gpr[2]_6__MUX2X0P5H7L_A:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.883730 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883776 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883786 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883901 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A:S0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.883948 81737 PwrCalcInternalPower.cc:205] gpr[2]_7__MUX2X0P5H7L_A:S0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.884148 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884184 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884191 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884197 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884203 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884209 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884215 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884223 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884231 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884238 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884246 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884253 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884738 81737 PwrCalcInternalPower.cc:205] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_A_INVX0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260121 12:14:14.884771 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884779 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884792 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884799 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884805 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884810 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884817 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884824 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884829 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884836 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884842 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.884848 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:A0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885167 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885192 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885198 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885205 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885210 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885216 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885222 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885229 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885414 81737 PwrCalcInternalPower.cc:205] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.885562 81737 PwrCalcInternalPower.cc:205] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0:C0 input slew is not exist.
+[m[0;31mE20260121 12:14:14.885597 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0_C0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885605 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0_C0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885612 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0_C0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885620 81737 PwrCalcInternalPower.cc:97] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0_C0_NAND2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885646 81737 PwrCalcInternalPower.cc:205] gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0_C0_NAND2X0P5H7L_Y:B input slew is not exist.
+[m[0;31mE20260121 12:14:14.885861 81737 PwrCalcInternalPower.cc:97] pc[0]_reg_p_D_MUX2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.885874 81737 PwrCalcInternalPower.cc:97] pc[0]_reg_p_D_MUX2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.886052 81737 PwrCalcInternalPower.cc:97] pc[1]_reg_p_D_MUX2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.886062 81737 PwrCalcInternalPower.cc:97] pc[1]_reg_p_D_MUX2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.886263 81737 PwrCalcInternalPower.cc:97] pc[2]_reg_p_D_MUX2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.886274 81737 PwrCalcInternalPower.cc:97] pc[2]_reg_p_D_MUX2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.886327 81737 PwrCalcInternalPower.cc:205] pc[2]_reg_p_D_MUX2X0P5H7L_Y:B input slew is not exist.
+[m[0;31mE20260121 12:14:14.886533 81737 PwrCalcInternalPower.cc:97] pc[3]_reg_p_D_MUX2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.886544 81737 PwrCalcInternalPower.cc:97] pc[3]_reg_p_D_MUX2X0P5H7L_Y:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.886899 81737 PwrCalcInternalPower.cc:205] rom_BUFX16H7L_A:A input slew is not exist.
+[m[0;31mE20260121 12:14:14.886962 81737 PwrCalcInternalPower.cc:205] rom_BUFX5H7L_A:A input slew is not exist.
+[m[0;31mE20260121 12:14:14.886992 81737 PwrCalcInternalPower.cc:97] rom_NOR2BX1H7L_B:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.887002 81737 PwrCalcInternalPower.cc:97] rom_NOR2BX1H7L_B:AN rise slew is not exist.
+[m[0;31mE20260121 12:14:14.887009 81737 PwrCalcInternalPower.cc:97] rom_NOR2BX1H7L_B:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.887015 81737 PwrCalcInternalPower.cc:97] rom_NOR2BX1H7L_B:B rise slew is not exist.
+[m[0;31mE20260121 12:14:14.887054 81737 PwrCalcInternalPower.cc:205] rom_NOR2BX1H7L_B:B input slew is not exist.
+[mI20260121 12:14:14.904631 81737 PwrCalcInternalPower.cc:605] calc internal power result 1.15218mW
+I20260121 12:14:14.904695 81737 PwrCalcInternalPower.cc:607] calc internal power end
+I20260121 12:14:14.904757 81737 PwrCalcInternalPower.cc:609] calc internal power memory usage 0MB
+I20260121 12:14:14.904763 81737 PwrCalcInternalPower.cc:611] calc internal power time elapsed 0.073207s
+I20260121 12:14:14.904810 81737 PwrCalcSwitchPower.cc:89] calc switch power start
+I20260121 12:14:14.904872 81737 PwrCalcSwitchPower.cc:106] net seg1_0_ has no driver, skip switch power calculation.
+I20260121 12:14:14.905162 81737 PwrCalcSwitchPower.cc:173] calc switch power result 0mw
+I20260121 12:14:14.905179 81737 PwrCalcSwitchPower.cc:175] calc switch power end
+I20260121 12:14:14.905200 81737 PwrCalcSwitchPower.cc:177] calc switch power memory usage 0MB
+I20260121 12:14:14.905205 81737 PwrCalcSwitchPower.cc:179] calc switch power time elapsed 0.000395s
+I20260121 12:14:14.906243 81737 Power.cc:275] power calculation end
+I20260121 12:14:14.906267 81737 Power.cc:277] power calculation memory usage 0MB
+I20260121 12:14:14.906272 81737 Power.cc:279] power calculation time elapsed 0.148604s
+I20260121 12:14:14.906287 81737 Power.cc:981] power report start, output dir: /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz
+I20260121 12:14:14.907047 81737 Power.cc:491] 
++---------------+----------------+--------------+---------------+-------------+-----------+
+| Power Group   | Internal Power | Switch Power | Leakage Power | Total Power | (%)       |
++---------------+----------------+--------------+---------------+-------------+-----------+
+| combinational | 9.505e-04      | 0.000e+00    | 3.407e-07     | 9.509e-04   | (82.477%) |
+| sequential    | 2.017e-04      | 0.000e+00    | 3.593e-07     | 2.020e-04   | (17.523%) |
++---------------+----------------+--------------+---------------+-------------+-----------+
+I20260121 12:14:14.907197 81737 Power.cc:543] Total Power   ==  0.00115288 W
+I20260121 12:14:14.908402 81737 Power.cc:669] Instance Power Report: 
+I20260121 12:14:14.908435 81737 Power.cc:670] 
++-------------------------------------------------------------------------------------------------------------+-----------------+----------------+--------------+---------------+-------------+
+| Instance Name                                                                                               | Nominal Voltage | Internal Power | Switch Power | Leakage Power | Total Power |
++-------------------------------------------------------------------------------------------------------------+-----------------+----------------+--------------+---------------+-------------+
+| gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B_Y_AOI211X3H7L_B0                                    | 1.2             | 4.473e-05      | 0.000e+00    | 1.615e-09     | 4.473e-05   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_Y_OAOI211X4H7L_B0                                    | 1.2             | 3.822e-05      | 0.000e+00    | 2.719e-09     | 3.822e-05   |
+| gpr[1]_6__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_B_Y_AOAI211X0P5H7L_A1                                               | 1.2             | 3.089e-05      | 0.000e+00    | 6.919e-10     | 3.089e-05   |
+| gpr[1]_6__MUX4X1P4H7L_B_Y_NOR2X0P5H7L_B_Y_INVX0P5H7L_A_Y_NAND2X0P5H7L_B_Y_XNOR2X0P5H7L_B                    | 1.2             | 2.137e-05      | 0.000e+00    | 3.086e-09     | 2.138e-05   |
+| pc[3]_reg_p_D_MUX2X0P5H7L_Y                                                                                 | 1.2             | 2.105e-05      | 0.000e+00    | 2.141e-09     | 2.105e-05   |
+| pc[2]_reg_p_D_MUX2X0P5H7L_Y                                                                                 | 1.2             | 1.952e-05      | 0.000e+00    | 2.140e-09     | 1.952e-05   |
+| pc[0]_reg_p_D_MUX2X0P5H7L_Y                                                                                 | 1.2             | 1.885e-05      | 0.000e+00    | 2.098e-09     | 1.885e-05   |
+| pc[1]_reg_p_D_MUX2X0P5H7L_Y                                                                                 | 1.2             | 1.809e-05      | 0.000e+00    | 2.138e-09     | 1.810e-05   |
+| gpr[2]_4__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_A                                                   | 1.2             | 1.784e-05      | 0.000e+00    | 2.331e-10     | 1.784e-05   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_XNOR2X1H7L_A                                                     | 1.2             | 1.645e-05      | 0.000e+00    | 3.209e-09     | 1.645e-05   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_A_OR3X1H7L_C                                         | 1.2             | 1.425e-05      | 0.000e+00    | 1.745e-09     | 1.426e-05   |
+| gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND4X0P5H7L_B                                                   | 1.2             | 1.407e-05      | 0.000e+00    | 2.401e-10     | 1.407e-05   |
+| gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOA211X2H7L_C0                                                   | 1.2             | 1.403e-05      | 0.000e+00    | 1.407e-09     | 1.404e-05   |
+| gpr[1]_5__MUX4X3H7L_B                                                                                       | 1.2             | 1.162e-05      | 0.000e+00    | 5.300e-09     | 1.162e-05   |
+| gpr[1]_0__MUX4X3H7L_B                                                                                       | 1.2             | 1.162e-05      | 0.000e+00    | 5.300e-09     | 1.162e-05   |
+| gpr[1]_3__MUX4X3H7L_B                                                                                       | 1.2             | 1.149e-05      | 0.000e+00    | 5.300e-09     | 1.150e-05   |
+| gpr[1]_2__MUX4X3H7L_B                                                                                       | 1.2             | 1.144e-05      | 0.000e+00    | 5.300e-09     | 1.145e-05   |
+| gpr[1]_1__MUX4X3H7L_B                                                                                       | 1.2             | 1.111e-05      | 0.000e+00    | 5.300e-09     | 1.111e-05   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_A_OR3X1H7L_C_Y_AOI21X0P5H7L_A1                       | 1.2             | 1.057e-05      | 0.000e+00    | 8.353e-10     | 1.057e-05   |
+| seg0[6]_reg_p_D_AOAI211X0P5H7L_Y_B0_AOI21X3H7L_A0                                                           | 1.2             | 1.055e-05      | 0.000e+00    | 1.681e-09     | 1.055e-05   |
+| seg0[6]_reg_p_D_AOAI211X0P5H7L_Y                                                                            | 1.2             | 1.030e-05      | 0.000e+00    | 6.965e-10     | 1.030e-05   |
+| seg0[1]_reg_p_D_OAI32X0P5H7L_Y                                                                              | 1.2             | 1.024e-05      | 0.000e+00    | 8.164e-10     | 1.024e-05   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_XNOR2X1H7L_A_B_OAI31X1H7L_Y                                      | 1.2             | 1.010e-05      | 0.000e+00    | 8.970e-10     | 1.010e-05   |
+| gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A                                                    | 1.2             | 9.781e-06      | 0.000e+00    | 3.140e-09     | 9.784e-06   |
+| pc[3]_reg_p_D_MUX2X0P5H7L_Y_A_XNOR2X0P5H7L_Y                                                                | 1.2             | 8.719e-06      | 0.000e+00    | 3.087e-09     | 8.722e-06   |
+| gpr[1]_7__MUX4X1P4H7L_B                                                                                     | 1.2             | 8.450e-06      | 0.000e+00    | 4.266e-09     | 8.454e-06   |
+| gpr[1]_6__MUX4X1P4H7L_B_1                                                                                   | 1.2             | 8.443e-06      | 0.000e+00    | 4.266e-09     | 8.448e-06   |
+| gpr[1]_4__MUX4X1P4H7L_B                                                                                     | 1.2             | 8.431e-06      | 0.000e+00    | 4.266e-09     | 8.435e-06   |
+| gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOI211X0P5H7L_C0                                                 | 1.2             | 8.379e-06      | 0.000e+00    | 5.747e-10     | 8.380e-06   |
+| gpr[1]_6__MUX4X1P4H7L_B                                                                                     | 1.2             | 8.368e-06      | 0.000e+00    | 4.266e-09     | 8.372e-06   |
+| gpr[1]_3__MUX4X1P4H7L_B                                                                                     | 1.2             | 8.364e-06      | 0.000e+00    | 4.266e-09     | 8.368e-06   |
+| gpr[1]_1__MUX4X1P4H7L_B                                                                                     | 1.2             | 8.355e-06      | 0.000e+00    | 4.266e-09     | 8.360e-06   |
+| gpr[1]_5__MUX4X1P4H7L_B                                                                                     | 1.2             | 8.346e-06      | 0.000e+00    | 4.266e-09     | 8.350e-06   |
+| gpr[1]_7__MUX4X1P4H7L_B_1                                                                                   | 1.2             | 8.327e-06      | 0.000e+00    | 4.266e-09     | 8.331e-06   |
+| gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B                                     | 1.2             | 8.326e-06      | 0.000e+00    | 3.181e-09     | 8.329e-06   |
+| gpr[1]_4__MUX4X1P4H7L_B_1                                                                                   | 1.2             | 8.318e-06      | 0.000e+00    | 4.266e-09     | 8.322e-06   |
+| gpr[1]_0__MUX4X1P4H7L_B                                                                                     | 1.2             | 8.318e-06      | 0.000e+00    | 4.266e-09     | 8.322e-06   |
+| gpr[1]_2__MUX4X1P4H7L_B                                                                                     | 1.2             | 8.318e-06      | 0.000e+00    | 4.266e-09     | 8.322e-06   |
+| seg1[2]_reg_p_D_OAI22X0P5H7L_Y                                                                              | 1.2             | 8.154e-06      | 0.000e+00    | 8.054e-10     | 8.155e-06   |
+| gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_NOR4X6H7L_B                                                      | 1.2             | 7.925e-06      | 0.000e+00    | 1.181e-09     | 7.926e-06   |
+| seg0[2]_reg_p_D_OAI22X0P5H7L_Y                                                                              | 1.2             | 7.507e-06      | 0.000e+00    | 8.023e-10     | 7.507e-06   |
+| gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0                                                                     | 1.2             | 7.402e-06      | 0.000e+00    | 1.183e-09     | 7.403e-06   |
+| gpr[1]_6__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_B                                                                   | 1.2             | 7.222e-06      | 0.000e+00    | 3.466e-10     | 7.222e-06   |
+| seg0[7]_reg_p_D_OAI22X0P5H7L_Y                                                                              | 1.2             | 6.921e-06      | 0.000e+00    | 8.294e-10     | 6.921e-06   |
+| gpr[1]_4__XNOR2X0P5H7L_B_Y_NAND3X0P5H7L_A                                                                   | 1.2             | 6.830e-06      | 0.000e+00    | 3.633e-10     | 6.830e-06   |
+| gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B                                                   | 1.2             | 6.660e-06      | 0.000e+00    | 3.125e-09     | 6.663e-06   |
+| seg0[5]_reg_p_D_OAI31X0P5H7L_Y                                                                              | 1.2             | 6.541e-06      | 0.000e+00    | 7.428e-10     | 6.542e-06   |
+| seg1[7]_reg_p_D_OAI21X0P5H7L_Y_B0_AOAI211X0P5H7L_Y                                                          | 1.2             | 6.257e-06      | 0.000e+00    | 6.604e-10     | 6.258e-06   |
+| gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_NOR4X6H7L_B_C_XNOR2X4H7L_Y                                       | 1.2             | 6.159e-06      | 0.000e+00    | 5.053e-09     | 6.164e-06   |
+| gpr[2]_2__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 6.158e-06      | 0.000e+00    | 3.113e-09     | 6.161e-06   |
+| gpr[2]_5__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 6.158e-06      | 0.000e+00    | 3.134e-09     | 6.161e-06   |
+| gpr[2]_3__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 6.156e-06      | 0.000e+00    | 3.113e-09     | 6.159e-06   |
+| gpr[2]_0__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 6.156e-06      | 0.000e+00    | 3.113e-09     | 6.159e-06   |
+| gpr[2]_1__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 6.155e-06      | 0.000e+00    | 3.113e-09     | 6.158e-06   |
+| gpr[2]_4__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 6.155e-06      | 0.000e+00    | 3.131e-09     | 6.158e-06   |
+| gpr[2]_6__MUX2X0P5H7L_A_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 6.153e-06      | 0.000e+00    | 3.134e-09     | 6.157e-06   |
+| seg0[3]_reg_p_D_OAI22X0P5H7L_Y                                                                              | 1.2             | 6.076e-06      | 0.000e+00    | 8.246e-10     | 6.077e-06   |
+| pc[2]_reg_p_D_MUX2X0P5H7L_Y_A_XNOR2X0P5H7L_Y                                                                | 1.2             | 6.047e-06      | 0.000e+00    | 3.096e-09     | 6.050e-06   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_A_OAI21X0P5H7L_B0                                    | 1.2             | 5.897e-06      | 0.000e+00    | 7.030e-10     | 5.897e-06   |
+| seg1[4]_reg_p_D_AOI21X0P5H7L_Y_B0_AOI211X0P5H7L_Y                                                           | 1.2             | 5.737e-06      | 0.000e+00    | 7.684e-10     | 5.737e-06   |
+| gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B                                                                     | 1.2             | 5.682e-06      | 0.000e+00    | 3.166e-09     | 5.685e-06   |
+| seg1[4]_reg_p_D_AOI21X0P5H7L_Y                                                                              | 1.2             | 5.607e-06      | 0.000e+00    | 7.570e-10     | 5.608e-06   |
+| gpr[1]_5__XNOR2X0P5H7L_B                                                                                    | 1.2             | 5.536e-06      | 0.000e+00    | 3.113e-09     | 5.539e-06   |
+| gpr[1]_6__XNOR2X0P5H7L_B                                                                                    | 1.2             | 5.532e-06      | 0.000e+00    | 3.112e-09     | 5.535e-06   |
+| gpr[1]_4__XNOR2X0P5H7L_B                                                                                    | 1.2             | 5.525e-06      | 0.000e+00    | 3.109e-09     | 5.528e-06   |
+| gpr[1]_3__XNOR2X0P5H7L_B                                                                                    | 1.2             | 5.490e-06      | 0.000e+00    | 3.089e-09     | 5.493e-06   |
+| gpr[1]_0__XNOR2X0P5H7L_B                                                                                    | 1.2             | 5.489e-06      | 0.000e+00    | 3.089e-09     | 5.492e-06   |
+| seg1[6]_reg_p_D_OAI2BB1X0P5H7L_Y                                                                            | 1.2             | 5.476e-06      | 0.000e+00    | 1.112e-09     | 5.477e-06   |
+| seg1[7]_reg_p_D_OAI21X0P5H7L_Y                                                                              | 1.2             | 5.468e-06      | 0.000e+00    | 7.078e-10     | 5.469e-06   |
+| gpr[1]_1__XOR2X0P5H7L_B                                                                                     | 1.2             | 5.457e-06      | 0.000e+00    | 3.089e-09     | 5.460e-06   |
+| gpr[1]_2__XOR2X0P5H7L_B                                                                                     | 1.2             | 5.456e-06      | 0.000e+00    | 3.089e-09     | 5.459e-06   |
+| gpr[1]_7__XOR2X0P5H7L_B                                                                                     | 1.2             | 5.321e-06      | 0.000e+00    | 3.131e-09     | 5.324e-06   |
+| gpr[2]_7__MUX2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_NOR4X0P5H7L_B                                                     | 1.2             | 5.283e-06      | 0.000e+00    | 2.667e-10     | 5.284e-06   |
+| seg0[6]_reg_p_D_AOAI211X0P5H7L_Y_B0_AOI21X3H7L_A0_A1_OAOI211X0P5H7L_B0                                      | 1.2             | 5.261e-06      | 0.000e+00    | 7.267e-10     | 5.261e-06   |
+| seg1[5]_reg_p_D_OAI21X0P5H7L_Y_B0_OAI211X1P4H7L_Y                                                           | 1.2             | 5.118e-06      | 0.000e+00    | 6.371e-10     | 5.119e-06   |
+| gpr[1]_3__MUX4X1P4H7L_B_Y_AOI31X0P5H7L_B0                                                                   | 1.2             | 4.977e-06      | 0.000e+00    | 8.038e-10     | 4.978e-06   |
+| gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_AOA211X2H7L_C0_Y_NOR3X1P4H7L_B                                   | 1.2             | 4.907e-06      | 0.000e+00    | 8.825e-10     | 4.908e-06   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_AOI31X0P5H7L_B0                                                                   | 1.2             | 4.898e-06      | 0.000e+00    | 8.038e-10     | 4.899e-06   |
+| seg1[1]_reg_p_D_OAI31X0P5H7L_Y                                                                              | 1.2             | 4.787e-06      | 0.000e+00    | 7.650e-10     | 4.787e-06   |
+| gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B_Y_XOR2X0P5H7L_A_Y_OAI21X0P5H7L_A1                                  | 1.2             | 4.626e-06      | 0.000e+00    | 7.130e-10     | 4.627e-06   |
+| seg0[4]_reg_p_D_OAOI211X0P5H7L_Y_C0_OA211X1H7L_Y                                                            | 1.2             | 4.222e-06      | 0.000e+00    | 1.015e-09     | 4.223e-06   |
+| seg1[5]_reg_p_D_OAI21X0P5H7L_Y                                                                              | 1.2             | 4.168e-06      | 0.000e+00    | 7.160e-10     | 4.169e-06   |
+| gpr[1]_1__MUX4X1P4H7L_B_Y_AOI31X2H7L_B0_Y_NOR2X0P5H7L_A_Y_XOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1                   | 1.2             | 4.150e-06      | 0.000e+00    | 7.130e-10     | 4.151e-06   |
+| seg0[4]_reg_p_D_OAOI211X0P5H7L_Y                                                                            | 1.2             | 4.007e-06      | 0.000e+00    | 7.879e-10     | 4.007e-06   |
+| gpr[0]_0__reg_p                                                                                             | 1.2             | 3.969e-06      | 0.000e+00    | 6.757e-09     | 3.976e-06   |
+| gpr[0]_3__reg_p                                                                                             | 1.2             | 3.969e-06      | 0.000e+00    | 6.757e-09     | 3.976e-06   |
+| gpr[0]_1__reg_p                                                                                             | 1.2             | 3.969e-06      | 0.000e+00    | 6.757e-09     | 3.976e-06   |
+| gpr[0]_2__reg_p                                                                                             | 1.2             | 3.969e-06      | 0.000e+00    | 6.757e-09     | 3.976e-06   |
+| gpr[0]_5__reg_p                                                                                             | 1.2             | 3.969e-06      | 0.000e+00    | 6.719e-09     | 3.976e-06   |
+| gpr[0]_4__reg_p                                                                                             | 1.2             | 3.969e-06      | 0.000e+00    | 6.726e-09     | 3.975e-06   |
+| gpr[0]_6__reg_p                                                                                             | 1.2             | 3.969e-06      | 0.000e+00    | 6.721e-09     | 3.975e-06   |
+| gpr[0]_7__reg_p                                                                                             | 1.2             | 3.969e-06      | 0.000e+00    | 6.642e-09     | 3.975e-06   |
+| seg1[1]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.789e-09     | 3.975e-06   |
+| seg1[5]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.772e-09     | 3.975e-06   |
+| seg1[6]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.767e-09     | 3.975e-06   |
+| seg0[5]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.760e-09     | 3.975e-06   |
+| seg0[6]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.760e-09     | 3.975e-06   |
+| seg1[7]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.756e-09     | 3.975e-06   |
+| seg1[3]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.737e-09     | 3.975e-06   |
+| seg1[4]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.689e-09     | 3.974e-06   |
+| seg0[3]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.686e-09     | 3.974e-06   |
+| seg0[7]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.683e-09     | 3.974e-06   |
+| seg1[2]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.657e-09     | 3.974e-06   |
+| seg0[2]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.652e-09     | 3.974e-06   |
+| seg0[1]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.645e-09     | 3.974e-06   |
+| seg0[4]_reg_p                                                                                               | 1.2             | 3.968e-06      | 0.000e+00    | 6.623e-09     | 3.974e-06   |
+| pc[0]_reg_p                                                                                                 | 1.2             | 3.967e-06      | 0.000e+00    | 6.616e-09     | 3.974e-06   |
+| pc[2]_reg_p                                                                                                 | 1.2             | 3.963e-06      | 0.000e+00    | 6.544e-09     | 3.969e-06   |
+| gpr[1]_2__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.969e-06   |
+| gpr[1]_1__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.969e-06   |
+| gpr[1]_0__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.969e-06   |
+| gpr[1]_3__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.969e-06   |
+| gpr[1]_5__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.719e-09     | 3.969e-06   |
+| pc[1]_reg_p                                                                                                 | 1.2             | 3.963e-06      | 0.000e+00    | 6.548e-09     | 3.969e-06   |
+| gpr[3]_3__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.969e-06   |
+| gpr[3]_2__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.969e-06   |
+| gpr[3]_1__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.969e-06   |
+| gpr[3]_0__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.969e-06   |
+| gpr[3]_5__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.719e-09     | 3.969e-06   |
+| gpr[1]_4__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.726e-09     | 3.969e-06   |
+| gpr[1]_6__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.721e-09     | 3.969e-06   |
+| gpr[1]_7__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.642e-09     | 3.969e-06   |
+| gpr[3]_4__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.726e-09     | 3.969e-06   |
+| gpr[3]_6__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.721e-09     | 3.969e-06   |
+| gpr[3]_7__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.642e-09     | 3.969e-06   |
+| gpr[2]_3__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.968e-06   |
+| gpr[2]_0__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.968e-06   |
+| gpr[2]_1__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.968e-06   |
+| gpr[2]_2__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.757e-09     | 3.968e-06   |
+| gpr[2]_5__reg_p                                                                                             | 1.2             | 3.962e-06      | 0.000e+00    | 6.719e-09     | 3.968e-06   |
+| gpr[2]_4__reg_p                                                                                             | 1.2             | 3.961e-06      | 0.000e+00    | 6.726e-09     | 3.968e-06   |
+| gpr[2]_6__reg_p                                                                                             | 1.2             | 3.961e-06      | 0.000e+00    | 6.721e-09     | 3.968e-06   |
+| gpr[2]_7__reg_p                                                                                             | 1.2             | 3.961e-06      | 0.000e+00    | 6.642e-09     | 3.968e-06   |
+| pc[3]_reg_p                                                                                                 | 1.2             | 3.960e-06      | 0.000e+00    | 6.544e-09     | 3.967e-06   |
+| seg0[7]_reg_p_D_OAI22X0P5H7L_Y_B0_MUX2X0P5H7L_Y                                                             | 1.2             | 3.909e-06      | 0.000e+00    | 2.087e-09     | 3.911e-06   |
+| seg1[3]_reg_p_D_OAI21X0P5H7L_Y                                                                              | 1.2             | 3.841e-06      | 0.000e+00    | 7.047e-10     | 3.842e-06   |
+| seg1[6]_reg_p_D_OAI2BB1X0P5H7L_Y_A1N_OAI2BB1X0P5H7L_Y                                                       | 1.2             | 3.567e-06      | 0.000e+00    | 1.165e-09     | 3.568e-06   |
+| gpr[1]_7__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 3.532e-06      | 0.000e+00    | 3.225e-09     | 3.535e-06   |
+| gpr[1]_3__MUX4X1P4H7L_B_Y_XNOR2X0P7H7L_B                                                                    | 1.2             | 3.515e-06      | 0.000e+00    | 3.258e-09     | 3.518e-06   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_NOR2X1H7L_B_A_XNOR2X0P5H7L_Y                                     | 1.2             | 3.458e-06      | 0.000e+00    | 3.225e-09     | 3.462e-06   |
+| gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B                                                                    | 1.2             | 3.448e-06      | 0.000e+00    | 3.225e-09     | 3.452e-06   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A                                                                    | 1.2             | 3.446e-06      | 0.000e+00    | 3.225e-09     | 3.449e-06   |
+| gpr[1]_0__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A                                                                    | 1.2             | 3.437e-06      | 0.000e+00    | 3.225e-09     | 3.440e-06   |
+| pc[3]_reg_p_D_MUX2X0P5H7L_Y_A_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y                                               | 1.2             | 3.396e-06      | 0.000e+00    | 3.563e-10     | 3.396e-06   |
+| seg0[1]_reg_p_D_OAI32X0P5H7L_Y_B0_OAI21X0P5H7L_Y                                                            | 1.2             | 3.375e-06      | 0.000e+00    | 7.122e-10     | 3.376e-06   |
+| gpr[1]_1__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_OAI21X0P5H7L_A1                                 | 1.2             | 3.301e-06      | 0.000e+00    | 7.130e-10     | 3.302e-06   |
+| gpr[1]_6__MUX4X1P4H7L_B_Y_NOR2X0P5H7L_B_Y_INVX0P5H7L_A_Y_NAND2X0P5H7L_B_Y_XNOR2X0P5H7L_B_Y_NOR2X0P5H7L_B    | 1.2             | 3.286e-06      | 0.000e+00    | 7.642e-10     | 3.287e-06   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_AOI31X0P5H7L_B0_Y_AOI2BB1X0P5H7L_B0                                               | 1.2             | 3.261e-06      | 0.000e+00    | 1.813e-09     | 3.262e-06   |
+| pc[1]_reg_p_D_MUX2X0P5H7L_Y_A_XOR2X0P5H7L_Y                                                                 | 1.2             | 3.223e-06      | 0.000e+00    | 3.091e-09     | 3.226e-06   |
+| seg1[2]_reg_p_D_OAI22X0P5H7L_Y_B0_AOI21X0P5H7L_Y                                                            | 1.2             | 3.195e-06      | 0.000e+00    | 8.218e-10     | 3.196e-06   |
+| gpr[1]_5__MUX4X1P4H7L_B_Y_XNOR2X0P5H7L_A_Y_XNOR2X1H7L_A_Y_NOR2X1P4H7L_B                                     | 1.2             | 3.179e-06      | 0.000e+00    | 9.637e-10     | 3.180e-06   |
+| seg0[5]_reg_p_D_OAI31X0P5H7L_Y_A2_OAI21X0P5H7L_B0                                                           | 1.2             | 3.100e-06      | 0.000e+00    | 7.029e-10     | 3.101e-06   |
+| seg1[4]_reg_p_D_AOI21X0P5H7L_Y_A1_AOI21X0P5H7L_Y                                                            | 1.2             | 3.034e-06      | 0.000e+00    | 8.151e-10     | 3.035e-06   |
+I20260121 12:14:14.912853 81737 Power.cc:1047] power report end, output dir: /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz
+I20260121 12:14:14.912900 81737 Power.cc:1049] power report memory usage 0MB
+I20260121 12:14:14.912909 81737 Power.cc:1051] power report time elapsed 0.006621s

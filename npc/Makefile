@@ -54,11 +54,11 @@ chk:
 	verilator --lint-only -Wall vsrc/$(t).v
 
 # include $(YOSYS_STA_HOME)/Makefile
-mysyn:chk
+syn:chk
 	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES=/home/biruide/ysyx-workbench/npc/vsrc/$(t).v
 	cp -r $(YOSYS_STA_HOME)/result/$(t)* ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
-mysta:
+sta:
 	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES=/home/biruide/ysyx-workbench/npc/vsrc/$(t).v
 	cp -r $(YOSYS_STA_HOME)/result/$(t)* ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
