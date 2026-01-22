@@ -53,6 +53,18 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_info(char *args) {
+  switch (*args)
+  {
+  case 'r':
+    isa_reg_display();
+    // printf();
+    break;
+  case 'w':
+    break;
+  default:
+    printf("%c is unknow\nr - print register\nw - print watching point", *args);
+    break;
+  }
   return 0;
 }
 
@@ -97,8 +109,8 @@ static struct {
   { "info", "Print someshing status", cmd_info },
   { "x", "Print memory", cmd_x },
   { "p", "Print value", cmd_p },
-  { "w", "Set point", cmd_w },
-  { "d", "Delete point", cmd_d },
+  { "w", "Set watching point", cmd_w },
+  { "d", "Delete watching point", cmd_d },
 
   /* TODO: Add more commands */
 
