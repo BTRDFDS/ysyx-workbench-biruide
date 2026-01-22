@@ -80,7 +80,7 @@ static int cmd_x(char *args) {
   if(args==NULL) {printf("x N EXPR\n");return 0;}
   char *n=strtok(args, " ");
   if(n==NULL) {printf("x N EXPR\n");return 0;}
-  char *EXPR = strtok(args, " ");
+  char *EXPR = strtok(NULL, " ");
   if(EXPR==NULL) {printf("x N EXPR\n");return 0;}
   paddr_t addr = atoi(EXPR);
   int len = atoi(n);
