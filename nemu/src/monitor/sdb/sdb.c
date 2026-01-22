@@ -88,7 +88,7 @@ static int cmd_x(char *args) {
   // vaddr_read(addr,len);
   for(int i=0;i<len;i++) {
     // printf("%x:%x",addr,pmem[addr]);
-    printf("%x:%x",addr,vaddr_read(addr+i,1));
+    printf("%x:%x\n",addr,vaddr_read(addr+i,1));
   }
   return 0;
 }
