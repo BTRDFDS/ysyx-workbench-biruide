@@ -56,6 +56,7 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_info(char *args) {
+  if(args == NULL) {printf("r - print register\nw - print watching points\n");}
   switch (*args)
   {
   case 'r':
