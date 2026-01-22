@@ -82,13 +82,13 @@ static int cmd_x(char *args) {
   if(n==NULL) {printf("x N EXPR\n");return 0;}
   char *EXPR = strtok(NULL, " ");
   if(EXPR==NULL) {printf("x N EXPR\n");return 0;}
-  paddr_t addr = strtol(EXPR, NULL, 0);
-  int len = atoi(n);
+  paddr_t addr = strtol(EXPR,NULL,0);
+  int len = strtol(n,NULL,0);
   printf("%x,%x\n",addr,len);
   // vaddr_read(addr,len);
   for(int i=0;i<len;i++) {
     // printf("%x:%x",addr,pmem[addr]);
-    printf("%x:%x",addr,vaddr_read(addr+i,16));
+    printf("%x:%x",addr,vaddr_read(addr+i,1));
   }
   return 0;
 }
