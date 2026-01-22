@@ -49,6 +49,8 @@ static int cmd_c(char *args) {
 
 
 static int cmd_si(char *args) {
+  // int step = atoi(args);
+  cpu_exec(atoi(args));
   return 0;
 }
 
@@ -60,9 +62,10 @@ static int cmd_info(char *args) {
     isa_reg_display();
     break;
   case 'w':
+    printf("print watching points when pc = %x\n", cpu.pc);
     break;
   default:
-    printf("%c is unknow\nr - print register\nw - print watching point\n", *args);
+    printf("%c is unknow\nr - print register\nw - print watching points\n", *args);
     break;
   }
   return 0;
