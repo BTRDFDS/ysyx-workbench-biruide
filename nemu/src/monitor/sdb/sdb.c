@@ -56,13 +56,13 @@ static int cmd_info(char *args) {
   switch (*args)
   {
   case 'r':
+    printf("print register\n");
     isa_reg_display();
-    printf("print register");
     break;
   case 'w':
     break;
   default:
-    printf("%c is unknow\nr - print register\nw - print watching point", *args);
+    printf("%c is unknow\nr - print register\nw - print watching point\n", *args);
     break;
   }
   return 0;
