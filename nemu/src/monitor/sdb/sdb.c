@@ -84,11 +84,11 @@ static int cmd_x(char *args) {
   if(EXPR==NULL) {printf("x N EXPR\n");return 0;}
   paddr_t addr = strtol(EXPR,NULL,0);
   int len = strtol(n,NULL,0);
-  printf("%x,%x\n",addr,len);
+  // printf("%x,%x\n",addr,len);
   // vaddr_read(addr,len);
   for(int i=0;i<len;i++) {
     // printf("%x:%x",addr,pmem[addr]);
-    printf("%x:%x\n",addr+i,vaddr_read(addr+i,4));
+    printf("%x:%8x\n",addr+i,vaddr_read(addr+i,4));
   }
   return 0;
 }
