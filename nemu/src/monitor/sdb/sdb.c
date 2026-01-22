@@ -48,6 +48,36 @@ static int cmd_c(char *args) {
 }
 
 
+static int cmd_si(char *args) {
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  return 0;
+}
+
+
+static int cmd_x(char *args) {
+  return 0;
+}
+
+
+static int cmd_p(char *args) {
+  return 0;
+}
+
+
+static int cmd_w(char *args) {
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  return 0;
+}
+
+
+
+
 static int cmd_q(char *args) {
   nemu_state.state = NEMU_QUIT;
   return -1;
@@ -63,6 +93,12 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si", "Step into one instruction", cmd_si },
+  { "info", "Print someshing status", cmd_info },
+  { "x", "Print memory", cmd_x },
+  { "p", "Print value", cmd_p },
+  { "w", "Set point", cmd_w },
+  { "d", "Delete point", cmd_d },
 
   /* TODO: Add more commands */
 
