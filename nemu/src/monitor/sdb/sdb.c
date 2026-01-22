@@ -49,8 +49,9 @@ static int cmd_c(char *args) {
 
 
 static int cmd_si(char *args) {
-  // int step = atoi(args);
-  cpu_exec(atoi(args));
+  int step=1;
+  if(args != NULL) {step=atoi(args);}
+  cpu_exec(step);
   return 0;
 }
 
