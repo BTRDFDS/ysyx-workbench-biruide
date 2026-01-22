@@ -57,7 +57,7 @@ static int cmd_info(char *args) {
   {
   case 'r':
     isa_reg_display();
-    // printf();
+    printf("print register");
     break;
   case 'w':
     break;
