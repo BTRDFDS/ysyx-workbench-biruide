@@ -86,9 +86,10 @@ static int cmd_x(char *args) {
   int len = strtol(n,NULL,0);
   // printf("%x,%x\n",addr,len);
   // vaddr_read(addr,len);
+  printf("pc = %x\n",cpu.pc);
   for(int i=0;i<len;i++) {
     // printf("%x:%x",addr,pmem[addr]);
-    printf("%x:%8x\n",addr+i*32,paddr_read(addr+i,4));
+    printf("%x:%8x\n",addr+i*32,vaddr_read(addr+i,4));
   }
   return 0;
 }
