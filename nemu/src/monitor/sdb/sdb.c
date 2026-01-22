@@ -82,7 +82,7 @@ static int cmd_x(char *args) {
   if(n==NULL) {printf("x N EXPR\n");return 0;}
   char *EXPR = strtok(NULL, " ");
   if(EXPR==NULL) {printf("x N EXPR\n");return 0;}
-  paddr_t addr = atoi(EXPR);
+  paddr_t addr = strtol(EXPR, NULL, 0);
   int len = atoi(n);
   printf("%x,%x\n",addr,len);
   // vaddr_read(addr,len);
