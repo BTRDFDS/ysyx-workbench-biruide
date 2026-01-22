@@ -18,6 +18,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
+#include <memory/vaddr.h>
 
 static int is_batch_mode = false;
 
@@ -48,6 +50,67 @@ static int cmd_c(char *args) {
 }
 
 
+static int cmd_si(char *args) {
+  int step=1;
+  if(args != NULL) {step=atoi(args);}
+  cpu_exec(step);
+  return 0;
+}
+
+static int cmd_info(char *args) {
+  if(args == NULL) {printf("r - print register\nw - print watching points\n");return 1;}
+  switch (*args)
+  {
+  case 'r':
+    printf("print register when pc = %x\n", cpu.pc);
+    isa_reg_display();
+    break;
+  case 'w':
+    printf("print watching points when pc = %x\n", cpu.pc);
+    break;
+  default:
+    printf("%c is unknow\nr - print register\nw - print watching points\n", *args);
+    break;
+  }
+  return 0;
+}
+
+
+static int cmd_x(char *args) {
+  if(args==NULL) {printf("x N EXPR\n");return 0;}
+  char *n=strtok(args, " ");
+  if(n==NULL) {printf("x N EXPR\n");return 0;}
+  char *EXPR = strtok(NULL, " ");
+  if(EXPR==NULL) {printf("x N EXPR\n");return 0;}
+  paddr_t addr = strtol(EXPR,NULL,0);
+  int len = strtol(n,NULL,0);
+  // printf("%x,%x\n",addr,len);
+  // vaddr_read(addr,len);
+  printf("pc = %x\n",cpu.pc);
+  for(int i=0;i<len;i++) {
+    // printf("%x:%x",addr,pmem[addr]);
+    printf("%x:%8x\n",addr+i*4,vaddr_read(addr+i*4,4));
+  }
+  return 0;
+}
+
+
+static int cmd_p(char *args) {
+  return 0;
+}
+
+
+static int cmd_w(char *args) {
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  return 0;
+}
+
+
+
+
 static int cmd_q(char *args) {
   nemu_state.state = NEMU_QUIT;
   return -1;
@@ -63,6 +126,12 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si", "Step into one instruction", cmd_si },
+  { "info", "Print someshing status", cmd_info },
+  { "x", "Print memory", cmd_x },
+  { "p", "Print value", cmd_p },
+  { "w", "Set watching point", cmd_w },
+  { "d", "Delete watching point", cmd_d },
 
   /* TODO: Add more commands */
 
