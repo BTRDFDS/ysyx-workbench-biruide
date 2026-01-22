@@ -56,7 +56,7 @@ static int cmd_info(char *args) {
   switch (*args)
   {
   case 'r':
-    printf("print register\n");
+    printf("print register when pc = %x\n", cpu.pc);
     isa_reg_display();
     break;
   case 'w':
