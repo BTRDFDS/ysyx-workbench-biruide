@@ -213,9 +213,15 @@ uint32_t eval(int p, int q) {
     int val2 = eval(op + 1, q);
 
     switch (tokens[op].type) {
-      case '+': return val1 + val2;
-      case '-': return val1 - val2;
-      case '*': return val1 * val2;
+      case '+':
+        return val1 + val2;
+        break;
+      case '-':
+        return val1 - val2;
+        break;
+      case '*':
+        return val1 * val2;
+        break;
       case '/': 
         if(val2==0){printf("%d: ?/0 => error\n",op);return 0;}
         return val1 / val2;
