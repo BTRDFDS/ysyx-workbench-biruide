@@ -114,7 +114,7 @@ static bool make_token(char *e) {
             tokens[nr_token].type=rules[i].token_type;
             break;
         }
-        printf("%d:%s",nr_token,tokens[nr_token].str);
+        printf("%d:%s(%s)\n",nr_token,tokens[nr_token].str,substr_start);
         nr_token++;
         break;
       }
