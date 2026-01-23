@@ -101,10 +101,10 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-        if(nr_token>=32){printf("too many\n");return 0;}
+        if(nr_token>=32){printf("too many input\n");return 0;}
         switch (rules[i].token_type) {
           case(TK_NUM):
-            if(substr_len>=32){printf("%d:%.*s too long\n",position-substr_len,substr_len,substr_start);return 0;}
+            if(substr_len>=32){printf("%d:%.*s too long,should <=32\n",position-substr_len,substr_len,substr_start);return 0;}
             tokens[nr_token].type=TK_NUM;
             strncpy(tokens[nr_token].str,substr_start,substr_len);
             break;
@@ -141,7 +141,7 @@ word_t expr(char *e, bool *success) {
   // TODO();
   for (int i = 0; i < nr_token; i++)
   {
-    printf("%d:type=%d str=%s\n",i,tokens[i].type,tokens[i].str);
+    printf("%d:type=%c str=%s\n",i,tokens[i].type,tokens[i].str);
   }
   
 
