@@ -10,3 +10,5 @@
 !Kconfig
 include/config
 include/generated
+../nvboard/
+../yosys-sta/
