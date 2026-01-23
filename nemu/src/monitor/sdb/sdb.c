@@ -58,7 +58,7 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_info(char *args) {
-  if(args == NULL) {printf("r - print register\nw - print watching points\n");return 1;}
+  if(args == NULL) {printf("r - print register\nw - print watchpoints\n");return 1;}
   switch (*args)
   {
   case 'r':
@@ -66,10 +66,10 @@ static int cmd_info(char *args) {
     isa_reg_display();
     break;
   case 'w':
-    printf("print watching points when pc = %x\n", cpu.pc);
+    printf("print watchpoints when pc = %x\n", cpu.pc);
     break;
   default:
-    printf("%c is unknow\nr - print register\nw - print watching points\n", *args);
+    printf("%c is unknow\nr - print register\nw - print watchpoints\n", *args);
     break;
   }
   return 0;
@@ -96,6 +96,8 @@ static int cmd_x(char *args) {
 
 
 static int cmd_p(char *args) {
+  bool success;
+  expr(args,&success);
   return 0;
 }
 
