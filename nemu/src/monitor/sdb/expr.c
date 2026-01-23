@@ -204,13 +204,22 @@ uint32_t eval(int p, int q) {
         continue;
       }
     }
-    if(op==p||op==q){
+    int val1, val2;
+    if((op==q)){
       printf("Bad expression\n");
       return 0;
+    }else if(op==p){
+      if(tokens[p].type=='-'){
+        val1=0;
+      }else{
+      printf("Bad expression\n");
+      return 0;
+      }
+    }else{
+      val1 = eval(p, op - 1);
     }
     // op = the position of 主运算符 in the token expression;
-    int val1 = eval(p, op - 1);
-    int val2 = eval(op + 1, q);
+    val2 = eval(op + 1, q);
 
     switch (tokens[op].type) {
       case '+':
