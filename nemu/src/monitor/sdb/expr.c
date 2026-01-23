@@ -104,7 +104,7 @@ static bool make_token(char *e) {
         if(nr_token>=32){printf("too many\n");return 0;}
         switch (rules[i].token_type) {
           case(TK_NUM):
-            if(substr_len>=32){printf("%d:%.*s too long\n",position,substr_len,substr_start);return 0;}
+            if(substr_len>=32){printf("%d:%.*s too long\n",position-substr_len,substr_len,substr_start);return 0;}
             tokens[nr_token].type=TK_NUM;
             strncpy(tokens[nr_token].str,substr_start,substr_len);
             break;
