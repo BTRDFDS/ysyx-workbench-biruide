@@ -176,20 +176,66 @@ uint32_t eval(int p, int q) {
     return eval(p + 1, q - 1);
   }
   else {
-    int op;
-    for (int i = p; op <= q; i++) {
-      if(
-        tokens[i].type!=TK_NUM&&
-      )
+    int op=p;
+    int c=0;
+    int np=0;//等级
+    int j=0;//缓存等级
+    for (int i = p; i <= q; i++) {
+      if(tokens[i].type=='(')c++;
+      else if(tokens[i].type==')')c--;
+      if(c==0&&tokens[i].type!=TK_NUM&&tokens[i].type!=')'){
+        switch (tokens[i].type)
+        {
+        case '+':
+          j=2;
+          break;
+        case '-':
+          if(i>0&&tokens[i-1].type==TK_NUM){
+            j=2;
+          }else{
+            j=0;
+          }
+        case '*':
+        case '/':
+          j=1;
+        default:
+          j=0;
+          break;
+        }
+        if(j>=np){
+          op=i;
+          np=j;
+        }
+        continue;
+      }
+    }
+    int val1, val2;
+    if((op==q)){
+      printf("Bad expression\n");
+      return 0;
+    }else if(op==p){
+      if(tokens[p].type=='-'){
+        val1=0;
+      }else{
+      printf("Bad expression\n");
+      return 0;
+      }
+    }else{
+      val1 = eval(p, op - 1);
     }
     // op = the position of 主运算符 in the token expression;
-    int val1 = eval(p, op - 1);
-    int val2 = eval(op + 1, q);
+    val2 = eval(op + 1, q);
 
     switch (tokens[op].type) {
-      case '+': return val1 + val2;
-      case '-': return val1 - val2;
-      case '*': return val1 * val2;
+      case '+':
+        return val1 + val2;
+        break;
+      case '-':
+        return val1 - val2;
+        break;
+      case '*':
+        return val1 * val2;
+        break;
       case '/': 
         if(val2==0){printf("%d: ?/0 => error\n",op);return 0;}
         return val1 / val2;
@@ -208,7 +254,7 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
   // for (int i = 0; i < nr_token; i++){printf("%d:type=%c str=%s\n",i,tokens[i].type,tokens[i].str);}
-  
+  printf("%d\n",eval(0,nr_token-1));
 
   return 0;
 }
