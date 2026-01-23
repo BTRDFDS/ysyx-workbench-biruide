@@ -101,10 +101,10 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-        if(nr_token>=32){printf("too many\n");return 0;}
+        if(nr_token>=32){printf("too many input\n");return 0;}
         switch (rules[i].token_type) {
           case(TK_NUM):
-            if(substr_len>=32){printf("%d:%.*s too long\n",position-substr_len,substr_len,substr_start);return 0;}
+            if(substr_len>=10){printf("%d:%.*s too long,should <=10(2147483647)\n",position-substr_len,substr_len,substr_start);return 0;}
             tokens[nr_token].type=TK_NUM;
             strncpy(tokens[nr_token].str,substr_start,substr_len);
             break;
@@ -129,7 +129,75 @@ static bool make_token(char *e) {
 
   return true;
 }
+bool check_parentheses(int p, int q) {
+  if(tokens[p].type!='('||tokens[q].type!=')'){
+    return false;
+  }
+  else{
+    // int l=0;
+    // int r=0;
+    int c=0;
+    for(int i=p;i<=q;i++){
+      if(tokens[i].type=='(')c++;
+      else if(tokens[i].type==')')c--;
+      if(c<=0){
+        if(i==q)return true;
+        else return false;
+      }
+      // if(tokens[i].type=='(')l++;
+      // if(tokens[i].type==')')r++;
+    }
+    // if(l==r)return true;
+    // else return false;
+  }
+  return false;
+}
+uint32_t eval(int p, int q) {
+  if (p > q) {
+    printf("Bad expression\n");
+    return 0;
+    /* Bad expression */
+  }
+  else if (p == q) {
+    if(tokens[p].type!=TK_NUM){
+      printf("Bad expression\n");
+      return 0;
+    }
+    return strtol(tokens[p].str,NULL,0);
+    /* Single token.
+     * For now this token should be a number.
+     * Return the value of the number.
+     */
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p + 1, q - 1);
+  }
+  else {
+    int op;
+    for (int i = p; op <= q; i++) {
+      if(
+        tokens[i].type!=TK_NUM&&
+      )
+    }
+    // op = the position of 主运算符 in the token expression;
+    int val1 = eval(p, op - 1);
+    int val2 = eval(op + 1, q);
 
+    switch (tokens[op].type) {
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/': 
+        if(val2==0){printf("%d: ?/0 => error\n",op);return 0;}
+        return val1 / val2;
+        break;
+      default: assert(0);
+    }
+  }
+}
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -139,10 +207,7 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
-  for (int i = 0; i < nr_token; i++)
-  {
-    printf("%d:type=%d str=%s\n",i,tokens[i].type,tokens[i].str);
-  }
+  // for (int i = 0; i < nr_token; i++){printf("%d:type=%c str=%s\n",i,tokens[i].type,tokens[i].str);}
   
 
   return 0;
