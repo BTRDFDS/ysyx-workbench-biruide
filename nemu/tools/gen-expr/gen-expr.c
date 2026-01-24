@@ -30,14 +30,18 @@ static char *code_format =
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
-int len = 65535;
-int iTemp,j;
+char *useBuf;
+int len = 65530;
+int iTemp,j,k;
 // char *cTemp = NULL;
 uint32_t choose(uint32_t n){
   return rand()%n;
 }
+int max[10]={1,9,99,999,9999,99999,999999,9999999,99999999,999999999};
 void gen(char c) {
-  sprintf(buf + strlen(buf), "%c", c);
+  // sprintf(useBuf, "%c", c);
+  *useBuf=c;
+  useBuf++;
 }
 void gen_num() {
   if(len>10){
@@ -53,16 +57,20 @@ void gen_num() {
 
 
 
-  if(len>31){
-    iTemp=2^31;
+  if(len>=10){
+    iTemp=INT32_MAX;
   }else{
-    iTemp=2^len;
+    // iTemp=max[len];
+    // iTemp=2^len;
+    iTemp=1U<<len;
   }
   if(iTemp==0){iTemp=1;}
   // sprintf(cTemp,"%u",iTemp);
   // if(len-strlen(cTemp)>0)
-  sprintf(buf+ strlen(buf), "%u",abs(rand()%iTemp));
-  len=65536-strlen(buf);
+  k=sprintf(useBuf, "%u",abs(rand()%iTemp));
+  useBuf+=k;
+  // len=65536-strlen(buf);
+  len-=k;
   if(j>0){
     for(int i=0;i<j;i++){gen(' ');}
   }
@@ -111,18 +119,24 @@ int main(int argc, char *argv[]) {
   int seed = time(0);
   // srand(seed);
   // srand(1769172359);//修复清零的种子
-  // srand(1769173342);//修复除以零的种子
+  srand(1769173342);//修复除以零的种子
   // printf("seed = %d\n", seed);
   // int loop = 2000;
-  int loop = 1;
+  int loop = 10;
   if (argc > 1) {
     sscanf(argv[1], "%d", &loop);
   }
   int i;
   for (i = 0; i < loop; i ++) {
     // if(1%1000==0){printf("new is %d",i);}
+    useBuf=buf;
     len = 65535;
-    buf[0] = '\0';
+    // buf[0] = '\0';
+    // code_buf[0] = '\0';
+
+    memset(buf, 0, sizeof(buf));
+    memset(code_buf, 0, sizeof(code_buf));
+
     gen_rand_expr();
 
     sprintf(code_buf, code_format, buf);
