@@ -31,24 +31,41 @@ static char *code_format =
 "  return 0; "
 "}";
 int len = 65535;
-int iTemp;
+int iTemp,j;
 // char *cTemp = NULL;
 uint32_t choose(uint32_t n){
   return rand()%n;
 }
+void gen(char c) {
+  sprintf(buf + strlen(buf), "%c", c);
+}
 void gen_num() {
+  if(len>10){
+    iTemp=rand()%10;
+  }else if(len>1){
+    iTemp=rand()%len-1;
+  }else{iTemp=0;}
+  if(iTemp!=0){
+    len-=iTemp;//插入空格
+    j = rand()%iTemp;//后面是j个，前面是iTemp-j个
+    for(int i=0;i<iTemp-j;i++){gen(' ');}
+  }else{j=0;}
+
+
+
   if(len>31){
     iTemp=2^31;
   }else{
     iTemp=2^len;
   }
+  if(iTemp==0){iTemp=1;}
   // sprintf(cTemp,"%u",iTemp);
   // if(len-strlen(cTemp)>0)
   sprintf(buf+ strlen(buf), "%u",abs(rand()%iTemp));
   len=65536-strlen(buf);
-}
-void gen(char c) {
-  sprintf(buf + strlen(buf), "%c", c);
+  if(j>0){
+    for(int i=0;i<j;i++){gen(' ');}
+  }
 }
 void gen_rand_op(){
   switch(choose(4)){
@@ -61,7 +78,8 @@ void gen_rand_op(){
 }
 static void gen_rand_expr() {
   iTemp = choose(3);
-  if(len<=1){iTemp=0;}
+  if(len<=2){iTemp=0;}
+  // else if(len<=2){iTemp=0;}
   switch (iTemp) {
     case 0:
       gen_num();
@@ -80,7 +98,11 @@ static void gen_rand_expr() {
       gen_rand_expr();
       break;
     default:
-      gen_num();
+      len-=2;
+      gen_rand_expr();
+      gen_rand_op();
+      len++;
+      gen_rand_expr();
       break;
   }
 }
@@ -89,14 +111,16 @@ int main(int argc, char *argv[]) {
   int seed = time(0);
   // srand(seed);
   // srand(1769172359);//修复清零的种子
-  srand(1769173342);//修复除以零的种子
-  printf("seed = %d\n", seed);
+  // srand(1769173342);//修复除以零的种子
+  // printf("seed = %d\n", seed);
+  // int loop = 2000;
   int loop = 1;
   if (argc > 1) {
     sscanf(argv[1], "%d", &loop);
   }
   int i;
   for (i = 0; i < loop; i ++) {
+    // if(1%1000==0){printf("new is %d",i);}
     len = 65535;
     buf[0] = '\0';
     gen_rand_expr();
@@ -108,19 +132,20 @@ int main(int argc, char *argv[]) {
     fputs(code_buf, fp);
     fclose(fp);
 
-    int ret = system("gcc /tmp/.code.c -o /tmp/.expr -Werror");
+    int ret = system("gcc /tmp/.code.c -o /tmp/.expr 2>/dev/null");
     // int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
-    if (ret != 0) continue;
+    // printf("%d\n",ret);
+    if (ret != 0){i--;continue;}
 
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
-    int result;
+    int result,res;
     ret = fscanf(fp, "%d", &result);
-    pclose(fp);
-    // if(ret != 1) continue;
-    // if(res != 0) continue;
-    printf("%u %s\n", result, buf);
+    res=pclose(fp);
+    if(ret != 1){i--;continue;}
+    if(res != 0){i--;continue;}
+    printf("%u,%s\n", result, buf);
   }
   return 0;
 }

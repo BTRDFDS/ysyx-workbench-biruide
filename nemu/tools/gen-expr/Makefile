@@ -19,6 +19,9 @@ include $(NEMU_HOME)/scripts/build.mk
 build/gen-expr:gen-expr.c
 	gcc -g -o $@ $^
 run:build/gen-expr
-	./build/gen-expr 50 > input
+# 	./build/gen-expr 10000 > input
+# 	./build/gen-expr 2000 > input
+	./build/gen-expr 20 > input
 gdb:build/gen-expr
-	gdb -tui ./build/gen-expr 50 > input
+# 	gdb -tui ./build/gen-expr 20
+	gdb -tui ./build/gen-expr 2000
