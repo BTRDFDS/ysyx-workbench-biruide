@@ -14,13 +14,38 @@
 ***************************************************************************************/
 
 #include <common.h>
+#include "monitor/sdb/sdb.h"
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
+#define genExprMax 10000
+void gen_expr(){
+  FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/genExpr", "r");
+  assert(fp!=NULL);
+  char buf[65570];
+  char *res;
+  char *exp;
+  bool success;
+  for(int i=0;i<genExprMax;i++){
+    if(fgets(buf, 65570, fp)!=NULL){
+      res =strtok(buf, ",");
+      if(res==NULL){continue;}
+      exp=strtok(NULL, "\0");
+      if(exp==NULL){continue;}
+      word_t should=strtoul(res, NULL, 10);
+      assert(should==expr(exp,&success));
+      assert(success==1);
+    }else{continue;}
+
+  }
+}
 int main(int argc, char *argv[]) {
+
+  gen_expr();
+
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
