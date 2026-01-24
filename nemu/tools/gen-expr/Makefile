@@ -16,3 +16,14 @@
 NAME = gen-expr
 SRCS = gen-expr.c
 include $(NEMU_HOME)/scripts/build.mk
+build/gen-expr:gen-expr.c
+	gcc -g -o $@ $^ -O0
+run:build/gen-expr
+	./build/gen-expr 10000 > input
+# 	./build/gen-expr 2000 > input
+# 	./build/gen-expr 20 > input
+# 	./build/gen-expr 1000 > input
+gdb:build/gen-expr
+	gdb -tui ./build/gen-expr
+val:
+	time valgrind --leak-check=full --show-reachable=yes ./build/gen-expr 100 > input
