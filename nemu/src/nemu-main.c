@@ -44,7 +44,7 @@ void gen_expr(){
 }
 int main(int argc, char *argv[]) {
 
-  // gen_expr();
+  gen_expr();
 
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
