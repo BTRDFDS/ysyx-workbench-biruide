@@ -185,7 +185,7 @@ uint32_t eval(int p, int q) {
     for (int i = p; i <= q; i++) {
       if(tokens[i].type=='(')c++;
       else if(tokens[i].type==')')c--;
-      if(c==0&&tokens[i].type!=TK_NUM&&tokens[i].type!=')'){
+      else if(c==0&&tokens[i].type!=TK_NUM){
         switch (tokens[i].type)
         {
         case '+':
