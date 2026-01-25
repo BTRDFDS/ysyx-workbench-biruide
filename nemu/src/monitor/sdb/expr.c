@@ -211,7 +211,7 @@ uint32_t eval(int p, int q) {
         continue;
       }
     }
-    uint32_t val1, val2;
+    uint32_t val1, val2,res;
     if((op==q)){
       printf("Bad expression\n");
       return 0;
@@ -227,23 +227,24 @@ uint32_t eval(int p, int q) {
     }
     // op = the position of 主运算符 in the token expression;
     val2 = eval(op + 1, q);
-    Log("%u %c %u", val1, tokens[op].type, val2);
     switch (tokens[op].type) {
       case '+':
-        return val1 + val2;
+        res=val1 + val2;
         break;
       case '-':
-        return val1 - val2;
+        res=val1 - val2;
         break;
       case '*':
-        return val1 * val2;
+        res=val1 * val2;
         break;
       case '/': 
         if(val2==0){printf("%d: ?/0 => error\n",op);return 0;}
-        return val1 / val2;
+        res=val1 / val2;
         break;
       default: assert(0);
     }
+    Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
+    return res;
   }
 }
 
