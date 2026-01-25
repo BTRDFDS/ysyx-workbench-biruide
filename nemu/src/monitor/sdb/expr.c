@@ -165,7 +165,8 @@ uint32_t eval(int p, int q) {
       printf("Bad expression\n");
       return 0;
     }
-    return strtoul(tokens[p].str,NULL,0);
+    // return strtoul(tokens[p].str,NULL,0);
+    return (uint32_t)(strtoul(tokens[p].str,NULL,0) % 0x100000000UL);
     /* Single token.
      * For now this token should be a number.
      * Return the value of the number.
