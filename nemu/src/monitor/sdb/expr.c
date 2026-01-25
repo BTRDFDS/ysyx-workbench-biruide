@@ -179,7 +179,7 @@ uint32_t eval(int p, int q) {
   }
   else {
     int op=p;
-    int c=0;
+    int c=0;//括号计数
     int np=0;//等级
     int j=0;//缓存等级
     for (int i = p; i <= q; i++) {
