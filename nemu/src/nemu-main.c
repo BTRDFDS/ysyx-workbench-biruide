@@ -30,14 +30,20 @@ void gen_expr(){
   char *res;
   char *exp;
   bool success;
+  word_t should,is;
   for(int i=0;i<genExprMax;i++){
     if(fgets(buf, 65570, fp)!=NULL){
       res =strtok(buf, ",");
       if(res==NULL){continue;}
       exp=strtok(NULL, "\0");
       if(exp==NULL){continue;}
-      word_t should=strtoul(res, NULL, 10);
-      assert(should==expr(exp,&success));
+      should=strtoul(res, NULL, 10);
+      is=expr(exp,&success);
+      if(is!=should){
+        printf("error:should=%d, is=%d",should, is);
+        assert(0);
+      }
+      // assert(should==);
       assert(success==1);
     }else{continue;}
 
