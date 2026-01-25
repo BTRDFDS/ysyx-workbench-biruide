@@ -93,10 +93,7 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
-        position += substr_len;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
          * to record the token in the array `tokens'. For certain types
@@ -105,7 +102,7 @@ static bool make_token(char *e) {
         if(nr_token>=65536){printf("too many input\n");return 0;}
         switch (rules[i].token_type) {
           case(TK_NUM):
-            if(substr_len>10){printf("%d:%.*s too long,should <=10(2147483647)\n",position-substr_len,substr_len,substr_start);return 0;}
+            if(substr_len>10){printf("%d:%.*s too long,should <=10(2147483647)\n",position,substr_len,substr_start);return 0;}
             tokens[nr_token].type=TK_NUM;
             strncpy(tokens[nr_token].str,substr_start,substr_len);
             tokens[nr_token].str[substr_len] = '\0';
@@ -118,6 +115,9 @@ static bool make_token(char *e) {
             break;
         }
         // printf("%d:%s(%s)\n",nr_token,tokens[nr_token].str,substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %s",
+            i, rules[i].regex, position, substr_len, tokens[nr_token].str);
+        position += substr_len;
         nr_token++;
         break;
       }
