@@ -40,7 +40,7 @@ void gen_expr(){
       should=strtoul(res, NULL, 10);
       is=expr(exp,&success);
       if(is!=should){
-        printf("error:should=%d, is=%d",should, is);
+        printf("error:should=%d, is=%d\n",should, is);
         assert(0);
       }
       // assert(should==);
