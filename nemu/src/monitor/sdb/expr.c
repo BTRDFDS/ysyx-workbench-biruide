@@ -192,7 +192,7 @@ uint32_t eval(int p, int q) {
           j=2;
           break;
         case '-':
-          if(i>0&&tokens[i-1].type==TK_NUM){
+          if(i>p&&tokens[i-1].type==TK_NUM){
             j=2;
           }else{
             j=0;
