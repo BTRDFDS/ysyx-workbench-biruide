@@ -102,7 +102,7 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-        if(nr_token>=32){printf("too many input\n");return 0;}
+        if(nr_token>=65536){printf("too many input\n");return 0;}
         switch (rules[i].token_type) {
           case(TK_NUM):
             if(substr_len>10){printf("%d:%.*s too long,should <=10(2147483647)\n",position-substr_len,substr_len,substr_start);return 0;}
