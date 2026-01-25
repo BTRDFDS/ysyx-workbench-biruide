@@ -27,3 +27,8 @@ gdb:build/gen-expr
 	gdb -tui ./build/gen-expr
 val:
 	time valgrind --leak-check=full --show-reachable=yes ./build/gen-expr 100 > input
+
+build/do:do.c
+	gcc -g -o $@ $^
+do:build/do
+	./build/do

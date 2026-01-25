@@ -23,20 +23,29 @@ int is_exit_status_bad();
 
 #define genExprMax 10000
 void gen_expr(){
+  // init_regex();
   FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/genExpr", "r");
+  // FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/use", "r");
   assert(fp!=NULL);
   char buf[65570];
   char *res;
   char *exp;
   bool success;
+  word_t should,is;
   for(int i=0;i<genExprMax;i++){
     if(fgets(buf, 65570, fp)!=NULL){
       res =strtok(buf, ",");
       if(res==NULL){continue;}
       exp=strtok(NULL, "\0");
       if(exp==NULL){continue;}
-      word_t should=strtoul(res, NULL, 10);
-      assert(should==expr(exp,&success));
+      should=strtoul(res, NULL, 10);
+      is=expr(exp,&success);
+      if(is!=should){
+        printf("error:should=%u, is=%u\n",should, is);
+        printf("exp=%s\n",exp);
+        assert(0);
+      }
+      // assert(should==);
       assert(success==1);
     }else{continue;}
 
@@ -44,7 +53,6 @@ void gen_expr(){
 }
 int main(int argc, char *argv[]) {
 
-  gen_expr();
 
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
@@ -54,6 +62,9 @@ int main(int argc, char *argv[]) {
 #endif
 
   /* Start engine. */
+  gen_expr();
+  
+  
   engine_start();
 
   return is_exit_status_bad();

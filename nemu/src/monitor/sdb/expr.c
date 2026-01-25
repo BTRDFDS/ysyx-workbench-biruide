@@ -86,28 +86,26 @@ static bool make_token(char *e) {
 
   nr_token = 0;
 
-  while (e[position] != '\0') {
+  while ((e[position] != '\0')&&(e[position]!='\n')) {
     /* Try all rules one by one. */
     for (i = 0; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-            i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
-        position += substr_len;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-        if(nr_token>=32){printf("too many input\n");return 0;}
+        if(nr_token>=65536){printf("too many input\n");return 0;}
         switch (rules[i].token_type) {
           case(TK_NUM):
-            if(substr_len>=10){printf("%d:%.*s too long,should <=10(2147483647)\n",position-substr_len,substr_len,substr_start);return 0;}
+            if(substr_len>10){printf("%d:%.*s too long,should <=10(2147483647)\n",position,substr_len,substr_start);return 0;}
             tokens[nr_token].type=TK_NUM;
             strncpy(tokens[nr_token].str,substr_start,substr_len);
+            tokens[nr_token].str[substr_len] = '\0';
             break;
           case(TK_NOTYPE):
             nr_token--;
@@ -117,6 +115,9 @@ static bool make_token(char *e) {
             break;
         }
         // printf("%d:%s(%s)\n",nr_token,tokens[nr_token].str,substr_start);
+        Log("match rules[%d] = \"%s\" at %d with len %d: %.*s when %d:%s",
+            i, rules[i].regex, position, substr_len, substr_len, substr_start,nr_token,tokens[nr_token].str);
+        position += substr_len;
         nr_token++;
         break;
       }
@@ -164,7 +165,8 @@ uint32_t eval(int p, int q) {
       printf("Bad expression\n");
       return 0;
     }
-    return strtol(tokens[p].str,NULL,0);
+    return strtoul(tokens[p].str,NULL,0);
+    
     /* Single token.
      * For now this token should be a number.
      * Return the value of the number.
@@ -178,27 +180,29 @@ uint32_t eval(int p, int q) {
   }
   else {
     int op=p;
-    int c=0;
+    int c=0;//括号计数
     int np=0;//等级
     int j=0;//缓存等级
     for (int i = p; i <= q; i++) {
       if(tokens[i].type=='(')c++;
       else if(tokens[i].type==')')c--;
-      if(c==0&&tokens[i].type!=TK_NUM&&tokens[i].type!=')'){
+      else if(c==0&&tokens[i].type!=TK_NUM){
         switch (tokens[i].type)
         {
         case '+':
           j=2;
           break;
         case '-':
-          if(i>0&&tokens[i-1].type==TK_NUM){
+          if(i>p&&(tokens[i-1].type==TK_NUM||tokens[i-1].type==')')){
             j=2;
           }else{
             j=0;
           }
+          break;
         case '*':
         case '/':
           j=1;
+          break;
         default:
           j=0;
           break;
@@ -210,7 +214,7 @@ uint32_t eval(int p, int q) {
         continue;
       }
     }
-    int val1, val2;
+    uint32_t val1, val2,res;
     if((op==q)){
       printf("Bad expression\n");
       return 0;
@@ -226,23 +230,24 @@ uint32_t eval(int p, int q) {
     }
     // op = the position of 主运算符 in the token expression;
     val2 = eval(op + 1, q);
-
     switch (tokens[op].type) {
       case '+':
-        return val1 + val2;
+        res=val1 + val2;
         break;
       case '-':
-        return val1 - val2;
+        res=val1 - val2;
         break;
       case '*':
-        return val1 * val2;
+        res=val1 * val2;
         break;
       case '/': 
         if(val2==0){printf("%d: ?/0 => error\n",op);return 0;}
-        return val1 / val2;
+        res=val1 / val2;
         break;
       default: assert(0);
     }
+    Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
+    return res;
   }
 }
 
@@ -250,7 +255,7 @@ word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
-  }
+  }else{*success=true;}
 
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
