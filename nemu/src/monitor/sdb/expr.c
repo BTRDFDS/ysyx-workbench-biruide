@@ -219,12 +219,12 @@ uint32_t eval(int p, int q) {
       printf("Bad expression\n");
       return 0;
     }else if(op==p){
-      // if(tokens[p].type=='-'){
-      //   val1=0;
-      // }else{
+      if(tokens[p].type=='-'){
+        val1=0;
+      }else{
       printf("Bad expression\n");
       return 0;
-      // }
+      }
       
     }else{
       val1 = eval(p, op - 1);
@@ -236,7 +236,12 @@ uint32_t eval(int p, int q) {
         res=val1 + val2;
         break;
       case '-':
-        res=val1 - val2;
+  if (val1 >= val2) {
+    res = val1 - val2;
+  } else {
+    // 显式计算下溢：(val1 + 2^32) - val2，避免编译器隐式优化导致的1位偏差
+    res = (uint32_t)(0x100000000UL + val1 - val2);
+  }
         break;
       case '*':
         res=val1 * val2;
