@@ -237,7 +237,7 @@ uint32_t eval(int p, int q) {
         break;
       case '-':
         res=val1 - val2;
-        if(val1<val2){res++;}
+        // if(val1<val2){res++;}
         break;
       case '*':
         res=val1 * val2;
