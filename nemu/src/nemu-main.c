@@ -41,6 +41,7 @@ void gen_expr(){
       is=expr(exp,&success);
       if(is!=should){
         printf("error:should=%u, is=%u\n",should, is);
+        printf("exp=%s\n",exp);
         assert(0);
       }
       // assert(should==);
