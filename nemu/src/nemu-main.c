@@ -23,6 +23,7 @@ int is_exit_status_bad();
 
 #define genExprMax 10000
 void gen_expr(){
+  // init_regex();
   FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/genExpr", "r");
   assert(fp!=NULL);
   char buf[65570];
@@ -44,7 +45,6 @@ void gen_expr(){
 }
 int main(int argc, char *argv[]) {
 
-  gen_expr();
 
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
@@ -54,6 +54,9 @@ int main(int argc, char *argv[]) {
 #endif
 
   /* Start engine. */
+  gen_expr();
+  
+  
   engine_start();
 
   return is_exit_status_bad();
