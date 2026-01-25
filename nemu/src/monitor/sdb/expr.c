@@ -197,9 +197,11 @@ uint32_t eval(int p, int q) {
           }else{
             j=0;
           }
+          break;
         case '*':
         case '/':
           j=1;
+          break;
         default:
           j=0;
           break;
