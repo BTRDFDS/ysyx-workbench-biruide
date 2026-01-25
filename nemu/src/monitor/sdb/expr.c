@@ -250,7 +250,7 @@ word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
-  }
+  }else{*success=true;}
 
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
