@@ -164,7 +164,7 @@ uint32_t eval(int p, int q) {
       printf("Bad expression\n");
       return 0;
     }
-    return strtol(tokens[p].str,NULL,0);
+    return strtoul(tokens[p].str,NULL,0);
     /* Single token.
      * For now this token should be a number.
      * Return the value of the number.
@@ -210,7 +210,7 @@ uint32_t eval(int p, int q) {
         continue;
       }
     }
-    int val1, val2;
+    uint32_t val1, val2;
     if((op==q)){
       printf("Bad expression\n");
       return 0;
