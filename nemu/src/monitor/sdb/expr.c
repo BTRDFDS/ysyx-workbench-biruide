@@ -219,12 +219,13 @@ uint32_t eval(int p, int q) {
       printf("Bad expression\n");
       return 0;
     }else if(op==p){
-      if(tokens[p].type=='-'){
-        val1=0;
-      }else{
+      // if(tokens[p].type=='-'){
+      //   val1=0;
+      // }else{
       printf("Bad expression\n");
       return 0;
-      }
+      // }
+      
     }else{
       val1 = eval(p, op - 1);
     }
