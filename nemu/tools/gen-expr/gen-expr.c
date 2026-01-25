@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
     fputs(code_buf, fp);
     fclose(fp);
     system("sed 's/\\*/\\*(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
-    int ret = system("gcc /tmp/.code2.c -o /tmp/.expr 2>/dev/null");
+    int ret = system("gcc /tmp/.code2.c -Werror -o /tmp/.expr 2>/dev/null");
     // int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
     // printf("%d\n",ret);
     if (ret != 0){i--;continue;}
