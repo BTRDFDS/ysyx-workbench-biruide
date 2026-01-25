@@ -227,7 +227,7 @@ uint32_t eval(int p, int q) {
     }
     // op = the position of 主运算符 in the token expression;
     val2 = eval(op + 1, q);
-
+    Log("%u %c %u", val1, tokens[op].type, val2);
     switch (tokens[op].type) {
       case '+':
         return val1 + val2;
