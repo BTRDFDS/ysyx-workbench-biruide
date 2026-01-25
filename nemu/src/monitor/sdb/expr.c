@@ -108,6 +108,7 @@ static bool make_token(char *e) {
             if(substr_len>10){printf("%d:%.*s too long,should <=10(2147483647)\n",position-substr_len,substr_len,substr_start);return 0;}
             tokens[nr_token].type=TK_NUM;
             strncpy(tokens[nr_token].str,substr_start,substr_len);
+            tokens[nr_token].str[substr_len] = '\0';
             break;
           case(TK_NOTYPE):
             nr_token--;
