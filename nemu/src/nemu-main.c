@@ -24,8 +24,8 @@ int is_exit_status_bad();
 #define genExprMax 10000
 void gen_expr(){
   // init_regex();
-  FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/genExpr", "r");
-  // FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/use", "r");
+  // FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/genExpr", "r");
+  FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/use", "r");
   assert(fp!=NULL);
   char buf[65570];
   char *res;
