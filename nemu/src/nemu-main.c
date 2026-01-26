@@ -52,13 +52,13 @@ void gen_expr(){
         errShould[err]=should;
         errIs[err]=is;
       }
-      // if(is!=should){
-      //   printf("error:should=%u, is=%u\n",should, is);
-      //   printf("exp=%s\n",exp);
-      //   assert(0);
-      // }
-      // // assert(should==);
-      // assert(success==1);
+      if(is!=should){
+        printf("error:should=%u, is=%u\n",should, is);
+        printf("exp=%s\n",exp);
+        assert(0);
+      }
+      // assert(should==);
+      assert(success==1);
     }else{continue;}
 
   }
