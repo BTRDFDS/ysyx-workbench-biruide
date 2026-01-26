@@ -121,6 +121,13 @@ static bool make_token(char *e) {
             tokens[nr_token].type=TK_REG;
             strncpy(tokens[nr_token].str,substr_start,substr_len);
             tokens[nr_token].str[substr_len] = '\0';
+            break;
+          case(TK_HEX):
+            if(substr_len>8){printf("%d:%.*s too long,should <=8(0xFFFFFFFF)\n",position,substr_len,substr_start);return 0;}
+            tokens[nr_token].type=TK_HEX;
+            strncpy(tokens[nr_token].str,substr_start,substr_len);
+            tokens[nr_token].str[substr_len] = '\0';
+            break;
           default: 
             tokens[nr_token].type=rules[i].token_type;
             break;
