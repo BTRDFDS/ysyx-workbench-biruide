@@ -58,15 +58,13 @@ WP* new_wp(){//其中new_wp()从free_链表中返回一个空闲的监视点结�
   }
   return wp;
 }
-int free_wp(WP *wp) {
+void free_wp(WP *wp) {
   if(wp != NULL && wp->use == true){
     wp->use = false;
     wp->next = free_;
     free_ = wp;
-    return 0;
   }else{
     printf("no watchpoint\n");
-    return -1;
   }
 }
 int checkWp(){
