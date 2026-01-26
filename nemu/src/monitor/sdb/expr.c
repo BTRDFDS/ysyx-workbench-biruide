@@ -24,7 +24,7 @@
 #include <memory/vaddr.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,TK_NUM,TK_REG,TK_NEQ,TK_AND,TK_POINT
+  TK_NOTYPE = 256, TK_EQ,TK_NUM,TK_REG,TK_NEQ,TK_AND,TK_POINT,TK_HEX
 
   /* TODO: Add more token types */
 
@@ -50,7 +50,7 @@ static struct rule {
   {"\\(",'('},
   {"\\)",')'},
   {"[0-9]+",TK_NUM},
-  {"0[xX][0-9a-fA-F]+",TK_NUM},//16进制0x
+  {"0[xX][0-9a-fA-F]+",TK_HEX},//16进制0x
   {"\\$[a-zA-Z0-9]+",TK_REG},//寄存器以$开头
   
 
@@ -183,6 +183,8 @@ uint32_t eval(int p, int q) {
       }
       printf("%d: %s => error\n",p,tokens[p].str);
       return 0;
+    }else if(tokens[p].type==TK_HEX){
+      return (uint32_t)strtoul(tokens[p].str,NULL,16);
     }
       printf("Bad expression\n");
       return 0;
