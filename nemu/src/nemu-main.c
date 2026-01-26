@@ -21,11 +21,11 @@ void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-#define genExprMax 1000
+#define genExprMax 10000
 void gen_expr(){
   // init_regex();
-  FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/input", "r");
-  // FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/genExpr", "r");
+  // FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/input", "r");
+  FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/genExpr", "r");
   // FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/use", "r");
   assert(fp!=NULL);
   char buf[65570];
@@ -66,6 +66,7 @@ void gen_expr(){
   for(int i=0;i<err;i++){
     printf("%d,%u,%u\n",errId[i],errShould[i],errIs[i]);
   }
+  assert(0);
 }
 int main(int argc, char *argv[]) {
 
