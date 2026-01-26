@@ -21,7 +21,7 @@ void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-#define genExprMax 1000
+#define genExprMax 2000
 void gen_expr(){
   // init_regex();
   FILE *fp = fopen("/home/biruide/ysyx-workbench/nemu/tools/gen-expr/genExpr", "r");
