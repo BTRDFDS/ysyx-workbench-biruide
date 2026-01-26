@@ -24,7 +24,7 @@
 #include <memory/vaddr.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,TK_NUM,TK_REG,TK_NEQ,TK_AND,TK_POINT,TK_HEX
+  TK_NOTYPE = 256, TK_EQ,TK_NUM,TK_REG,TK_NEQ,TK_AND,TK_POINT,TK_HEX,TK_OR
 
   /* TODO: Add more token types */
 
@@ -52,6 +52,7 @@ static struct rule {
   {"0[xX][0-9a-fA-F]+",TK_HEX},//16进制0x
   {"\\$[a-zA-Z0-9]+",TK_REG},//寄存器以$开头
   {"[0-9]+",TK_NUM},
+  {"||", TK_OR},
   
 
 };
@@ -223,17 +224,22 @@ word_t eval(int p, int q) {
         switch (tokens[i].type)
         {
         case '+':
-          j=2;
+          j=3;
           break;
         case '-':
           if(i>p&&(tokens[i-1].type==TK_NUM||tokens[i-1].type==')')){
-            j=2;
+            j=3;
           }else{
             j=0;
           }
           break;
         case '*':
         case '/':
+          j=2;
+          break;
+        case TK_EQ:
+        case TK_NEQ:
+        case TK_AND:
           j=1;
           break;
         default:
@@ -278,6 +284,17 @@ word_t eval(int p, int q) {
         if(val2==0){printf("%d: ?/0 => error\n",op);return 0;}
         res=val1 / val2;
         break;
+      case TK_EQ:
+        if(val1==val2)res=1;
+        else res=0;
+        break;
+      case TK_NEQ:
+        if(val1!=val2)res=1;
+        else res=0;
+        break;
+      case TK_AND:
+        if(val1&&val2)res=1;
+        else res=0;
       default: assert(0);
     }
     Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
