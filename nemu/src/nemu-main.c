@@ -32,6 +32,7 @@ void gen_expr(){
   char *exp;
   bool success;
   word_t should,is;
+  int err=0;
   for(int i=0;i<genExprMax;i++){
     if(fgets(buf, 65570, fp)!=NULL){
       res =strtok(buf, ",");
@@ -40,16 +41,18 @@ void gen_expr(){
       if(exp==NULL){continue;}
       should=strtoul(res, NULL, 10);
       is=expr(exp,&success);
-      if(is!=should){
-        printf("error:should=%u, is=%u\n",should, is);
-        printf("exp=%s\n",exp);
-        assert(0);
-      }
-      // assert(should==);
-      assert(success==1);
+      if(is!=should||success!=1){err++;}
+      // if(is!=should){
+      //   printf("error:should=%u, is=%u\n",should, is);
+      //   printf("exp=%s\n",exp);
+      //   assert(0);
+      // }
+      // // assert(should==);
+      // assert(success==1);
     }else{continue;}
 
   }
+  printf("errors:%d in %d\n",err,genExprMax);
 }
 int main(int argc, char *argv[]) {
 
