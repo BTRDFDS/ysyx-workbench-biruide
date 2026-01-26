@@ -22,10 +22,12 @@
 #include <memory/vaddr.h>
 
 static int is_batch_mode = false;
-
+typedef struct watchpoint {} WP;
 void init_regex();
 void init_wp_pool();
 int checkWp();
+WP* new_wp();
+void free_wp(WP *wp);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
