@@ -14,7 +14,8 @@
 ***************************************************************************************/
 
 #include <isa.h>
-
+// include/isa.h
+// src/monitor/sdb/expr.c
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
@@ -169,12 +170,20 @@ uint32_t eval(int p, int q) {
     /* Bad expression */
   }
   else if (p == q) {
-    if(tokens[p].type!=TK_NUM){
+    if(tokens[p].type==TK_NUM){
+    return (uint32_t)strtoul(tokens[p].str,NULL,0);
+    }else if(tokens[p].type==TK_REG){
+      bool *iSuccess = false;
+      return isa_reg_str2val(tokens[p].str,iSuccess);
+    }
+
+
+
+
+
       printf("Bad expression\n");
       return 0;
-    }
-    // return strtoul(tokens[p].str,NULL,0);
-    return (uint32_t)(strtoul(tokens[p].str,NULL,0) % 0x100000000UL);
+
     /* Single token.
      * For now this token should be a number.
      * Return the value of the number.
