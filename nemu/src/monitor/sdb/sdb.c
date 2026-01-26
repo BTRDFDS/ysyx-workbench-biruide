@@ -97,7 +97,7 @@ static int cmd_x(char *args) {
 
 static int cmd_p(char *args) {
   bool success;
-  printf("%d\n",expr(args,&success));
+  printf("%u\n",expr(args,&success));
   return 0;
 }
 
@@ -119,7 +119,7 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_help(char *args);
-
+static int cmd_test(char *args);
 static struct {
   const char *name;
   const char *description;
@@ -134,6 +134,7 @@ static struct {
   { "p", "Print value", cmd_p },
   { "w", "Set watching point", cmd_w },
   { "d", "Delete watching point", cmd_d },
+  { "test", "do somr test", cmd_test}
 
   /* TODO: Add more commands */
 
@@ -160,6 +161,23 @@ static int cmd_help(char *args) {
       }
     }
     printf("Unknown command '%s'\n", arg);
+  }
+  return 0;
+}
+static int cmd_test(char *args) {
+  if(args == NULL) {
+    printf("without order,then will show help\n");
+    cmd_help(NULL);
+  }else{
+    switch (*args)
+    {
+      case 'p':
+        gen_expr();
+        break;
+      default:
+        printf("unknow order\n");
+        break;
+    }
   }
   return 0;
 }
