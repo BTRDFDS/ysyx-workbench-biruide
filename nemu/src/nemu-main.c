@@ -14,13 +14,14 @@
 ***************************************************************************************/
 
 #include <common.h>
-#include "monitor/sdb/sdb.h"
+// #include "monitor/sdb/sdb.h"
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
+/*
 #define genExprMax 10000
 void gen_expr(){
   // init_regex();
@@ -68,6 +69,10 @@ void gen_expr(){
   }
   assert(0);
 }
+*/
+
+
+
 int main(int argc, char *argv[]) {
 
 
@@ -79,7 +84,7 @@ int main(int argc, char *argv[]) {
 #endif
 
   /* Start engine. */
-  gen_expr();
+  // gen_expr();
   
   
   engine_start();
