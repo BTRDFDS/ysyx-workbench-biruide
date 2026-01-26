@@ -208,8 +208,8 @@ word_t eval(int p, int q) {
      */
     return eval(p + 1, q - 1);
   }else if(p+1==q&&tokens[p].type==TK_POINT){
-    if(tokens[q].type==TK_NUM)
-    return vaddr_read((word_t)strtoul(tokens[q].str,NULL,0),4);
+    if(tokens[q].type==TK_NUM||tokens[q].type==TK_HEX)
+    return vaddr_read(eval(q,q),4);
   }
   else {
     int op=p;
