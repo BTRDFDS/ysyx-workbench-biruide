@@ -173,8 +173,14 @@ uint32_t eval(int p, int q) {
     if(tokens[p].type==TK_NUM){
     return (uint32_t)strtoul(tokens[p].str,NULL,0);
     }else if(tokens[p].type==TK_REG){
-      bool *iSuccess = false;
-      return isa_reg_str2val(tokens[p].str,iSuccess);
+      
+      bool iSuccess = false;
+      word_t res=isa_reg_str2val(tokens[p].str,&iSuccess);
+      if(iSuccess==true){
+        return res;
+      }
+      printf("%d: %s => error\n",p,tokens[p].str);
+      return 0;
     }
 
 
