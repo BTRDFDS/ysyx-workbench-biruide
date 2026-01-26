@@ -21,7 +21,7 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,TK_NUM,
+  TK_NOTYPE = 256, TK_EQ,TK_NUM,TK_REG,TK_NEQ,TK_AND,TK_POINT
 
   /* TODO: Add more token types */
 
@@ -39,6 +39,8 @@ static struct rule {
   {" +", TK_NOTYPE},    // spaces
   {"\\+", '+'},         // plus
   {"==", TK_EQ},        // equal
+  {"!=", TK_NEQ},
+  {"&&", TK_AND},
   {"\\-",'-'},
   {"\\*",'*'},
   {"\\/",'/'},
@@ -46,6 +48,8 @@ static struct rule {
   {"\\)",')'},
   {"[0-9]+",TK_NUM},
   {"0[xX][0-9a-fA-F]+",TK_NUM},//16进制0x
+  {"\\$[a-zA-Z0-9]+",TK_REG},//寄存器以$开头
+  
 
 };
 
@@ -110,6 +114,10 @@ static bool make_token(char *e) {
           case(TK_NOTYPE):
             nr_token--;
             break;
+          case(TK_REG):
+            tokens[nr_token].type=TK_REG;
+            strncpy(tokens[nr_token].str,substr_start,substr_len);
+            tokens[nr_token].str[substr_len] = '\0';
           default: 
             tokens[nr_token].type=rules[i].token_type;
             break;
@@ -177,6 +185,8 @@ uint32_t eval(int p, int q) {
      * If that is the case, just throw away the parentheses.
      */
     return eval(p + 1, q - 1);
+  }else if(p+1==q&&tokens[p].type==TK_POINT){
+
   }
   else {
     int op=p;
@@ -250,6 +260,7 @@ uint32_t eval(int p, int q) {
     Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
     return res;
   }
+  return 0;
 }
 
 word_t expr(char *e, bool *success) {
@@ -261,7 +272,11 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
   // for (int i = 0; i < nr_token; i++){printf("%d:type=%c str=%s\n",i,tokens[i].type,tokens[i].str);}
-  
+  for (int i=0;i<nr_token;i++) {
+  if (tokens[i].type == '*' && (i==0||(tokens[i-1].type!=')'&&tokens[i-1].type!=TK_NUM))) {
+    tokens[i].type = TK_POINT;
+  }
+  }
   // printf("%d\n",eval(0,nr_token-1));
   return eval(0,nr_token-1);
   // return 0;
