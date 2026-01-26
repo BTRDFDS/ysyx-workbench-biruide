@@ -295,6 +295,7 @@ word_t eval(int p, int q) {
       case TK_AND:
         if(val1&&val2)res=1;
         else res=0;
+        break;
       default: assert(0);
     }
     Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
