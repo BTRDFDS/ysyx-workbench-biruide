@@ -20,6 +20,8 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <memory/paddr.h>
+#include <memory/vaddr.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ,TK_NUM,TK_REG,TK_NEQ,TK_AND,TK_POINT
@@ -173,7 +175,7 @@ uint32_t eval(int p, int q) {
     if(tokens[p].type==TK_NUM){
     return (uint32_t)strtoul(tokens[p].str,NULL,0);
     }else if(tokens[p].type==TK_REG){
-      
+
       bool iSuccess = false;
       word_t res=isa_reg_str2val(tokens[p].str,&iSuccess);
       if(iSuccess==true){
@@ -182,11 +184,6 @@ uint32_t eval(int p, int q) {
       printf("%d: %s => error\n",p,tokens[p].str);
       return 0;
     }
-
-
-
-
-
       printf("Bad expression\n");
       return 0;
 
@@ -201,7 +198,8 @@ uint32_t eval(int p, int q) {
      */
     return eval(p + 1, q - 1);
   }else if(p+1==q&&tokens[p].type==TK_POINT){
-
+    if(tokens[q].type==TK_NUM)
+    return vaddr_read((uint32_t)strtoul(tokens[q].str,NULL,0),4);
   }
   else {
     int op=p;
