@@ -72,9 +72,9 @@ int checkWp(){
   while(wp_pool[i].use == true&&i<NR_WP){
     if(cpu.pc==wp_pool[i].line){
       Log("watchpoint %d : %u\n",wp_pool[i].NO,wp_pool[i].line);
-      return true;
+      return 0;
     }
     i++;
   }
-  return false;
+  return -1;
 }
