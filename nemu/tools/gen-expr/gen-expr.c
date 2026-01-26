@@ -25,10 +25,11 @@ static char buf[65536] = {};
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
-"int main() { "
-"  unsigned result = %s; "
-"  printf(\"%%u\", result); "
-"  return 0; "
+"#include <stdint.h>\n"
+"int main(){"
+"uint32_t result=%s; "
+"printf(\"%%u\", result); "
+"return 0;"
 "}";
 char *useBuf;
 int len = 65530;
@@ -79,7 +80,10 @@ void gen_rand_op(){
   switch(choose(4)){
     case 0: gen('+'); break;
     case 1: gen('-'); break;
-    case 2: gen('*'); break;
+    case 2:
+      gen('*');
+      
+      break;
     case 3: gen('/'); break;
     default: gen('+'); break;
   }
@@ -145,8 +149,10 @@ int main(int argc, char *argv[]) {
     assert(fp != NULL);
     fputs(code_buf, fp);
     fclose(fp);
-
-    int ret = system("gcc /tmp/.code.c -o /tmp/.expr 2>/dev/null");
+    system("sed 's/\\*/\\*(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
+    system("sed 's/\\+/\\+(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
+    system("sed 's/\\-/\\-(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
+    int ret = system("gcc /tmp/.code2.c -Werror -o /tmp/.expr 2>/dev/null");
     // int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
     // printf("%d\n",ret);
     if (ret != 0){i--;continue;}
