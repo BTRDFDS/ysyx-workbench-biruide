@@ -32,6 +32,10 @@ void gen_expr(){
   char *exp;
   bool success;
   word_t should,is;
+  #define errbuf 10
+  int errId[errbuf]={0};
+  word_t errShould[errbuf]={0};
+  word_t errIs[errbuf]={0};
   int err=0;
   for(int i=0;i<genExprMax;i++){
     if(fgets(buf, 65570, fp)!=NULL){
@@ -41,7 +45,12 @@ void gen_expr(){
       if(exp==NULL){continue;}
       should=strtoul(res, NULL, 10);
       is=expr(exp,&success);
-      if(is!=should||success!=1){err++;}
+      if(is!=should||success!=1){
+        err++;
+        errId[err]=i;
+        errShould[err]=should;
+        errIs[err]=is;
+      }
       // if(is!=should){
       //   printf("error:should=%u, is=%u\n",should, is);
       //   printf("exp=%s\n",exp);
@@ -53,6 +62,9 @@ void gen_expr(){
 
   }
   printf("errors:%d in %d\n",err,genExprMax);
+  for(int i=0;i<err;i++){
+    printf("%d,%u,%u\n",errId[i],errShould[i],errIs[i]);
+  }
 }
 int main(int argc, char *argv[]) {
 
