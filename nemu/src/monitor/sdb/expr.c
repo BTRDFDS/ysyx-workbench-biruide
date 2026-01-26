@@ -52,7 +52,8 @@ static struct rule {
   {"0[xX][0-9a-fA-F]+",TK_HEX},//16进制0x
   {"\\$[a-zA-Z0-9]+",TK_REG},//寄存器以$开头
   {"[0-9]+",TK_NUM},
-  {"||", TK_OR},
+  {"\\|\\|", TK_OR},
+
   
 
 };
