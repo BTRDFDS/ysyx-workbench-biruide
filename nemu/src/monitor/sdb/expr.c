@@ -172,7 +172,7 @@ bool check_parentheses(int p, int q) {
   }
   return false;
 }
-uint32_t eval(int p, int q) {
+word_t eval(int p, int q) {
   if (p > q) {
     printf("Bad expression\n");
     return 0;
@@ -180,7 +180,7 @@ uint32_t eval(int p, int q) {
   }
   else if (p == q) {
     if(tokens[p].type==TK_NUM){
-    return (uint32_t)strtoul(tokens[p].str,NULL,0);
+    return (word_t)strtoul(tokens[p].str,NULL,0);
     }else if(tokens[p].type==TK_REG){
 
       bool iSuccess = false;
@@ -191,7 +191,8 @@ uint32_t eval(int p, int q) {
       printf("%d: %s => error\n",p,tokens[p].str);
       return 0;
     }else if(tokens[p].type==TK_HEX){
-      return (uint32_t)strtoul(tokens[p].str,NULL,16);
+      word_t res = strtoul(tokens[p].str,NULL,16);
+      return res;
     }
       printf("Bad expression\n");
       return 0;
@@ -208,7 +209,7 @@ uint32_t eval(int p, int q) {
     return eval(p + 1, q - 1);
   }else if(p+1==q&&tokens[p].type==TK_POINT){
     if(tokens[q].type==TK_NUM)
-    return vaddr_read((uint32_t)strtoul(tokens[q].str,NULL,0),4);
+    return vaddr_read((word_t)strtoul(tokens[q].str,NULL,0),4);
   }
   else {
     int op=p;
@@ -246,7 +247,7 @@ uint32_t eval(int p, int q) {
         continue;
       }
     }
-    uint32_t val1, val2,res;
+    word_t val1, val2,res;
     if((op==q)){
       printf("Bad expression\n");
       return 0;
