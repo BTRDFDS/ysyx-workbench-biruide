@@ -18,11 +18,12 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include "watchpoint.h"
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
 
 static int is_batch_mode = false;
-typedef struct watchpoint {} WP;
+
 void init_regex();
 void init_wp_pool();
 WP* new_wp();
@@ -105,10 +106,14 @@ static int cmd_p(char *args) {
 
 
 static int cmd_w(char *args) {
+  WP *wp =new_wp();
+  // assert(wp!=0);
+  wp->line=strtoul(args,NULL,0);
   return 0;
 }
 
 static int cmd_d(char *args) {
+  
   return 0;
 }
 
