@@ -14,18 +14,14 @@
 ***************************************************************************************/
 
 #include "sdb.h"
+#include "watchpoint.h"
+#include <cpu/cpu.h>
+#include <cpu/decode.h>
+#include <cpu/difftest.h>
+#include <locale.h>
 
-#define NR_WP 32
 
-typedef struct watchpoint {
-  int NO;
-  struct watchpoint *next;
-
-  /* TODO: Add more members if necessary */
-
-} WP;
-
-static WP wp_pool[NR_WP] = {};
+WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;
 
 void init_wp_pool() {
@@ -41,3 +37,34 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 
+WP* new_wp(){//其中new_wp()从free_链表中返回一个空闲的监视点结构
+  assert(free_ != NULL);
+  WP *wp = free_;
+  free_ = free_->next;
+  wp->use = true;
+  if (wp == NULL) {
+    printf("too many watchpoint\n");
+    assert(0);
+  }
+  return wp;
+}
+void free_wp(WP *wp) {
+  if(wp != NULL && wp->use == true){
+    wp->use = false;
+    wp->next = free_;
+    free_ = wp;
+  }else{
+    printf("no watchpoint\n");
+  }
+}
+int checkWp(){
+  int i=0;
+  while(wp_pool[i].use == true&&i<NR_WP){
+    if(cpu.pc==wp_pool[i].line){
+      Log("watchpoint %d : %u",wp_pool[i].NO,wp_pool[i].line);
+      return 0;
+    }
+    i++;
+  }
+  return -1;
+}

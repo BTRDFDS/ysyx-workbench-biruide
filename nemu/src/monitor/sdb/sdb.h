@@ -20,5 +20,5 @@
 
 word_t expr(char *e, bool *success);
 void gen_expr();
-
+int checkWp();
 #endif
