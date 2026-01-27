@@ -113,8 +113,16 @@ static int cmd_w(char *args) {
 }
 
 static int cmd_d(char *args) {
-  
-  return 0;
+  int no = strtoul(args,NULL,0);
+  for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
+    if(wp_pool[i].NO == no) {
+      free_wp(&wp_pool[i]);
+      printf("delete no %d\n",no);
+      return 0;
+    }
+  }
+  printf("no %d is not exist\n",no);
+  return -1;
 }
 
 

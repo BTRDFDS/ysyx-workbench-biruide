@@ -11,3 +11,5 @@ typedef struct watchpoint {
   /* TODO: Add more members if necessary */
 
 } WP;
+#define NR_WP 32
+static WP wp_pool[NR_WP] = {};
