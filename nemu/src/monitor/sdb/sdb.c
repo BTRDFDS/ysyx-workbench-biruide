@@ -69,7 +69,9 @@ static int cmd_info(char *args) {
     isa_reg_display();
     break;
   case 'w':
-    printf("print watchpoints when pc = %x\n", cpu.pc);
+      for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
+        printf("no %d in line %u\n",wp_pool[i].NO,wp_pool[i].line);
+      }
     break;
   default:
     printf("%c is unknow\nr - print register\nw - print watchpoints\n", *args);
@@ -109,7 +111,7 @@ static int cmd_w(char *args) {
   WP *wp =new_wp();
   assert(wp!=0);
   wp->line=strtoul(args,NULL,0);
-  printf("add no %d in line %d\n",wp->NO,wp->line);
+  printf("add no %d in line %u\n",wp->NO,wp->line);
   return 0;
 }
 
