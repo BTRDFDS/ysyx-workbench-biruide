@@ -107,8 +107,9 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
   WP *wp =new_wp();
-  // assert(wp!=0);
+  assert(wp!=0);
   wp->line=strtoul(args,NULL,0);
+  printf("add no %d in line %d\n",wp->NO,wp->line);
   return 0;
 }
 
