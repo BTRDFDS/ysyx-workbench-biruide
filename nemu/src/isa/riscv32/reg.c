@@ -24,8 +24,30 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
+  for(int i=0;i<4;i++){
+    for(int j=0;j<8;j++){
+      printf("%2d:%3s=%8x  ",i*8+j,regs[i*8+j],cpu.gpr[i*8+j]);
+    }
+    printf("\n");
+  }
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
+  if(s[0] != '$') {
+    *success = false;
+    return 0;
+  }
+  const char *name = s + 1;
+  for(int i = 0; i < 32; i++) {
+    if(strcmp(name, regs[i]) == 0) {
+      *success = true;
+      return cpu.gpr[i];
+    }
+  }
+  if(strcmp(name, "pc") == 0) {
+    *success = true;
+    return cpu.pc;
+  }
+  *success = false;
   return 0;
 }
