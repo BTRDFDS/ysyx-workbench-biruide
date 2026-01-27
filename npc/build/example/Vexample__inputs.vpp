@@ -1,0 +1,24 @@
+// Dump of all post-preprocessor input
+// Blank lines and `line directives have been removed
+//
+// Information:
+//   Version: Verilator 5.040 2025-08-30 rev v5.040-50-g0a9d9db5a
+//   Arguments: --debug --cc --trace -MMD vsrc/example.v --exe csrc/example.cpp --Mdir build/example --build /home/biruide/ysyx-workbench/nvboard/build/nvboard.a -CFLAGS -MMD -CFLAGS -O3 -CFLAGS -I/usr/include/SDL2 -CFLAGS -D_REENTRANT -CFLAGS -I/home/biruide/ysyx-workbench/nvboard/usr/include -LDFLAGS -lSDL2 -LDFLAGS -lSDL2_image -LDFLAGS -lSDL2_ttf
+//   Build jobs: 1
+//   Verilate jobs: 1
+
+`begin_keywords "1800-2023"
+module light(
+  input clk,
+  input rst,
+  output reg [15:0] led
+);
+  reg [31:0] count;
+  always @(posedge clk) begin
+    if (rst) begin led <= 1; count <= 0; end
+    else begin
+      if (count == 0) led <= {led[14:0], led[15]};
+      count <= (count >= 5000000 ? 32'b0 : count + 1);
+    end
+  end
+endmodule

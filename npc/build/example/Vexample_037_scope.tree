@@ -1,0 +1,81 @@
+Verilator Tree Dump (format 0x3900) from <e1527> to <e1606>
+     NETLIST 0x55555730c000 <e1> {a0aa}  $root [1ps/1ps]
+    1: MODULE 0x555557392640 <e1321> {e1ai}  __024root  L1 [P] [1ps]
+    1:1: CELLINLINE 0x5555573b2960 <e1441> {e1ai}  light -> light
+    1:2: VAR 0x555557355d40 <e1325> {e2aj} @dt=0x555557384840@(G/w1)  clk [PI] INPUT [P] [VSTATIC]  PORT
+    1:2: VAR 0x555557355e60 <e1330> {e3aj} @dt=0x555557384840@(G/w1)  rst [PI] INPUT [P] [VSTATIC]  PORT
+    1:2: VAR 0x5555573b4000 <e1336> {e4av} @dt=0x55555738d800@(G/w16)  led [PO] OUTPUT [P] [VSTATIC]  PORT
+    1:2: VAR 0x5555573557a0 <e1470> {e2aj} @dt=0x555557384840@(G/w1)  light__DOT__clk [VSTATIC]  PORT
+    1:2: VAR 0x5555573558c0 <e1132> {e3aj} @dt=0x555557384840@(G/w1)  light__DOT__rst [VSTATIC]  PORT
+    1:2: VAR 0x5555573559e0 <e1140> {e4av} @dt=0x55555738d800@(G/w16)  light__DOT__led [VSTATIC]  PORT
+    1:2: VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
+    1:2: TOPSCOPE 0x55555736bb80 <e1531#> {e1ai}
+    1:2:2: SCOPE 0x555557316460 <e1530#> {e1ai}  TOP [abovep=0] [cellp=0] [modp=0x555557392640]
+    1:2:2:1: VARSCOPE 0x555557399980 <e1533#> {e2aj} @dt=0x555557384840@(G/w1)  TOP->clk [T] [scopep=0x555557316460] -> VAR 0x555557355d40 <e1325> {e2aj} @dt=0x555557384840@(G/w1)  clk [PI] INPUT [P] [VSTATIC]  PORT
+    1:2:2:1: VARSCOPE 0x555557399a40 <e1536#> {e3aj} @dt=0x555557384840@(G/w1)  TOP->rst [T] [scopep=0x555557316460] -> VAR 0x555557355e60 <e1330> {e3aj} @dt=0x555557384840@(G/w1)  rst [PI] INPUT [P] [VSTATIC]  PORT
+    1:2:2:1: VARSCOPE 0x555557399b00 <e1539#> {e4av} @dt=0x55555738d800@(G/w16)  TOP->led [T] [scopep=0x555557316460] -> VAR 0x5555573b4000 <e1336> {e4av} @dt=0x55555738d800@(G/w16)  led [PO] OUTPUT [P] [VSTATIC]  PORT
+    1:2:2:1: VARSCOPE 0x555557399bc0 <e1544#> {e2aj} @dt=0x555557384840@(G/w1)  TOP->light__DOT__clk [T] [scopep=0x555557316460] -> VAR 0x5555573557a0 <e1470> {e2aj} @dt=0x555557384840@(G/w1)  light__DOT__clk [VSTATIC]  PORT
+    1:2:2:1: VARSCOPE 0x555557399c80 <e1547#> {e3aj} @dt=0x555557384840@(G/w1)  TOP->light__DOT__rst [T] [scopep=0x555557316460] -> VAR 0x5555573558c0 <e1132> {e3aj} @dt=0x555557384840@(G/w1)  light__DOT__rst [VSTATIC]  PORT
+    1:2:2:1: VARSCOPE 0x555557399d40 <e1550#> {e4av} @dt=0x55555738d800@(G/w16)  TOP->light__DOT__led [T] [scopep=0x555557316460] -> VAR 0x5555573559e0 <e1140> {e4av} @dt=0x55555738d800@(G/w16)  light__DOT__led [VSTATIC]  PORT
+    1:2:2:1: VARSCOPE 0x555557399e00 <e1553#> {e6ao} @dt=0x55555738db00@(G/w32)  TOP->light__DOT__count [T] [scopep=0x555557316460] -> VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
+    1:2:2:2: ASSIGNALIAS 0x55555736bc20 <e1450> {e2aj} @dt=0x555557384840@(G/w1)
+    1:2:2:2:1: VARREF 0x5555573c60d0 <e1447> {e2aj} @dt=0x555557384840@(G/w1)  clk [RV] <- VARSCOPE 0x555557399980 <e1533#> {e2aj} @dt=0x555557384840@(G/w1)  TOP->clk [T] [scopep=0x555557316460] -> VAR 0x555557355d40 <e1325> {e2aj} @dt=0x555557384840@(G/w1)  clk [PI] INPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2: VARREF 0x5555573c61a0 <e1448> {e2aj} @dt=0x555557384840@(G/w1)  light__DOT__clk [LV] => VARSCOPE 0x555557399bc0 <e1544#> {e2aj} @dt=0x555557384840@(G/w1)  TOP->light__DOT__clk [T] [scopep=0x555557316460] -> VAR 0x5555573557a0 <e1470> {e2aj} @dt=0x555557384840@(G/w1)  light__DOT__clk [VSTATIC]  PORT
+    1:2:2:2: ASSIGNALIAS 0x55555736bcc0 <e1540#> {e3aj} @dt=0x555557384840@(G/w1)
+    1:2:2:2:1: VARREF 0x5555573c6270 <e1456> {e3aj} @dt=0x555557384840@(G/w1)  rst [RV] <- VARSCOPE 0x555557399a40 <e1536#> {e3aj} @dt=0x555557384840@(G/w1)  TOP->rst [T] [scopep=0x555557316460] -> VAR 0x555557355e60 <e1330> {e3aj} @dt=0x555557384840@(G/w1)  rst [PI] INPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2: VARREF 0x5555573c6340 <e1457> {e3aj} @dt=0x555557384840@(G/w1)  light__DOT__rst [LV] => VARSCOPE 0x555557399c80 <e1547#> {e3aj} @dt=0x555557384840@(G/w1)  TOP->light__DOT__rst [T] [scopep=0x555557316460] -> VAR 0x5555573558c0 <e1132> {e3aj} @dt=0x555557384840@(G/w1)  light__DOT__rst [VSTATIC]  PORT
+    1:2:2:2: ASSIGNALIAS 0x55555736bd60 <e1541#> {e4av} @dt=0x55555738d800@(G/w16)
+    1:2:2:2:1: VARREF 0x5555573c6410 <e1465> {e4av} @dt=0x55555738d800@(G/w16)  led [RV] <- VARSCOPE 0x555557399b00 <e1539#> {e4av} @dt=0x55555738d800@(G/w16)  TOP->led [T] [scopep=0x555557316460] -> VAR 0x5555573b4000 <e1336> {e4av} @dt=0x55555738d800@(G/w16)  led [PO] OUTPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2: VARREF 0x5555573c64e0 <e1466> {e4av} @dt=0x55555738d800@(G/w16)  light__DOT__led [LV] => VARSCOPE 0x555557399d40 <e1550#> {e4av} @dt=0x55555738d800@(G/w16)  TOP->light__DOT__led [T] [scopep=0x555557316460] -> VAR 0x5555573559e0 <e1140> {e4av} @dt=0x55555738d800@(G/w16)  light__DOT__led [VSTATIC]  PORT
+    1:2:2:2: ALWAYS 0x555557387d90 <e1554#> {e7ad}
+    1:2:2:2:1: SENTREE 0x555557387e40 <e1030> {e7ak}
+    1:2:2:2:1:1: SENITEM 0x555557387ef0 <e678> {e7am} [POS]
+    1:2:2:2:1:1:1: VARREF 0x5555573c65b0 <e1149> {e7au} @dt=0x555557384840@(G/w1)  clk [RV] <- VARSCOPE 0x555557399980 <e1533#> {e2aj} @dt=0x555557384840@(G/w1)  TOP->clk [T] [scopep=0x555557316460] -> VAR 0x555557355d40 <e1325> {e2aj} @dt=0x555557384840@(G/w1)  clk [PI] INPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2: IF 0x5555573cc000 <e1378> {e8af}
+    1:2:2:2:2:1: VARREF 0x5555573c6680 <e1263> {e8aj} @dt=0x555557384840@(G/w1)  rst [RV] <- VARSCOPE 0x555557399a40 <e1536#> {e3aj} @dt=0x555557384840@(G/w1)  TOP->rst [T] [scopep=0x555557316460] -> VAR 0x555557355e60 <e1330> {e3aj} @dt=0x555557384840@(G/w1)  rst [PI] INPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2:2: ASSIGNDLY 0x55555736be00 <e1372> {e8ay} @dt=0x55555738d800@(G/w16)
+    1:2:2:2:2:2:1: CONST 0x5555573b2a50 <e1162> {e8bb} @dt=0x55555738d800@(G/w16)  16'h1
+    1:2:2:2:2:2:2: VARREF 0x5555573c6750 <e1150> {e8au} @dt=0x55555738d800@(G/w16)  led [LV] => VARSCOPE 0x555557399b00 <e1539#> {e4av} @dt=0x55555738d800@(G/w16)  TOP->led [T] [scopep=0x555557316460] -> VAR 0x5555573b4000 <e1336> {e4av} @dt=0x55555738d800@(G/w16)  led [PO] OUTPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2:2: ASSIGNDLY 0x55555736bea0 <e1164> {e8bk} @dt=0x55555738db00@(G/w32)
+    1:2:2:2:2:2:1: CONST 0x5555573b2b40 <e1278> {e8bn} @dt=0x5555573992c0@(G/sw32)  32'sh0
+    1:2:2:2:2:2:2: VARREF 0x5555573c6820 <e1163> {e8be} @dt=0x55555738db00@(G/w32)  light__DOT__count [LV] => VARSCOPE 0x555557399e00 <e1553#> {e6ao} @dt=0x55555738db00@(G/w32)  TOP->light__DOT__count [T] [scopep=0x555557316460] -> VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
+    1:2:2:2:2:3: IF 0x5555573cc0b0 <e1375> {e10ah}
+    1:2:2:2:2:3:1: EQ 0x5555573cc160 <e764> {e10ar} @dt=0x555557384840@(G/w1)
+    1:2:2:2:2:3:1:1: CONST 0x5555573b2c30 <e1344> {e10au} @dt=0x5555573992c0@(G/sw32)  32'sh0
+    1:2:2:2:2:3:1:2: VARREF 0x5555573c68f0 <e1345> {e10al} @dt=0x55555738db00@(G/w32)  light__DOT__count [RV] <- VARSCOPE 0x555557399e00 <e1553#> {e6ao} @dt=0x55555738db00@(G/w32)  TOP->light__DOT__count [T] [scopep=0x555557316460] -> VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
+    1:2:2:2:2:3:2: ASSIGNDLY 0x55555736bf40 <e1169> {e10bb} @dt=0x55555738d800@(G/w16)
+    1:2:2:2:2:3:2:1: CONCAT 0x5555573cc210 <e1348> {e10bo} @dt=0x55555738d800@(G/w16)
+    1:2:2:2:2:3:2:1:1: SEL 0x555557399ec0 <e1183> {e10bi} @dt=0x555557398900@(G/w15) widthConst=15 decl[15:0]]
+    1:2:2:2:2:3:2:1:1:1: VARREF 0x5555573c69c0 <e1176> {e10bf} @dt=0x55555738d800@(G/w16)  led [RV] <- VARSCOPE 0x555557399b00 <e1539#> {e4av} @dt=0x55555738d800@(G/w16)  TOP->led [T] [scopep=0x555557316460] -> VAR 0x5555573b4000 <e1336> {e4av} @dt=0x55555738d800@(G/w16)  led [PO] OUTPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2:3:2:1:1:2: CONST 0x5555573b2d20 <e1200> {e10bm} @dt=0x5555573989c0@(G/sw4)  4'h0
+    1:2:2:2:2:3:2:1:2: SEL 0x5555573ce000 <e1213> {e10bt} @dt=0x555557384840@(G/w1) widthConst=1 decl[15:0]]
+    1:2:2:2:2:3:2:1:2:1: VARREF 0x5555573c6a90 <e1205> {e10bq} @dt=0x55555738d800@(G/w16)  led [RV] <- VARSCOPE 0x555557399b00 <e1539#> {e4av} @dt=0x55555738d800@(G/w16)  TOP->led [T] [scopep=0x555557316460] -> VAR 0x5555573b4000 <e1336> {e4av} @dt=0x55555738d800@(G/w16)  led [PO] OUTPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2:3:2:1:2:2: CONST 0x5555573b2e10 <e1228> {e10bu} @dt=0x5555573989c0@(G/sw4)  4'hf
+    1:2:2:2:2:3:2:2: VARREF 0x5555573c6b60 <e1168> {e10ax} @dt=0x55555738d800@(G/w16)  led [LV] => VARSCOPE 0x555557399b00 <e1539#> {e4av} @dt=0x55555738d800@(G/w16)  TOP->led [T] [scopep=0x555557316460] -> VAR 0x5555573b4000 <e1336> {e4av} @dt=0x55555738d800@(G/w16)  led [PO] OUTPUT [P] [VSTATIC]  PORT
+    1:2:2:2:2:3: ASSIGNDLY 0x5555573d0000 <e1249> {e11an} @dt=0x55555738db00@(G/w32)
+    1:2:2:2:2:3:1: COND 0x5555573cc2c0 <e1261> {e11bi} @dt=0x55555738db00@(G/w32)
+    1:2:2:2:2:3:1:1: LTE 0x5555573cc370 <e1360> {e11ax} @dt=0x555557384840@(G/w1)
+    1:2:2:2:2:3:1:1:1: CONST 0x5555573b2f00 <e1352> {e11ba} @dt=0x5555573992c0@(G/sw32)  32'sh4c4b40
+    1:2:2:2:2:3:1:1:2: VARREF 0x5555573c6c30 <e1353> {e11ar} @dt=0x55555738db00@(G/w32)  light__DOT__count [RV] <- VARSCOPE 0x555557399e00 <e1553#> {e6ao} @dt=0x55555738db00@(G/w32)  TOP->light__DOT__count [T] [scopep=0x555557316460] -> VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
+    1:2:2:2:2:3:1:2: CONST 0x5555573b2ff0 <e1302> {e11bk} @dt=0x55555738db00@(G/w32)  32'h0
+    1:2:2:2:2:3:1:3: ADD 0x5555573cc420 <e1262> {e11by} @dt=0x55555738db00@(G/w32)
+    1:2:2:2:2:3:1:3:1: CONST 0x5555573b30e0 <e1365> {e11ca} @dt=0x5555573992c0@(G/sw32)  32'sh1
+    1:2:2:2:2:3:1:3:2: VARREF 0x5555573c6d00 <e1366> {e11bs} @dt=0x55555738db00@(G/w32)  light__DOT__count [RV] <- VARSCOPE 0x555557399e00 <e1553#> {e6ao} @dt=0x55555738db00@(G/w32)  TOP->light__DOT__count [T] [scopep=0x555557316460] -> VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
+    1:2:2:2:2:3:2: VARREF 0x5555573c6dd0 <e1248> {e11ah} @dt=0x55555738db00@(G/w32)  light__DOT__count [LV] => VARSCOPE 0x555557399e00 <e1553#> {e6ao} @dt=0x55555738db00@(G/w32)  TOP->light__DOT__count [T] [scopep=0x555557316460] -> VAR 0x555557355b00 <e1148> {e6ao} @dt=0x55555738db00@(G/w32)  light__DOT__count [VSTATIC]  VAR
+    3: TYPETABLE 0x5555572e8800 <e2> {a0aa}
+		detailed  ->  BASICDTYPE 0x555557384840 <e104> {d53aw} @dt=this@(G/w1)  logic [GENERIC] kwd=logic
+		detailed  ->  BASICDTYPE 0x5555573989c0 <e1192> {e10bi} @dt=this@(G/sw4)  logic [GENERIC] kwd=logic range=[3:0]
+		detailed  ->  BASICDTYPE 0x555557398900 <e1180> {e10bi} @dt=this@(G/w15)  logic [GENERIC] kwd=logic range=[14:0]
+		detailed  ->  BASICDTYPE 0x55555738d800 <e1139> {e4ak} @dt=this@(G/w16)  logic [GENERIC] kwd=logic range=[15:0]
+		detailed  ->  BASICDTYPE 0x55555738db00 <e1147> {e6ad} @dt=this@(G/w32)  logic [GENERIC] kwd=logic range=[31:0]
+		detailed  ->  BASICDTYPE 0x5555573992c0 <e1273> {e8bn} @dt=this@(G/sw32)  logic [GENERIC] kwd=logic range=[31:0]
+    3:1: BASICDTYPE 0x555557384840 <e104> {d53aw} @dt=this@(G/w1)  logic [GENERIC] kwd=logic
+    3:1: VOIDDTYPE 0x5555573864d0 <e127> {d54av} @dt=this@(w0)void
+    3:1: BASICDTYPE 0x55555738d800 <e1139> {e4ak} @dt=this@(G/w16)  logic [GENERIC] kwd=logic range=[15:0]
+    3:1: BASICDTYPE 0x55555738db00 <e1147> {e6ad} @dt=this@(G/w32)  logic [GENERIC] kwd=logic range=[31:0]
+    3:1: BASICDTYPE 0x555557398900 <e1180> {e10bi} @dt=this@(G/w15)  logic [GENERIC] kwd=logic range=[14:0]
+    3:1: BASICDTYPE 0x5555573989c0 <e1192> {e10bi} @dt=this@(G/sw4)  logic [GENERIC] kwd=logic range=[3:0]
+    3:1: BASICDTYPE 0x5555573992c0 <e1273> {e8bn} @dt=this@(G/sw32)  logic [GENERIC] kwd=logic range=[31:0]
+    3: CONSTPOOL 0x555557312000 <e7> {a0aa}
+    3:1: MODULE 0x555557314000 <e6> {a0aa}  @CONST-POOL@  L0 [NONE]
+    3:1:2: SCOPE 0x555557316000 <e5> {a0aa}  @CONST-POOL@ [abovep=0] [cellp=0] [modp=0x555557314000]
