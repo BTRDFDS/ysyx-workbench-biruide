@@ -42,7 +42,6 @@ WP* new_wp(){//其中new_wp()从free_链表中返回一个空闲的监视点结�
   WP *wp = free_;
   free_ = free_->next;
   wp->use = true;
-  wp->next = NULL;
   if (wp == NULL) {
     printf("too many watchpoint\n");
     assert(0);
