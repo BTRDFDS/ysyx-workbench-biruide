@@ -9,6 +9,6 @@
 0x80000008: 01 02 c5 03 lbu	a0, 0x10(t0)
 0x8000000c: 00 10 00 73 ebreak
 [1;34m[src/cpu/cpu-exec.c:122 cpu_exec] nemu: [1;32mHIT GOOD TRAP[0m at pc = 0x8000000c[0m
-[1;34m[src/cpu/cpu-exec.c:90 statistic] host time spent = 6342 us[0m
+[1;34m[src/cpu/cpu-exec.c:90 statistic] host time spent = 233 us[0m
 [1;34m[src/cpu/cpu-exec.c:91 statistic] total guest instructions = 4[0m
-[1;34m[src/cpu/cpu-exec.c:92 statistic] simulation frequency = 630 inst/s[0m
+[1;34m[src/cpu/cpu-exec.c:92 statistic] simulation frequency = 17167 inst/s[0m
