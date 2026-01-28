@@ -7,4 +7,3 @@
 0x80000000: 00 00 02 97 auipc	t0, 0
 [1;34m[src/monitor/sdb/watchpoint.c:64 checkWp] pin watchpoint 0 : 0x80000004[0m
 [1;34m[src/monitor/sdb/watchpoint.c:64 checkWp] pin watchpoint 0 : 0x80000004[0m
-[1;34m[src/monitor/sdb/watchpoint.c:64 checkWp] pin watchpoint 0 : 0x80000004[0m
