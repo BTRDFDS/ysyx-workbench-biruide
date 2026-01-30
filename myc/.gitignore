@@ -1,0 +1,7 @@
+!src/
+!tests
+bin
+build
+!Makefile
+!*.bin
+!*.hex

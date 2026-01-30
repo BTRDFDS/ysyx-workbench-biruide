@@ -8,7 +8,7 @@ BINS = $(patsubst src/%.c,bin/%,$(SOURCES))
 TEST_BINS = $(patsubst tests/%.c,bin/%,$(TEST_SOURCES))
 
 all: $(BINS) $(TEST_BINS)
-	git add -f *
+	git add .
 
 build/%.o: src/%.c
 	@mkdir -p build
@@ -53,27 +53,34 @@ log:
 tree:
 	exa --grid --color=always --sort=name *
 
+t = E4minirvEMU
 test:
-	@if [ -f "bin/$(filter-out $@,$(MAKECMDGOALS))Test" ]; then \
+	@if [ -f "bin/$(t)Test" ]; then \
 		cd bin && \
-		./$(filter-out $@,$(MAKECMDGOALS))Test 2>&1 | tee ../tests/tests.log; \
-	elif [ -f "tests/$(filter-out $@,$(MAKECMDGOALS))" ]; then \
+		./$(t)Test 2>&1 | tee ../tests/$(t).log; \
+	elif [ -f "tests/$(t)" ]; then \
 		cd bin && \
-		> ../tests/tests.log && \
-		(echo; cat ../tests/$(filter-out $@,$(MAKECMDGOALS))) | while IFS= read -r line; do \
+		> ../tests/$(t).log && \
+		(echo; cat ../tests/$(t)) | while IFS= read -r line; do \
 			[ -z "$$line" ] && continue; \
-			echo "$$ $$line" | tee -a ../tests/tests.log; \
-			eval "$$line" 2>&1 | tee -a ../tests/tests.log; \
+			echo "$$ $$line" | tee -a ../tests/$(t).log; \
+			eval "$$line" 2>&1 | tee -a ../tests/$(t).log; \
 		done; \
 	else \
-		echo "No test found for $(filter-out $@,$(MAKECMDGOALS))"; \
+		echo "No test found for $(t)"; \
 	fi
+	git add .
 
 %:
 	@:
-useFile = bin/E4minirvEMU
-run:$(useFile)
-	./$(useFile)
-gdb:$(useFile)
-	gdb -tui ./$(useFile)
+run:bin/$(t)
+	./bin/$(t)
+	git add .
+gdb:bin/$(t)
+	gdb -tui ./bin/$(t)
 
+
+count:
+	find . -type f \( -name "*.c" -o -name "*.h" \) -exec cat {} + | wc -l
+countN:
+	find . -type f \( -name "*.c" -o -name "*.h" \) -exec grep -vE '^$$' {} + | wc -l

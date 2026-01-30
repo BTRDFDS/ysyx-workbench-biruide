@@ -50,14 +50,14 @@ int main(int argc, char *argv[])
             another[2], another[3]);
 	numbers[3] = 'd';
 	printf("%c\n",numbers[3]);
-	printf("%s\n",numbers);
+	printf("%ls\n",numbers);
 	name[3] = 107;
 	printf("%d\n",name[3]);
 	printf("%s\n",name);
 	printf("%d\n",name);
-	*another = name;
-	another[4] = '\0';
-	printf("%s\n",another);
+	// *another = name;
+	// another[4] = '\0';
+	// printf("%s\n",another);
 	printf("end\n");
     return 0;
 }
