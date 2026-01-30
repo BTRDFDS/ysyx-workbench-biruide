@@ -163,16 +163,14 @@ char *test_list_insert_sorted()
 
 List *listMergeBottom(List *list, List_compare cmp)//归并排序
 {
-    if (!list || !cmp) {
-        return NULL;
-    }
+    if (!list||!cmp) {return NULL;}
     if(List_count(list)<=1) return list;
     int count = List_count(list);
     List *myList = list;
     List *newList = NULL;
     List *left = List_create();
     List *right = List_create();
-    
+
     void *val = NULL;
     for(int size = 1;size < count; size *= 2){
         newList = List_create();
