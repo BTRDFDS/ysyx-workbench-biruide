@@ -27,11 +27,11 @@ int main(){
     int i,j;
     for(i = 0; i < 10; i++){
         j = rand()%9999;
-        printf("#%d->%d\n", i,j);
+        printf("in%d->%d\n", i,j);
         push(j);
     }
     for(i = 0; i < 10; i++){
-        printf("%d<-%d\n", i,pop());
+        printf("out%d<-%d\n", i,pop());
     }
     return 0;
 }

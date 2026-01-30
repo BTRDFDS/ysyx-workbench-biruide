@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "object.h"
+#include "ex19o.h"
 #include <assert.h>
 
 void Object_destroy(void *self)

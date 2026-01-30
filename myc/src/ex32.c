@@ -1,6 +1,8 @@
 #include <ex32.h>
 #include <dbg.h>
 
+//ex32是功能函数，a是全部测试，b是原本的测试
+
 List *List_create()
 {
     return calloc(1, sizeof(List));

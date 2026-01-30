@@ -2,6 +2,8 @@
 #include <ex32.h>
 #include <assert.h>
 
+//ex32是功能函数，a是全部测试，b是原本的测试
+
 static List *list = NULL;
 char *test1 = "test1 data";
 char *test2 = "test2 data";

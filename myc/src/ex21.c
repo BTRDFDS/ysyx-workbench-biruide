@@ -37,7 +37,7 @@ int main(){
     float f3 = 10.0f;
     long double ld3 = 20.5L;
     auto res3 = f3 + ld3;
-    printf("float(10.0) + long double(20.5) = %Lf\n", res3);
+    printf("float(%f) + long double(%f) = %Lf\n",f3,ld3,res3);
     printf("\n");
 
     int num1 = 100;

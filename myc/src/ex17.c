@@ -6,7 +6,7 @@
 
 // #define MAX_DATA 512
 // #define MAX_ROWS 100
-
+//17是非全局变量，17a是有一个全局共用的conn
 
 
 struct Address {
@@ -104,7 +104,7 @@ struct Connection *Database_open(const char *filename, char mode, int max_data, 
         free(conn);
         die(NULL, "errO2");
     }
-
+    //文件内的格式是结构体.......先把所有的row排列完然后是依次排列的name0和email0，name1和email1...
     if(mode == 'c') {
         if(max_data <= 0){die(NULL, "errO3");}
         if(max_rows <= 0){die(NULL, "errO4");}
@@ -142,6 +142,8 @@ void Database_write(struct Connection *conn)
     int rc = fwrite(conn->db->rows, sizeof(struct Address), conn->db->max_rows, conn->file);
     if(rc != conn->db->max_rows){die(conn, "errW7");}
 
+    //文件内的格式是结构体.......先把所有的row排列完然后是依次排列的name0和email0，name1和email1...
+    //不进行底下for就会使得文件里面只存有旧的指针而不是过去的数据，数据在后面需要单独写入
     for(int i = 0; i < conn->db->max_rows; i++) {
         if(fwrite(conn->db->rows[i].name, conn->db->max_data, 1, conn->file) != 1){
             die(conn, "errW8");}
@@ -320,35 +322,35 @@ int main(int argc, char *argv[])
     if(argc>=7){ phone = atoi(argv[6]);}
     if(argc>=8){ QQ = atoi(argv[7]);}
     switch(action) {
-        case 'c':
+        case 'c'://create建数据库，需要指定大小
             Database_create(conn);
             Database_write(conn);
             break;
 
-        case 'g':
+        case 'g'://get获取
             if(argc != 4) die(conn,"Need an id to get");
 
             Database_get(conn, id);
             break;
 
-        case 's':
+        case 's'://set修改某个值
             if(argc < 6) die(conn,"Need id, name, email to set");
 
             Database_set(conn, id, argv[4], argv[5],phone, QQ);
             Database_write(conn);
             break;
 
-        case 'd':
+        case 'd'://del删除
             if(argc < 4) die(conn,"Need id to delete");
 
             Database_delete(conn, id);
             Database_write(conn);
             break;
 
-        case 'l':
+        case 'l'://list列表
             Database_list(conn);
             break;
-        case 'f':
+        case 'f'://寻找
             if(argc < 4) die(conn,"Need something to find");
             dataFind(conn, id, argv[4], argv[5] ,phone, QQ);
             break;

@@ -98,7 +98,7 @@ error:
 
 int main(int argc, char *argv[])
 {
-    check(argc == 2, "Need an argument.");
+    check(argc == 2, "Need an argument like ./bin/ex20 test");
 
     test_debug();
     test_log_err();

@@ -20,14 +20,15 @@ uint32_t M[max];
 int main(int argc, char *argv[]){
 
 //加载指令
-    FILE *file = fopen("mem.bin","rb");
+    FILE *file = fopen("hex/mem.bin","rb");
+    // FILE *file = fopen("hex/sum.bin","rb");
     check(file != NULL,"can't open file");
     fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
+    long fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);
-    size_t words_read = fread(M, sizeof(uint32_t), file_size/sizeof(uint32_t), file);
-    //printf("%ld %ld\n",file_size,words_read);
-    check(words_read == file_size/sizeof(uint32_t),"can't read file");
+    size_t wordsRead = fread(M, sizeof(uint32_t), fileSize/sizeof(uint32_t), file);
+    //printf("%ld %ld\n",fileSize,wordsRead);
+    check(wordsRead == fileSize/sizeof(uint32_t),"can't read file");
     fclose(file);
     debug(for (int i = 0; i < 16; i++){printf("%8x\n",M[i]);});
 

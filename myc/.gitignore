@@ -1,7 +1,6 @@
-!src/
-!tests
-bin
-build
+!src/*
+!hex/*
+!tests/*
+bin/*
+build/*
 !Makefile
-!*.bin
-!*.hex

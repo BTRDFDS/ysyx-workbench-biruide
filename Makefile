@@ -42,3 +42,8 @@ _default:
 	@echo "Please run 'make' under subprojects."
 
 .PHONY: .git_commit .clean_index _default
+
+count:
+	find . -type f \( -name "*.c" -o -name "*.h" \) -exec cat {} + | wc -l
+countN:
+	find . -type f \( -name "*.c" -o -name "*.h" \) -exec grep -vE '^$$' {} + | wc -l

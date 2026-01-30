@@ -161,7 +161,7 @@ char *test_list_insert_sorted()
     return NULL;
 }
 
-List *listMergeBottom(List *list, List_compare cmp)
+List *listMergeBottom(List *list, List_compare cmp)//归并排序
 {
     if (!list || !cmp) {
         return NULL;

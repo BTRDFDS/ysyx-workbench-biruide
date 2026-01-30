@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "object.h"
+#include "ex19o.h"
 
 int Map_init(void *self)
 {

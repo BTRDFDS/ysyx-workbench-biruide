@@ -46,19 +46,19 @@ int *bubble_sort(int *numbers, int count, compare_cb cmp)
     return target;
 }
 
-int* insertionSort(int *numbers, int count, compare_cb cmp) {
+int* insertionSort(int *numbers, int count, compare_cb cmp) {//插入排序
     if(numbers == NULL) die("Memory error");
     if(cmp == NULL) die("Memory error");
+
     int *target = malloc(count * sizeof(int));
     if(!target) die("Memory error.");
     memcpy(target, numbers, count * sizeof(int));
+
     for (int i = 1; i < count; i++) {
         int temp = target[i];  // 当前待插入的元素
-        int j = i;
-        // 向右移动大于temp的元素
-        while (j > 0 && cmp(target[j - 1], temp) > 0) {
-            target[j] = target[j - 1];
-            j--;
+        int j;
+        for(j=i;j>0&&cmp(target[j-1],temp)>0;j--){
+            target[j]=target[j-1];
         }
         target[j] = temp;  // 插入元素到正确位置
     }
@@ -127,11 +127,11 @@ int main(int argc, char *argv[])
         numbers[i] = atoi(inputs[i]);
     }
 
-    test_sorting(numbers, count, sorted_order ,bubble_sort);
-    test_sorting(numbers, count, sorted_order ,insertionSort);
-    test_sorting(numbers, count, reverse_order,bubble_sort);
+    test_sorting(numbers, count, sorted_order ,bubble_sort);//冒泡小到大
+    test_sorting(numbers, count, sorted_order ,insertionSort);//插入
+    test_sorting(numbers, count, reverse_order,bubble_sort);//大到小
     test_sorting(numbers, count, reverse_order,insertionSort);
-    test_sorting(numbers, count, strange_order,bubble_sort);
+    test_sorting(numbers, count, strange_order,bubble_sort);//?奇怪的？
     test_sorting(numbers, count, strange_order,insertionSort);
     //test_sorting(numbers, count, printf("\n"));
     //test_sorting(numbers, count, NULL);

@@ -1,6 +1,6 @@
 CFLAGS=-Wall -g -Isrc
 
-SOURCES=$(filter-out src/ex32.c src/ex29lib src/exn22, $(wildcard src/ex*.c src/E4*.c))
+SOURCES=$(filter-out src/ex32.c src/ex29lib src/ex19o src/exn22, $(wildcard src/ex*.c src/E4*.c))
 TEST_SOURCES=$(wildcard tests/ex*Test.c)
 OBJECTS=$(patsubst src/%.c,build/%.o,$(SOURCES))
 TEST_OBJECTS=$(patsubst tests/%.c,build/%.o,$(TEST_SOURCES))
@@ -25,10 +25,10 @@ bin/%: build/%.o
 clean:
 	rm -f $(BINS) $(OBJECTS)
 
-bin/ex19:build/object.o build/ex19.o
-	gcc $(CFLAGS) build/ex19.o build/object.o -o $@
-bin/ex19a: build/object.o build/ex19.o
-	gcc $(CFLAGS) build/ex19.o build/object.o -o $@
+bin/ex19:build/ex19o.o build/ex19.o
+	gcc $(CFLAGS) build/ex19.o build/ex19o.o -o $@
+bin/ex19a: build/ex19o.o build/ex19a.o
+	gcc $(CFLAGS) build/ex19a.o build/ex19o.o -o $@
 
 bin/ex22: build/ex22.o build/exn22.o
 	gcc $(CFLAGS) build/ex22.o build/exn22.o -o $@

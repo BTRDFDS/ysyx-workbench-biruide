@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "object.h"
+#include "ex19o.h"
 
 int Map_init(void *self)
 {
@@ -15,7 +15,7 @@ int Map_init(void *self)
     Room *arena = NEW(Room, "The arena, with the minotaur");
     Room *kitchen = NEW(Room, "Kitchen, you have the knife now");
 
-    // 新增房间
+    // 新房间
     Room *dungeon = NEW(Room, "The dark dungeon, chains hang from the walls");
     Room *garden = NEW(Room, "The royal garden, flowers bloom everywhere");
     Room *library = NEW(Room, "The ancient library, books line the walls");
@@ -63,13 +63,12 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
     // make our map to work with
-    Map *game = NEW(Map, "The Hall of the Minotaur.");
+    Map *game = NEW(Map, "The Hall of the Minotaur pro max.");
 
     printf("You enter the ");
     game->location->_(describe)(game->location);
 
-    while(process_input(game)) {
-    }
+    while(process_input(game)){}
 
     return 0;
 }

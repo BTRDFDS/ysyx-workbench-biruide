@@ -2,6 +2,8 @@
 #include <ex32.h>
 #include <assert.h>
 
+//ex32是功能函数，a是全部测试，b是原本的测试
+
 static List *list = NULL;
 static List *list2 = NULL;
 
@@ -141,7 +143,8 @@ char *testCopy()
     List_push(list, test2);
     List_push(list, test3);
     ListCopy(list, list2);
-    //错误原因是不能直接对含有值的链表直接 list_clear，必须先pop或者shift完才行
+    //错误原因是不能直接对含有值的链表直接list_clear，必须先pop或者shift完才行
+    //就是直接list_clear的话去free会触发导致野指针，解决办法是在list_clear里面强制检测是否还有值，有的话就会强制执行List_pop清空
     //List_clear(list2);
     //printf("%d\n",List_count(list2));
     mu_assert(List_count(list2) == 3, "Wrong count after copy.");

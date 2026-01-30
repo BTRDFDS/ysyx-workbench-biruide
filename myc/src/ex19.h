@@ -1,7 +1,7 @@
 #ifndef _ex19_h
 #define _ex19_h
 
-#include "object.h"
+#include "ex19o.h"
 
 struct Monster {
     Object proto;

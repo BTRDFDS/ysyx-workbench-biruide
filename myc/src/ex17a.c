@@ -6,6 +6,7 @@
 
 // #define MAX_DATA 512
 // #define MAX_ROWS 100
+//17是非全局变量，17a是有一个全局共用的conn
 
 
 struct Address {
