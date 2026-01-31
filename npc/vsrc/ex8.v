@@ -51,8 +51,8 @@ always @(posedge clk) begin
     end
     else begin
         if(x == hTotal)begin
-            // x <= 1;
-            // if(y == vTotal) y <= 1;
+            x <= 1;
+            if(y == vTotal) y <= 1;
             if(y == vTotal)begin
                 // y <= y;
                 // x <=x;

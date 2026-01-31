@@ -5,7 +5,6 @@
 // unless using verilator public meta comments.
 // Suggest use Vexample.h instead.
 
-
 #ifndef VERILATED_VEXAMPLE__PCH_H_
 #define VERILATED_VEXAMPLE__PCH_H_  // guard
 

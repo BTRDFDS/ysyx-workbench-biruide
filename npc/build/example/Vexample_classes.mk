@@ -26,13 +26,14 @@ VM_TRACE_VCD = 1
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
   Vexample \
-  Vexample___024root__DepSet_h625e39dc__0 \
-  Vexample___024root__DepSet_hcb5acca5__0 \
+  Vexample___024root__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
   Vexample___024root__Slow \
-  Vexample___024root__DepSet_hcb5acca5__0__Slow \
+  Vexample___024root__0__Slow \
+  Vexample_example__Slow \
+  Vexample_example__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \
@@ -40,7 +41,7 @@ VM_SUPPORT_FAST += \
 
 # Generated support classes, non-fast-path, compile with low/medium optimization
 VM_SUPPORT_SLOW += \
-  Vexample__Syms \
+  Vexample__Syms__Slow \
   Vexample__Trace__0__Slow \
   Vexample__TraceDecls__0__Slow \
 

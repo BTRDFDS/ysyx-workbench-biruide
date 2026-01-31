@@ -1,289 +1,364 @@
 `begin_keywords "1800-2023"
-`line 1 "/usr/local/share/verilator/include/verilated_std.sv" 1
+`line 1 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 1
  
 
-`line 3 "/usr/local/share/verilator/include/verilated_std.sv" 0
+`line 3 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
  
 
-`line 5 "/usr/local/share/verilator/include/verilated_std.sv" 0
+`line 5 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
  
 
-`line 7 "/usr/local/share/verilator/include/verilated_std.sv" 0
- 
- 
- 
- 
-
-`line 12 "/usr/local/share/verilator/include/verilated_std.sv" 0
- 
- 
- 
- 
- 
- 
- 
- 
+`line 7 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
  
  
  
  
 
-`line 25 "/usr/local/share/verilator/include/verilated_std.sv" 0
+`line 12 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  
 
-`line 28 "/usr/local/share/verilator/include/verilated_std.sv" 0
-/*verilator lint_off DECLFILENAME*/ 
-/*verilator lint_off TIMESCALEMOD*/ 
-/*verilator lint_off UNUSEDSIGNAL*/ 
+`line 25 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+ 
+ 
+
+`line 28 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+/*verilator lint_off DECLFILENAME*/
+/*verilator lint_off TIMESCALEMOD*/
+/*verilator lint_off UNUSEDSIGNAL*/
 package std;
-   class mailbox #(type T);
-      protected int m_bound;
-      protected T m_queue[$];
+   
+  class mailbox #(
+      type T
+  );
+    protected int m_bound;
+    protected T m_queue[$];
 
-`line 36 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function new(int bound = 0);
-         m_bound = bound;
-      endfunction
+`line 39 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function new(int bound = 0);
+      m_bound = bound;
+    endfunction
 
-`line 40 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function int num();
-         return m_queue.size();
-      endfunction
+`line 43 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function int num();
+      return m_queue.size();
+    endfunction
 
-`line 44 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      task put(T message);
+`line 47 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    task put(T message);
  
-                
                
-         
-
-`line 50 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      endtask
-
-`line 52 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function int try_put(T message);
-         if (m_bound == 0 || num() < m_bound) begin
-            m_queue.push_back(message);
-            return 1;
-         end
-         return 0;
-      endfunction
-
-`line 60 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      task get(ref T message);
- 
-             
-               
-         
            
+      
 
-`line 67 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      endtask
+`line 53 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    endtask
 
-`line 69 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function int try_get(ref T message);
-         if (num() > 0) begin
-            message = m_queue.pop_front();
-            return 1;
-         end
-         return 0;
-      endfunction
+`line 55 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function int try_put(T message);
+      if (m_bound == 0 || num() < m_bound) begin
+        m_queue.push_back(message);
+        return 1;
+      end
+      return 0;
+    endfunction
 
-`line 77 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      task peek(ref T message);
+`line 63 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    task get(ref T message);
  
-             
-               
-         
+          
            
-
-`line 84 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      endtask
-
-`line 86 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function int try_peek(ref T message);
-         if (num() > 0) begin
-            message = m_queue[0];
-            return 1;
-         end
-         return 0;
-      endfunction
-   endclass
-
-`line 95 "/usr/local/share/verilator/include/verilated_std.sv" 0
-   class semaphore;
-      protected int m_keyCount;
-
-`line 98 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function new(int keyCount = 0);
-         m_keyCount = keyCount;
-      endfunction
-
-`line 102 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function void put(int keyCount = 1);
-         m_keyCount += keyCount;
-      endfunction
-
-`line 106 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      task get(int keyCount = 1);
- 
-             
-               
-         
-           
-
-`line 113 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      endtask
-
-`line 115 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function int try_get(int keyCount = 1);
-         if (m_keyCount >= keyCount) begin
-            m_keyCount -= keyCount;
-            return 1;
-         end
-         return 0;
-      endfunction
-   endclass
-
-`line 124 "/usr/local/share/verilator/include/verilated_std.sv" 0
-   class process;
-      typedef enum {
-         FINISHED  = 0,
-         RUNNING   = 1,
-         WAITING   = 2,
-         SUSPENDED = 3,
-         KILLED    = 4
-      } state;
-
-`line 133 "/usr/local/share/verilator/include/verilated_std.sv" 0
- 
       
         
 
+`line 70 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    endtask
 
-`line 138 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      static function process self();
-         process p = new;
+`line 72 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function int try_get(ref T message);
+      if (num() > 0) begin
+        message = m_queue.pop_front();
+        return 1;
+      end
+      return 0;
+    endfunction
+
+`line 80 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    task peek(ref T message);
  
           
-
-`line 143 "/usr/local/share/verilator/include/verilated_std.sv" 0
-         return p;
-      endfunction
-
-`line 146 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      protected function void set_status(state s);
- 
-            
-
-`line 150 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      endfunction
-
-`line 152 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function state status();
- 
            
+      
+        
 
-`line 156 "/usr/local/share/verilator/include/verilated_std.sv" 0
-         return RUNNING;
+`line 87 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    endtask
 
-`line 158 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      endfunction
+`line 89 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function int try_peek(ref T message);
+      if (num() > 0) begin
+        message = m_queue[0];
+        return 1;
+      end
+      return 0;
+    endfunction
+  endclass
 
-`line 160 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function void kill();
-         set_status(KILLED);
-      endfunction
+`line 98 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+   
+  class semaphore;
+    protected int m_keyCount;
 
-`line 164 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function void suspend();
-         $error("std::process::suspend() not supported");
-      endfunction
+`line 102 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function new(int keyCount = 0);
+      m_keyCount = keyCount;
+    endfunction
 
-`line 168 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function void resume();
-         set_status(RUNNING);
-      endfunction
+`line 106 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function void put(int keyCount = 1);
+      m_keyCount += keyCount;
+    endfunction
 
-`line 172 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      task await();
+`line 110 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    task get(int keyCount = 1);
  
-                
+          
+           
+      
+        
 
-`line 176 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      endtask
+`line 117 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    endtask
 
-`line 178 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      static task killQueue(ref process processQueue[$]);
+`line 119 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function int try_get(int keyCount = 1);
+      if (m_keyCount >= keyCount) begin
+        m_keyCount -= keyCount;
+        return 1;
+      end
+      return 0;
+    endfunction
+  endclass
+
+`line 128 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+   
+  class process;
+    typedef enum {
+      FINISHED = 0,
+      RUNNING = 1,
+      WAITING = 2,
+      SUSPENDED = 3,
+      KILLED = 4
+    } state;
+
+`line 138 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+     
+    protected chandle m_process;
+
+`line 141 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    static function process self();
+      process p = new;
+ 
+       
+
+`line 146 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+      return p;
+    endfunction
+
+`line 149 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    protected function void set_status(state s);
+ 
+         
+
+`line 153 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    endfunction
+
+`line 155 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function state status();
+ 
+        
+
+`line 159 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+      return RUNNING;
+
+`line 161 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    endfunction
+
+`line 163 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function void kill();
+      set_status(KILLED);
+    endfunction
+
+`line 167 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function void suspend();
+      $error("std::process::suspend() not supported");
+    endfunction
+
+`line 171 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function void resume();
+      set_status(RUNNING);
+    endfunction
+
+`line 175 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    task await();
  
              
-            
-         
 
-`line 184 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      endtask
+`line 179 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    endtask
 
-`line 186 "/usr/local/share/verilator/include/verilated_std.sv" 0
-       
-       
-       
+`line 181 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    static task killQueue(ref process processQueue[$]);
  
-
-`line 191 "/usr/local/share/verilator/include/verilated_std.sv" 0
- 
+          
+        
       
-         
-         
-       
 
-`line 197 "/usr/local/share/verilator/include/verilated_std.sv" 0
+`line 187 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    endtask
+
+`line 189 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+     
+     
+     
+     
  
-      
-         
-         
-       
 
-`line 203 "/usr/local/share/verilator/include/verilated_std.sv" 0
+`line 195 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
  
       
          
          
        
 
-
-
-
-`line 212 "/usr/local/share/verilator/include/verilated_std.sv" 0
-       
-       
-       
+`line 201 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+ 
       
-       
+         
+         
        
 
-`line 219 "/usr/local/share/verilator/include/verilated_std.sv" 0
+`line 207 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+ 
+      
+         
+         
        
-       
-       
-       
-      function string get_randstate();
-         string s;
 
-`line 226 "/usr/local/share/verilator/include/verilated_std.sv" 0
-         s.itoa($random);   
-         set_randstate(s);   
-         return s;
-      endfunction
 
-`line 231 "/usr/local/share/verilator/include/verilated_std.sv" 0
-      function void set_randstate(string s);
-         $urandom(s.atoi());   
-      endfunction
-   endclass
-   function int randomize();
-      randomize = 0;
-   endfunction
+
+`line 215 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+     
+
+`line 217 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+     
+     
+     
+    
+     
+     
+
+`line 224 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+     
+     
+     
+     
+    function string get_randstate();
+       
+      string s = string'($c("0"));
+
+`line 232 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+      $c(s, " = ", m_process, "->randstate();");
+      return s;
+    endfunction
+
+`line 236 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+    function void set_randstate(string s);
+      $c(m_process, "->randstate(", s, ");");
+    endfunction
+  endclass
+
+`line 241 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+   
+  function int randomize();
+    randomize = 0;
+  endfunction
+
+`line 246 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+   
+   
+   
+  typedef struct {
+    string name;
+    int weight;
+    int goal;
+    string comment;
+    int at_least;
+    int auto_bin_max;
+    int cross_num_print_missing;
+    bit cross_retain_auto_bins;
+    bit detect_overlap;
+    bit per_instance;
+    bit get_inst_coverage;
+  } vl_covergroup_options_t;
+
+`line 263 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+  typedef struct {
+    int weight;
+    int goal;
+    string comment;
+    int at_least;
+    int auto_bin_max;
+    bit detect_overlap;
+  } vl_coverpoint_options_t;
+
+`line 272 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+  typedef struct {
+    int weight;
+    int goal;
+    string comment;
+    int at_least;
+    int cross_num_print_missing;
+    bit cross_retain_auto_bins;
+  } vl_cross_options_t;
+
+`line 281 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+  typedef struct {
+    int weight;
+    int goal;
+    string comment;
+    bit strobe;
+    bit merge_instances;
+    bit distribute_first;
+    real real_interval;
+  } vl_covergroup_type_options_t;
+
+`line 291 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+  typedef struct {
+    int weight;
+    int goal;
+    string comment;
+    real real_interval;
+  } vl_coverpoint_type_options_t;
+
+`line 298 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
+  typedef struct {
+    int weight;
+    int goal;
+    string comment;
+  } vl_cross_type_options_t;
+
+`line 304 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0
 endpackage
 
-`line 240 "/usr/local/share/verilator/include/verilated_std.sv" 0
+`line 306 "/home/biruide/oss-cad-suite/share/verilator/include/verilated_std.sv" 0

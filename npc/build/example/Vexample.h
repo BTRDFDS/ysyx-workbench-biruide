@@ -13,6 +13,8 @@
 class Vexample__Syms;
 class Vexample___024root;
 class VerilatedVcdC;
+class Vexample_example;
+
 
 // This class is the main interface to the Verilated model
 class alignas(VL_CACHE_LINE_BYTES) Vexample VL_NOT_FINAL : public VerilatedModel {
@@ -29,13 +31,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vexample VL_NOT_FINAL : public VerilatedModel
     // PORTS
     // The application code writes and reads these signals to
     // propagate new values into/out from the Verilated model.
-    VL_IN8(&clk,0,0);
-    VL_IN8(&rst,0,0);
-    VL_OUT16(&led,15,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.
     // Otherwise the application code can consider these internals.
+    Vexample_example* const __PVT__example;
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.

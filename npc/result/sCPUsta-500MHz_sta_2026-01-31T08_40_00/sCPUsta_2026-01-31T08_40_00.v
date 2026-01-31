@@ -1,4 +1,4 @@
-//Generate the verilog at 2026-01-31T08:40:00 by iSTA.
+//Generate the verilog at 2026-01-21T12:14:14 by iSTA.
 module sCPUsta (
 clk,
 rom_0_,

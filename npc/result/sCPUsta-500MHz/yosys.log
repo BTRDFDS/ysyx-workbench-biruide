@@ -2176,7 +2176,7 @@ ABC: UC Berkeley, ABC 1.01 (compiled Jan 14 2026 02:53:56)
 ABC: abc 01> empty
 ABC: abc 01> source <abc-temp-dir>/abc.script
 ABC: + read_blif <abc-temp-dir>/input.blif 
-ABC: + read_library /tmp/yosys-abc-LpfhRQ/stdcells.genlib 
+ABC: + read_library /tmp/yosys-abc-WcKRUg/stdcells.genlib 
 ABC: + strash 
 ABC: + dretime 
 ABC: + map 
@@ -2732,17 +2732,17 @@ Optimizing module sCPUsta.
 
 15. Executing ABC pass (technology mapping using ABC).
 
-15.1. Extracting gate netlist of module `\sCPUsta' to `/tmp/yosys-abc-BBnlF9/input.blif'..
+15.1. Extracting gate netlist of module `\sCPUsta' to `/tmp/yosys-abc-NQ8vNN/input.blif'..
 
 15.1.1. Executed ABC.
 Extracted 203 gates and 247 wires to a netlist network with 44 inputs and 31 outputs.
-Running ABC script: /tmp/yosys-abc-BBnlF9/abc.script
+Running ABC script: /tmp/yosys-abc-NQ8vNN/abc.script
 ABC: UC Berkeley, ABC 1.01 (compiled Jan 14 2026 02:53:56)
 ABC: abc 01> empty
-ABC: abc 01> source /tmp/yosys-abc-BBnlF9/abc.script
-ABC: + read_blif /tmp/yosys-abc-BBnlF9/input.blif 
+ABC: abc 01> source /tmp/yosys-abc-NQ8vNN/abc.script
+ABC: + read_blif /tmp/yosys-abc-NQ8vNN/input.blif 
 ABC: + read_lib -X LAT* -w /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib 
-ABC: Parsing finished successfully.  Parsing time =     0.73 sec
+ABC: Parsing finished successfully.  Parsing time =     0.82 sec
 ABC: Scl_LibertyReadGenlib() skipped sequential cell "DFFNQX1H7L".
 ABC: Scl_LibertyReadGenlib() skipped sequential cell "DFFNQX2H7L".
 ABC: Scl_LibertyReadGenlib() skipped sequential cell "DFFNQX3H7L".
@@ -2890,8 +2890,8 @@ ABC: Scl_LibertyReadGenlib() skipped three-state cell "TINVX3H7L".
 ABC: Scl_LibertyReadGenlib() skipped three-state cell "TINVX4H7L".
 ABC: Scl_LibertyReadGenlib() skipped three-state cell "TINVX6H7L".
 ABC: Scl_LibertyReadGenlib() skipped three-state cell "TINVX8H7L".
-ABC: Library "ics55_LLSC_H7CL_typ_tt_1p2_25" from "/home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib" has 600 cells (147 skipped: 111 seq; 22 tri-state; 14 no func; 0 dont_use; 0 with 2 outputs; 0 with 3+ outputs).  Time =     0.97 sec
-ABC: Memory =  135.92 MB. Time =     0.97 sec
+ABC: Library "ics55_LLSC_H7CL_typ_tt_1p2_25" from "/home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib" has 600 cells (147 skipped: 111 seq; 22 tri-state; 14 no func; 0 dont_use; 0 with 2 outputs; 0 with 3+ outputs).  Time =     1.08 sec
+ABC: Memory =  135.92 MB. Time =     1.08 sec
 ABC: Warning: Detected 6 multi-output cells (for example, "ADDFX1H7L").
 ABC: + read_constr -v /home/biruide/ysyx-workbench/yosys-sta/result/sCPUsta-500MHz/abc.sdc 
 ABC: Setting driving cell to be "BUFX0P5H7L".
@@ -2957,7 +2957,7 @@ ABC: Path  8 --     128 : 3    1 NOR3X1P4H7L  A =   1.40  Df = 554.8  -17.3 ps  
 ABC: Start-point = pi9 (\rom [0]).  End-point = po1 ($abc$901$auto$rtlil.cc:3464:Mux$164[7]).
 ABC: + print_stats -m 
 ABC: netlist                       : i/o =   44/   31  lat =    0  nd =   186  edge =    522  area =432.60  delay = 8.00  lev = 8
-ABC: + write_blif /tmp/yosys-abc-BBnlF9/output.blif 
+ABC: + write_blif /tmp/yosys-abc-NQ8vNN/output.blif 
 ABC: 
 
 15.1.2. Re-integrating ABC results.
@@ -3758,6 +3758,6 @@ Found and reported 0 problems.
 26. Executing Verilog backend.
 Dumping module `\sCPUsta'.
 
-End of script. Logfile hash: 436d5b9bb8, CPU: user 2.52s system 0.36s, MEM: 210.78 MB peak
+End of script. Logfile hash: 4b30df59ab, CPU: user 2.56s system 0.57s, MEM: 210.62 MB peak
 Yosys 0.61+0 (git sha1 71feb2a2a, clang++ 18.1.8 -fPIC -O3)
-Time spent: 36% 2x abc (1 sec), 15% 1x clockgate (0 sec), ...
+Time spent: 36% 2x abc (1 sec), 18% 1x clockgate (0 sec), ...

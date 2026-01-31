@@ -10,9 +10,7 @@
 Vexample::Vexample(VerilatedContext* _vcontextp__, const char* _vcname__)
     : VerilatedModel{*_vcontextp__}
     , vlSymsp{new Vexample__Syms(contextp(), _vcname__, this)}
-    , clk{vlSymsp->TOP.clk}
-    , rst{vlSymsp->TOP.rst}
-    , led{vlSymsp->TOP.led}
+    , __PVT__example{vlSymsp->TOP.__PVT__example}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context
@@ -120,7 +118,7 @@ VL_ATTR_COLD static void trace_init(void* voidSelf, VerilatedVcd* tracep, uint32
             "Turning on wave traces requires Verilated::traceEverOn(true) call before time 0.");
     }
     vlSymsp->__Vm_baseCode = code;
-    tracep->pushPrefix(std::string{vlSymsp->name()}, VerilatedTracePrefixType::SCOPE_MODULE);
+    tracep->pushPrefix(vlSymsp->name(), VerilatedTracePrefixType::SCOPE_MODULE);
     Vexample___024root__trace_decl_types(tracep);
     Vexample___024root__trace_init_top(vlSelf, tracep);
     tracep->popPrefix();
