@@ -225,23 +225,24 @@ word_t eval(int p, int q) {
         switch (tokens[i].type)
         {
         case '+':
-          j=3;
+          j=2;
           break;
         case '-':
           if(i>p&&(tokens[i-1].type==TK_NUM||tokens[i-1].type==')')){
-            j=3;
+            j=2;
           }else{
             j=0;
           }
           break;
         case '*':
         case '/':
-          j=2;
+          j=1;
           break;
         case TK_EQ:
         case TK_NEQ:
         case TK_AND:
-          j=1;
+        case TK_OR:
+          j=3;
           break;
         default:
           j=0;
