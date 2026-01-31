@@ -6,7 +6,8 @@
 typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
-  word_t line;//第几行代码
+  // word_t line;//第几行代码
+  char require[256];
   bool use;//有没有被使用
   /* TODO: Add more members if necessary */
 

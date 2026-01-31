@@ -22,15 +22,10 @@
 
 // this should be enough
 static char buf[65536] = {};
-static char code_buf[65536 + 128] = {}; // a little larger than `buf`
+static char code_buf[65536 + 70] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
-"#include <stdint.h>\n"
-"int main(){"
-"uint32_t result=%s; "
-"printf(\"%%u\", result); "
-"return 0;"
-"}";
+"int main(){unsigned r=%s;printf(\"%%u\",r);}";
 char *useBuf;
 int len = 65530;
 int iTemp,j,k;
@@ -131,7 +126,7 @@ int main(int argc, char *argv[]) {
     sscanf(argv[1], "%d", &loop);
   }
   int i;
-  for (i = 0; i < loop; i ++) {
+  for (i = 0; i < loop;) {
     // if(1%1000==0){printf("new is %d",i);}
     useBuf=buf;
     len = 65535;
@@ -149,23 +144,28 @@ int main(int argc, char *argv[]) {
     assert(fp != NULL);
     fputs(code_buf, fp);
     fclose(fp);
-    system("sed 's/\\*/\\*(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
-    system("sed 's/\\+/\\+(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
-    system("sed 's/\\-/\\-(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
-    int ret = system("gcc /tmp/.code2.c -Werror -o /tmp/.expr 2>/dev/null");
+    if(system("sed 's/\\<[0-9]\\+\\>/&U/g' /tmp/.code.c > /tmp/.code2.c")!=0){continue;}
+    // system("sed 's/\\*/\\*(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
+    // system("sed 's/\\+/\\+(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
+    // system("sed 's/\\-/\\-(uint32_t)/g' /tmp/.code.c > /tmp/.code2.c");
+    // int ret = system("gcc /tmp/.code2.c -Werror -o /tmp/.expr 2>/dev/null");
+    if(system("gcc /tmp/.code2.c -Werror -o /tmp/.expr 2>/dev/null")!=0){continue;}
     // int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
     // printf("%d\n",ret);
-    if (ret != 0){i--;continue;}
+    // if (ret != 0){i--;continue;}
 
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
     int result,res;
-    ret = fscanf(fp, "%d", &result);
-    res=pclose(fp);
-    if(ret != 1){i--;continue;}
-    if(res != 0){i--;continue;}
+    // ret = fscanf(fp, "%d", &result);
+    // res=pclose(fp);
+    if(fscanf(fp, "%d", &result)!=1){continue;}
+    if(pclose(fp)!=0){continue;}
+    // if(ret != 1){i--;continue;}
+    // if(res != 0){i--;continue;}
     printf("%u,%s\n", result, buf);
+    i++;
   }
   return 0;
 }

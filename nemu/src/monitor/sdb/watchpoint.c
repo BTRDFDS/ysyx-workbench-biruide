@@ -59,9 +59,15 @@ void free_wp(WP *wp) {
 }
 int checkWp(){
   int i=0;
+  bool success=false;
   while(wp_pool[i].use == true&&i<NR_WP){
-    if(cpu.pc==wp_pool[i].line){
-      Log("pin watchpoint %d : 0x%x",wp_pool[i].NO,wp_pool[i].line);
+    // if(cpu.pc==wp_pool[i].line){
+    //   Log("pin watchpoint %d : 0x%x",wp_pool[i].NO,wp_pool[i].line);
+    //   return 0;
+    // }
+    expr(wp_pool[i].require,&success);
+    if(success){
+      Log("watchpoint %d : %s",wp_pool[i].NO,wp_pool[i].require);
       return 0;
     }
     i++;

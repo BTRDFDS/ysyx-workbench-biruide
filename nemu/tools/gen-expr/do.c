@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include <stdint.h>
 int main() {
-uint32_t result = ((  17193771      )-(uint32_t) 10596717        /(((((  802068292    *(  1931235732 -(uint32_t)       1680984248)-(uint32_t)((  21849767 ))-(uint32_t)   2109909274 ))))));
-printf("%u\n", result);
+unsigned r =     88877950U*   2138846818U   +  1696477762U+( 1480337826U  )+    833555187U ;
+printf("%u\n", r);
 return 0;
 }

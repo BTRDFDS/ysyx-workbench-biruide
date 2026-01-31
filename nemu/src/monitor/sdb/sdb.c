@@ -67,7 +67,7 @@ static int cmd_info(char *args) {
   case 'w':
       printf("print watchpoints\n");
       for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
-        printf("no %d in line %u\n",wp_pool[i].NO,wp_pool[i].line);
+        printf("no %d is :%s\n",wp_pool[i].NO,wp_pool[i].require);
       }
     break;
   default:
@@ -107,8 +107,11 @@ static int cmd_p(char *args) {
 static int cmd_w(char *args) {
   WP *wp =new_wp();
   assert(wp!=0);
-  wp->line=strtoul(args,NULL,0);
-  printf("add no %d in line 0x%x\n",wp->NO,wp->line);
+  strcpy(wp->require,args);
+  printf("add no %d is %s\n",wp->NO,wp->require);
+
+  // wp->line=strtoul(args,NULL,0);
+  // printf("add no %d in line 0x%x\n",wp->NO,wp->line);
   return 0;
 }
 
