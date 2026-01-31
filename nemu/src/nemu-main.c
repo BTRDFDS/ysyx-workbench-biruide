@@ -14,6 +14,7 @@
 ***************************************************************************************/
 
 #include <common.h>
+#include "monitor/sdb/sdb.h"
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
@@ -84,7 +85,7 @@ int main(int argc, char *argv[]) {
 #endif
 
   /* Start engine. */
-  // gen_expr();
+  gen_expr();
   
   
   engine_start();
