@@ -174,9 +174,11 @@ bool check_parentheses(int p, int q) {
   }
   return false;
 }
-word_t eval(int p, int q) {
+word_t eval(int p, int q, bool *success) {
+  if(success==false){return 0;}
   if (p > q) {
     printf("Bad expression\n");
+    success=false;
     return 0;
     /* Bad expression */
   }
@@ -188,15 +190,19 @@ word_t eval(int p, int q) {
       bool iSuccess = false;
       word_t res=isa_reg_str2val(tokens[p].str,&iSuccess);
       if(iSuccess==true){
+        *success=true;
         return res;
       }
       printf("%d: %s => error\n",p,tokens[p].str);
+      *success=false;
       return 0;
     }else if(tokens[p].type==TK_HEX){
       word_t res = strtoul(tokens[p].str,NULL,16);
+      *success=true;
       return res;
     }
       printf("Bad expression\n");
+      *success=false;
       return 0;
 
     /* Single token.
@@ -208,10 +214,10 @@ word_t eval(int p, int q) {
     /* The expression is surrounded by a matched pair of parentheses.
      * If that is the case, just throw away the parentheses.
      */
-    return eval(p + 1, q - 1);
+    return eval(p + 1, q - 1,success);
   }else if(p+1==q&&tokens[p].type==TK_POINT){
     if(tokens[q].type==TK_NUM||tokens[q].type==TK_HEX)
-    return vaddr_read(eval(q,q),4);
+    return vaddr_read(eval(q,q,success),4);
   }
   else {
     int op=p;
@@ -258,20 +264,24 @@ word_t eval(int p, int q) {
     word_t val1, val2,res;
     if((op==q)){
       printf("Bad expression\n");
+      *success=false;
       return 0;
     }else if(op==p){
       if(tokens[p].type=='-'){
         val1=0;
       }else{
       printf("Bad expression\n");
+      *success=false;
       return 0;
       }
       
     }else{
-      val1 = eval(p, op - 1);
+      val1 = eval(p, op - 1,success);
+      if(*success==false){return 0;}
     }
     // op = the position of 主运算符 in the token expression;
-    val2 = eval(op + 1, q);
+    val2 = eval(op + 1, q,success);
+    if(*success==false){return 0;}
     switch (tokens[op].type) {
       case '+':
         res=val1 + val2;
@@ -305,6 +315,7 @@ word_t eval(int p, int q) {
       default: assert(0);
     }
     Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
+    *success=true;
     return res;
   }
   return 0;
@@ -325,7 +336,7 @@ word_t expr(char *e, bool *success) {
   }
   }
   // printf("%d\n",eval(0,nr_token-1));
-  return eval(0,nr_token-1);
+  return eval(0,nr_token-1,success);
   // return 0;
 }
 
