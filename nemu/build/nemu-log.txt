@@ -6,3 +6,4 @@
 [1;34m[src/monitor/monitor.c:32 welcome] Build time: 09:29:36, Jan 31 2026[0m
 [1;34m[src/monitor/sdb/expr.c:138 make_token] match rules[12] = "[0-9]+" at 0 with len 1: 1[0m
 [1;34m[src/monitor/sdb/expr.c:138 make_token] match rules[12] = "[0-9]+" at 0 with len 1: 2[0m
+[1;34m[src/monitor/sdb/expr.c:138 make_token] match rules[12] = "[0-9]+" at 0 with len 1: 3[0m
