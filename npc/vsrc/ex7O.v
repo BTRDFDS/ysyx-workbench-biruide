@@ -1,4 +1,4 @@
-module ex7(
+module ex7O(
     input ps2_clk,
     input ps2_data,
     output reg [7:0] key0,

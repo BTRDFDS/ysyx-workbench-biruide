@@ -1,4 +1,4 @@
-#include "Vex7.h"
+#include "Vex7O.h"
 #include "verilated.h"
 #include <stdlib.h>
 #include <unistd.h>
@@ -6,7 +6,7 @@
 int main(int argc, char** argv) {
 	VerilatedContext* contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
-	Vex7* top = new Vex7{contextp};
+	Vex7O* top = new Vex7O{contextp};
 	int a=0XFF;
     nvboard_bind_pin(&top->ps2_clk,1,PS2_CLK);
     nvboard_bind_pin(&top->ps2_data,1,PS2_DAT);
@@ -23,6 +23,7 @@ int main(int argc, char** argv) {
 	while (!contextp->gotFinish()) {
   		nvboard_update();
         top->eval();
+		
 
 	}
 	delete top;

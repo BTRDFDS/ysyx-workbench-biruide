@@ -17,8 +17,9 @@ t?=water
 
 all: $(BINS)
 bin/%: vsrc/%.v csrc/%.cpp | build/% bin
-	verilator --lint-only -Wall $<
+	verilator --lint-only -Wall $< --top-module $* -Wno-DECLFILENAME
 	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
+	--top-module $* \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	

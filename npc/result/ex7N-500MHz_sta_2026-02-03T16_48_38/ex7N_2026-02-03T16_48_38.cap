@@ -1,0 +1,15 @@
+Generate the report at 2026-02-03T15:27:28, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
++-----------------------------------------------------+----------------+---------------+------------------+----------------+------+
+| Net / Pin                                           | MaxCapacitance | Capacitance   | CapacitanceSlack | LibCellPort    | Note |
++-----------------------------------------------------+----------------+---------------+------------------+----------------+------+
+| buffer_0__MUX2X0P5H7L_A_S0                          |                |               |                  |                |      |
+| buffer_0__MUX2X0P5H7L_A_S0_NOR4X0P5H7L_Y:Y          | 0.011r/0.011f  | 0.002r/0.002f | 0.009r/0.009f    | NOR4X0P5H7L/Y  |      |
+| over_reg_p_D                                        |                |               |                  |                |      |
+| over_NOR4BX0P5H7L_B:Y                               | 0.011r/0.011f  | 0.001r/0.001f | 0.011r/0.011f    | NOR4BX0P5H7L/Y |      |
+| buffer_4__reg_p_D_MUX2X0P5H7L_Y_S0                  |                |               |                  |                |      |
+| buffer_4__reg_p_D_MUX2X0P5H7L_Y_S0_NOR3BX0P5H7L_Y:Y | 0.016r/0.016f  | 0.002r/0.002f | 0.014r/0.014f    | NOR3BX0P5H7L/Y |      |
+| buffer_8__reg_p_D_MUX2X0P5H7L_Y_S0                  |                |               |                  |                |      |
+| buffer_8__reg_p_D_MUX2X0P5H7L_Y_S0_NOR3BX0P5H7L_Y:Y | 0.016r/0.016f  | 0.002r/0.002f | 0.014r/0.014f    | NOR3BX0P5H7L/Y |      |
+| segD1_OR2X1P4H7L_Y_A                                |                |               |                  |                |      |
+| segD1_OR2X1P4H7L_Y_A_NOR3X0P5H7L_Y:Y                | 0.015r/0.015f  | 0.002r/0.002f | 0.014r/0.014f    | NOR3X0P5H7L/Y  |      |
++-----------------------------------------------------+----------------+---------------+------------------+----------------+------+

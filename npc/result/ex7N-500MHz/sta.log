@@ -1,0 +1,669 @@
+I20260203 16:48:14.379093 113381 Sta.cc:383] read verilog file /home/biruide/ysyx-workbench/yosys-sta/result/ex7N-500MHz/ex7N.netlist.v start
+I20260203 16:48:14.382082 113381 VerilogParserRustC.cc:41] load verilog file /home/biruide/ysyx-workbench/yosys-sta/result/ex7N-500MHz/ex7N.netlist.v
+r str /home/biruide/ysyx-workbench/yosys-sta/result/ex7N-500MHz/ex7N.netlist.v
+I20260203 16:48:14.393766 113381 Sta.cc:391] read verilog end
+I20260203 16:48:14.393858 113381 Sta.cc:309] load lib start
+I20260203 16:48:14.397171 113414 Sta.cc:287] read liberty /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib start 
+I20260203 16:48:14.397250 113414 LibParserRustC.cc:1285] load liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+rust read lib file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+I20260203 16:48:19.679030 113414 LibParserRustC.cc:1294] load liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib success.
+I20260203 16:48:19.679168 113414 Sta.cc:297] read liberty /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib end 
+I20260203 16:48:19.679661 113381 Sta.cc:328] load lib end
+I20260203 16:48:19.679750 113381 Sta.cc:417] link design ex7N start
+I20260203 16:48:19.687605 113520 LibParserRustC.cc:1304] link liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib start.
+I20260203 16:48:19.690399 113520 LibParserRustC.cc:666] unkown attri name: voltage_map in /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib line no 28
+I20260203 16:48:38.091562 113520 LibParserRustC.cc:1310] link liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib success.
+I20260203 16:48:38.119762 113381 Sta.cc:889] assign segT0_0_ = segA0_0_
+I20260203 16:48:38.119834 113381 Sta.cc:889] assign segA1_5_ = ascll_7_
+I20260203 16:48:38.119844 113381 Sta.cc:889] assign segA1_3_ = segA0_0_
+I20260203 16:48:38.119851 113381 Sta.cc:889] assign segA1_1_ = ascll_7_
+I20260203 16:48:38.119858 113381 Sta.cc:889] assign segA1_0_ = segA0_0_
+I20260203 16:48:38.119866 113381 Sta.cc:889] assign segD1_0_ = segA0_0_
+I20260203 16:48:38.119877 113381 Sta.cc:889] assign segD0_0_ = segA0_0_
+I20260203 16:48:38.119884 113381 Sta.cc:889] assign segT1_0_ = segA0_0_
+I20260203 16:48:38.120424 113381 Sta.cc:1106] link design ex7N end
+I20260203 16:48:38.120440 113381 Sta.cc:1108] design ex7N inst num: 605
+I20260203 16:48:38.121186 113381 Sta.cc:1110] design ex7N net num: 617
+I20260203 16:48:38.121206 113381 Sta.cc:1112] design ex7N port num: 68
+I20260203 16:48:38.121600 113381 Sta.cc:181] read sdc /home/biruide/ysyx-workbench/yosys-sta/scripts/default.sdc start 
+I20260203 16:48:38.128547 113381 CmdCreateClock.cc:124] create clock core_clock for pin/port: clk
+I20260203 16:48:38.128618 113381 Sta.cc:198] read sdc /home/biruide/ysyx-workbench/yosys-sta/scripts/default.sdc end 
+I20260203 16:48:38.129321 113381 StaBuildGraph.cc:315] build graph start
+I20260203 16:48:38.138695 113381 StaBuildGraph.cc:216] net segD0_0_ has no driver.
+I20260203 16:48:38.138758 113381 StaBuildGraph.cc:216] net segD1_0_ has no driver.
+I20260203 16:48:38.138787 113381 StaBuildGraph.cc:216] net segA1_0_ has no driver.
+I20260203 16:48:38.138790 113381 StaBuildGraph.cc:216] net segA1_1_ has no driver.
+I20260203 16:48:38.138796 113381 StaBuildGraph.cc:216] net segA1_3_ has no driver.
+I20260203 16:48:38.138801 113381 StaBuildGraph.cc:216] net segA1_5_ has no driver.
+I20260203 16:48:38.138810 113381 StaBuildGraph.cc:216] net segT0_0_ has no driver.
+I20260203 16:48:38.138841 113381 StaBuildGraph.cc:216] net segT1_0_ has no driver.
+I20260203 16:48:38.142777 113381 StaBuildGraph.cc:332] build graph end
+I20260203 16:48:38.142992 113381 Sta.cc:2834] update timing start
+I20260203 16:48:38.143272 113381 StaApplySdc.cc:698] apply sdc start
+I20260203 16:48:38.143316 113381 StaApplySdc.cc:729] apply sdc end
+I20260203 16:48:38.143328 113381 StaClockPropagation.cc:324] ideal clock propagation start
+I20260203 16:48:38.143340 113381 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260203 16:48:38.143435 113381 StaClockPropagation.cc:203] clock propagate end to vertex over_reg_p:CK
+I20260203 16:48:38.143738 113381 StaClockPropagation.cc:422] ideal clock propagation end
+I20260203 16:48:38.143781 113381 StaCheck.cc:129] found loop fwd start
+I20260203 16:48:38.144114 113381 StaCheck.cc:148] found loop fwd end
+I20260203 16:48:38.144141 113381 StaCheck.cc:150] found loop bwd start
+I20260203 16:48:38.144345 113381 StaCheck.cc:172] found loop bwd end
+I20260203 16:48:38.144416 113381 StaClockSlewDelayPropagation.cc:112] clock slew delay propagation start
+I20260203 16:48:38.145210 113381 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 1
+I20260203 16:48:38.145955 113381 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 29
+I20260203 16:48:38.146090 113381 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 12
+I20260203 16:48:38.146459 113381 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 90
+I20260203 16:48:38.146765 113381 StaClockSlewDelayPropagation.cc:163] clock slew delay propagation end
+I20260203 16:48:38.146813 113381 StaClockSlewDelayPropagation.cc:166] clock slew delay propagation memory usage 0MB
+I20260203 16:48:38.146836 113381 StaClockSlewDelayPropagation.cc:169] clock slew delay propagation time elapsed 0.002421s
+I20260203 16:48:38.147189 113381 StaClockPropagation.cc:326] propagated(kNormal) clock propagation start
+I20260203 16:48:38.147199 113381 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260203 16:48:38.147205 113381 StaClockPropagation.cc:424] propagated(kNormal) clock propagation end
+I20260203 16:48:38.147210 113381 StaApplySdc.cc:698] apply sdc start
+I20260203 16:48:38.147215 113381 StaApplySdc.cc:729] apply sdc end
+I20260203 16:48:38.147219 113381 StaClockPropagation.cc:328] propagated(kGenerated) clock propagation start
+I20260203 16:48:38.147223 113381 StaClockPropagation.cc:354] clock propagation clock num: 1
+I20260203 16:48:38.147228 113381 StaClockPropagation.cc:426] propagated(kGenerated) clock propagation end
+I20260203 16:48:38.147231 113381 StaApplySdc.cc:698] apply sdc start
+I20260203 16:48:38.147236 113381 StaApplySdc.cc:729] apply sdc end
+I20260203 16:48:38.147240 113381 StaBuildPropTag.cc:325] build propagation tag start
+I20260203 16:48:38.147274 113381 StaBuildPropTag.cc:338] build propagation tag end
+I20260203 16:48:38.147315 113381 StaDataPropagation.cc:676] data fwd propagation start
+I20260203 16:48:38.147349 113381 StaDataPropagationBFS.cc:166] data fwd propagation bfs start
+I20260203 16:48:38.147538 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 112
+I20260203 16:48:38.151507 113631 StaDataPropagationBFS.cc:82] Thread 136339198551616 date fwd propagate found start vertex.SegT1.in_1__reg_p:CK
+I20260203 16:48:38.151379 113623 StaDataPropagationBFS.cc:82] Thread 136339090454080 date fwd propagate found start vertex.ps2_clk
+I20260203 16:48:38.151448 113627 StaDataPropagationBFS.cc:82] Thread 136339232122432 date fwd propagate found start vertex.SegT0.in_1__reg_p:CK
+I20260203 16:48:38.151639 113626 StaDataPropagationBFS.cc:82] Thread 136339240515136 date fwd propagate found start vertex.SegT0.in_0__reg_p:CK
+I20260203 16:48:38.151466 113628 StaDataPropagationBFS.cc:82] Thread 136339223729728 date fwd propagate found start vertex.SegT0.in_2__reg_p:CK
+I20260203 16:48:38.151376 113653 StaDataPropagationBFS.cc:82] Thread 136338493924928 date fwd propagate found start vertex.clrn
+I20260203 16:48:38.151696 113632 StaDataPropagationBFS.cc:82] Thread 136339190158912 date fwd propagate found start vertex.SegT1.in_2__reg_p:CK
+[0;31mE20260203 16:48:38.151782 113635 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260203 16:48:38.151757 113633 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260203 16:48:38.151772 113625 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260203 16:48:38.151783 113627 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260203 16:48:38.151736 113634 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260203 16:48:38.151878 113623 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260203 16:48:38.151892 113626 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260203 16:48:38.152052 113638 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[m[0;31mE20260203 16:48:38.152227 113642 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260203 16:48:38.151383 113622 StaDataPropagationBFS.cc:82] Thread 136339082061376 date fwd propagate found start vertex.ps2_data
+I20260203 16:48:38.151491 113630 StaDataPropagationBFS.cc:82] Thread 136339206944320 date fwd propagate found start vertex.SegT1.in_0__reg_p:CK
+[0;31mE20260203 16:48:38.151772 113631 Lib.cc:181] Warning: val outside table ranges:  val = 0; min_val = 0.0121961; max_val = 0.795659
+[mI20260203 16:48:38.151489 113629 StaDataPropagationBFS.cc:82] Thread 136339215337024 date fwd propagate found start vertex.SegT0.in_3__reg_p:CK
+I20260203 16:48:38.157581 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 123
+I20260203 16:48:38.162673 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 199
+I20260203 16:48:38.167304 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 59
+I20260203 16:48:38.172616 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 160
+I20260203 16:48:38.182245 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 53
+I20260203 16:48:38.188755 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 124
+I20260203 16:48:38.194620 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 69
+I20260203 16:48:38.201944 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 141
+I20260203 16:48:38.210765 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 52
+I20260203 16:48:38.217996 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 96
+I20260203 16:48:38.222653 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 35
+I20260203 16:48:38.226364 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 105
+I20260203 16:48:38.230463 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 23
+I20260203 16:48:38.233961 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 129
+I20260203 16:48:38.239480 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 44
+I20260203 16:48:38.244850 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 192
+I20260203 16:48:38.247874 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 48
+I20260203 16:48:38.250609 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 89
+I20260203 16:48:38.253814 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 41
+I20260203 16:48:38.256479 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 90
+I20260203 16:48:38.260274 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 45
+I20260203 16:48:38.263055 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 68
+I20260203 16:48:38.266469 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 20
+I20260203 16:48:38.269213 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 65
+I20260203 16:48:38.272619 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 23
+I20260203 16:48:38.275669 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 27
+I20260203 16:48:38.278569 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 7
+I20260203 16:48:38.280413 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 7
+I20260203 16:48:38.282855 113381 StaDataPropagationBFS.cc:229] data fwd propagation bfs end
+I20260203 16:48:38.282928 113381 StaDataPropagationBFS.cc:232] data fwd propagation bfs memory usage 1509.12MB
+I20260203 16:48:38.282946 113381 StaDataPropagationBFS.cc:234] data fwd propagation bfs time elapsed 0.135596s
+I20260203 16:48:38.282953 113381 StaDataPropagation.cc:695] data fwd propagation end
+I20260203 16:48:38.282958 113381 StaDataPropagation.cc:676] data fwd propagation start
+I20260203 16:48:38.282974 113381 StaDataPropagationBFS.cc:166] data fwd propagation bfs start
+I20260203 16:48:38.283071 113381 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 2
+I20260203 16:48:38.286092 113381 StaDataPropagationBFS.cc:229] data fwd propagation bfs end
+I20260203 16:48:38.286175 113381 StaDataPropagationBFS.cc:232] data fwd propagation bfs memory usage 0MB
+I20260203 16:48:38.286185 113381 StaDataPropagationBFS.cc:234] data fwd propagation bfs time elapsed 0.003211s
+I20260203 16:48:38.286191 113381 StaDataPropagation.cc:695] data fwd propagation end
+I20260203 16:48:38.286197 113381 StaAnalyze.cc:557] analyze timing path start
+I20260203 16:48:38.286202 113381 StaAnalyze.cc:565] analyze timing path end vertex 1 total 183 start
+[0;31mE20260203 16:48:38.286208 113381 StaAnalyze.cc:328] The output port segD0_4_ is not constrained
+[m[0;31mE20260203 16:48:38.286242 113381 StaAnalyze.cc:328] The output port segD0_4_ is not constrained
+[mI20260203 16:48:38.286247 113381 StaAnalyze.cc:599] analyze timing path end vertex 1 total 183 end
+[0;31mE20260203 16:48:38.286252 113381 StaAnalyze.cc:328] The output port segD0_3_ is not constrained
+[m[0;31mE20260203 16:48:38.286257 113381 StaAnalyze.cc:328] The output port segD0_3_ is not constrained
+[m[0;31mE20260203 16:48:38.286262 113381 StaAnalyze.cc:328] The output port data_0_ is not constrained
+[m[0;31mE20260203 16:48:38.286267 113381 StaAnalyze.cc:328] The output port data_0_ is not constrained
+[m[0;31mE20260203 16:48:38.286273 113381 StaAnalyze.cc:328] The output port data_1_ is not constrained
+[m[0;31mE20260203 16:48:38.286278 113381 StaAnalyze.cc:328] The output port data_1_ is not constrained
+[m[0;31mE20260203 16:48:38.286283 113381 StaAnalyze.cc:328] The output port data_2_ is not constrained
+[m[0;31mE20260203 16:48:38.286288 113381 StaAnalyze.cc:328] The output port data_2_ is not constrained
+[mI20260203 16:48:38.286294 113381 StaAnalyze.cc:565] analyze timing path end vertex 11 total 183 start
+I20260203 16:48:38.286298 113381 StaAnalyze.cc:599] analyze timing path end vertex 11 total 183 end
+I20260203 16:48:38.286302 113381 StaAnalyze.cc:565] analyze timing path end vertex 21 total 183 start
+I20260203 16:48:38.286305 113381 StaAnalyze.cc:599] analyze timing path end vertex 21 total 183 end
+I20260203 16:48:38.286310 113381 StaAnalyze.cc:565] analyze timing path end vertex 31 total 183 start
+I20260203 16:48:38.286314 113381 StaAnalyze.cc:599] analyze timing path end vertex 31 total 183 end
+I20260203 16:48:38.286351 113381 StaAnalyze.cc:303] add path data num 2 to SegT0.in_0__reg_p:D
+I20260203 16:48:38.286379 113381 StaAnalyze.cc:565] analyze timing path end vertex 41 total 183 start
+I20260203 16:48:38.286391 113381 StaAnalyze.cc:599] analyze timing path end vertex 41 total 183 end
+I20260203 16:48:38.286442 113381 StaAnalyze.cc:565] analyze timing path end vertex 51 total 183 start
+I20260203 16:48:38.286454 113381 StaAnalyze.cc:599] analyze timing path end vertex 51 total 183 end
+I20260203 16:48:38.286458 113381 StaAnalyze.cc:565] analyze timing path end vertex 61 total 183 start
+I20260203 16:48:38.286463 113381 StaAnalyze.cc:599] analyze timing path end vertex 61 total 183 end
+I20260203 16:48:38.286473 113381 StaAnalyze.cc:565] analyze timing path end vertex 71 total 183 start
+I20260203 16:48:38.286485 113381 StaAnalyze.cc:599] analyze timing path end vertex 71 total 183 end
+I20260203 16:48:38.286546 113381 StaAnalyze.cc:565] analyze timing path end vertex 81 total 183 start
+I20260203 16:48:38.286561 113381 StaAnalyze.cc:599] analyze timing path end vertex 81 total 183 end
+I20260203 16:48:38.286607 113381 StaAnalyze.cc:565] analyze timing path end vertex 91 total 183 start
+I20260203 16:48:38.286623 113381 StaAnalyze.cc:599] analyze timing path end vertex 91 total 183 end
+I20260203 16:48:38.286669 113381 StaAnalyze.cc:565] analyze timing path end vertex 101 total 183 start
+I20260203 16:48:38.286679 113381 StaAnalyze.cc:599] analyze timing path end vertex 101 total 183 end
+I20260203 16:48:38.286727 113381 StaAnalyze.cc:565] analyze timing path end vertex 111 total 183 start
+I20260203 16:48:38.286736 113381 StaAnalyze.cc:599] analyze timing path end vertex 111 total 183 end
+I20260203 16:48:38.286754 113381 StaAnalyze.cc:303] add path data num 2 to fifo[5]_4__reg_p:D
+I20260203 16:48:38.286793 113381 StaAnalyze.cc:565] analyze timing path end vertex 121 total 183 start
+I20260203 16:48:38.286803 113381 StaAnalyze.cc:599] analyze timing path end vertex 121 total 183 end
+I20260203 16:48:38.286862 113381 StaAnalyze.cc:565] analyze timing path end vertex 131 total 183 start
+I20260203 16:48:38.286872 113381 StaAnalyze.cc:599] analyze timing path end vertex 131 total 183 end
+I20260203 16:48:38.286921 113381 StaAnalyze.cc:565] analyze timing path end vertex 141 total 183 start
+I20260203 16:48:38.286926 113381 StaAnalyze.cc:599] analyze timing path end vertex 141 total 183 end
+I20260203 16:48:38.286975 113381 StaAnalyze.cc:565] analyze timing path end vertex 151 total 183 start
+I20260203 16:48:38.286986 113381 StaAnalyze.cc:599] analyze timing path end vertex 151 total 183 end
+I20260203 16:48:38.287038 113381 StaAnalyze.cc:565] analyze timing path end vertex 161 total 183 start
+I20260203 16:48:38.287052 113381 StaAnalyze.cc:599] analyze timing path end vertex 161 total 183 end
+I20260203 16:48:38.287091 113381 StaAnalyze.cc:303] add path data num 2 to segT1[4]_reg_p:D
+I20260203 16:48:38.287106 113381 StaAnalyze.cc:565] analyze timing path end vertex 171 total 183 start
+I20260203 16:48:38.287114 113381 StaAnalyze.cc:599] analyze timing path end vertex 171 total 183 end
+I20260203 16:48:38.287170 113381 StaAnalyze.cc:565] analyze timing path end vertex 181 total 183 start
+I20260203 16:48:38.287185 113381 StaAnalyze.cc:599] analyze timing path end vertex 181 total 183 end
+I20260203 16:48:38.287199 113381 StaAnalyze.cc:603] analyze timing path end
+I20260203 16:48:38.287204 113381 StaApplySdc.cc:698] apply sdc start
+I20260203 16:48:38.287207 113381 StaApplySdc.cc:729] apply sdc end
+I20260203 16:48:38.287211 113381 StaDataPropagation.cc:698] data bwd propagation start
+I20260203 16:48:38.288462 113381 StaDataPropagation.cc:249] propagate start vertex SegT0.in_0__reg_p:CK
+I20260203 16:48:38.288487 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.SegT0.in_0__reg_p:D
+I20260203 16:48:38.288506 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.SegT0.in_1__reg_p:D
+I20260203 16:48:38.288520 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.SegT0.in_2__reg_p:D
+I20260203 16:48:38.288538 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.segT1[1]_reg_p:D
+I20260203 16:48:38.288558 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.segT1[2]_reg_p:D
+I20260203 16:48:38.288579 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.segT1[7]_reg_p:D
+I20260203 16:48:38.288599 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.segT1[3]_reg_p:D
+I20260203 16:48:38.288612 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.segT1[4]_reg_p:D
+I20260203 16:48:38.288635 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.segT1[5]_reg_p:D
+I20260203 16:48:38.288648 113381 StaDataPropagation.cc:172] Thread 136339337764992 data bwd propagate found end vertex.segT1[6]_reg_p:D
+I20260203 16:48:38.292448 113381 StaDataPropagation.cc:703] data bwd propagation end
+I20260203 16:48:38.292495 113381 Sta.cc:2895] update timing end
+I20260203 16:48:38.292549 113381 Sta.cc:2898] update timing memory usage 1509.25MB
+I20260203 16:48:38.292563 113381 Sta.cc:2900] update timing time elapsed 0.149571s
+I20260203 16:48:38.292807 113381 Sta.cc:2998] start write sta report.
+I20260203 16:48:38.292820 113381 Sta.cc:2999] output sta report path: /home/biruide/ysyx-workbench/yosys-sta/result/ex7N-500MHz
+I20260203 16:48:38.296849 113381 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260203 16:48:38.296903 113381 StaReport.cc:206] report the clock group **clock_gating_default** 5 timing paths.
+I20260203 16:48:38.298226 113381 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260203 16:48:38.299222 113381 StaReport.cc:206] report the clock group **clock_gating_default** 5 timing paths.
+I20260203 16:48:38.299319 113381 StaReport.cc:211] report the clock group core_clock 1 timing paths.
+I20260203 16:48:38.299333 113381 StaReport.cc:206] report the clock group **clock_gating_default** 1 timing paths.
+I20260203 16:48:38.299396 113381 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260203 16:48:38.299427 113381 StaReport.cc:206] report the clock group **clock_gating_default** 5 timing paths.
+I20260203 16:48:38.299849 113381 StaReport.cc:211] report the clock group core_clock 5 timing paths.
+I20260203 16:48:38.300336 113381 StaReport.cc:206] report the clock group **clock_gating_default** 5 timing paths.
+I20260203 16:48:38.300377 113381 StaReport.cc:211] report the clock group core_clock 1 timing paths.
+I20260203 16:48:38.300384 113381 StaReport.cc:206] report the clock group **clock_gating_default** 1 timing paths.
+I20260203 16:48:38.300388 113381 Sta.cc:1885] 
++-------------------------------------------------------------------------------------+--------------------------+------------+------------+---------------+-------+-------+-----------+
+| Endpoint                                                                            | Clock Group              | Delay Type | Path Delay | Path Required | CPPR  | Slack | Freq(MHz) |
++-------------------------------------------------------------------------------------+--------------------------+------------+------------+---------------+-------+-------+-----------+
+| segT1[6]_reg_p:D                                                                    | core_clock               | max        | 0.759f     | 1.954         | 0.000 | 1.195 | 1241.963  |
+| segT1[4]_reg_p:D                                                                    | core_clock               | max        | 0.774r     | 1.973         | 0.000 | 1.199 | 1248.472  |
+| segT1[7]_reg_p:D                                                                    | core_clock               | max        | 0.774r     | 1.973         | 0.000 | 1.199 | 1248.472  |
+| segT1[1]_reg_p:D                                                                    | core_clock               | max        | 0.749f     | 1.954         | 0.000 | 1.205 | 1257.790  |
+| segT1[2]_reg_p:D                                                                    | core_clock               | max        | 0.749f     | 1.954         | 0.000 | 1.205 | 1258.443  |
+| segT0[4]_reg_p_D_NOR2X3H7L_Y_B_MUX4X3H7L_Y_S0_ICGX0P5H7L_E:E                        | **clock_gating_default** | max        | 0.645f     | 1.969         | 0.000 | 1.324 | NA        |
+| w_ptr_1__reg_p_D_AOI21X0P5H7L_Y_A0_NOR2BX1H7L_B_AN_NOR3BX0P5H7L_AN_Y_ICGX0P5H7L_E:E | **clock_gating_default** | max        | 0.609r     | 1.942         | 0.000 | 1.333 | NA        |
+| segT0[4]_reg_p_D_NOR2X3H7L_Y_B_MUX4X3H7L_Y_S0_ICGX0P5H7L_E:E                        | **clock_gating_default** | max        | 0.589r     | 1.946         | 0.000 | 1.357 | NA        |
+| w_ptr_1__reg_p_D_AOI21X0P5H7L_Y_A0_NOR2BX1H7L_B_Z_ICGX0P5H7L_E:E                    | **clock_gating_default** | max        | 0.589r     | 1.946         | 0.000 | 1.358 | NA        |
+| w_ptr_1__reg_p_D_AOI21X0P5H7L_Y_A1_NOR2BX1H7L_B_Z_ICGX0P5H7L_E:E                    | **clock_gating_default** | max        | 0.589r     | 1.946         | 0.000 | 1.358 | NA        |
+| ps2_clk_sync_1__reg_p:D                                                             | core_clock               | min        | 0.059f     | -0.008        | 0.000 | 0.067 | NA        |
+| ps2_clk_sync_2__reg_p:D                                                             | core_clock               | min        | 0.064f     | -0.008        | 0.000 | 0.072 | NA        |
+| ps2_clk_sync_1__reg_p:D                                                             | core_clock               | min        | 0.080r     | -0.015        | 0.000 | 0.095 | NA        |
+| ps2_clk_sync_2__reg_p:D                                                             | core_clock               | min        | 0.085r     | -0.018        | 0.000 | 0.103 | NA        |
+| over_reg_p:D                                                                        | core_clock               | min        | 0.101f     | -0.008        | 0.000 | 0.109 | NA        |
+| ps2Neg_ICGX0P5H7L_E:E                                                               | **clock_gating_default** | min        | 0.102f     | -0.003        | 0.000 | 0.105 | NA        |
+| ps2Neg_INVX0P5H7L_Y_A_NOR2X0P5H7L_A_Y_ICGX0P5H7L_E:E                                | **clock_gating_default** | min        | 0.104f     | -0.004        | 0.000 | 0.108 | NA        |
+| ps2Neg_ICGX0P5H7L_E:E                                                               | **clock_gating_default** | min        | 0.131r     | -0.013        | 0.000 | 0.144 | NA        |
+| w_ptr_1__reg_p_D_AOI21X0P5H7L_Y_A0_NOR2X0P5H7L_A_Y_ICGX0P5H7L_E:E                   | **clock_gating_default** | min        | 0.147f     | -0.005        | 0.000 | 0.151 | NA        |
+| w_ptr_1__reg_p_D_AOI21X0P5H7L_Y_A1_NOR2X0P5H7L_A_Y_ICGX0P5H7L_E:E                   | **clock_gating_default** | min        | 0.147f     | -0.005        | 0.000 | 0.151 | NA        |
++-------------------------------------------------------------------------------------+--------------------------+------------+------------+---------------+-------+-------+-----------+
+I20260203 16:48:38.300695 113381 Sta.cc:1886] 
++------------+------------+-------+
+| Clock      | Delay Type | TNS   |
++------------+------------+-------+
+| core_clock | max        | 0.000 |
+| core_clock | min        | 0.000 |
++------------+------------+-------+
+I20260203 16:48:38.323414 113381 NetlistWriter.cc:52] start write verilog file /home/biruide/ysyx-workbench/yosys-sta/result/ex7N-500MHz/ex7N.v
+I20260203 16:48:38.328919 113381 NetlistWriter.cc:71] finish write verilog file /home/biruide/ysyx-workbench/yosys-sta/result/ex7N-500MHz/ex7N.v
+I20260203 16:48:38.329247 113381 Sta.cc:3111] used lib: /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+I20260203 16:48:38.329258 113381 Sta.cc:3096] The timing engine run success.
+I20260203 16:48:38.331142 113381 Power.cc:854] build graph and seq graph start
+I20260203 16:48:38.331905 113381 PwrBuildGraph.cc:80] build power graph start
+I20260203 16:48:38.338282 113381 PwrBuildGraph.cc:170] build power graph end
+I20260203 16:48:38.338377 113381 PwrBuildGraph.cc:172] build power graph memory usage 0MB
+I20260203 16:48:38.338411 113381 PwrBuildGraph.cc:174] build power graph time elapsed 0.006506s
+I20260203 16:48:38.338440 113381 PwrBuildSeqGraph.cc:326] build seq graph start
+I20260203 16:48:38.358117 113381 PwrBuildSeqGraph.cc:330] build seq graph end
+I20260203 16:48:38.358189 113381 PwrBuildSeqGraph.cc:332] seq inst num: 107
+I20260203 16:48:38.358193 113381 PwrBuildSeqGraph.cc:333] input port num: 4
+I20260203 16:48:38.358196 113381 PwrBuildSeqGraph.cc:334] output port num: 64
+I20260203 16:48:38.358199 113381 PwrBuildSeqGraph.cc:335] seq macro num: 0
+I20260203 16:48:38.358219 113381 PwrBuildSeqGraph.cc:336] seq arc num: 4303
+I20260203 16:48:38.358223 113381 PwrBuildSeqGraph.cc:339] seq vertex max fanout: 94
+I20260203 16:48:38.358227 113381 PwrBuildSeqGraph.cc:340] seq vertex max fanin: 94
+I20260203 16:48:38.358296 113381 PwrBuildSeqGraph.cc:343] build seq graph memory usage 1182MB
+I20260203 16:48:38.358311 113381 PwrBuildSeqGraph.cc:345] build seq graph time elapsed 0.019871s
+I20260203 16:48:38.358318 113381 Power.cc:861] build graph and seq graph end
+I20260203 16:48:38.358333 113381 Power.cc:863] build graph and seq graph memory usage 1182MB
+I20260203 16:48:38.358338 113381 Power.cc:866] build graph and seq graph time elapsed 0.027201s
+I20260203 16:48:38.358350 113381 Power.cc:871] power annotate vcd start
+I20260203 16:48:38.358354 113381 Power.cc:128] annotate toggle sp start
+I20260203 16:48:38.358359 113381 Power.cc:134] annotate toggle sp end
+I20260203 16:48:38.358362 113381 Power.cc:878] power vcd annotate end
+I20260203 16:48:38.358372 113381 Power.cc:880] power vcd annotate memory usage 0MB
+I20260203 16:48:38.358376 113381 Power.cc:882] power vcd annotate time elapsed 2.6e-05s
+I20260203 16:48:38.358388 113381 Power.cc:896] power propagation start
+I20260203 16:48:38.358408 113381 PwrCheckPipelineLoop.cc:122] check pipeline loop start
+I20260203 16:48:38.358542 113381 PwrCheckPipelineLoop.cc:129] check pipeline loop end
+I20260203 16:48:38.358583 113381 PwrCheckPipelineLoop.cc:137] check pipeline loop memory usage 0MB
+I20260203 16:48:38.358589 113381 PwrCheckPipelineLoop.cc:139] check pipeline loop time elapsed 0.000182s
+I20260203 16:48:38.358603 113381 PwrLevelizeSeqGraph.cc:93] seq levelization start
+I20260203 16:48:38.358685 113381 PwrLevelizeSeqGraph.cc:101] seq levelization end
+I20260203 16:48:38.358719 113381 PwrLevelizeSeqGraph.cc:103] the seq graph's level depth 11
+I20260203 16:48:38.358742 113381 PwrLevelizeSeqGraph.cc:116] levelization memory usage 0MB
+I20260203 16:48:38.358747 113381 PwrLevelizeSeqGraph.cc:118] levelization time elapsed 0.000144s
+I20260203 16:48:38.358775 113381 PwrPropagateConst.cc:184] propagate const start
+I20260203 16:48:38.358860 113381 PwrPropagateConst.cc:109] set tie cell fanout from segA0_TIEHIH7L_Z:Z data in vertex segA0_0_
+I20260203 16:48:38.358877 113381 PwrPropagateConst.cc:109] set tie cell fanout from ascll_TIELOH7L_Z:Z data in vertex ascll_7_
+I20260203 16:48:38.358888 113381 PwrPropagateConst.cc:288] propagate const end
+I20260203 16:48:38.358902 113381 PwrPropagateConst.cc:290] propagate const memory usage 0MB
+I20260203 16:48:38.358906 113381 PwrPropagateConst.cc:292] propagate const time elapsed 0.000131s
+I20260203 16:48:38.358919 113381 PwrPropagateToggleSP.cc:202] propagate toggle sp start
+I20260203 16:48:38.362766 114711 PwrPropagateToggleSP.cc:66] power vertex ps2_clk_sync_0__reg_p:D not found launch clock domain.
+I20260203 16:48:38.368808 113381 PwrPropagateToggleSP.cc:316] propagate toggle sp end
+I20260203 16:48:38.368892 113381 PwrPropagateToggleSP.cc:319] propagate toggle sp memory usage 0MB
+I20260203 16:48:38.368904 113381 PwrPropagateToggleSP.cc:321] propagate toggle sp time elapsed 0.009985s
+I20260203 16:48:38.368928 113381 PwrPropagateClock.cc:68] propagate clock start
+I20260203 16:48:38.368963 113381 PwrPropagateClock.cc:80] propagate clock end
+I20260203 16:48:38.368979 113381 PwrPropagateClock.cc:82] propagate clock memory usage 0MB
+I20260203 16:48:38.368984 113381 PwrPropagateClock.cc:84] propagate clock time elapsed 5.6e-05s
+I20260203 16:48:38.368990 113381 Power.cc:914] power propagation end
+I20260203 16:48:38.369027 113381 Power.cc:916] power propagation memory usage 0MB
+I20260203 16:48:38.369032 113381 Power.cc:918] power propagation time elapsed 0.010644s
+I20260203 16:48:38.369052 113381 Power.cc:267] power calculation start
+I20260203 16:48:38.369069 113381 PwrCalcLeakagePower.cc:85] calc leakage power start
+I20260203 16:48:38.517581 113381 PwrCalcLeakagePower.cc:119] calc leakage power result 0.00143039mw
+I20260203 16:48:38.517680 113381 PwrCalcLeakagePower.cc:122] calc leakage power end
+I20260203 16:48:38.517760 113381 PwrCalcLeakagePower.cc:124] calc leakage power memory usage 0MB
+I20260203 16:48:38.517768 113381 PwrCalcLeakagePower.cc:126] calc leakage power time elapsed 0.148699s
+I20260203 16:48:38.517787 113381 PwrCalcInternalPower.cc:565] calc internal power start
+[0;31mE20260203 16:48:38.517915 113381 PwrCalcInternalPower.cc:97] SegT0.in_0__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.517962 113381 PwrCalcInternalPower.cc:97] SegT0.in_0__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.518008 113381 PwrCalcInternalPower.cc:205] SegT0.in_0__reg_p_D_NOR2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.518513 113381 PwrCalcInternalPower.cc:97] SegT0.in_1__reg_p_D_AOI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.518555 113381 PwrCalcInternalPower.cc:97] SegT0.in_1__reg_p_D_AOI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.518688 113381 PwrCalcInternalPower.cc:205] SegT0.in_1__reg_p_D_AOI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.519054 113381 PwrCalcInternalPower.cc:97] SegT0.in_2__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.519089 113381 PwrCalcInternalPower.cc:97] SegT0.in_2__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.519135 113381 PwrCalcInternalPower.cc:205] SegT0.in_2__reg_p_D_NOR2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.519512 113381 PwrCalcInternalPower.cc:97] SegT0.in_3__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.519546 113381 PwrCalcInternalPower.cc:97] SegT0.in_3__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.519919 113381 PwrCalcInternalPower.cc:97] SegT1.in_0__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.519928 113381 PwrCalcInternalPower.cc:97] SegT1.in_0__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.519951 113381 PwrCalcInternalPower.cc:205] SegT1.in_0__reg_p_D_NOR2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.520258 113381 PwrCalcInternalPower.cc:97] SegT1.in_1__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.520275 113381 PwrCalcInternalPower.cc:97] SegT1.in_1__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.520428 113381 PwrCalcInternalPower.cc:97] SegT1.in_2__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.520439 113381 PwrCalcInternalPower.cc:97] SegT1.in_2__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.520625 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__NAND2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.520644 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__NAND2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.520673 113381 PwrCalcInternalPower.cc:205] SegT1.in_3__NAND2X0P5H7L_B:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.522881 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__XOR2X0P5H7L_A_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.522948 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__XOR2X0P5H7L_A_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.522954 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__XOR2X0P5H7L_A_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.522960 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__XOR2X0P5H7L_A_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.522965 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__XOR2X0P5H7L_A_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.522969 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__XOR2X0P5H7L_A_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530661 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530772 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530786 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530795 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530802 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530807 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530813 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530819 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530825 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530831 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530838 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.530844 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.531271 113381 PwrCalcInternalPower.cc:205] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.531347 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.531371 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.531378 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.531384 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.531390 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.531396 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532699 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532732 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532744 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532750 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532765 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532771 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532776 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532783 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.532920 113381 PwrCalcInternalPower.cc:205] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.533016 113381 PwrCalcInternalPower.cc:205] SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.533195 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.533226 113381 PwrCalcInternalPower.cc:97] SegT1.in_3__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.533308 113381 PwrCalcInternalPower.cc:97] buffer_0__MUX2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.533334 113381 PwrCalcInternalPower.cc:97] buffer_0__MUX2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534024 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D:AN rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534080 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D:AN rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534089 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D:AN rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534096 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D:AN rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534104 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D:AN rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534111 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D:AN rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534117 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D:AN rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534123 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D:AN rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534561 113381 PwrCalcInternalPower.cc:205] buffer_0__NOR4BX0P5H7L_D:AN input slew is not exist.
+[m[0;31mE20260203 16:48:38.534636 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D_B_NAND2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.534644 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D_B_NAND2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.535558 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D_Y_NAND2X0P5H7L_B_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.535578 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D_Y_NAND2X0P5H7L_B_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.535585 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D_Y_NAND2X0P5H7L_B_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.535593 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D_Y_NAND2X0P5H7L_B_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.535598 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D_Y_NAND2X0P5H7L_B_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.535605 113381 PwrCalcInternalPower.cc:97] buffer_0__NOR4BX0P5H7L_D_Y_NAND2X0P5H7L_B_Y_NOR3X0P5H7L_C:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.535777 113381 PwrCalcInternalPower.cc:205] buffer_0__NOR4BX0P5H7L_D_Y_NAND2X0P5H7L_B_Y_NOR3X0P5H7L_C:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.535979 113381 PwrCalcInternalPower.cc:97] buffer_1__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.535992 113381 PwrCalcInternalPower.cc:97] buffer_1__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538064 113381 PwrCalcInternalPower.cc:97] buffer_2__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538105 113381 PwrCalcInternalPower.cc:97] buffer_2__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538117 113381 PwrCalcInternalPower.cc:97] buffer_2__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538125 113381 PwrCalcInternalPower.cc:97] buffer_2__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538129 113381 PwrCalcInternalPower.cc:97] buffer_2__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538136 113381 PwrCalcInternalPower.cc:97] buffer_2__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538359 113381 PwrCalcInternalPower.cc:97] buffer_3__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538372 113381 PwrCalcInternalPower.cc:97] buffer_3__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.538579 113381 PwrCalcInternalPower.cc:205] buffer_3__reg_p_D_MUX2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.538972 113381 PwrCalcInternalPower.cc:97] buffer_4__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.539002 113381 PwrCalcInternalPower.cc:97] buffer_4__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540055 113381 PwrCalcInternalPower.cc:97] buffer_5__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540091 113381 PwrCalcInternalPower.cc:97] buffer_5__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540102 113381 PwrCalcInternalPower.cc:97] buffer_5__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540108 113381 PwrCalcInternalPower.cc:97] buffer_5__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540114 113381 PwrCalcInternalPower.cc:97] buffer_5__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540119 113381 PwrCalcInternalPower.cc:97] buffer_5__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540227 113381 PwrCalcInternalPower.cc:205] buffer_5__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.540922 113381 PwrCalcInternalPower.cc:97] buffer_6__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540974 113381 PwrCalcInternalPower.cc:97] buffer_6__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540984 113381 PwrCalcInternalPower.cc:97] buffer_6__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540989 113381 PwrCalcInternalPower.cc:97] buffer_6__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540994 113381 PwrCalcInternalPower.cc:97] buffer_6__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.540999 113381 PwrCalcInternalPower.cc:97] buffer_6__reg_p_D_AOAI211X0P5H7L_Y_C0_NAND3X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.541301 113381 PwrCalcInternalPower.cc:97] buffer_7__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.541356 113381 PwrCalcInternalPower.cc:97] buffer_7__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.541707 113381 PwrCalcInternalPower.cc:97] buffer_8__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.541762 113381 PwrCalcInternalPower.cc:97] buffer_8__reg_p_D_MUX2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.541857 113381 PwrCalcInternalPower.cc:205] buffer_8__reg_p_D_MUX2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.541999 113381 PwrCalcInternalPower.cc:97] buffer_9__MUX2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.542024 113381 PwrCalcInternalPower.cc:97] buffer_9__MUX2X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.542739 113381 PwrCalcInternalPower.cc:205] clrn_BUFX1P4H7L_A:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.542784 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.542790 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.542795 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.542800 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.542804 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.542809 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.543211 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_1:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.543244 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_1:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.543251 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_1:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.543255 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_1:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.543260 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_1:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.543265 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_1:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.543586 113381 PwrCalcInternalPower.cc:205] clrn_NOR3X0P5H7L_A_1:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.544087 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_1_C_NOR2BX1H7L_AN_B_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.544150 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_1_C_NOR2BX1H7L_AN_B_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.550810 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_C_NAND2BX0P5H7L_B_AN_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.550868 113381 PwrCalcInternalPower.cc:97] clrn_NOR3X0P5H7L_A_C_NAND2BX0P5H7L_B_AN_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.550899 113381 PwrCalcInternalPower.cc:205] clrn_NOR3X0P5H7L_A_C_NAND2BX0P5H7L_B_AN_NAND2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.555466 113381 PwrCalcInternalPower.cc:97] count_2__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.555516 113381 PwrCalcInternalPower.cc:97] count_2__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.555879 113381 PwrCalcInternalPower.cc:97] count_3__reg_p_D_AOI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.555900 113381 PwrCalcInternalPower.cc:97] count_3__reg_p_D_AOI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.555934 113381 PwrCalcInternalPower.cc:205] count_3__reg_p_D_AOI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.556043 113381 PwrCalcInternalPower.cc:205] count_3__reg_p_D_AOI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.617785 113381 PwrCalcInternalPower.cc:97] over_INVX0P5H7L_A_Y_NAND2X0P5H7L_A_B_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.617913 113381 PwrCalcInternalPower.cc:97] over_INVX0P5H7L_A_Y_NAND2X0P5H7L_A_B_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.617962 113381 PwrCalcInternalPower.cc:97] over_NOR3X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.617969 113381 PwrCalcInternalPower.cc:97] over_NOR3X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.617975 113381 PwrCalcInternalPower.cc:97] over_NOR3X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.617981 113381 PwrCalcInternalPower.cc:97] over_NOR3X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.617987 113381 PwrCalcInternalPower.cc:97] over_NOR3X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.617993 113381 PwrCalcInternalPower.cc:97] over_NOR3X0P5H7L_B:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.685887 113381 PwrCalcInternalPower.cc:97] segT0[1]_reg_p_D_AOAI211X1P4H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.686017 113381 PwrCalcInternalPower.cc:97] segT0[1]_reg_p_D_AOAI211X1P4H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.686026 113381 PwrCalcInternalPower.cc:97] segT0[1]_reg_p_D_AOAI211X1P4H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.686054 113381 PwrCalcInternalPower.cc:97] segT0[1]_reg_p_D_AOAI211X1P4H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.686185 113381 PwrCalcInternalPower.cc:205] segT0[1]_reg_p_D_AOAI211X1P4H7L_Y:C0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.686928 113381 PwrCalcInternalPower.cc:205] segT0[1]_reg_p_D_AOAI211X1P4H7L_Y:C0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.692333 113381 PwrCalcInternalPower.cc:97] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.692386 113381 PwrCalcInternalPower.cc:97] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.692394 113381 PwrCalcInternalPower.cc:97] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.692400 113381 PwrCalcInternalPower.cc:97] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.692406 113381 PwrCalcInternalPower.cc:97] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.692412 113381 PwrCalcInternalPower.cc:97] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.692418 113381 PwrCalcInternalPower.cc:97] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.692425 113381 PwrCalcInternalPower.cc:97] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.692530 113381 PwrCalcInternalPower.cc:205] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.692602 113381 PwrCalcInternalPower.cc:205] segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_C0_OAI31X1H7L_Y_B0_AOI211X0P5H7L_Y:C0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.694474 113381 PwrCalcInternalPower.cc:97] segT0[3]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI31X1H7L_Y_B0_OAOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.694527 113381 PwrCalcInternalPower.cc:97] segT0[3]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI31X1H7L_Y_B0_OAOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.694535 113381 PwrCalcInternalPower.cc:97] segT0[3]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI31X1H7L_Y_B0_OAOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.694553 113381 PwrCalcInternalPower.cc:97] segT0[3]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI31X1H7L_Y_B0_OAOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.694696 113381 PwrCalcInternalPower.cc:205] segT0[3]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI31X1H7L_Y_B0_OAOI211X0P5H7L_Y:C0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.694777 113381 PwrCalcInternalPower.cc:205] segT0[3]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI31X1H7L_Y_B0_OAOI211X0P5H7L_Y:C0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.694831 113381 PwrCalcInternalPower.cc:97] segT0[4]_reg_p_D_NOR2X3H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.694842 113381 PwrCalcInternalPower.cc:97] segT0[4]_reg_p_D_NOR2X3H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.698982 113381 PwrCalcInternalPower.cc:97] segT0[5]_reg_p_D_OAOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.699050 113381 PwrCalcInternalPower.cc:97] segT0[5]_reg_p_D_OAOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.699061 113381 PwrCalcInternalPower.cc:97] segT0[5]_reg_p_D_OAOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.699066 113381 PwrCalcInternalPower.cc:97] segT0[5]_reg_p_D_OAOI211X0P5H7L_Y:C0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.699169 113381 PwrCalcInternalPower.cc:205] segT0[5]_reg_p_D_OAOI211X0P5H7L_Y:C0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.699255 113381 PwrCalcInternalPower.cc:205] segT0[5]_reg_p_D_OAOI211X0P5H7L_Y:C0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.703087 113381 PwrCalcInternalPower.cc:97] segT0[6]_reg_p_D_AOA211X1P4H7L_Y_C0_AOI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.703132 113381 PwrCalcInternalPower.cc:97] segT0[6]_reg_p_D_AOA211X1P4H7L_Y_C0_AOI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.703150 113381 PwrCalcInternalPower.cc:205] segT0[6]_reg_p_D_AOA211X1P4H7L_Y_C0_AOI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.703193 113381 PwrCalcInternalPower.cc:205] segT0[6]_reg_p_D_AOA211X1P4H7L_Y_C0_AOI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.708905 113381 PwrCalcInternalPower.cc:97] segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_A1N_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.708966 113381 PwrCalcInternalPower.cc:97] segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_A1N_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.709012 113381 PwrCalcInternalPower.cc:97] segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.709019 113381 PwrCalcInternalPower.cc:97] segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_B0_NAND2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.709046 113381 PwrCalcInternalPower.cc:205] segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_B0_NAND2X0P5H7L_Y:A input slew is not exist.
+[m[0;31mE20260203 16:48:38.721546 113381 PwrCalcInternalPower.cc:97] w_ptr_0__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.721624 113381 PwrCalcInternalPower.cc:97] w_ptr_0__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.722764 113381 PwrCalcInternalPower.cc:97] w_ptr_1__reg_p_D_AOI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.722790 113381 PwrCalcInternalPower.cc:97] w_ptr_1__reg_p_D_AOI21X0P5H7L_Y:B0 rise slew is not exist.
+[m[0;31mE20260203 16:48:38.722832 113381 PwrCalcInternalPower.cc:205] w_ptr_1__reg_p_D_AOI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.722892 113381 PwrCalcInternalPower.cc:205] w_ptr_1__reg_p_D_AOI21X0P5H7L_Y:B0 input slew is not exist.
+[m[0;31mE20260203 16:48:38.724222 113381 PwrCalcInternalPower.cc:97] w_ptr_2__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[m[0;31mE20260203 16:48:38.724243 113381 PwrCalcInternalPower.cc:97] w_ptr_2__reg_p_D_NOR2X0P5H7L_Y:A rise slew is not exist.
+[mI20260203 16:48:38.724534 113381 PwrCalcInternalPower.cc:605] calc internal power result 11.2159mW
+I20260203 16:48:38.724552 113381 PwrCalcInternalPower.cc:607] calc internal power end
+I20260203 16:48:38.724613 113381 PwrCalcInternalPower.cc:609] calc internal power memory usage 0MB
+I20260203 16:48:38.724623 113381 PwrCalcInternalPower.cc:611] calc internal power time elapsed 0.206836s
+I20260203 16:48:38.724647 113381 PwrCalcSwitchPower.cc:89] calc switch power start
+I20260203 16:48:38.724713 113381 PwrCalcSwitchPower.cc:106] net segD0_0_ has no driver, skip switch power calculation.
+I20260203 16:48:38.724731 113381 PwrCalcSwitchPower.cc:106] net segD1_0_ has no driver, skip switch power calculation.
+I20260203 16:48:38.724752 113381 PwrCalcSwitchPower.cc:106] net segA1_0_ has no driver, skip switch power calculation.
+I20260203 16:48:38.724756 113381 PwrCalcSwitchPower.cc:106] net segA1_1_ has no driver, skip switch power calculation.
+I20260203 16:48:38.724764 113381 PwrCalcSwitchPower.cc:106] net segA1_3_ has no driver, skip switch power calculation.
+I20260203 16:48:38.724769 113381 PwrCalcSwitchPower.cc:106] net segA1_5_ has no driver, skip switch power calculation.
+I20260203 16:48:38.724776 113381 PwrCalcSwitchPower.cc:106] net segT0_0_ has no driver, skip switch power calculation.
+I20260203 16:48:38.724792 113381 PwrCalcSwitchPower.cc:106] net segT1_0_ has no driver, skip switch power calculation.
+I20260203 16:48:38.725734 113381 PwrCalcSwitchPower.cc:173] calc switch power result 0mw
+I20260203 16:48:38.725785 113381 PwrCalcSwitchPower.cc:175] calc switch power end
+I20260203 16:48:38.725854 113381 PwrCalcSwitchPower.cc:177] calc switch power memory usage 0MB
+I20260203 16:48:38.725863 113381 PwrCalcSwitchPower.cc:179] calc switch power time elapsed 0.001216s
+I20260203 16:48:38.729735 113381 Power.cc:275] power calculation end
+I20260203 16:48:38.729818 113381 Power.cc:277] power calculation memory usage 0MB
+I20260203 16:48:38.729831 113381 Power.cc:279] power calculation time elapsed 0.360779s
+I20260203 16:48:38.729879 113381 Power.cc:981] power report start, output dir: /home/biruide/ysyx-workbench/yosys-sta/result/ex7N-500MHz
+I20260203 16:48:38.734925 113381 Power.cc:491] 
++---------------+----------------+--------------+---------------+-------------+-----------+
+| Power Group   | Internal Power | Switch Power | Leakage Power | Total Power | (%)       |
++---------------+----------------+--------------+---------------+-------------+-----------+
+| combinational | 1.082e-02      | 0.000e+00    | 6.889e-07     | 1.082e-02   | (96.468%) |
+| sequential    | 3.955e-04      | 0.000e+00    | 7.415e-07     | 3.963e-04   | (3.532%)  |
++---------------+----------------+--------------+---------------+-------------+-----------+
+I20260203 16:48:38.735145 113381 Power.cc:543] Total Power   ==  0.0112173 W
+I20260203 16:48:38.738533 113381 Power.cc:669] Instance Power Report: 
+I20260203 16:48:38.738585 113381 Power.cc:670] 
++-----------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+----------------+--------------+---------------+-------------+
+| Instance Name                                                                                                                                       | Nominal Voltage | Internal Power | Switch Power | Leakage Power | Total Power |
++-----------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+----------------+--------------+---------------+-------------+
+| segT1[7]_reg_p_D_OAI211X1P4H7L_Y                                                                                                                    | 1.2             | 9.215e-04      | 0.000e+00    | 6.872e-10     | 9.215e-04   |
+| segT1[4]_reg_p_D_OAI211X1P4H7L_Y                                                                                                                    | 1.2             | 8.590e-04      | 0.000e+00    | 6.872e-10     | 8.590e-04   |
+| segT1[1]_reg_p_D_OAI211X1P4H7L_Y                                                                                                                    | 1.2             | 8.207e-04      | 0.000e+00    | 6.930e-10     | 8.207e-04   |
+| segT1[2]_reg_p_D_OAI211X1P4H7L_Y                                                                                                                    | 1.2             | 7.380e-04      | 0.000e+00    | 6.875e-10     | 7.380e-04   |
+| segT1[6]_reg_p_D_OAI211X1P4H7L_Y                                                                                                                    | 1.2             | 6.827e-04      | 0.000e+00    | 6.691e-10     | 6.827e-04   |
+| segT1[2]_reg_p_D_OAI211X1P4H7L_Y_B0_NAND4BBX2H7L_Y                                                                                                  | 1.2             | 5.211e-04      | 0.000e+00    | 1.711e-09     | 5.211e-04   |
+| segT1[3]_reg_p_D_AOAI211X1P4H7L_Y                                                                                                                   | 1.2             | 4.354e-04      | 0.000e+00    | 8.846e-10     | 4.354e-04   |
+| segT1[5]_reg_p_D_OAI22X1P4H7L_Y                                                                                                                     | 1.2             | 4.160e-04      | 0.000e+00    | 1.022e-09     | 4.160e-04   |
+| segT1[4]_reg_p_D_OAI211X1P4H7L_Y_B0_NAND4BBX0P7H7L_Y                                                                                                | 1.2             | 3.595e-04      | 0.000e+00    | 1.561e-09     | 3.595e-04   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1                                                                             | 1.2             | 3.515e-04      | 0.000e+00    | 2.044e-09     | 3.515e-04   |
+| segT1[6]_reg_p_D_OAI211X1P4H7L_Y_B0_NAND4BX0P5H7L_Y                                                                                                 | 1.2             | 3.050e-04      | 0.000e+00    | 9.048e-10     | 3.050e-04   |
+| segT1[7]_reg_p_D_OAI211X1P4H7L_Y_B0_NAND4BX0P5H7L_Y                                                                                                 | 1.2             | 2.654e-04      | 0.000e+00    | 9.046e-10     | 2.654e-04   |
+| segT1[1]_reg_p_D_OAI211X1P4H7L_Y_C0_NAND4X0P5H7L_Y                                                                                                  | 1.2             | 2.637e-04      | 0.000e+00    | 2.655e-10     | 2.637e-04   |
+| segT1[6]_reg_p_D_OAI211X1P4H7L_Y_C0_OR3X1P4H7L_Y                                                                                                    | 1.2             | 1.949e-04      | 0.000e+00    | 1.752e-09     | 1.949e-04   |
+| segT1[4]_reg_p_D_OAI211X1P4H7L_Y_A1_XNOR2X1P4H7L_Y                                                                                                  | 1.2             | 1.917e-04      | 0.000e+00    | 3.249e-09     | 1.917e-04   |
+| clrn_NOR3X0P5H7L_A_C_NAND2BX0P5H7L_B_Y_NAND4BBX2H7L_C                                                                                               | 1.2             | 1.813e-04      | 0.000e+00    | 1.929e-09     | 1.813e-04   |
+| segT1[6]_reg_p_D_OAI211X1P4H7L_Y_A1_MUX2X2H7L_Y                                                                                                     | 1.2             | 1.548e-04      | 0.000e+00    | 3.899e-09     | 1.548e-04   |
+| segT1[1]_reg_p_D_OAI211X1P4H7L_Y_B0_NAND3BX0P5H7L_Y                                                                                                 | 1.2             | 1.306e-04      | 0.000e+00    | 1.021e-09     | 1.306e-04   |
+| segT1[4]_reg_p_D_OAI211X1P4H7L_Y_C0_NAND3X0P5H7L_Y                                                                                                  | 1.2             | 1.242e-04      | 0.000e+00    | 4.054e-10     | 1.242e-04   |
+| segT1[1]_reg_p_D_OAI211X1P4H7L_Y_A1_OR2X0P7H7L_Y                                                                                                    | 1.2             | 1.183e-04      | 0.000e+00    | 1.531e-09     | 1.183e-04   |
+| fifo[7]_7__MUX4X3H7L_A_Y_XOR2X3H7L_B_Y_OAI32X4H7L_A1                                                                                                | 1.2             | 1.160e-04      | 0.000e+00    | 3.138e-09     | 1.160e-04   |
+| buffer_9__XNOR2X1P4H7L_B_Y_XNOR3X3H7L_B                                                                                                             | 1.2             | 1.012e-04      | 0.000e+00    | 6.987e-09     | 1.013e-04   |
+| clrn_NOR3X0P5H7L_A_1_C_NOR2BX1H7L_AN_Z_AO211X1P4H7L_C0_Y_OR3X1P4H7L_C                                                                               | 1.2             | 9.758e-05      | 0.000e+00    | 1.809e-09     | 9.758e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_Y_BUFX7H7L_A                                                                | 1.2             | 7.869e-05      | 0.000e+00    | 4.862e-09     | 7.869e-05   |
+| segT1[2]_reg_p_D_OAI211X1P4H7L_Y_C0_NAND3X0P5H7L_Y                                                                                                  | 1.2             | 7.811e-05      | 0.000e+00    | 3.815e-10     | 7.811e-05   |
+| clrn_NOR3X0P5H7L_A_Y_NAND3X0P5H7L_C_Y_AOI31X1P4H7L_B0                                                                                               | 1.2             | 7.266e-05      | 0.000e+00    | 9.169e-10     | 7.266e-05   |
+| clrn_NOR3X0P5H7L_A_1_Y_NAND3X0P5H7L_C_Y_AOI31X1P4H7L_B0                                                                                             | 1.2             | 7.237e-05      | 0.000e+00    | 9.074e-10     | 7.237e-05   |
+| segT1[4]_reg_p_D_OAI211X1P4H7L_Y_A0_NAND2BX0P7H7L_Y                                                                                                 | 1.2             | 7.203e-05      | 0.000e+00    | 1.234e-09     | 7.203e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0                                                                                               | 1.2             | 7.034e-05      | 0.000e+00    | 1.031e-09     | 7.034e-05   |
+| segT1[5]_reg_p_D_OAI22X1P4H7L_Y_A0_NAND2BX1P4H7L_Y                                                                                                  | 1.2             | 6.976e-05      | 0.000e+00    | 1.379e-09     | 6.976e-05   |
+| clrn_NOR3X0P5H7L_A_C_NAND2BX0P5H7L_B_Y_NAND4BBX2H7L_C_Y_BUFX3P5H7L_A                                                                                | 1.2             | 6.715e-05      | 0.000e+00    | 2.428e-09     | 6.716e-05   |
+| segT0[4]_reg_p_D_NOR2X3H7L_Y_B_MUX4X3H7L_Y                                                                                                          | 1.2             | 6.204e-05      | 0.000e+00    | 5.453e-09     | 6.205e-05   |
+| segT1[5]_reg_p_D_OAI22X1P4H7L_Y_B1_NAND2BX1P4H7L_Y                                                                                                  | 1.2             | 5.969e-05      | 0.000e+00    | 1.356e-09     | 5.969e-05   |
+| fifo[7]_0__MUX4X1P4H7L_A_Y_XOR2X0P5H7L_B_Y_MUX2X1P4H7L_B_Y_AOI211X4H7L_B0                                                                           | 1.2             | 5.232e-05      | 0.000e+00    | 1.992e-09     | 5.232e-05   |
+| clrn_NOR3X0P5H7L_A_1_C_NOR2BX1H7L_AN_Z_AO211X1P4H7L_C0_Y_NOR3X3H7L_C                                                                                | 1.2             | 4.863e-05      | 0.000e+00    | 1.244e-09     | 4.863e-05   |
+| segT1[5]_reg_p_D_OAI22X1P4H7L_Y_A1_NOR2BX1P4H7L_Z                                                                                                   | 1.2             | 4.859e-05      | 0.000e+00    | 1.432e-09     | 4.859e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_A1_OR4X1P4H7L_Y                                                             | 1.2             | 4.759e-05      | 0.000e+00    | 1.666e-09     | 4.759e-05   |
+| segT1[5]_reg_p_D_OAI22X1P4H7L_Y_B0_NAND2X1P4H7L_Y                                                                                                   | 1.2             | 4.742e-05      | 0.000e+00    | 7.195e-10     | 4.742e-05   |
+| segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_A0N_AO221X1H7L_Y                                                                                                  | 1.2             | 4.352e-05      | 0.000e+00    | 1.888e-09     | 4.352e-05   |
+| buffer_9__XNOR2X1P4H7L_B_Y_XNOR3X3H7L_B_Y_XNOR2X3H7L_A                                                                                              | 1.2             | 3.810e-05      | 0.000e+00    | 4.209e-09     | 3.811e-05   |
+| clrn_NOR3X0P5H7L_A_1_C_NOR2BX1H7L_AN_Z_AO211X1P4H7L_C0                                                                                              | 1.2             | 3.659e-05      | 0.000e+00    | 1.799e-09     | 3.659e-05   |
+| clrn_NOR3X0P5H7L_A_Y_AOI31X0P5H7L_A2                                                                                                                | 1.2             | 3.566e-05      | 0.000e+00    | 7.370e-10     | 3.566e-05   |
+| segT1[3]_reg_p_D_AOAI211X1P4H7L_Y_A0_NAND2X0P5H7L_Y                                                                                                 | 1.2             | 3.240e-05      | 0.000e+00    | 5.627e-10     | 3.240e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y_C_AND4X6H7L_C                                             | 1.2             | 3.109e-05      | 0.000e+00    | 2.005e-09     | 3.109e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_NAND3X1P4H7L_Y                                                                             | 1.2             | 3.035e-05      | 0.000e+00    | 4.765e-10     | 3.035e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_Y_BUFX3H7L_A                                                                                  | 1.2             | 2.986e-05      | 0.000e+00    | 2.178e-09     | 2.986e-05   |
+| segT1[3]_reg_p_D_AOAI211X1P4H7L_Y_C0_NAND2X0P5H7L_Y                                                                                                 | 1.2             | 2.942e-05      | 0.000e+00    | 5.569e-10     | 2.942e-05   |
+| segT0[6]_reg_p_D_AOA211X1P4H7L_Y_C0_AOI21X0P5H7L_Y_A1_OAO211X0P5H7L_Y                                                                               | 1.2             | 2.843e-05      | 0.000e+00    | 1.563e-09     | 2.843e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2                                                                                                                  | 1.2             | 2.811e-05      | 0.000e+00    | 1.416e-09     | 2.811e-05   |
+| segT1[3]_reg_p_D_AOAI211X1P4H7L_Y_A1_NAND2X0P5H7L_Y                                                                                                 | 1.2             | 2.762e-05      | 0.000e+00    | 5.356e-10     | 2.762e-05   |
+| segT1[6]_reg_p_D_OAI211X1P4H7L_Y_A0_NOR3X0P5H7L_Y                                                                                                   | 1.2             | 2.572e-05      | 0.000e+00    | 5.147e-10     | 2.572e-05   |
+| segT1[2]_reg_p_D_OAI211X1P4H7L_Y_A0_NOR2X1P4H7L_Y                                                                                                   | 1.2             | 2.212e-05      | 0.000e+00    | 8.153e-10     | 2.212e-05   |
+| segT0[5]_reg_p_D_OAOI211X0P5H7L_Y_B0_OA22X0P5H7L_Y                                                                                                  | 1.2             | 2.111e-05      | 0.000e+00    | 1.610e-09     | 2.111e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_A0_NAND2BX12H7L_B                                                                                                | 1.2             | 2.063e-05      | 0.000e+00    | 1.231e-08     | 2.064e-05   |
+| segT0[6]_reg_p_D_AOA211X1P4H7L_Y                                                                                                                    | 1.2             | 2.057e-05      | 0.000e+00    | 1.330e-09     | 2.057e-05   |
+| fifo[3]_1__MUX4X3H7L_A                                                                                                                              | 1.2             | 2.040e-05      | 0.000e+00    | 5.581e-09     | 2.040e-05   |
+| fifo[7]_5__MUX4X3H7L_A                                                                                                                              | 1.2             | 2.034e-05      | 0.000e+00    | 5.581e-09     | 2.034e-05   |
+| fifo[7]_1__MUX4X3H7L_A                                                                                                                              | 1.2             | 2.027e-05      | 0.000e+00    | 5.581e-09     | 2.028e-05   |
+| fifo[7]_7__MUX4X3H7L_A                                                                                                                              | 1.2             | 1.970e-05      | 0.000e+00    | 5.656e-09     | 1.971e-05   |
+| fifo[7]_3__MUX4X3H7L_A                                                                                                                              | 1.2             | 1.961e-05      | 0.000e+00    | 5.655e-09     | 1.962e-05   |
+| fifo[7]_6__MUX4X3H7L_A                                                                                                                              | 1.2             | 1.939e-05      | 0.000e+00    | 5.653e-09     | 1.940e-05   |
+| fifo[3]_3__MUX4X3H7L_A                                                                                                                              | 1.2             | 1.936e-05      | 0.000e+00    | 5.655e-09     | 1.937e-05   |
+| fifo[7]_2__MUX4X3H7L_A                                                                                                                              | 1.2             | 1.927e-05      | 0.000e+00    | 5.656e-09     | 1.927e-05   |
+| fifo[7]_3__MUX4X3H7L_A_Y_XNOR2X0P5H7L_B_Y_OAI2BB1X1P4H7L_A1N                                                                                        | 1.2             | 1.633e-05      | 0.000e+00    | 1.276e-09     | 1.633e-05   |
+| clrn_NOR3X0P5H7L_A_1_Y_AOI21BX0P5H7L_B0N_A0_OAI211X1H7L_Y                                                                                           | 1.2             | 1.624e-05      | 0.000e+00    | 6.256e-10     | 1.624e-05   |
+| fifo[3]_5__MUX4X1P4H7L_A                                                                                                                            | 1.2             | 1.506e-05      | 0.000e+00    | 4.566e-09     | 1.506e-05   |
+| fifo[7]_4__MUX4X1P4H7L_A                                                                                                                            | 1.2             | 1.503e-05      | 0.000e+00    | 4.566e-09     | 1.503e-05   |
+| fifo[3]_4__MUX4X1H7L_A_Y_NAND3X0P5H7L_C_Y_OA211X1P4H7L_B0                                                                                           | 1.2             | 1.458e-05      | 0.000e+00    | 1.058e-09     | 1.458e-05   |
+| fifo[3]_4__MUX4X1H7L_A                                                                                                                              | 1.2             | 1.453e-05      | 0.000e+00    | 4.504e-09     | 1.453e-05   |
+| fifo[3]_0__MUX4X1P4H7L_A                                                                                                                            | 1.2             | 1.432e-05      | 0.000e+00    | 4.634e-09     | 1.432e-05   |
+| fifo[7]_0__MUX4X1P4H7L_A                                                                                                                            | 1.2             | 1.431e-05      | 0.000e+00    | 4.634e-09     | 1.432e-05   |
+| fifo[3]_7__MUX4X1P4H7L_A                                                                                                                            | 1.2             | 1.430e-05      | 0.000e+00    | 4.634e-09     | 1.431e-05   |
+| fifo[3]_6__MUX4X1P4H7L_A                                                                                                                            | 1.2             | 1.430e-05      | 0.000e+00    | 4.632e-09     | 1.430e-05   |
+| fifo[3]_2__MUX4X1P4H7L_A                                                                                                                            | 1.2             | 1.428e-05      | 0.000e+00    | 4.634e-09     | 1.428e-05   |
+| fifo[7]_5__MUX2X0P5H7L_A_Y_AOI22X0P5H7L_A0_Y_NAND3X1P4H7L_C                                                                                         | 1.2             | 1.339e-05      | 0.000e+00    | 5.374e-10     | 1.339e-05   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_C0_OAI211X0P7H7L_Y                                                          | 1.2             | 1.327e-05      | 0.000e+00    | 5.493e-10     | 1.327e-05   |
+| fifo[3]_4__MUX4X1H7L_A_Y_OA31X1H7L_A2_Y_OA31X1P4H7L_B0                                                                                              | 1.2             | 1.268e-05      | 0.000e+00    | 1.519e-09     | 1.269e-05   |
+| SegT1.in_3__XOR2X0P5H7L_A_Y_NOR3X0P5H7L_C_B_NAND2X3H7L_Y                                                                                            | 1.2             | 1.261e-05      | 0.000e+00    | 1.219e-09     | 1.261e-05   |
+| segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y                                                                                                                   | 1.2             | 1.259e-05      | 0.000e+00    | 1.323e-09     | 1.259e-05   |
+| fifo[7]_5__MUX2X0P5H7L_A_Y_AOI22X0P5H7L_A0                                                                                                          | 1.2             | 1.254e-05      | 0.000e+00    | 7.589e-10     | 1.254e-05   |
+| fifo[7]_5__MUX4X3H7L_A_Y_OAI22X4H7L_B0                                                                                                              | 1.2             | 1.215e-05      | 0.000e+00    | 2.547e-09     | 1.216e-05   |
+| segT0[1]_reg_p_D_AOAI211X1P4H7L_Y                                                                                                                   | 1.2             | 1.167e-05      | 0.000e+00    | 8.763e-10     | 1.167e-05   |
+| clrn_NOR3X0P5H7L_A_1_Y_NAND3X0P5H7L_C                                                                                                               | 1.2             | 1.091e-05      | 0.000e+00    | 2.989e-10     | 1.091e-05   |
+| clrn_NOR3X0P5H7L_A_Y_NAND3X0P5H7L_C                                                                                                                 | 1.2             | 1.081e-05      | 0.000e+00    | 3.089e-10     | 1.081e-05   |
+| segT1[6]_reg_p_D_OAI211X1P4H7L_Y_A0_NOR3X0P5H7L_Y_C_NAND2X0P5H7L_Y                                                                                  | 1.2             | 1.039e-05      | 0.000e+00    | 5.628e-10     | 1.039e-05   |
+| fifo[7]_0__MUX4X1P4H7L_A_Y_XOR2X0P5H7L_B_Y_MUX2X1P4H7L_B                                                                                            | 1.2             | 9.276e-06      | 0.000e+00    | 2.256e-09     | 9.278e-06   |
+| segT0[6]_reg_p_D_AOA211X1P4H7L_Y_A1_MUX2X1P4H7L_Y                                                                                                   | 1.2             | 8.608e-06      | 0.000e+00    | 2.086e-09     | 8.610e-06   |
+| SegT1.in_3__NAND2X0P5H7L_B_Y_AOI21X0P5H7L_B0                                                                                                        | 1.2             | 8.609e-06      | 0.000e+00    | 7.908e-10     | 8.610e-06   |
+| buffer_2__XNOR2X0P5H7L_A_Y_XNOR2X0P5H7L_B                                                                                                           | 1.2             | 8.572e-06      | 0.000e+00    | 3.184e-09     | 8.575e-06   |
+| segT0[2]_reg_p_D_OAOI211X0P5H7L_Y                                                                                                                   | 1.2             | 8.567e-06      | 0.000e+00    | 7.135e-10     | 8.568e-06   |
+| fifo[7]_7__MUX4X3H7L_A_Y_XOR2X3H7L_B                                                                                                                | 1.2             | 8.412e-06      | 0.000e+00    | 4.315e-09     | 8.416e-06   |
+| clrn_NOR3X0P5H7L_A_1_C_NOR2BX1H7L_AN_Z_AO211X1P4H7L_C0_B0_AOI21X0P5H7L_Y                                                                            | 1.2             | 8.012e-06      | 0.000e+00    | 7.908e-10     | 8.013e-06   |
+| clrn_NOR3X0P5H7L_A_Y_AOI31X0P5H7L_A2_B0_AOI21X0P5H7L_Y                                                                                              | 1.2             | 7.571e-06      | 0.000e+00    | 7.908e-10     | 7.572e-06   |
+| fifo[3]_0__MUX4X1P4H7L_A_Y_XNOR2X0P5H7L_B_Y_OAOI211X0P7H7L_B0                                                                                       | 1.2             | 7.570e-06      | 0.000e+00    | 7.421e-10     | 7.571e-06   |
+| buffer_2__reg_p_D_AOAI211X0P5H7L_Y                                                                                                                  | 1.2             | 7.300e-06      | 0.000e+00    | 6.862e-10     | 7.301e-06   |
+| segT0[2]_reg_p_D_OAOI211X0P5H7L_Y_B0_NOR3X1P4H7L_Y                                                                                                  | 1.2             | 7.290e-06      | 0.000e+00    | 6.597e-10     | 7.291e-06   |
+| buffer_3__reg_p_D_MUX2X0P5H7L_Y                                                                                                                     | 1.2             | 7.060e-06      | 0.000e+00    | 2.051e-09     | 7.062e-06   |
+| fifo[3]_3__MUX4X3H7L_A_Y_XNOR2X0P5H7L_B_Y_NAND3X1P4H7L_C                                                                                            | 1.2             | 6.928e-06      | 0.000e+00    | 5.454e-10     | 6.928e-06   |
+| segT0[1]_reg_p_D_AOAI211X1P4H7L_Y_A1_MUX2X0P5H7L_Y                                                                                                  | 1.2             | 6.382e-06      | 0.000e+00    | 1.908e-09     | 6.384e-06   |
+| segT0[5]_reg_p_D_OAOI211X0P5H7L_Y                                                                                                                   | 1.2             | 6.312e-06      | 0.000e+00    | 7.184e-10     | 6.313e-06   |
+| fifo[3]_7__MUX4X1P4H7L_A_Y_XNOR2X0P5H7L_B                                                                                                           | 1.2             | 6.257e-06      | 0.000e+00    | 3.349e-09     | 6.261e-06   |
+| fifo[3]_3__MUX4X3H7L_A_Y_XNOR2X0P5H7L_B                                                                                                             | 1.2             | 6.257e-06      | 0.000e+00    | 3.347e-09     | 6.260e-06   |
+| fifo[7]_3__MUX4X3H7L_A_Y_XNOR2X0P5H7L_B                                                                                                             | 1.2             | 6.254e-06      | 0.000e+00    | 3.347e-09     | 6.257e-06   |
+| fifo[3]_0__MUX4X1P4H7L_A_Y_XNOR2X0P5H7L_B                                                                                                           | 1.2             | 6.248e-06      | 0.000e+00    | 3.347e-09     | 6.251e-06   |
+| buffer_9__XNOR2X1P4H7L_B                                                                                                                            | 1.2             | 6.244e-06      | 0.000e+00    | 3.350e-09     | 6.247e-06   |
+| buffer_0__MUX2X0P5H7L_B                                                                                                                             | 1.2             | 6.203e-06      | 0.000e+00    | 2.053e-09     | 6.205e-06   |
+| fifo[3]_2__MUX4X1P4H7L_A_Y_XOR2X1P4H7L_B                                                                                                            | 1.2             | 5.974e-06      | 0.000e+00    | 3.419e-09     | 5.978e-06   |
+| buffer_9__XNOR2X1P4H7L_B_Y_XNOR3X3H7L_B_A_XOR2X1P4H7L_Y                                                                                             | 1.2             | 5.960e-06      | 0.000e+00    | 3.252e-09     | 5.963e-06   |
+| fifo[3]_4__MUX4X1H7L_A_Y_OA31X1H7L_A2                                                                                                               | 1.2             | 5.834e-06      | 0.000e+00    | 1.481e-09     | 5.835e-06   |
+| count_3__reg_p_D_AOI21X0P5H7L_Y_A1_AOAI211X0P5H7L_Y                                                                                                 | 1.2             | 5.752e-06      | 0.000e+00    | 6.335e-10     | 5.753e-06   |
+| segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_A0N_AO221X1H7L_Y_C0_NOR4X0P5H7L_Y                                                                                 | 1.2             | 5.627e-06      | 0.000e+00    | 3.248e-10     | 5.627e-06   |
+| buffer_0__NOR4BX0P5H7L_D_Y_NAND2X0P5H7L_B                                                                                                           | 1.2             | 5.605e-06      | 0.000e+00    | 4.793e-10     | 5.605e-06   |
+| fifo[3]_4__MUX4X1H7L_A_Y_OA31X1H7L_A2_Y_OAI31X1H7L_B0                                                                                               | 1.2             | 5.597e-06      | 0.000e+00    | 9.655e-10     | 5.598e-06   |
+| buffer_9__XNOR2X1P4H7L_B_Y_XNOR3X3H7L_B_C_XNOR2X0P5H7L_Y                                                                                            | 1.2             | 5.590e-06      | 0.000e+00    | 3.112e-09     | 5.593e-06   |
+| buffer_2__XNOR2X0P5H7L_A                                                                                                                            | 1.2             | 5.587e-06      | 0.000e+00    | 3.113e-09     | 5.590e-06   |
+| fifo[7]_2__MUX4X3H7L_A_Y_XOR2X0P5H7L_B                                                                                                              | 1.2             | 5.435e-06      | 0.000e+00    | 3.264e-09     | 5.438e-06   |
+| fifo[7]_0__MUX4X1P4H7L_A_Y_XOR2X0P5H7L_B                                                                                                            | 1.2             | 5.417e-06      | 0.000e+00    | 3.263e-09     | 5.421e-06   |
+| SegT1.in_3__NAND2X0P5H7L_B_Y_NOR3X1P4H7L_C_Y_AND4X1P4H7L_D                                                                                          | 1.2             | 5.358e-06      | 0.000e+00    | 6.547e-10     | 5.358e-06   |
+| clrn_NOR3X0P5H7L_A_1_C_NOR2BX1H7L_AN_B_NOR3X1P4H7L_C_Y_AND4X1P4H7L_D                                                                                | 1.2             | 5.284e-06      | 0.000e+00    | 6.547e-10     | 5.285e-06   |
+| buffer_7__reg_p_D_MUX2X0P5H7L_Y                                                                                                                     | 1.2             | 5.272e-06      | 0.000e+00    | 2.029e-09     | 5.274e-06   |
+| segT1[6]_reg_p_D_OAI211X1P4H7L_Y_A0_NOR3X0P5H7L_Y_B_AND4X1P4H7L_Y                                                                                   | 1.2             | 5.249e-06      | 0.000e+00    | 6.547e-10     | 5.250e-06   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y                                                           | 1.2             | 5.122e-06      | 0.000e+00    | 3.828e-10     | 5.122e-06   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_Y_AOI211X1P4H7L_B0_A0_OAI221X4H7L_B1_B0_NAND3X0P5H7L_Y_C_NOR2X3H7L_Y                                             | 1.2             | 5.084e-06      | 0.000e+00    | 2.233e-09     | 5.086e-06   |
+| segT0[3]_reg_p_D_AOI2BB1X0P5H7L_Y                                                                                                                   | 1.2             | 4.937e-06      | 0.000e+00    | 1.597e-09     | 4.939e-06   |
+| SegT1.in_3__reg_p_D_AO31X0P5H7L_A2_A1_NAND2X0P5H7L_Y                                                                                                | 1.2             | 4.855e-06      | 0.000e+00    | 5.813e-10     | 4.855e-06   |
+| fifo[7]_6__MUX4X3H7L_A_Y_OAI21X0P5H7L_A1                                                                                                            | 1.2             | 4.801e-06      | 0.000e+00    | 7.105e-10     | 4.801e-06   |
+| buffer_6__reg_p_D_AO
+I20260203 16:48:38.754549 113381 Power.cc:1047] power report end, output dir: /home/biruide/ysyx-workbench/yosys-sta/result/ex7N-500MHz
+I20260203 16:48:38.754652 113381 Power.cc:1049] power report memory usage 0MB
+I20260203 16:48:38.754662 113381 Power.cc:1051] power report time elapsed 0.024784s
