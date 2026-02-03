@@ -106,9 +106,12 @@ static int cmd_p(char *args) {
 
 static int cmd_w(char *args) {
   WP *wp =new_wp();
+  bool success;
   assert(wp!=0);
   strcpy(wp->require,args);
-  printf("add no %d is %s\n",wp->NO,wp->require);
+  wp->value = expr(wp->require,&success);
+  if(success == false) {printf("expr is wrong\n");free_wp(wp);return -1;}
+  printf("add watchpoints no.%d is %s\n",wp->NO,wp->require);
 
   // wp->line=strtoul(args,NULL,0);
   // printf("add no %d in line 0x%x\n",wp->NO,wp->line);

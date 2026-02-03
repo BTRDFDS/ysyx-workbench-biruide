@@ -1,5 +1,5 @@
 module ex7O(
-    input ps2_clk,
+    input clk,
     input ps2_data,
     output reg [7:0] key0,
     output reg [7:0] key1,
@@ -58,7 +58,7 @@ module ex7O(
         rom['h46]=8'h39;
         rom['h45]=8'h30;
     end
-    always@(negedge ps2_clk)begin
+    always@(neged)begin
         if(count<4'd11) begin
             data[count] <= ps2_data; 
             count <= count + 1'b1;
