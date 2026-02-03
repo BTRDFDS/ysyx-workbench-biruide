@@ -67,7 +67,7 @@ int checkWp(){
     //   return 0;
     // }
     val=expr(wp_pool[i].require,&success);
-    if(success&&val!=wp_pool[i].value){
+    if(success&&val!=wp_pool[i].value&&wp_pool[i].use==true){
       wp_pool[i].value=val;
       Log("watchpoint %d : %s,val form %u to %u",wp_pool[i].NO,wp_pool[i].require,wp_pool[i].value,val);
       wp_pool[i].value=val;

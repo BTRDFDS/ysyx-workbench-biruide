@@ -66,7 +66,7 @@ static int cmd_info(char *args) {
     break;
   case 'w':
       printf("print watchpoints\n");
-      for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
+      for(int i=0;i<NR_WP;i++){
         printf("no %d is :%s\n",wp_pool[i].NO,wp_pool[i].require);
       }
     break;
