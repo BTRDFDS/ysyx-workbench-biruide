@@ -9,11 +9,7 @@
 [1;34m[src/monitor/sdb/expr.c:138 make_token] match rules[11] = "\$[a-zA-Z0-9]+" at 0 with len 3: $t0[0m
 [1;34m[src/monitor/sdb/watchpoint.c:72 checkWp] watchpoint 0 : $t0,val form 2147483648 to 2147483648[0m
 0x80000004: 00 02 88 23 sb	zero, 0x10(t0)
-[1;34m[src/monitor/sdb/expr.c:138 make_token] match rules[11] = "\$[a-zA-Z0-9]+" at 0 with len 3: $t0[0m
-0x80000008: 01 02 c5 03 lbu	a0, 0x10(t0)
-[1;34m[src/monitor/sdb/expr.c:138 make_token] match rules[11] = "\$[a-zA-Z0-9]+" at 0 with len 3: $t0[0m
-0x8000000c: 00 10 00 73 ebreak
-[1;34m[src/cpu/cpu-exec.c:122 cpu_exec] nemu: [1;32mHIT GOOD TRAP[0m at pc = 0x8000000c[0m
-[1;34m[src/cpu/cpu-exec.c:90 statistic] host time spent = 10837 us[0m
-[1;34m[src/cpu/cpu-exec.c:91 statistic] total guest instructions = 4[0m
-[1;34m[src/cpu/cpu-exec.c:92 statistic] simulation frequency = 369 inst/s[0m
+[1;34m[src/cpu/cpu-exec.c:122 cpu_exec] nemu: [1;31mABORT[0m at pc = 0x00000000[0m
+[1;34m[src/cpu/cpu-exec.c:90 statistic] host time spent = 567 us[0m
+[1;34m[src/cpu/cpu-exec.c:91 statistic] total guest instructions = 2[0m
+[1;34m[src/cpu/cpu-exec.c:92 statistic] simulation frequency = 3527 inst/s[0m
