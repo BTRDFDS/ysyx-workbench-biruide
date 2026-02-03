@@ -66,7 +66,7 @@ static int cmd_info(char *args) {
     break;
   case 'w':
       printf("print watchpoints\n");
-      for(int i=0;i<NR_WP;i++){
+      for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
         if(wp_pool[i].use == true){printf("no %d is :%s\n",wp_pool[i].NO,wp_pool[i].require);}
       }
     break;
@@ -122,6 +122,13 @@ static int cmd_d(char *args) {
   int no = strtoul(args,NULL,0);
   for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
     if(wp_pool[i].NO == no) {
+      for(;wp_pool[i].use == true&&i<NR_WP-1;i++){
+        if(wp_pool[i+1].use == true){
+          wp_pool[i].value = wp_pool[i+1].value;
+          strcpy(wp_pool[i].require,wp_pool[i+1].require);
+        }
+        else{break;}
+      }
       free_wp(&wp_pool[i]);
       printf("delete no %d\n",no);
       return 0;

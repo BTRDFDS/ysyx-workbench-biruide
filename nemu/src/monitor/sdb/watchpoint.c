@@ -61,7 +61,7 @@ int checkWp(){
   int i=0;
   bool success=false;
   word_t val;
-  while(i<NR_WP){//wp_pool[i].use == true&&
+  while(wp_pool[i].use == true&&i<NR_WP){//wp_pool[i].use == true&&
     // if(cpu.pc==wp_pool[i].line){
     //   Log("pin watchpoint %d : 0x%x",wp_pool[i].NO,wp_pool[i].line);
     //   return 0;
