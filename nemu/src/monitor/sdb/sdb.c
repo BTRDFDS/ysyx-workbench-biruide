@@ -110,7 +110,7 @@ static int cmd_w(char *args) {
   assert(wp!=0);
   strcpy(wp->require,args);
   wp->value = expr(wp->require,&success);
-  if(success == false) {printf("expr is wrong\n");free_wp(wp);return -1;}
+  if(success == false) {printf("expr is wrong\n");free_wp(wp);return 0;}
   printf("add watchpoints no.%d is %s\n",wp->NO,wp->require);
 
   // wp->line=strtoul(args,NULL,0);
