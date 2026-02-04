@@ -1,15 +1,15 @@
-Generate the report at 2026-02-03T16:48:38, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
-+--------------------------------------------------------------------------+-----------+--------+-------------+------------------+------+
-| Net / Pin                                                                | MaxFanout | Fanout | FanoutSlack | LibCellPort      | Note |
-+--------------------------------------------------------------------------+-----------+--------+-------------+------------------+------+
-| segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_B0                                     |           |        |             |                  |      |
-| segT0[7]_reg_p_D_OAI2BB2X1P4H7L_Y_B0_NAND2X0P5H7L_Y:Y                    | NA        | 1      | NA          | NAND2X0P5H7L/Y   |      |
-| w_ptr_1__reg_p_D                                                         |           |        |             |                  |      |
-| w_ptr_1__reg_p_D_AOI21X0P5H7L_Y:Y                                        | NA        | 1      | NA          | AOI21X0P5H7L/Y   |      |
-| segT0[5]_reg_p_D_OAOI211X0P5H7L_Y_A1_AOI21X0P5H7L_Y_B0                   |           |        |             |                  |      |
-| segT0[5]_reg_p_D_OAOI211X0P5H7L_Y_A1_AOI21X0P5H7L_Y_B0_NOR3X0P5H7L_Y:Y   | NA        | 1      | NA          | NOR3X0P5H7L/Y    |      |
-| segT0[5]_reg_p_D_OAOI211X0P5H7L_Y_B0_OA22X0P5H7L_Y_B0                    |           |        |             |                  |      |
-| segT0[5]_reg_p_D_OAOI211X0P5H7L_Y_B0_OA22X0P5H7L_Y_B0_AOI2BB1X0P5H7L_Y:Y | NA        | 1      | NA          | AOI2BB1X0P5H7L/Y |      |
-| segT0[4]_reg_p_D_NOR2X3H7L_Y_B_MUX4X3H7L_Y_A                             |           |        |             |                  |      |
-| segT0[4]_reg_p_D_NOR2X3H7L_Y_B_MUX4X3H7L_Y_A_AOI21X0P5H7L_Y:Y            | NA        | 1      | NA          | AOI21X0P5H7L/Y   |      |
-+--------------------------------------------------------------------------+-----------+--------+-------------+------------------+------+
+Generate the report at 2026-02-04T14:40:52, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
++-------------------------------------+-----------+--------+-------------+------------------+------+
+| Net / Pin                           | MaxFanout | Fanout | FanoutSlack | LibCellPort      | Note |
++-------------------------------------+-----------+--------+-------------+------------------+------+
+| segT1[6]_reg_p_D                    |           |        |             |                  |      |
+| segT1[6]_reg_p_D_NAND3X1P4H7L_Y:Y   | NA        | 1      | NA          | NAND3X1P4H7L/Y   |      |
+| segT1[2]_reg_p_D                    |           |        |             |                  |      |
+| segT1[2]_reg_p_D_OAOI211X1P4H7L_Y:Y | NA        | 1      | NA          | OAOI211X1P4H7L/Y |      |
+| segT0[4]_reg_p_D                    |           |        |             |                  |      |
+| segT0[4]_reg_p_D_AOI21X0P5H7L_Y:Y   | NA        | 1      | NA          | AOI21X0P5H7L/Y   |      |
+| buffer_6_                           |           |        |             |                  |      |
+| buffer_6__reg_p:Q                   | NA        | 5      | NA          | DFFQX1H7L/Q      |      |
+| segA0_1_                            |           |        |             |                  |      |
+| segA0_MUX2X1P4H7L_Y:Y               | NA        | 1      | NA          | MUX2X1P4H7L/Y    |      |
++-------------------------------------+-----------+--------+-------------+------------------+------+

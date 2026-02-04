@@ -1,4 +1,4 @@
-module ex8(
+module ex8N(
     input clk,
     input reset,
     // input [18:0]vgaLocate,
@@ -42,32 +42,54 @@ initial begin
     // $readmemh("nuaa.hex", vgaData);
     $readmemh("hex/NUAA.hex", vgaData);
 end
-always @(posedge clk) begin
-    if(reset == 1'b1) begin
+// always @(posedge clk) begin
+//     if(reset == 1'b1) begin
+//         x <= 1;
+//         y <= 1;
+//         $fseek(logFile,0,0);
+//         // vgaBlank <=0;
+//     end
+//     else begin
+//         if(x == hTotal)begin
+//             x <= 1;
+//             if(y == vTotal) y <= 1;
+//             if(y == vTotal)begin
+//                 // y <= y;
+//                 // x <=x;
+//                 x <= 1;
+//                 y <= 1;
+//             end else begin
+//                 y<= y + 1;
+//                 x <=1;
+//             end
+//         end
+//         else begin
+//             x <= x + 1;
+//         end
+//     end
+// end
+  always @(posedge reset or posedge clk) //行像素计数
+      if (reset == 1'b1)
         x <= 1;
+      else
+      begin
+        if (x == hTotal)
+            x <= 1;
+        else
+            x <= x + 10'd1;
+      end
+
+  always @(posedge clk)  //列像素计数
+      if (reset == 1'b1)
         y <= 1;
         $fseek(logFile,0,0);
-        // vgaBlank <=0;
-    end
-    else begin
-        if(x == hTotal)begin
-            x <= 1;
-            if(y == vTotal) y <= 1;
-            if(y == vTotal)begin
-                y <= y;
-                x <=x;
-                // x <= 1;
-                // y <= 1;
-            end else begin
-                y<= y + 1;
-                x <=1;
-            end
-        end
-        else begin
-            x <= x + 1;
-        end
-    end
-end
+      else
+      begin
+        if (y == vTotal & x == hTotal)
+            y <= 1;
+        else if (x == hTotal)
+            y <= y + 10'd1;
+      end
 // always@(posedge clk) if(((vgaBlank)|(x==hActive&vValid))&(x <= hBackporch)) $fstrobe(logFile,"xy",x,y," hv",hAddr,vAddr," ",locate," %x%x%x",vgaR, vgaG, vgaB);
 //同步
 assign vgaHsync = (x>hFrontporch);

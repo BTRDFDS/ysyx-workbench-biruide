@@ -20,7 +20,7 @@ module ex7NW(clk,clrn,ps2_clk,ps2_data,data,
     wire sampling = ps2_clk_sync[2] & ~ps2_clk_sync[1];
 
     always @(posedge clk) begin
-        if (clrn == 0) begin // reset
+        if (clrn == 1) begin // reset
             count <= 0; w_ptr <= 0; r_ptr <= 0; overflow <= 0; ready<= 0;
         end
         else begin

@@ -1,0 +1,15 @@
+Generate the report at 2026-02-04T13:18:11, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
++------------------------------------------------------------------------+-----------+--------+-------------+----------------+------+
+| Net / Pin                                                              | MaxFanout | Fanout | FanoutSlack | LibCellPort    | Note |
++------------------------------------------------------------------------+-----------+--------+-------------+----------------+------+
+| fifo[3]_0__MUX4X1P4H7L_A_Y_AND3X1H7L_C_Y                               |           |        |             |                |      |
+| fifo[3]_0__MUX4X1P4H7L_A_Y_AND3X1H7L_C:Y                               | NA        | 1      | NA          | AND3X1H7L/Y    |      |
+| clrn_NOR2X0P5H7L_A_Y_MUX2X3H7L_B_S0_AOI31X1P4H7L_Y_B0                  |           |        |             |                |      |
+| clrn_NOR2X0P5H7L_A_Y_MUX2X3H7L_B_S0_AOI31X1P4H7L_Y_B0_NAND3X0P5H7L_Y:Y | NA        | 1      | NA          | NAND3X0P5H7L/Y |      |
+| segT1_4_                                                               |           |        |             |                |      |
+| segT1[4]_reg_p:Q                                                       | NA        | 1      | NA          | DFFQX1H7L/Q    |      |
+| SegT1.in_0__reg_p_D                                                    |           |        |             |                |      |
+| SegT1.in_0__reg_p_D_NOR2X0P5H7L_Y:Y                                    | NA        | 1      | NA          | NOR2X0P5H7L/Y  |      |
+| SegT1.in_1__reg_p_D_NOR2X0P5H7L_Y_B                                    |           |        |             |                |      |
+| SegT1.in_1__reg_p_D_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y:Y                    | NA        | 1      | NA          | XOR2X0P5H7L/Y  |      |
++------------------------------------------------------------------------+-----------+--------+-------------+----------------+------+

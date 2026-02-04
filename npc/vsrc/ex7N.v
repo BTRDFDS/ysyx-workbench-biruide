@@ -1,5 +1,7 @@
 // module ex7N(clk,clrn,ps2_clk,ps2_data,data,ready,nextdata_n,overflow,segD0,segD1);
 module ex7N(clk,clrn,ps2_clk,ps2_data,data,ascll,segD0,segD1,segA0,segA1,segT0,segT1);
+    parameter sizeF=2;
+    parameter sizeW=1;
     input clk,clrn,ps2_clk,ps2_data;//系统时钟(应该是比键盘快)、同步复位
     // input nextdata_n;
     output [7:0] data,ascll,segD0,segD1,segA0,segA1,segT0,segT1;
@@ -7,9 +9,9 @@ module ex7N(clk,clrn,ps2_clk,ps2_data,data,ascll,segD0,segD1,segA0,segA1,segT0,s
     // output reg overflow;     // fifo overflow
     // internal signal, for test
     reg [9:0] buffer;        // ps2_data bits
-    reg [7:0] fifo[7:0];     // data fifo一个8*8的空间，横是buffer[8:1]，即数据位，
+    reg [7:0] fifo[sizeF-1:0];     // data fifo一个8*8的空间，横是buffer[8:1]，即数据位，
     // reg [2:0] w_ptr,r_ptr;   // fifo write and read pointers
-    reg [2:0] w_ptr;   // fifo write and read pointers
+    reg [sizeW-1:0] w_ptr;   // fifo write and read pointers
     reg [3:0] count;  // count ps2_data bits
     // detect falling edge of ps2_clk
     reg [2:0] ps2_clk_sync;
@@ -69,7 +71,7 @@ module ex7N(clk,clrn,ps2_clk,ps2_data,data,ascll,segD0,segD1,segA0,segA1,segT0,s
     always @(posedge clk) begin
         if (clrn == 1) begin // reset
             // count <= 0; w_ptr <= 0; r_ptr <= 0; overflow <= 0; ready<= 0;
-            count <= 0; w_ptr <= 0;over <= 0;times<=0;
+            count <= 0; w_ptr <= 0;over <= 0;times<=0;fifo[sizeF-1]<=8'h0;
         end else begin
             // if ( ready ) begin // read to output next data上一个已经读取完成，可以处理下一个按键了
 
@@ -88,29 +90,31 @@ module ex7N(clk,clrn,ps2_clk,ps2_data,data,ascll,segD0,segD1,segA0,segA1,segT0,s
                     (ps2_data)       &&  // stop bit，其实是==1
                     (^buffer[9:1])) begin      // odd  parity奇校验
                     if(over==1)begin//上i一个是不是F0
+                        // $strobe("key:%h over:%b",buffer[8:1],over);
                         over<=0;
                         fifo[w_ptr] <= 8'b0;
-                        w_ptr <= w_ptr+3'b1;
+                        w_ptr <= w_ptr+'b1;
                     end else begin
                         fifo[w_ptr] <= buffer[8:1];  // kbd键盘 scan code
-                        w_ptr <= w_ptr+3'b1;
+                        w_ptr <= w_ptr+'b1;
                         if(buffer[8:1]==8'hf0)begin
+                            $strobe("key:%h over:%b",fifo[w_ptr-1],over);
                             over<=1;
                         end
                         if(buffer[8:1]!=fifo[w_ptr-1]&&buffer[8:1]!=8'hf0)begin
+                            $strobe("key:%h over:%b",fifo[w_ptr-1],over);
                             times<=times+8'b1;
                         end
                     end
                     // ready <= 1'b1;
                     // overflow <= overflow | (r_ptr == (w_ptr + 3'b1));//只要读得比写的快就一直判定溢出直到复位
-                    // $strobe("key: %b %h over:%b",fifo[w_ptr-1],fifo[w_ptr-1],over);
                     // $strobe("fifo",fifo[w_ptr-1]," ",fifo[r_ptr]," w_ptr:",w_ptr," r_ptr:",r_ptr," overflow:",overflow);
                 end
                 count <= 0;     // for next
               end else begin//常规读取
                 buffer[count] <= ps2_data;  // store ps2_data
                 count <= count + 3'b1;
-                $strobe("ps2:",ps2_data," count:",count);
+                // $strobe("ps2:",ps2_data," count:",count);
               end
             //   $strobe(w_ptr," ",r_ptr);
             end
