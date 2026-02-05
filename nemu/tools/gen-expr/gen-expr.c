@@ -75,10 +75,7 @@ void gen_rand_op(){
   switch(choose(4)){
     case 0: gen('+'); break;
     case 1: gen('-'); break;
-    case 2:
-      gen('*');
-      
-      break;
+    case 2: gen('*'); break;
     case 3: gen('/'); break;
     default: gen('+'); break;
   }

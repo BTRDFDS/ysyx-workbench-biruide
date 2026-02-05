@@ -1,7 +1,7 @@
 // module ex7N(clk,clrn,ps2_clk,ps2_data,data,ready,nextdata_n,overflow,segD0,segD1);
 module ex7N(clk,clrn,ps2_clk,ps2_data,data,ascll,segD0,segD1,segA0,segA1,segT0,segT1);
-    parameter sizeF=2;
-    parameter sizeW=1;
+    parameter sizeF=4;
+    parameter sizeW=2;
     input clk,clrn,ps2_clk,ps2_data;//系统时钟(应该是比键盘快)、同步复位
     // input nextdata_n;
     output [7:0] data,ascll,segD0,segD1,segA0,segA1,segT0,segT1;

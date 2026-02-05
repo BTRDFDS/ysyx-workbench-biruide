@@ -1,10 +1,9 @@
-module ex7NW(clk,clrn,ps2_clk,ps2_data,data,ascll,segD0,segD1,segA0,segA1,segT0,segT1,
-                    ready,nextdata_n,overflow);
+module ex7W(clk,clrn,ps2_clk,ps2_data,data,ascll,segD0,segD1,segA0,segA1,segT0,segT1); //,ready,nextdata_n,overflow
     input clk,clrn,ps2_clk,ps2_data;
-    input nextdata_n;
+    // input nextdata_n;
+    // output reg ready;
+    // output reg overflow;     // fifo overflow
     output [7:0] data,ascll,segD0,segD1,segA0,segA1,segT0,segT1;
-    output reg ready;
-    output reg overflow;     // fifo overflow
     // internal signal, for test
     reg [9:0] buffer;        // ps2_data bits
     reg [7:0] fifo[7:0];     // data fifo
@@ -15,7 +14,10 @@ module ex7NW(clk,clrn,ps2_clk,ps2_data,data,ascll,segD0,segD1,segA0,segA1,segT0,
     
     reg [7:0] times;
 
-reg [7:0] rom['hff:0];
+    reg ready,overflow;
+    wire nextdata_n;
+
+    reg [7:0] rom['hff:0];
     initial begin
         rom['h1C]=8'h41;
         rom['h32]=8'h42;
@@ -61,6 +63,8 @@ reg [7:0] rom['hff:0];
 
     wire sampling = ps2_clk_sync[2] & ~ps2_clk_sync[1];
 
+    assign nextdata_n=overflow?0:~ready;
+
     always @(posedge clk) begin
         if (clrn == 1) begin // reset
             count <= 0; w_ptr <= 0; r_ptr <= 0; overflow <= 0; ready<= 0;times<=0;
@@ -87,7 +91,7 @@ reg [7:0] rom['hff:0];
 
                     w_ptr <= w_ptr+3'b1;
                     ready <= 1'b1;
-                    overflow <= overflow | (r_ptr == (w_ptr + 3'b1));
+                    overflow <= overflow | (r_ptr == (w_ptr + 3'h2));
                 end
                 count <= 0;     // for next
               end else begin

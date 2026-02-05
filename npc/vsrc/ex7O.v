@@ -58,7 +58,7 @@ module ex7O(
         rom['h46]=8'h39;
         rom['h45]=8'h30;
     end
-    always@(neged)begin
+    always@(negedge clk)begin
         if(count<4'd11) begin
             data[count] <= ps2_data; 
             count <= count + 1'b1;
