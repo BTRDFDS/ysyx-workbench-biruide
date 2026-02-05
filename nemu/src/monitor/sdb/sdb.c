@@ -65,7 +65,7 @@ static int cmd_info(char *args) {
     isa_reg_display();
     break;
   case 'w':
-      printf("print watchpoints\n");
+      // printf("print watchpoints\n");
       for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
         if(wp_pool[i].use == true){printf("no %d is :%s\n",wp_pool[i].NO,wp_pool[i].require);}
       }
