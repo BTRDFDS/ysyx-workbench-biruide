@@ -67,12 +67,20 @@ static int cmd_info(char *args) {
   case 'w':
       // printf("print watchpoints\n");
       bool has=false;
+      /*
       for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
         if(wp_pool[i].use == true){
           has=true;
           printf("no %d : %s | now value=%u\n",wp_pool[i].NO,wp_pool[i].require,wp_pool[i].value);
         }
+      }*/
+     WP *wp=head;
+     while (wp != NULL&&wp->use == true){
+      if(wp->use == true){
+        has=true;
+        printf("no %d : %s | now value=%u\n",wp->NO,wp->require,wp->value);
       }
+     }
       if(has==false){printf("no watchpoints\n");}
     break;
   default:
