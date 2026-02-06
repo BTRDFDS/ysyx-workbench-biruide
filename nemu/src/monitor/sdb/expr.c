@@ -313,7 +313,7 @@ word_t eval(int p, int q, bool *success) {
         break;
       default: assert(0);
     }
-    // Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
+    Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
     *success=true;
     return res;
   }
