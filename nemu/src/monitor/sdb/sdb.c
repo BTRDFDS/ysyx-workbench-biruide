@@ -78,7 +78,7 @@ static int cmd_info(char *args) {
      while (wp != NULL&&wp->use == true){
       if(wp->use == true){
         has=true;
-        printf("no %d : %s | now value=%u\n",wp->NO,wp->require,wp->value);
+        printf("no %d : %s\t| now value=%u\n",wp->NO,wp->require,wp->value);
         wp=wp->next;
       }
      }
