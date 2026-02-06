@@ -21,19 +21,20 @@
 #include <string.h>
 
 // this should be enough
-static char buf[65536] = {};
-static char code_buf[65536 + 70] = {}; // a little larger than `buf`
+#define max 65536
+static char buf[max] = {};
+static char code_buf[max + 70] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
 "int main(){unsigned r=%s;printf(\"%%u\",r);}";
 char *useBuf;
-int len = 65530;
+int len = max;
 int iTemp,j,k;
 // char *cTemp = NULL;
 uint32_t choose(uint32_t n){
   return rand()%n;
 }
-int max[10]={1,9,99,999,9999,99999,999999,9999999,99999999,999999999};
+int up[10]={1,9,99,999,9999,99999,999999,9999999,99999999,999999999};
 void gen(char c) {
   // sprintf(useBuf, "%c", c);
   *useBuf=c;
@@ -57,9 +58,9 @@ void gen_num() {
   if(len>=10){
     iTemp=INT32_MAX;//缓存上限
   }else{
-    // iTemp=max[len];
+    iTemp=up[len];
     // iTemp=2^len;
-    iTemp=1U<<len;
+    // iTemp=1U<<len;
   }
   if(iTemp==0){iTemp=1;}
   // sprintf(cTemp,"%u",iTemp);
@@ -84,6 +85,7 @@ void gen_rand_op(){
 static void gen_rand_expr() {
   iTemp = choose(3);//缓存抽卡结果
   if(len<=2){iTemp=0;}
+  if(len==max){iTemp=2;}
   // else if(len<=2){iTemp=0;}
   switch (iTemp) {
     case 0:
@@ -127,7 +129,7 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < loop;) {
     // if(1%1000==0){printf("new is %d",i);}
     useBuf=buf;
-    len = 65535;
+    len = max;
     // buf[0] = '\0';
     // code_buf[0] = '\0';
 
