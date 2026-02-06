@@ -70,7 +70,7 @@ static int cmd_info(char *args) {
       for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
         if(wp_pool[i].use == true){
           has=true;
-          printf("no %d :%s now value=%u\n",wp_pool[i].NO,wp_pool[i].require,wp_pool[i].value);
+          printf("no %d : %s | now value=%u\n",wp_pool[i].NO,wp_pool[i].require,wp_pool[i].value);
         }
       }
       if(has==false){printf("no watchpoints\n");}
