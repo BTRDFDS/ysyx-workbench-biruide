@@ -66,9 +66,14 @@ static int cmd_info(char *args) {
     break;
   case 'w':
       // printf("print watchpoints\n");
+      bool has=false;
       for(int i=0;wp_pool[i].use == true&&i<NR_WP;i++){
-        if(wp_pool[i].use == true){printf("no %d is :%s\n",wp_pool[i].NO,wp_pool[i].require);}
+        if(wp_pool[i].use == true){
+          has=true;
+          printf("no %d is :%s\n",wp_pool[i].NO,wp_pool[i].require);
+        }
       }
+      if(has==false){printf("no watchpoints\n");}
     break;
   default:
     printf("%c is unknow\nr - print register\nw - print watchpoints\n", *args);
