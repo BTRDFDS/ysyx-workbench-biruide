@@ -32,7 +32,16 @@ enum {
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
-#define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 20) | (BITS(i, 19, 12) << 12) | (BITS(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1);} while(0)
+// #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 20) | (BITS(i, 19, 12) << 12) | (BITS(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1);} while(0)
+
+#define immJ() do { \
+  *imm = SEXT( \
+    (BITS(i, 31, 31) << 19) |  /* imm20 占 20位 imm20_1 的第19位 */ \
+    (BITS(i, 19, 12) << 11) |  /* imm19_12 占 20位 imm20_1 的 11~18位 */ \
+    (BITS(i, 20, 20) << 10) |  /* imm11 占 20位 imm20_1 的第10位 */ \
+    BITS(i, 30, 21)            /* imm10_1 占 20位 imm20_1 的 0~9位 */ \
+  , 20) << 1; /* 对20位整体SEXT，再左移1位（J型偏移对齐要求） */ \
+} while(0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst;
