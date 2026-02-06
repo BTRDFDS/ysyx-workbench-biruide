@@ -111,7 +111,7 @@ static int cmd_p(char *args) {
 
 
 static int cmd_w(char *args) {
-  assert(args!=NULL);
+  if(args==NULL) {printf("need something\n");return 0;}
   WP *wp =new_wp();
   bool success;
   assert(wp!=0);
