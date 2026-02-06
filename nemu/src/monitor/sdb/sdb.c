@@ -111,6 +111,7 @@ static int cmd_p(char *args) {
 
 
 static int cmd_w(char *args) {
+  assert(args!=NULL);
   WP *wp =new_wp();
   bool success;
   assert(wp!=0);
