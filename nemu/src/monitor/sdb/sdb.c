@@ -94,13 +94,18 @@ static int cmd_info(char *args) {
 
 
 static int cmd_x(char *args) {
-  if(args==NULL) {printf("x N EXPR\n");return 0;}
+  if(args==NULL) {printf("x N EXPR,whitout N EXPR\n");return 0;}
   char *n=strtok(args, " ");
-  if(n==NULL) {printf("x N EXPR\n");return 0;}
+  if(n==NULL) {printf("x N EXPR,without N\n");return 0;}
   char *EXPR = strtok(NULL, " ");
-  if(EXPR==NULL) {printf("x N EXPR\n");return 0;}
-  paddr_t addr = strtol(EXPR,NULL,0);
-  int len = strtol(n,NULL,0);
+  if(EXPR==NULL) {printf("x N EXPR,without EXPR\n");return 0;}
+  // paddr_t addr = strtol(EXPR,NULL,0);
+  // int len = strtol(n,NULL,0);
+  bool success;
+  paddr_t addr = expr(EXPR,&success);
+  if(success!=true){printf("EXPR is error");return 0;}
+  int len = expr(n,&success);
+  if(success!=true){printf("N is error");return 0;}
   // printf("%x,%x\n",addr,len);
   // vaddr_read(addr,len);
   printf("pc = %x\n",cpu.pc);
