@@ -174,7 +174,7 @@ bool check_parentheses(int p, int q) {
   return false;
 }
 word_t eval(int p, int q, bool *success) {
-  if(success==false){success=false;return 0;}
+  if(success==false){return 0;}
   if (p > q) {
     printf("Bad expression:p>q|it shouldn't happen\n");
     success=false;
