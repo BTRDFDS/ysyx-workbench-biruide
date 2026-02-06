@@ -79,6 +79,7 @@ static int cmd_info(char *args) {
       if(wp->use == true){
         has=true;
         printf("no %d : %s | now value=%u\n",wp->NO,wp->require,wp->value);
+        wp=wp->next;
       }
      }
       if(has==false){printf("no watchpoints\n");}
