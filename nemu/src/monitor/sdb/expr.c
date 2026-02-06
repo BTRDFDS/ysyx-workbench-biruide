@@ -262,18 +262,17 @@ word_t eval(int p, int q, bool *success) {
     }
     word_t val1, val2,res;
     if((op==q)){
-      printf("Bad expression\n");
+      printf("Bad expression:without val2\n");
       *success=false;
       return 0;
     }else if(op==p){
       if(tokens[p].type=='-'){
         val1=0;
       }else{
-      printf("Bad expression\n");
+      printf("Bad expression:without val1\n");
       *success=false;
       return 0;
       }
-      
     }else{
       val1 = eval(p, op - 1,success);
       if(*success==false){return 0;}
@@ -296,19 +295,19 @@ word_t eval(int p, int q, bool *success) {
         res=val1 / val2;
         break;
       case TK_EQ:
-        if(val1==val2)res=1;
+        if(val1==val2) res=1;
         else res=0;
         break;
       case TK_NEQ:
-        if(val1!=val2)res=1;
+        if(val1!=val2) res=1;
         else res=0;
         break;
       case TK_AND:
-        if(val1&&val2)res=1;
+        if(val1&&val2) res=1;
         else res=0;
         break;
       case TK_OR:
-        if(val1||val2)res=1;
+        if(val1||val2) res=1;
         else res=0;
         break;
       default: assert(0);
