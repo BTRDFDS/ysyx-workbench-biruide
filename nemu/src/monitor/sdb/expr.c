@@ -200,7 +200,7 @@ word_t eval(int p, int q, bool *success) {
       *success=true;
       return res;
     }
-      printf("Bad expression\n");
+      printf("Bad expression:val isn't number\n");
       *success=false;
       return 0;
 
