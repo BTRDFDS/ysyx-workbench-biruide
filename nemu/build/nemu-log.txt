@@ -4,3 +4,7 @@
 [1;34m[src/monitor/monitor.c:28 welcome] Trace: [1;32mON[0m[0m
 [1;34m[src/monitor/monitor.c:29 welcome] If trace is enabled, a log file will be generated to record the trace. This may lead to a large log file. If it is not necessary, you can disable it in menuconfig[0m
 [1;34m[src/monitor/monitor.c:32 welcome] Build time: 09:29:36, Jan 31 2026[0m
+[1;34m[src/monitor/sdb/expr.c:315 eval] 0 - 10 = 4294967286[0m
+[1;34m[src/monitor/sdb/expr.c:315 eval] 10 + 4294967286 = 0[0m
+[1;34m[src/monitor/sdb/expr.c:315 eval] 0 - 11 = 4294967285[0m
+[1;34m[src/monitor/sdb/expr.c:315 eval] 10 + 4294967285 = 4294967295[0m

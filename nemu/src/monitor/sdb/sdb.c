@@ -105,7 +105,7 @@ static int cmd_x(char *args) {
 static int cmd_p(char *args) {
   bool success;
   word_t val=expr(args,&success);
-  if(success==true) printf("%u\n",val);
+  if(success==true) printf("%u or 0x%x\n",val,val);
   return 0;
 }
 
