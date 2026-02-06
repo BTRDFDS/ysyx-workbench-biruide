@@ -22,7 +22,7 @@
 
 
 WP wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
+WP *head = NULL, *free_ = NULL;
 
 void init_wp_pool() {
   int i;
@@ -31,7 +31,7 @@ void init_wp_pool() {
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
   }
 
-  head = NULL;
+  head = wp_pool;
   free_ = wp_pool;
 }
 
@@ -58,14 +58,11 @@ void free_wp(WP *wp) {
   }
 }
 int checkWp(){
-  int i=0;
   bool success=false;
   word_t val;
-  while(wp_pool[i].use == true&&i<NR_WP){//wp_pool[i].use == true&&
-    // if(cpu.pc==wp_pool[i].line){
-    //   Log("pin watchpoint %d : 0x%x",wp_pool[i].NO,wp_pool[i].line);
-    //   return 0;
-    // }
+  /*
+  int i=0;
+  while(wp_pool[i].use == true&&i<NR_WP){
     val=expr(wp_pool[i].require,&success);
     if(success&&val!=wp_pool[i].value&&wp_pool[i].use==true){
       printf("watchpoint %d : %s form %x to %x\n",wp_pool[i].NO,wp_pool[i].require,wp_pool[i].value,val);
@@ -73,6 +70,16 @@ int checkWp(){
       return 0;
     }
     i++;
+  }*/
+ WP *wp=head;
+  while(wp!=NULL&&wp->use==true){
+    val=expr(wp->require,&success);
+    if(success&&val!=wp->value&&wp->use==true){
+      printf("watchpoint %d : %s form %x to %x\n",wp->NO,wp->require,wp->value,val);
+      wp->value=val;
+      return 0;
+    }
+    wp=wp->next;
   }
   return -1;
 }
