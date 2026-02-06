@@ -40,8 +40,9 @@ void gen(char c) {
   useBuf++;
 }
 void gen_num() {
+  //空格
   if(len>10){
-    iTemp=rand()%10;
+    iTemp=rand()%10;//缓存空格长度
   }else if(len>1){
     iTemp=rand()%len-1;
   }else{iTemp=0;}
@@ -52,9 +53,9 @@ void gen_num() {
   }else{j=0;}
 
 
-
+  //真数
   if(len>=10){
-    iTemp=INT32_MAX;
+    iTemp=INT32_MAX;//缓存上限
   }else{
     // iTemp=max[len];
     // iTemp=2^len;
@@ -81,7 +82,7 @@ void gen_rand_op(){
   }
 }
 static void gen_rand_expr() {
-  iTemp = choose(3);
+  iTemp = choose(3);//缓存抽卡结果
   if(len<=2){iTemp=0;}
   // else if(len<=2){iTemp=0;}
   switch (iTemp) {

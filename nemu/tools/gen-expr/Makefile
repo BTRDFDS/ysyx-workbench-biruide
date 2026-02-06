@@ -22,7 +22,8 @@ run:build/gen-expr
 # 	./build/gen-expr 10000 > input
 # 	./build/gen-expr 2000 > input
 # 	./build/gen-expr 20 > input
-	./build/gen-expr 1000 > input
+# 	./build/gen-expr 1000 > input
+	./build/gen-expr 100 > input
 # 	./build/gen-expr 200 > input
 gdb:build/gen-expr
 	gdb -tui ./build/gen-expr
