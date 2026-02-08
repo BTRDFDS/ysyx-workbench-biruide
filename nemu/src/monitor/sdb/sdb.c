@@ -225,9 +225,11 @@ static int cmd_t(char *args) {
         gen_expr();
         break;
       case 'c':
-        // cpu_exec(-1);
-        cmd_c(args);
-        cmd_q(args);
+        cpu_exec(-1);
+        if(nemu_state.state!=NEMU_END){nemu_state.state = NEMU_QUIT;}
+        return -1;
+        // cmd_c(args);
+        // cmd_q(args);
         break;
       default:
         printf("unknow order\n");
