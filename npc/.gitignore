@@ -1,5 +1,5 @@
-*.*
-*
+# *.*
+# *
 !*/
 !Makefile
 !*.mk
@@ -10,3 +10,7 @@
 !.gitignore
 !README.md
 build/
+!result/*-500MHz/*
+!bin/*
+!vsrc/*
+!syn/*

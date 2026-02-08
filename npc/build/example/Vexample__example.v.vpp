@@ -1,6 +1,0 @@
-`begin_keywords "1800-2023"
-`line 1 "vsrc/example.v" 1
-module example();
-endmodule
-
-`line 4 "vsrc/example.v" 0

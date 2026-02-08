@@ -1,5 +1,0 @@
-Generate the report at 2026-01-21T12:03:05
-Report : Averaged Power
- +---------------+-----------------+----------------+--------------+---------------+-------------+
-| Instance Name | Nominal Voltage | Internal Power | Switch Power | Leakage Power | Total Power |
-+---------------+-----------------+----------------+--------------+---------------+-------------+
