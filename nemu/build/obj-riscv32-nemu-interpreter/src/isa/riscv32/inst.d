@@ -3,12 +3,12 @@ cmd_/home/biruide/ysyx-workbench/nemu/build/obj-riscv32-nemu-interpreter/src/isa
 source_/home/biruide/ysyx-workbench/nemu/build/obj-riscv32-nemu-interpreter/src/isa/riscv32/inst.o := src/isa/riscv32/inst.c
 
 deps_/home/biruide/ysyx-workbench/nemu/build/obj-riscv32-nemu-interpreter/src/isa/riscv32/inst.o := \
-    $(wildcard include/config/mbase.h) \
   src/isa/riscv32/local-include/reg.h \
     $(wildcard include/config/rt/check.h) \
     $(wildcard include/config/rve.h) \
   /home/biruide/ysyx-workbench/nemu/include/common.h \
     $(wildcard include/config/target/am.h) \
+    $(wildcard include/config/mbase.h) \
     $(wildcard include/config/msize.h) \
     $(wildcard include/config/isa64.h) \
   /home/biruide/ysyx-workbench/nemu/include/macro.h \
