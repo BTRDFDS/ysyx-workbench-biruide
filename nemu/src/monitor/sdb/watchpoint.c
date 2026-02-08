@@ -75,7 +75,7 @@ int checkWp(){
   while(wp!=NULL&&wp->use==true){
     val=expr(wp->require,&success);
     if(success&&val!=wp->value&&wp->use==true){
-      printf("pc = %x watchpoint %d : %s form %x to %x\n",cpu.pc-4,wp->NO,wp->require,wp->value,val);
+      printf("pc = %x watchpoint %d : %s form 0x%x to 0x%x | %u to %u | %d to |%d\n",cpu.pc-4,wp->NO,wp->require,wp->value,val,wp->value,val,wp->value,val);
       wp->value=val;
       return 0;
     }
