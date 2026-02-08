@@ -169,7 +169,7 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_help(char *args);
-static int cmd_test(char *args);
+static int cmd_t(char *args);
 static struct {
   const char *name;
   const char *description;
@@ -184,7 +184,7 @@ static struct {
   { "p", "Print value", cmd_p },
   { "w", "Set watching point", cmd_w },
   { "d", "Delete watching point", cmd_d },
-  { "test", "do somr test", cmd_test}
+  { "t", "do somr test", cmd_t}
 
   /* TODO: Add more commands */
 
@@ -214,7 +214,7 @@ static int cmd_help(char *args) {
   }
   return 0;
 }
-static int cmd_test(char *args) {
+static int cmd_t(char *args) {
   if(args == NULL) {
     printf("without order,then will show help\n");
     cmd_help(NULL);
@@ -223,6 +223,13 @@ static int cmd_test(char *args) {
     {
       case 'p':
         gen_expr();
+        break;
+      case 'c':
+        cpu_exec(-1);
+        if(nemu_state.state!=NEMU_END){nemu_state.state = NEMU_QUIT;}
+        return -1;
+        // cmd_c(args);
+        // cmd_q(args);
         break;
       default:
         printf("unknow order\n");
