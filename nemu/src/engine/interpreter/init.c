@@ -26,12 +26,12 @@ void engine_start() {
 // #endif
 #ifdef CONFIG_TARGET_AM
   cpu_exec(-1);
-// #elif TEST_AM
-//   printf("TEST_AM\n");
-//   cmd_t("c");
+#elif TEST_AM
+  printf("TEST_AM\n");
+  cmd_t("c");
 #else
   /* Receive commands from user. */
-  cmd_t("c");
-  // sdb_mainloop();
+  // cmd_t("c");
+  sdb_mainloop();
 #endif
 }
