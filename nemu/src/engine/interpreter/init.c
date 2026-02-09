@@ -19,6 +19,7 @@
 void sdb_mainloop();
 
 void engine_start() {
+  printf("enginestart\n");
 #ifdef TEST_AM
   printf("TEST_AM\n");
   cmd_t('c');
