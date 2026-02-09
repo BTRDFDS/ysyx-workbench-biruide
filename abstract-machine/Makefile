@@ -79,8 +79,8 @@ INCFLAGS += $(addprefix -I, $(INC_PATH))
 mode ?= 0
 
 ifeq ($(mode),1)
-	CFLAGS += -DTEST_AM
-	echo "TEST_AM"
+# 	CFLAGS += -DTEST_AM
+# 	echo "TEST_AM"
 endif
 
 ARCH_H := arch/$(ARCH).h
@@ -90,7 +90,7 @@ CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -D__PLATFORM__=$(PLATFORM) -D__PLATFORM_$(shell echo $(PLATFORM) | tr a-z A-Z | tr - _) \
             -DARCH_H=\"$(ARCH_H)\" \
             -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector \
-            -Wno-main -U_FORTIFY_SOURCE -fvisibility=hidden
+            -Wno-main -U_FORTIFY_SOURCE -fvisibility=hidden -DTEST_AM
 CXXFLAGS +=  $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  += -MMD $(INCFLAGS)
 LDFLAGS  += -z noexecstack $(addprefix -T, $(LDSCRIPTS))
