@@ -14,12 +14,16 @@
 ***************************************************************************************/
 
 #include <cpu/cpu.h>
+#include <../../monitor/sdb/sdb.h>
 
 void sdb_mainloop();
 
 void engine_start() {
 #ifdef CONFIG_TARGET_AM
   cpu_exec(-1);
+#elif TEST_AM
+  // cpu_exec(-1);
+  cmd_t('c');
 #else
   /* Receive commands from user. */
   sdb_mainloop();

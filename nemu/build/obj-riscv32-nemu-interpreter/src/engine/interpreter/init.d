@@ -13,6 +13,7 @@ deps_/home/biruide/ysyx-workbench/nemu/build/obj-riscv32-nemu-interpreter/src/en
   /home/biruide/ysyx-workbench/nemu/include/debug.h \
   /home/biruide/ysyx-workbench/nemu/include/utils.h \
     $(wildcard include/config/target/native/elf.h) \
+  /home/biruide/ysyx-workbench/nemu/src/engine/interpreter/../../monitor/sdb/sdb.h \
 
 /home/biruide/ysyx-workbench/nemu/build/obj-riscv32-nemu-interpreter/src/engine/interpreter/init.o: $(deps_/home/biruide/ysyx-workbench/nemu/build/obj-riscv32-nemu-interpreter/src/engine/interpreter/init.o)
 
