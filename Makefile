@@ -47,3 +47,20 @@ count:
 	find . -type f \( -name "*.c" -o -name "*.h" \) -exec cat {} + | wc -l
 countN:
 	find . -type f \( -name "*.c" -o -name "*.h" \) -exec grep -vE '^$$' {} + | wc -l
+Log:
+	mkdir Log
+gitLog:
+	git log --graph --date-order --pretty=reference --date=iso --decorate > Log/gitLog.txt
+# 	git log --date=short --pretty=online --graph --decorate --date-order --shortstat > opt
+# 	git log --date=short --pretty=short --decorate=full --no-indent --graph --decorate --date-order
+# 	git log --graph --date-order --oneline --decorate > opt
+# 参考预设+日期+装饰 + shortstat，awk拼接成一行
+# 	git log --graph --date-order --pretty=reference --date=shor1t --decorate=full --abbrev=8 --shortstat | awk '/^[*| ]/ {if (buf) print buf; buf=$0} /files changed/ {buf=buf " | " $0} END {print buf}' > opt
+gitLogU:
+	git log --graph --date-order --pretty=reference --date=iso --decorate | grep -v "LAPTOP-3IAF75LK" > Log/gitLogU.txt
+gitLogA:
+# 	git log --oneline --graph --decorate --date-order --ALL > opt
+	git log --graph --date-order --pretty=reference --date=iso --decorate --all > Log/gitLogA.txt
+gitLogAU:
+	git log --graph --date-order --pretty=reference --date=iso --decorate --all | grep -v "LAPTOP-3IAF75LK" > Log/gitLogAU.txt
+log:Log gitLog gitLogU gitLogA gitLogAU
