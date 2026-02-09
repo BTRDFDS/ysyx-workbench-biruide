@@ -76,6 +76,12 @@ READELF   = $(CROSS_COMPILE)readelf
 INC_PATH += $(WORK_DIR)/include $(addsuffix /include/, $(addprefix $(AM_HOME)/, $(LIBS)))
 INCFLAGS += $(addprefix -I, $(INC_PATH))
 
+mode ?= 0
+
+ifeq ($(mode),1)
+	CFLAGS += -DTEST_AM
+endif
+
 ARCH_H := arch/$(ARCH).h
 CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -D__ISA__=\"$(ISA)\" -D__ISA_$(shell echo $(ISA) | tr a-z A-Z)__ \
@@ -87,6 +93,7 @@ CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
 CXXFLAGS +=  $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  += -MMD $(INCFLAGS)
 LDFLAGS  += -z noexecstack $(addprefix -T, $(LDSCRIPTS))
+
 
 ## 4. Arch-Specific Configurations
 
