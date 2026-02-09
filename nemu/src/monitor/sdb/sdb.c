@@ -169,7 +169,7 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_help(char *args);
-static int cmd_t(char *args);
+int cmd_t(char *args);
 static struct {
   const char *name;
   const char *description;
@@ -214,7 +214,7 @@ static int cmd_help(char *args) {
   }
   return 0;
 }
-static int cmd_t(char *args) {
+int cmd_t(char *args) {
   if(args == NULL) {
     printf("without order,then will show help\n");
     cmd_help(NULL);

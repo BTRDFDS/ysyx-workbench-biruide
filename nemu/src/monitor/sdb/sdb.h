@@ -19,6 +19,7 @@
 #include <common.h>
 
 word_t expr(char *e, bool *success);
+int cmd_t(char *args);
 void gen_expr();
 int checkWp();
 #endif
