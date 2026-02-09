@@ -23,7 +23,7 @@ void engine_start() {
   cpu_exec(-1);
 #elif TEST_AM
   // cpu_exec(-1);
-  printf('TEST_AM');
+  printf("TEST_AM\n");
   cmd_t('c');
 #else
   /* Receive commands from user. */
