@@ -51,6 +51,13 @@ Log:
 	mkdir Log
 gitLog:
 	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --decorate > Log/gitLog.txt
+# 	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --decorate --shortstat > Log/gitLog.txt
+	
+# 	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --shortstat --decorate | sed ':a;N;$!ba;s/\n */ /g' > Log/gitLog.txt
+# 	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --shortstat --decorate | awk '/^\*[^-]|^\|[^-]/ {printf "%s ", $$0; next} / files changed/ {printf "%s\n", $$0; next} {printf "%s ", $$0}' > Log/gitLog.txt
+
+
+
 # 	git log --graph --date-order --pretty=reference --date=iso --decorate > Log/gitLog.txt
 # 	git log --date=short --pretty=online --graph --decorate --date-order --shortstat > opt
 # 	git log --date=short --pretty=short --decorate=full --no-indent --graph --decorate --date-order
