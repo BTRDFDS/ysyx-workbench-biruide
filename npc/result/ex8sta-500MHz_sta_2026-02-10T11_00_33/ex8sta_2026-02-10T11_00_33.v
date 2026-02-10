@@ -1,4 +1,4 @@
-//Generate the verilog at 2026-02-10T11:00:33 by iSTA.
+//Generate the verilog at 2026-02-03T17:01:51 by iSTA.
 module ex8sta (
 clk,
 reset,
