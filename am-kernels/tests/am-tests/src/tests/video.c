@@ -1,7 +1,7 @@
 #include <amtest.h>
 
 #define FPS 30
-#define N   32
+#define N   100
 
 static inline uint32_t pixel(uint8_t r, uint8_t g, uint8_t b) {
   return (r << 16) | (g << 8) | b;
