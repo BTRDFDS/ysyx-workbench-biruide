@@ -6,6 +6,7 @@ $(shell > $(RESULT))
 COLOR_RED   = \033[1;31m
 COLOR_GREEN = \033[1;32m
 COLOR_NONE  = \033[0m
+
 t ?= 0
 
 ALL = $(basename $(notdir $(shell find tests/. -name "*.c")))

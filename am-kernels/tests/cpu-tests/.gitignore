@@ -1,1 +1,4 @@
-/Makefile.*
+build/*
+!Makefile
+!tests
+!include
