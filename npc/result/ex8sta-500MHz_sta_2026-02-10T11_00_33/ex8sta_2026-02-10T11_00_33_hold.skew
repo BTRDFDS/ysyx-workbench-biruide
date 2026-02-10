@@ -1,4 +1,4 @@
-Generate the report at 2026-02-10T11:00:33, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
+Generate the report at 2026-02-03T17:01:51, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
 Clock: core_clock
 +---------------------------+---------+-------+------+
 | Clock Pin                 | Latency | Skew  |      |
@@ -11,7 +11,7 @@ Clock: core_clock
 | y_4__reg_p:CK (DFFQX1H7L) | 0.000   | 0.000 | rp-+ |
 | y_9__reg_p:CK (DFFQX1H7L) | 0.000   |       | rp-+ |
 | y_9__reg_p:CK (DFFQX1H7L) | 0.000   | 0.000 | rp-+ |
-| x_9__reg_p:CK (DFFQX1H7L) | 0.000   |       | rp-+ |
+| x_7__reg_p:CK (DFFQX1H7L) | 0.000   |       | rp-+ |
 | x_7__reg_p:CK (DFFQX1H7L) | 0.000   | 0.000 | rp-+ |
 +---------------------------+---------+-------+------+
 +------------------------------------+--------+-------------+------------+------------+-------+--------+
@@ -116,7 +116,7 @@ Clock: core_clock
 | clock core_clock (rise edge) |        |             |            | 0          | 0     |        |
 | clk (port)                   |        | 0.009       | 0.000      | 0.000      | 0.000 | 0.000r |
 | clk (net)                    | 11     |             |            |            |       |        |
-| x_9__reg_p:CK (DFFQX1H7L)    |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| x_7__reg_p:CK (DFFQX1H7L)    |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                              |        |             |            |            |       |        |
 | clock core_clock (rise edge) |        |             |            | 0          | 0     |        |
 | clk (port)                   |        | 0.012       | 0.000      | 0.000      | 0.000 | 0.000r |

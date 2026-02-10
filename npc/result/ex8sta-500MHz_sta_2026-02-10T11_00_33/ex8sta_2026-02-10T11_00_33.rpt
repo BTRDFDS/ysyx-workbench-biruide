@@ -1,12 +1,12 @@
-Generate the report at 2026-02-10T11:00:33, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
+Generate the report at 2026-02-03T17:01:51, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
 +---------------------+--------------------------+------------+------------+---------------+-------+-------+-----------+
 | Endpoint            | Clock Group              | Delay Type | Path Delay | Path Required | CPPR  | Slack | Freq(MHz) |
 +---------------------+--------------------------+------------+------------+---------------+-------+-------+-----------+
 | x_9__reg_p:D        | core_clock               | max        | 0.435r     | 1.971         | 0.000 | 1.537 | 2158.918  |
 | x_8__reg_p:D        | core_clock               | max        | 0.407f     | 1.952         | 0.000 | 1.545 | 2197.735  |
 | x_6__reg_p:D        | core_clock               | max        | 0.407f     | 1.952         | 0.000 | 1.545 | 2197.735  |
+| x_7__reg_p:D        | core_clock               | max        | 0.407f     | 1.952         | 0.000 | 1.545 | 2197.735  |
 | x_9__reg_p:D        | core_clock               | max        | 0.407f     | 1.952         | 0.000 | 1.545 | 2197.735  |
-| x_5__reg_p:D        | core_clock               | max        | 0.407f     | 1.952         | 0.000 | 1.545 | 2197.735  |
 | clk_ICGX0P5H7L_CK:E | **clock_gating_default** | max        | 0.382r     | 1.933         | 0.000 | 1.551 | NA        |
 | clk_ICGX0P5H7L_CK:E | **clock_gating_default** | max        | 0.263f     | 1.962         | 0.000 | 1.699 | NA        |
 | y_1__reg_p:D        | core_clock               | min        | 0.129f     | -0.008        | 0.000 | 0.137 | NA        |
@@ -166,17 +166,17 @@ Generate the report at 2026-02-10T11:00:33, GitVersion: aa25008b3778a76ae1975c83
 | x_9__NAND3BX0P5H7L_B_Y_NOR4X6H7L_D:B (NOR4X6H7L)    |        | 0.003       | 0.000      | 0.067      |             | 0.000  | 0.257f          |
 | x_9__NAND3BX0P5H7L_B_Y_NOR4X6H7L_D:Y (NOR4X6H7L)    |        | 0.011       | 0.000      | 0.162      |             | 0.125  | 0.382r          |
 | x_1__reg_p_D_NOR3X1P4H7L_Y_B (net)                  | 11     |             |            |            | 0.000       |        |                 |
-| x_9__reg_p_D_AOI211X1P4H7L_Y:C0 (AOI211X1P4H7L)     |        | 0.001       | 0.000      | 0.162      |             | 0.000  | 0.382r          |
-| x_9__reg_p_D_AOI211X1P4H7L_Y:Y (AOI211X1P4H7L)      |        | 0.001       | 0.000      | 0.043      |             | 0.024  | 0.407f          |
-| x_9__reg_p_D (net)                                  | 1      |             |            |            | 0.000       |        |                 |
-| x_9__reg_p:D (DFFQX1H7L)                            |        | 0.001       | 0.000      | 0.043      |             | 0.000  | 0.407f          |
+| x_7__reg_p_D_AOI211X1P4H7L_Y:C0 (AOI211X1P4H7L)     |        | 0.001       | 0.000      | 0.162      |             | 0.000  | 0.382r          |
+| x_7__reg_p_D_AOI211X1P4H7L_Y:Y (AOI211X1P4H7L)      |        | 0.001       | 0.000      | 0.043      |             | 0.024  | 0.407f          |
+| x_7__reg_p_D (net)                                  | 1      |             |            |            | 0.000       |        |                 |
+| x_7__reg_p:D (DFFQX1H7L)                            |        | 0.001       | 0.000      | 0.043      |             | 0.000  | 0.407f          |
 |                                                     |        |             |            |            |             |        |                 |
 | clk (port)                                          |        | 0.009       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
 | clk (clock net)                                     | 11     |             |            |            | NA          |        |                 |
-| x_9__reg_p:CK (DFFQX1H7L)                           |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| x_7__reg_p:CK (DFFQX1H7L)                           |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
 | clock core_clock (rise edge)                        |        |             |            |            |             | 2      | 2               |
 | clock network delay (ideal)                         |        |             |            |            |             | 0.000  | 2.000           |
-| x_9__reg_p:CK (DFFQX1H7L)                           |        |             |            |            |             |        | 2.000r          |
+| x_7__reg_p:CK (DFFQX1H7L)                           |        |             |            |            |             |        | 2.000r          |
 | library setup time                                  |        |             |            |            |             | -0.048 | 1.952           |
 | clock reconvergence pessimism                       |        |             |            |            |             | 0.000  | 1.952           |
 |                                                     |        |             |            |            |             |        |                 |
@@ -207,17 +207,17 @@ Generate the report at 2026-02-10T11:00:33, GitVersion: aa25008b3778a76ae1975c83
 | x_9__NAND3BX0P5H7L_B_Y_NOR4X6H7L_D:B (NOR4X6H7L)    |        | 0.003       | 0.000      | 0.067      |             | 0.000  | 0.257f          |
 | x_9__NAND3BX0P5H7L_B_Y_NOR4X6H7L_D:Y (NOR4X6H7L)    |        | 0.011       | 0.000      | 0.162      |             | 0.125  | 0.382r          |
 | x_1__reg_p_D_NOR3X1P4H7L_Y_B (net)                  | 11     |             |            |            | 0.000       |        |                 |
-| x_5__reg_p_D_AOI211X1P4H7L_Y:C0 (AOI211X1P4H7L)     |        | 0.001       | 0.000      | 0.162      |             | 0.000  | 0.382r          |
-| x_5__reg_p_D_AOI211X1P4H7L_Y:Y (AOI211X1P4H7L)      |        | 0.001       | 0.000      | 0.043      |             | 0.024  | 0.407f          |
-| x_5__reg_p_D (net)                                  | 1      |             |            |            | 0.000       |        |                 |
-| x_5__reg_p:D (DFFQX1H7L)                            |        | 0.001       | 0.000      | 0.043      |             | 0.000  | 0.407f          |
+| x_9__reg_p_D_AOI211X1P4H7L_Y:C0 (AOI211X1P4H7L)     |        | 0.001       | 0.000      | 0.162      |             | 0.000  | 0.382r          |
+| x_9__reg_p_D_AOI211X1P4H7L_Y:Y (AOI211X1P4H7L)      |        | 0.001       | 0.000      | 0.043      |             | 0.024  | 0.407f          |
+| x_9__reg_p_D (net)                                  | 1      |             |            |            | 0.000       |        |                 |
+| x_9__reg_p:D (DFFQX1H7L)                            |        | 0.001       | 0.000      | 0.043      |             | 0.000  | 0.407f          |
 |                                                     |        |             |            |            |             |        |                 |
 | clk (port)                                          |        | 0.009       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
 | clk (clock net)                                     | 11     |             |            |            | NA          |        |                 |
-| x_5__reg_p:CK (DFFQX1H7L)                           |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| x_9__reg_p:CK (DFFQX1H7L)                           |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
 | clock core_clock (rise edge)                        |        |             |            |            |             | 2      | 2               |
 | clock network delay (ideal)                         |        |             |            |            |             | 0.000  | 2.000           |
-| x_5__reg_p:CK (DFFQX1H7L)                           |        |             |            |            |             |        | 2.000r          |
+| x_9__reg_p:CK (DFFQX1H7L)                           |        |             |            |            |             |        | 2.000r          |
 | library setup time                                  |        |             |            |            |             | -0.048 | 1.952           |
 | clock reconvergence pessimism                       |        |             |            |            |             | 0.000  | 1.952           |
 |                                                     |        |             |            |            |             |        |                 |
