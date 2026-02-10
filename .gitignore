@@ -13,6 +13,8 @@
 !fceux-am/*
 !am-kernels/*
 !abstract-machine/*
+!riscv-tests-am/*
+!riscv-arch-tests-am/*
 !E4/*
 !myc/*
 !nemu/*

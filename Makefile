@@ -50,7 +50,7 @@ countN:
 Log:
 	mkdir Log
 gitLog:
-	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --decorate > Log/gitLog.txt
+	git log --graph --date-order --pretty=format:"%h%x09(%ad) %s" --date=iso --decorate > Log/gitLog.txt
 # 	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --decorate --shortstat > Log/gitLog.txt
 	
 # 	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --shortstat --decorate | sed ':a;N;$!ba;s/\n */ /g' > Log/gitLog.txt
@@ -65,13 +65,13 @@ gitLog:
 # 参考预设+日期+装饰 + shortstat，awk拼接成一行
 # 	git log --graph --date-order --pretty=reference --date=shor1t --decorate=full --abbrev=8 --shortstat | awk '/^[*| ]/ {if (buf) print buf; buf=$0} /files changed/ {buf=buf " | " $0} END {print buf}' > opt
 gitLogU:
-	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --decorate | grep -v "LAPTOP-3IAF75LK" > Log/gitLogU.txt
+	git log --graph --date-order --pretty=format:"%h%x09(%ad) %s" --date=iso --decorate | grep -v "LAPTOP-3IAF75LK" > Log/gitLogU.txt
 # 	git log --graph --date-order --pretty=reference --date=iso --decorate | grep -v "LAPTOP-3IAF75LK" > Log/gitLogU.txt
 gitLogA:
 # 	git log --oneline --graph --decorate --date-order --ALL > opt
-	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --decorate --all > Log/gitLogA.txt
+	git log --graph --date-order --pretty=format:"%h%x09(%ad) %s" --date=iso --decorate --all > Log/gitLogA.txt
 # 	git log --graph --date-order --pretty=reference --date=iso --decorate --all > Log/gitLogA.txt
 gitLogAU:
-	git log --graph --date-order --pretty=format:"%h (%ad) %s" --date=iso --decorate --all | grep -v "LAPTOP-3IAF75LK" > Log/gitLogAU.txt
+	git log --graph --date-order --pretty=format:"%h%x09(%ad) %s" --date=iso --decorate --all | grep -v "LAPTOP-3IAF75LK" > Log/gitLogAU.txt
 # 	git log --graph --date-order --pretty=reference --date=iso --decorate --all | grep -v "LAPTOP-3IAF75LK" > Log/gitLogAU.txt
 log:Log gitLog gitLogU gitLogA gitLogAU

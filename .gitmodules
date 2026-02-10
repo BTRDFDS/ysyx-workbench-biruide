@@ -1,0 +1,12 @@
+[submodule "riscv-arch-test-am"]
+	path = riscv-arch-test-am
+	url = ./riscv-arch-test-am
+[submodule "riscv-tests-am"]
+	path = riscv-tests-am
+	url = ./riscv-tests-am
+[submodule "nvboard"]
+	path = nvboard
+	url = ./nvboard
+[submodule "yosys-sta"]
+	path = yosys-sta
+	url = ./yosys-sta
