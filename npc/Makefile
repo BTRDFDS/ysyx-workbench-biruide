@@ -63,7 +63,7 @@ sim:bin/$(t) wave
 # 	@echo "Write this Makefile by your self."
 
 clean:
-	rm bin/* build/* -rf
+	rm -rf bin/* build/*
 run:bin/$(tU)
 	./bin/$(tU)
 gtk:
