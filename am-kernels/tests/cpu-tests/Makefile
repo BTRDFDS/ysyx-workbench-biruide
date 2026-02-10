@@ -37,5 +37,6 @@ gdb: all
 
 clean:
 	rm -rf Makefile.* build/
-
+help:
+	@echo "make run ARCH=riscv32-nemu ALL=add t=1"
 latest:
