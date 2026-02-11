@@ -3,14 +3,17 @@ module ysyx_26020046_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
   output [DATA_WIDTH-1:0] imm,
   output [ADDR_WIDTH-1:0] r1,r2,rd,
   output wen,uImm,
-  output reg [1:0] cho
+  output reg [1:0] cho,
+  output [2:0] funct3A7
+  // output [5:0] fun
 );
   wire [DATA_WIDTH-1:0] isjb,immI,immS,immJ,immB,immU;
   wire i,s,j,b,u,r,uR1,uR2;
   /* verilator lint_off UNUSEDSIGNAL */
-  wire [2:0] funct3;
-  wire [6:0] opcode,funct7;
+  wire [6:0] opcode;
   reg [2:0] con;
+  wire [2:0] funct3;
+  wire [6:0] funct7;
 
 
   assign r=(opcode==7'b0110011);
@@ -31,6 +34,9 @@ module ysyx_26020046_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
   assign funct3 = code[14:12];
   assign rd = code[11:7];
   assign opcode = code[6:0];
+
+  always@(*)begin
+    case({funct7,funct3,})
 
   assign immI = {{20{code[31]}},code[31:20]};
   assign immS = {{20{code[31]}},code[31:25],code[11:7]};

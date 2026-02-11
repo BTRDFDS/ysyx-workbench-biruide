@@ -24,11 +24,21 @@ ifeq ($(t),ysyx_26020046_minirv)
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_IDC.v,$(tV))
 	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
 endif
-all: $(BINS)
+# all: $(BINS)
+# bin/%: vsrc/%.v csrc/%.cpp | build/% bin
+# 	mkdir -p $(dir $@)
+# 	verilator --lint-only -Wall $< --top-module $(notdir $*) -Wno-DECLFILENAME
+# 	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
+# 	--top-module $(notdir $*) \
+# 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
+# 	$(addprefix -LDFLAGS , $(LDFLAGS))
+# 	cp build/$*/V$(notdir $*) $@
+# 	git add .
+# all: $(BINS)
 bin/%: vsrc/%.v csrc/%.cpp | build/% bin
 	mkdir -p $(dir $@)
-	verilator --lint-only -Wall $< --top-module $(notdir $*) -Wno-DECLFILENAME
-	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
+	verilator --lint-only -Wall $(tVd) --top-module $(notdir $*) -Wno-DECLFILENAME
+	verilator $(VERILATOR_CFLAGS)  $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
 	--top-module $(notdir $*) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
