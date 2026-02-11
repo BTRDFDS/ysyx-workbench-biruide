@@ -19,3 +19,10 @@ output:oR1 oR2读出的数据
 input :code 指令
 
 output:imm 立即数,r1,r2,rd 寄存器地址,wen 写入使能
+
+# LSU Load-Store Unit
+读写控制器，负责对内存进行读写操作，同时更新pc
+
+input:clk 时钟,addr 地址,rd 写入寄存器地址,wdata 写入数据,wen 写入使能
+
+output:addr 输出地址,wdata 写入数据,wen 写入使能,pc 更新后的pc

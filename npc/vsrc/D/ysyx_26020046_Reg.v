@@ -1,4 +1,4 @@
-module ysyx_26020046_GPR #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
+module ysyx_26020046_Reg #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
   input clk,
   input [DATA_WIDTH-1:0] wdata,
   input [ADDR_WIDTH-1:0] waddr,cR1,cR2,

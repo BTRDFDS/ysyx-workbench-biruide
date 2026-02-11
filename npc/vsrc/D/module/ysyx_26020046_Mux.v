@@ -1,3 +1,4 @@
+/* verilator lint_off DECLFILENAME */  // 局部关闭文件名检查，覆盖整个文件
 // 选择器模板内部实现
 module ysyx_26020046_MuxKeyInternal #(NR_KEY = 2, KEY_LEN = 1, DATA_LEN = 1, HAS_DEFAULT = 0) (
   output reg [DATA_LEN-1:0] out,
