@@ -53,8 +53,8 @@ module ysyx_26020046_MuxKeyWithDefault #(NR_KEY = 2, KEY_LEN = 1, DATA_LEN = 1) 
 );
   ysyx_26020046_MuxKeyInternal #(NR_KEY, KEY_LEN, DATA_LEN, 1) i0 (out, key, default_out, lut);
 endmodule
-/*
-module mux21(a,b,s,y);
+
+module ysyx_26020046_mux21(a,b,s,y);
   input   a,b,s;
   output  y;
 
@@ -70,7 +70,7 @@ module mux21(a,b,s,y);
     1'b1, b
   });
 endmodule
-module mux41(a,s,y);
+module ysyx_26020046_mux41(a,s,y);
   input  [3:0] a;
   input  [1:0] s;
   output y;
@@ -92,4 +92,10 @@ module mux41(a,s,y);
     2'b11, a[3]
   });
 endmodule
-*/
+
+module ysyx_26020046_mux2nM #(ADDR_WIDTH = 2, DATA_WIDTH = 32)(out,addr,in);
+  input [ADDR_WIDTH-1:0] addr;
+  input [(2**ADDR_WIDTH)*(ADDR_WIDTH + DATA_WIDTH)-1:0] in;
+  output [DATA_WIDTH-1:0] out;
+  ysyx_26020046_MuxKey #(2**ADDR_WIDTH,ADDR_WIDTH,DATA_WIDTH) i0 (.out(out), .key(addr), .lut(in));
+endmodule

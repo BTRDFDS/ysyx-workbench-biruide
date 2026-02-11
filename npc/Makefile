@@ -25,6 +25,7 @@ t?=water
 tV=$(shell find vsrc -type f -name "$(t).v")
 tC=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
 tU=$(patsubst vsrc/%.v,%,$(tV))
+tVd=$(NPC_HOME)/$(tV);
 # tC=$(wildcard csrc/$(t).v) $(wildcard csrc/*/$(t).v)
 # tC=$(shell find csrc -type f -name "$(t).cpp")
 all: $(BINS)
@@ -74,17 +75,17 @@ tree:
 	exa --grid --color=always --sort=name *
 
 chk:
-	verilator --lint-only -Wall $(tV)
+	verilator --lint-only -Wall $(tVd)
 # 	verilator --lint-only -Wall vsrc/$(t).v
 
 # include $(YOSYS_STA_HOME)/Makefile
 syn:chk
-	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES=$(NPC_HOME)/$(tV)
+	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES=$(tVd)
 # 	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES=$(NPC_HOME)/vsrc/$(t).v
 	cp -r $(YOSYS_STA_HOME)/result/$(t)*-500MHz ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 sta:
-	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES=$(NPC_HOME)/$(tV)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES=$(tVd)
 # 	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES=$(NPC_HOME)/vsrc/$(t).v
 	cp -r $(YOSYS_STA_HOME)/result/$(t)*-500MHz ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
