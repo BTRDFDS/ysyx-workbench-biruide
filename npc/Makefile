@@ -4,28 +4,55 @@ MAKEFLAGS += -k
 FLAGS=  --debug --cc --trace -MMD -O0
 VERILATOR_CFLAGS += $(FLAGS)
 
-vFile  = $(wildcard vsrc/*.v)
-cFile  = $(patsubst vsrc/%.v,csrc/%.cpp,$(vFile))
-BINS   = $(patsubst vsrc/%.v,bin/%,   $(vFile))
-BUILDS = $(patsubst vsrc/%.v,build/%, $(vFile))
-TOPNAME= $(patsubst vsrc/%.v,%,$(vFile))
+vFile = $(shell find vsrc -type f -name "*.v")
+cFile = $(patsubst vsrc/%.v,csrc/%.cpp,$(vFile))
+BINS  = $(patsubst vsrc/%.v,bin/%,$(vFile))
+NAME  = $(basename $(vFile))
 
 INC_PATH ?=
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS)
-t?=water
 
-all: $(BINS)
-bin/%: vsrc/%.v csrc/%.cpp | build/% bin
-	verilator --lint-only -Wall $< --top-module $* -Wno-DECLFILENAME
-	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
-	--top-module $* \
+t?=water
+tV=$(shell find vsrc -type f -name "$(t).v")
+tC=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
+tU=$(patsubst vsrc/%.v,%,$(tV))
+tVd=$(NPC_HOME)/$(tV)
+ifeq ($(t),ysyx_26020046_minirv)
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
+	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
+endif
+ifeq ($(t),ysyx_26020046_minirv_sta)
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
+	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
+endif
+# all: $(BINS)
+# bin/%: vsrc/%.v csrc/%.cpp | build/% bin
+# 	mkdir -p $(dir $@)
+# 	verilator --lint-only -Wall $< --top-module $(notdir $*) -Wno-DECLFILENAME
+# 	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
+# 	--top-module $(notdir $*) \
+# 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
+# 	$(addprefix -LDFLAGS , $(LDFLAGS))
+# 	cp build/$*/V$(notdir $*) $@
+# 	git add .
+# all: $(BINS)
+# bin/%: vsrc/%.v csrc/%.cpp | build/% bin
+bin/%: $(tVd) $(tC) | build/% bin
+	mkdir -p $(dir $@)
+	verilator --lint-only -Wall $(tVd) --top-module $(notdir $*) -Wno-DECLFILENAME
+	verilator $(VERILATOR_CFLAGS)  $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
+	--top-module $(notdir $*) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-	
-# 	cd build/$* && make -f V$*.mk
-	cp build/$*/V$* $@
-	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
+	cp build/$*/V$(notdir $*) $@
+	git add .
 
 bin:
 	mkdir -p bin
@@ -38,32 +65,36 @@ sim:bin/$(t) wave
 	./bin/$(t)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	gtkwave wave/$(t).vcd
-# 	@echo "Write this Makefile by your self."
-
 clean:
-	rm bin/* build/* -rf
-run:bin/$(t)
-	./bin/$(t)
+	rm -rf bin/* build/*
+run:bin/$(tU)
+	./bin/$(tU) $(ARG) $(xEb)
+do:bin/$(tU)
 gtk:
-	gtkwave wave/$(t).vcd
+	gtkwave wave/$(tU).vcd
 log:
 	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2026-01-01"
 tree:
 	exa --grid --color=always --sort=name *
 
-chk:
-	verilator --lint-only -Wall vsrc/$(t).v
+val:bin/$(t)
+	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tU)
 
-# include $(YOSYS_STA_HOME)/Makefile
-syn:chk
-	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES=/home/biruide/ysyx-workbench/npc/vsrc/$(t).v
-	cp -r $(YOSYS_STA_HOME)/result/$(t)* ./result
+chk:
+	@echo "t=$(t)"
+	@echo "tV=$(tV)"
+	@echo "tC=$(tC)"
+	@echo "tU=$(tU)"
+	@echo "tVd=$(tVd)"
+	verilator --lint-only -Wall $(tVd) -top-module $(t)
+syn:$(tV) chk
+	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES="$(tVd)
+	cp -r $(YOSYS_STA_HOME)/result/$(t)*-500MHz ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
-sta:
-	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES=/home/biruide/ysyx-workbench/npc/vsrc/$(t).v
-	cp -r $(YOSYS_STA_HOME)/result/$(t)* ./result
+sta:$(tV)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES="$(tVd)"
+	cp -r $(YOSYS_STA_HOME)/result/$(t)*-500MHz ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
-# 	rm -rf $(YOSYS_STA_HOME)/result/$(t)*
 symy:
 	yosys yosys.tcl
 try:

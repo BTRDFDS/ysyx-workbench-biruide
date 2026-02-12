@@ -13,8 +13,8 @@
 [TCL: yosys -import] Command name collision: found pre-existing command `read' -> skip.
 [TCL: yosys -import] Command name collision: found pre-existing command `trace' -> skip.
 
-1. Executing Verilog-2005 frontend: /home/biruide/ysyx-workbench/npc/vsrc/water.v
-Parsing SystemVerilog input from `/home/biruide/ysyx-workbench/npc/vsrc/water.v' to AST representation.
+1. Executing Verilog-2005 frontend: /home/biruide/ysyx-workbench/npc/vsrc/E/water.v
+Parsing SystemVerilog input from `/home/biruide/ysyx-workbench/npc/vsrc/E/water.v' to AST representation.
 Generating RTLIL representation for module `\water'.
 Successfully finished Verilog frontend.
 
@@ -35,7 +35,7 @@ Removed 0 unused modules.
 Cleaned up 0 empty switches.
 
 2.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
-Marked 1 switch rules as full_case in process $proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:10$7 in module water.
+Marked 1 switch rules as full_case in process $proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:10$7 in module water.
 Removed a total of 0 dead cases.
 
 2.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
@@ -43,7 +43,7 @@ Removed 0 redundant assignments.
 Promoted 2 assignments to connections.
 
 2.2.4. Executing PROC_INIT pass (extract init attributes).
-Found init rule in `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:16$8'.
+Found init rule in `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:16$8'.
   Set init value: \s = 10'1111100000
 
 2.2.5. Executing PROC_ARST pass (detect async resets in processes).
@@ -54,26 +54,26 @@ rejecting switch: has nested switches
 Converted 0 switches.
 
 2.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
-Creating decoders for process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:16$8'.
-Creating decoders for process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:10$7'.
+Creating decoders for process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:16$8'.
+Creating decoders for process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:10$7'.
      1/1: $0\s[9:0]
-Creating decoders for process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:4$1'.
+Creating decoders for process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:4$1'.
 
 2.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
 
 2.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
-Creating register for signal `\water.\s' using process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:10$7'.
+Creating register for signal `\water.\s' using process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:10$7'.
   created $dff cell `$procdff$14' with positive edge clock.
-Creating register for signal `\water.\myTime' using process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:4$1'.
+Creating register for signal `\water.\myTime' using process `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:4$1'.
   created $dff cell `$procdff$15' with positive edge clock.
 
 2.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
 
 2.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
-Removing empty process `water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:16$8'.
-Found and cleaned up 2 empty switches in `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:10$7'.
-Removing empty process `water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:10$7'.
-Removing empty process `water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/water.v:4$1'.
+Removing empty process `water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:16$8'.
+Found and cleaned up 2 empty switches in `\water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:10$7'.
+Removing empty process `water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:10$7'.
+Removing empty process `water.$proc$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:4$1'.
 Cleaned up 2 empty switches.
 
 2.2.12. Executing OPT_EXPR pass (perform const folding).
@@ -86,7 +86,7 @@ Optimizing module water.
 
 2.5. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \water..
-  removing unused non-port wire $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$4_Y.
+  removing unused non-port wire $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$4_Y.
   removing unused non-port wire $1\s[9:0].
   removing unused non-port wire $procmux$10_CMP.
   removing unused non-port wire $procmux$13_CMP.
@@ -115,10 +115,10 @@ Running muxtree optimizer on module \water..
     Root of a mux tree: $procmux$12 (pure)
 		eval $procmux$12 (replace 1 enable 1)
 		eval $procmux$9 (replace 1 enable 1)
-    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$4 (pure)
-		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$4 (replace 1 enable 1)
-    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (pure)
-		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (replace 1 enable 1)
+    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$4 (pure)
+		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$4 (replace 1 enable 1)
+    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (pure)
+		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (replace 1 enable 1)
   Analyzing evaluation results.
 Removed 0 multiplexer ports.
 
@@ -179,10 +179,10 @@ Running muxtree optimizer on module \water..
     Root of a mux tree: $procmux$12 (pure)
 		eval $procmux$12 (replace 1 enable 1)
 		eval $procmux$9 (replace 1 enable 1)
-    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$4 (pure)
-		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$4 (replace 1 enable 1)
-    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (pure)
-		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (replace 1 enable 1)
+    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$4 (pure)
+		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$4 (replace 1 enable 1)
+    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (pure)
+		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (replace 1 enable 1)
   Analyzing evaluation results.
 Removed 0 multiplexer ports.
 
@@ -197,13 +197,13 @@ Finding duplicate cells in `\water'.
 Removed a total of 0 cells.
 
 2.9.6. Executing OPT_DFF pass (perform DFF optimizations).
-Adding SRST signal on $procdff$15 ($dff) from module water (D = $add$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$3_Y, Q = \myTime, rval = 0).
+Adding SRST signal on $procdff$15 ($dff) from module water (D = $add$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$3_Y, Q = \myTime, rval = 0).
 Adding SRST signal on $procdff$14 ($dff) from module water (D = $procmux$9_Y, Q = \s, rval = 10'1111100000).
 Adding EN signal on $auto$ff.cc:337:slice$17 ($sdff) from module water (D = { \s [8:0] \s [9] }, Q = \s).
 
 2.9.7. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \water..
-  removing unused `$mux' cell `$ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$4'.
+  removing unused `$mux' cell `$ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$4'.
   removing unused `$mux' cell `$procmux$9'.
   removing unused `$mux' cell `$procmux$12'.
   removing unused non-port wire $procmux$9_Y.
@@ -220,8 +220,8 @@ Optimizing module water.
 Running muxtree optimizer on module \water..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (pure)
-		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (replace 1 enable 1)
+    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (pure)
+		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (replace 1 enable 1)
   Analyzing evaluation results.
 Removed 0 multiplexer ports.
 
@@ -246,26 +246,26 @@ Optimizing module water.
 2.9.16. Finished fast OPT passes. (There is nothing left to do.)
 
 2.10. Executing WREDUCE pass (reducing word size of cells).
-Removed top 12 bits (of 32) from port B of cell water.$lt$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$2 ($lt).
-Removed top 31 bits (of 32) from port B of cell water.$add$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$3 ($add).
-Removed top 12 bits (of 32) from port B of cell water.$eq$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$5 ($eq).
-Removed top 31 bits (of 32) from mux cell water.$ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 ($mux).
+Removed top 12 bits (of 32) from port B of cell water.$lt$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$2 ($lt).
+Removed top 31 bits (of 32) from port B of cell water.$add$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$3 ($add).
+Removed top 12 bits (of 32) from port B of cell water.$eq$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$5 ($eq).
+Removed top 31 bits (of 32) from mux cell water.$ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 ($mux).
 
 2.11. Executing PEEPOPT pass (run peephole optimizers).
 
 2.12. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \water..
-  removing unused non-port wire $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6_Y.
+  removing unused non-port wire $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6_Y.
 Removed 0 unused cells and 1 unused wires.
 
 2.13. Executing ALUMACC pass (create $alu and $macc cells).
 Extracting $alu and $macc cells in module water:
-  creating $macc model for $add$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$3 ($add).
-  creating $alu model for $macc $add$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$3.
-  creating $alu model for $lt$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$2 ($lt): new $alu
-  creating $alu model for $eq$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$5 ($eq): merged with $lt$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$2.
-  creating $alu cell for $lt$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$2, $eq$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$5: $auto$alumacc.cc:512:replace_alu$20
-  creating $alu cell for $add$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$3: $auto$alumacc.cc:512:replace_alu$27
+  creating $macc model for $add$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$3 ($add).
+  creating $alu model for $macc $add$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$3.
+  creating $alu model for $lt$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$2 ($lt): new $alu
+  creating $alu model for $eq$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$5 ($eq): merged with $lt$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$2.
+  creating $alu cell for $lt$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$2, $eq$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$5: $auto$alumacc.cc:512:replace_alu$20
+  creating $alu cell for $add$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$3: $auto$alumacc.cc:512:replace_alu$27
   created 2 $alu and 0 $macc cells.
 
 2.14. Executing SHARE pass (SAT-based resource sharing).
@@ -286,8 +286,8 @@ Removed a total of 0 cells.
 Running muxtree optimizer on module \water..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (pure)
-		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (replace 1 enable 1)
+    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (pure)
+		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (replace 1 enable 1)
   Analyzing evaluation results.
 Removed 0 multiplexer ports.
 
@@ -306,8 +306,8 @@ Removed a total of 0 cells.
 2.15.7. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \water..
   removing unused `$not' cell `$auto$alumacc.cc:106:get_cf$23'.
-  removing unused non-port wire $lt$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$2_Y.
-  removing unused non-port wire $eq$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$5_Y.
+  removing unused non-port wire $lt$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$2_Y.
+  removing unused non-port wire $eq$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$5_Y.
   removing unused non-port wire $auto$rtlil.cc:3329:Not$24.
 Removed 1 unused cells and 3 unused wires.
 
@@ -320,8 +320,8 @@ Optimizing module water.
 Running muxtree optimizer on module \water..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (pure)
-		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 (replace 1 enable 1)
+    Root of a mux tree: $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (pure)
+		eval $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 (replace 1 enable 1)
   Analyzing evaluation results.
 Removed 0 multiplexer ports.
 
@@ -380,7 +380,7 @@ Finding unused cells or wires in module \water..
 4. Executing ONEHOT pass.
 
 5. Executing MUXPACK pass ($mux cell cascades to $pmux).
-Considering $ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6 ($mux)
+Considering $ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6 ($mux)
 Converted 0 (p)mux cells into 0 pmux cells.
 
 6. Executing OPT_DEMORGAN pass (push inverters through $reduce_* cells).
@@ -397,7 +397,7 @@ Pushed 0 inverters.
 
 8.1.1. Executing OPT_EXPR pass (perform const folding).
 Optimizing module water.
-Replacing $mux cell `$ternary$/home/biruide/ysyx-workbench/npc/vsrc/water.v:8$6' (mux_bool) in module `\water' with constant driver `\is = $auto$rtlil.cc:3332:ReduceAnd$26'.
+Replacing $mux cell `$ternary$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:8$6' (mux_bool) in module `\water' with constant driver `\is = $auto$rtlil.cc:3332:ReduceAnd$26'.
 
 8.1.2. Executing OPT_MERGE pass (detect identical cells).
 Finding identical cells in module `\water'.
@@ -1939,7 +1939,7 @@ Finding unused cells or wires in module \water..
   removing unused non-port wire $auto$alumacc.cc:528:replace_alu$28.
   removing unused non-port wire $auto$alumacc.cc:528:replace_alu$21.
   removing unused non-port wire $auto$alumacc.cc:448:extract_cmp_alu$19.
-  removing unused non-port wire $add$/home/biruide/ysyx-workbench/npc/vsrc/water.v:5$3_Y.
+  removing unused non-port wire $add$/home/biruide/ysyx-workbench/npc/vsrc/E/water.v:5$3_Y.
   removing unused non-port wire $techmap$auto$alumacc.cc:512:replace_alu$27.$xor$/home/biruide/oss-cad-suite/lib/../share/yosys/techmap.v:296$107_Y.
   removing unused non-port wire $techmap$auto$alumacc.cc:512:replace_alu$27.$ternary$/home/biruide/oss-cad-suite/lib/../share/yosys/techmap.v:279$106_Y.
   removing unused non-port wire $techmap$auto$alumacc.cc:512:replace_alu$27.$not$/home/biruide/oss-cad-suite/lib/../share/yosys/techmap.v:279$105_Y.
@@ -2218,7 +2218,7 @@ ABC: UC Berkeley, ABC 1.01 (compiled Jan 14 2026 02:53:56)
 ABC: abc 01> empty
 ABC: abc 01> source <abc-temp-dir>/abc.script
 ABC: + read_blif <abc-temp-dir>/input.blif 
-ABC: + read_library /tmp/yosys-abc-q4Vw3r/stdcells.genlib 
+ABC: + read_library /tmp/yosys-abc-vcJOmZ/stdcells.genlib 
 ABC: + strash 
 ABC: + dretime 
 ABC: + map 
@@ -2678,41 +2678,16 @@ Removed a total of 0 cells.
 
 14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \water..
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_29_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_28_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_30_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_28_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_29_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_31_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_30_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$27.Y_0_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$27.Y_1_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$27.Y_2_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$27.Y_3_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$27.Y_4_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$27.Y_5_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_6_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_7_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_8_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_9_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_10_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_11_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_12_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_13_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_14_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_15_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_16_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_17_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_18_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_19_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_20_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_21_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_22_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_23_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_24_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_25_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_26_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_27_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_28_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_29_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_30_.
-  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_31_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_0_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_1_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_2_.
@@ -2741,6 +2716,31 @@ Finding unused cells or wires in module \water..
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_25_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_26_.
   removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_27_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_28_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_29_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.CO_30_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_6_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_7_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_8_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_9_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_10_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_11_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_12_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_13_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_14_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_15_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_16_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_17_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_18_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_19_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_20_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_21_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_22_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_23_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_24_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_25_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_26_.
+  removing unused non-port wire $auto$alumacc.cc:512:replace_alu$20.Y_27_.
 Removed 0 unused cells and 63 unused wires.
 
 14.8. Executing OPT_EXPR pass (perform const folding).
@@ -2777,15 +2777,15 @@ Optimizing module water.
 
 15. Executing ABC pass (technology mapping using ABC).
 
-15.1. Extracting gate netlist of module `\water' to `/tmp/yosys-abc-ZRSIJu/input.blif'..
+15.1. Extracting gate netlist of module `\water' to `/tmp/yosys-abc-VMvxB8/input.blif'..
 
 15.1.1. Executed ABC.
 Extracted 177 gates and 222 wires to a netlist network with 43 inputs and 43 outputs.
-Running ABC script: /tmp/yosys-abc-ZRSIJu/abc.script
+Running ABC script: /tmp/yosys-abc-VMvxB8/abc.script
 ABC: UC Berkeley, ABC 1.01 (compiled Jan 14 2026 02:53:56)
 ABC: abc 01> empty
-ABC: abc 01> source /tmp/yosys-abc-ZRSIJu/abc.script
-ABC: + read_blif /tmp/yosys-abc-ZRSIJu/input.blif 
+ABC: abc 01> source /tmp/yosys-abc-VMvxB8/abc.script
+ABC: + read_blif /tmp/yosys-abc-VMvxB8/input.blif 
 ABC: + read_lib -X LAT* -w /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib 
 ABC: Parsing finished successfully.  Parsing time =     0.75 sec
 ABC: Scl_LibertyReadGenlib() skipped sequential cell "DFFNQX1H7L".
@@ -2935,8 +2935,8 @@ ABC: Scl_LibertyReadGenlib() skipped three-state cell "TINVX3H7L".
 ABC: Scl_LibertyReadGenlib() skipped three-state cell "TINVX4H7L".
 ABC: Scl_LibertyReadGenlib() skipped three-state cell "TINVX6H7L".
 ABC: Scl_LibertyReadGenlib() skipped three-state cell "TINVX8H7L".
-ABC: Library "ics55_LLSC_H7CL_typ_tt_1p2_25" from "/home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib" has 600 cells (147 skipped: 111 seq; 22 tri-state; 14 no func; 0 dont_use; 0 with 2 outputs; 0 with 3+ outputs).  Time =     0.97 sec
-ABC: Memory =  135.92 MB. Time =     0.97 sec
+ABC: Library "ics55_LLSC_H7CL_typ_tt_1p2_25" from "/home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib" has 600 cells (147 skipped: 111 seq; 22 tri-state; 14 no func; 0 dont_use; 0 with 2 outputs; 0 with 3+ outputs).  Time =     1.00 sec
+ABC: Memory =  135.92 MB. Time =     1.00 sec
 ABC: Warning: Detected 6 multi-output cells (for example, "ADDFX1H7L").
 ABC: + read_constr -v /home/biruide/ysyx-workbench/yosys-sta/result/water-500MHz/abc.sdc 
 ABC: Setting driving cell to be "BUFX0P5H7L".
@@ -2998,7 +2998,7 @@ ABC: Path  4 --     165 : 3    1 AOI21X2H7L A =   1.96  Df = 383.7  -20.7 ps  S 
 ABC: Start-point = pi11 (\myTime_0_).  End-point = po25 ($auto$rtlil.cc:3575:MuxGate$1402).
 ABC: + print_stats -m 
 ABC: netlist                       : i/o =   43/   43  lat =    0  nd =   108  edge =    259  area =179.48  delay = 5.00  lev = 5
-ABC: + write_blif /tmp/yosys-abc-ZRSIJu/output.blif 
+ABC: + write_blif /tmp/yosys-abc-VMvxB8/output.blif 
 ABC: 
 
 15.1.2. Re-integrating ABC results.
@@ -3570,6 +3570,6 @@ Found and reported 0 problems.
 26. Executing Verilog backend.
 Dumping module `\water'.
 
-End of script. Logfile hash: e5c0719d7f, CPU: user 2.57s system 0.58s, MEM: 210.31 MB peak
+End of script. Logfile hash: ce53885296, CPU: user 2.56s system 0.43s, MEM: 210.00 MB peak
 Yosys 0.61+0 (git sha1 71feb2a2a, clang++ 18.1.8 -fPIC -O3)
-Time spent: 30% 2x abc (1 sec), 20% 1x clockgate (0 sec), ...
+Time spent: 31% 2x abc (1 sec), 18% 1x clockgate (0 sec), ...

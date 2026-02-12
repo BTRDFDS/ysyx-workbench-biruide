@@ -8,7 +8,7 @@ size_t strlen(const char *s) {
   panic("Not implemented");
 }
 
-char *strcpy(char *dst, const char *src) {//TODO:string
+char *strcpy(char *dst, const char *src) {//DONE:string
   // panic("Not implemented");
   char *out;
   if(dst==NULL){panic("error:dst is NULL");}
@@ -25,7 +25,7 @@ char *strncpy(char *dst, const char *src, size_t n) {
   panic("Not implemented");
 }
 
-char *strcat(char *dst, const char *src) {//TODO:string
+char *strcat(char *dst, const char *src) {//DONE:string
   // panic("Not implemented");
   if(dst==NULL){panic("error:dst is NULL");}
   if(src==NULL){panic("error:src is NULL");}
@@ -39,7 +39,7 @@ char *strcat(char *dst, const char *src) {//TODO:string
   return out;
 }
 
-int strcmp(const char *s1, const char *s2) {//TODO:string
+int strcmp(const char *s1, const char *s2) {//DONE:string
   // panic("Not implemented");
   if(s1==NULL){panic("error:s1 is NULL");}
   if(s2==NULL){panic("error:s2 is NULL");}
@@ -60,7 +60,7 @@ int strncmp(const char *s1, const char *s2, size_t n) {
   panic("Not implemented");
 }
 
-void *memset(void *s, int c, size_t n) {//TODO:string
+void *memset(void *s, int c, size_t n) {//DONE:string
   // panic("Not implemented");
   if(s==NULL){panic("error:s is NULL");}
   for(size_t i=0;i<n;i++){
@@ -77,7 +77,7 @@ void *memcpy(void *out, const void *in, size_t n) {
   panic("Not implemented");
 }
 
-int memcmp(const void *s1, const void *s2, size_t n) {//TODO:string
+int memcmp(const void *s1, const void *s2, size_t n) {//DONE:string
   // panic("Not implemented");
   if(s1==NULL){panic("error:s1 is NULL");}
   if(s2==NULL){panic("error:s2 is NULL");}

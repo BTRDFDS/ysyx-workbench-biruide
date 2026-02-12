@@ -13,7 +13,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   panic("Not implemented");
 }
 
-int sprintf(char *out, const char *fmt, ...) {//TODO
+int sprintf(char *out, const char *fmt, ...) {//DONE:hello-str
   // panic("Not implemented");
   //只能用str系列的函数，不能用其他的所有
   if(out==NULL){panic("out is NULL");}

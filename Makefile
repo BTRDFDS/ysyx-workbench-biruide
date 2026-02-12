@@ -1,4 +1,4 @@
-STUID = 100019871
+STUID = ysyx_26020046
 STUNAME = Bi RuiDe
 
 # DO NOT modify the following code!!!
