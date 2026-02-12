@@ -1,4 +1,4 @@
-module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32,PC_RESET=32'h00000000) (clk,reset,code,pc);
+module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32,PC_RESET=32'h80000000) (clk,reset,code,pc);
 //32'h80000000
 input clk,reset;
 input [DATA_WIDTH-1:0] code;

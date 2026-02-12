@@ -27,7 +27,7 @@ image: image-dep
 
 run: insert-arg
 	@echo "TODO: add command here to run simulation"
-#     @echo "ARG=$(IMAGE).bin xEb=$(XEB)"
-#     make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB)
+	@echo "ARG=$(IMAGE).bin xEb=$(XEB)"
+	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB)
 
 .PHONY: insert-arg

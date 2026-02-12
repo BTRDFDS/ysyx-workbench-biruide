@@ -41,4 +41,5 @@ clean:
 	rm -rf Makefile.* build/
 help:
 	@echo "make run ARCH=riscv32-nemu ALL=add t=1"
+	@echo "make ARCH=minirv-npc ALL=dummy run"
 latest:
