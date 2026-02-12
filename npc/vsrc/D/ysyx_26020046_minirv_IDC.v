@@ -1,9 +1,10 @@
-module ysyx_26020046_minirv_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32)(code,cR1,cR2,cRd,imm,imi,add,lui,l,s,jalr,w,eRd);
-  input [DATA_WIDTH-1:0] code;
+module ysyx_26020046_minirv_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32)(code,a0,cR1,cR2,cRd,imm,imi,add,lui,l,s,jalr,w,eRd,stop,eb);
+  input [DATA_WIDTH-1:0] code,a0;
   output [ADDR_WIDTH-1:0] cR1,cR2,cRd;
   output reg [DATA_WIDTH-1:0] imm;
   output [DATA_WIDTH-1:0] imi;
   output add,lui,l,s,jalr,w,eRd;
+  output reg stop,eb;
 
   wire addi;
   // wire lw,sw,sb,lbu;
@@ -20,7 +21,7 @@ module ysyx_26020046_minirv_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32)(code,cR1,cR2,
   assign opc=code[06:00];
 
   assign im0={{20{fc7[6]}},fc7,cRd};
-  assign im1={{20{fc7[2]}},fc7,cR2};
+  assign im1={{20{fc7[6]}},fc7,cR2};
 
   assign add =(opc==7'b0110011);
   assign addi=(opc==7'b0010011);
@@ -43,5 +44,14 @@ module ysyx_26020046_minirv_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32)(code,cR1,cR2,
       1'b0: imm=im1;
       1'b1: imm=im0;
     endcase
+  end
+  always@(*)begin
+    if(code==32'h100073)begin
+      stop=1'b1;
+      eb=(a0==32'b0);
+    end else begin
+      stop=1'b0;
+      eb=1'b0;
+    end
   end
 endmodule
