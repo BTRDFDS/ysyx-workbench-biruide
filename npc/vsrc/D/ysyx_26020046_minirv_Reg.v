@@ -9,6 +9,10 @@ module ysyx_26020046_minirv_Reg #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,en,iRd,c
     if (en&&cRd!=0) gpr[cRd] <= iRd;
     $display("en=%o Reg[%d](0x%x)<=0x%x",en,cRd,gpr[cRd],iRd);
     $strobe("Reg[%d]=%d", cRd, gpr[cRd]);
+    $strobe("00:0x%8x 01:0x%8x 02:0x%8x 03:0x%8x 04:0x%8x 05:0x%8x 06:0x%8x 07:0x%8x",0,gpr[01],gpr[02],gpr[03],gpr[04],gpr[05],gpr[06],gpr[07]);
+    $strobe("08:0x%8x 09:0x%8x 10:0x%8x 11:0x%8x 12:0x%8x 13:0x%8x 14:0x%8x 15:0x%8x",gpr[08],gpr[09],gpr[10],gpr[11],gpr[12],gpr[13],gpr[14],gpr[15]);
+    $strobe("16:0x%8x 17:0x%8x 18:0x%8x 19:0x%8x 20:0x%8x 21:0x%8x 22:0x%8x 23:0x%8x",gpr[16],gpr[17],gpr[18],gpr[19],gpr[20],gpr[21],gpr[22],gpr[23]);
+    $strobe("24:0x%8x 25:0x%8x 26:0x%8x 27:0x%8x 28:0x%8x 29:0x%8x 30:0x%8x 31:0x%8x",gpr[24],gpr[25],gpr[26],gpr[27],gpr[28],gpr[29],gpr[30],gpr[31]);
   end
   assign oR1 = (cR1==0)?0:gpr[cR1];
   assign oR2 = (cR2==0)?0:gpr[cR2];

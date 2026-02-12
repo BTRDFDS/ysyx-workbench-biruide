@@ -33,15 +33,15 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
   //wmask目前是要么是全是1要么是独热码
-	printf("pmem_write 0x%x(0x%x):%x<=%x with %x ",waddr,waddr>>2,M[waddr>>2],wdata,wmask);
-  if(wmask&0b1111==0b1111){
+	printf("pmem_write 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,M[waddr>>2],wdata,wmask);
+  if((wmask&0b1111)==0b1111){
 	printf("all\n");
     M[waddr>>2]=wdata;
   }else{
 	printf("part\n");
 	uint32_t mask1=0xffffffff;
 	uint32_t data=wdata&0xff;
-	switch(wmask&0b1111){
+	switch(wmask&0x0f){
 		case 0b0001:
 			mask1=0xffffff00;
 			data=data;
@@ -88,6 +88,7 @@ extern "C" void ebreak(unsigned char eb){
 int main(int argc, char** argv) {
 
     FILE *file = fopen("hex/sum.bin","rb");
+    // FILE *file = fopen("hex/mem.bin","rb");
 	if(file==NULL){printf("can't open file\n");}
     fseek(file, 0, SEEK_END);
     long fileSize = ftell(file);
@@ -97,6 +98,7 @@ int main(int argc, char** argv) {
 	fclose(file);
 
     M[0x8A] = 0x00100073;//sum
+	// M[0x488]=0x00100073;//mem
 
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
@@ -105,7 +107,7 @@ int main(int argc, char** argv) {
   uint32_t pc=0;
 	pc=top->pc;
 	top->code=M[pc>>2];
-  for(uint32_t i=0;(i<30000);i++){
+  for(uint32_t i=0;(i<30000);i++){//30000
 	top->clk=1;
 	pc=top->pc;
 	top->code=M[pc>>2];
