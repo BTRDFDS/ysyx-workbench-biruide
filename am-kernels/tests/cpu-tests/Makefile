@@ -22,7 +22,8 @@ $(ALL): %: Makefile.%
 
 Makefile.%: tests/%.c latest
 	@/bin/echo -e "NAME = $*\nSRCS = $<\ninclude $${AM_HOME}/Makefile" > $@
-	@if make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS) TEST_AM=$(t); then \
+# 	@if make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS) TEST_AM=$(t); then 
+	@if make -f $@ ARCH=$(ARCH) $(MAKECMDGOALS) TEST_AM=$(t) XEB=$(XEB); then \
 		printf "[%14s] $(COLOR_GREEN)PASS$(COLOR_NONE)\n" $* >> $(RESULT); \
 	else \
 		printf "[%14s] $(COLOR_RED)***FAIL***$(COLOR_NONE)\n" $* >> $(RESULT); \
@@ -35,8 +36,10 @@ run: all
 
 gdb: all
 
+
 clean:
 	rm -rf Makefile.* build/
 help:
 	@echo "make run ARCH=riscv32-nemu ALL=add t=1"
+	@echo "make ARCH=minirv-npc ALL=dummy run"
 latest:
