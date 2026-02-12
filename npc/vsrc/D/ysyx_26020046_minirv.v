@@ -1,4 +1,4 @@
-module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32,PC_RESET=32'h00000000) (clk,reset,code,pc);
+module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32,PC_RESET=32'h80000000) (clk,reset,code,pc);
 //32'h80000000
 input clk,reset;
 input [DATA_WIDTH-1:0] code;
@@ -7,7 +7,8 @@ output reg [DATA_WIDTH-1:0] pc;
 
 wire [ADDR_WIDTH-1:0] cR1,cR2,cRd;
 wire add,lui,l,s,jalr,w,eRd,stop,eb;
-wire [DATA_WIDTH-1:0] adr,iRd,oR1,oR2,oRAM,imm,imi,rAdr,iRAM,ramAddr,wRAM,a0;
+wire [DATA_WIDTH-1:0] adr,iRd,oR1,oR2,oRAM,imm,imi,rAdr,ramAddr,wRAM,a0;
+reg [DATA_WIDTH-1:0] iRAM;
 wire [3:0] wmask;
 
 ysyx_26020046_minirv_IDC #(ADDR_WIDTH,DATA_WIDTH) ysyx_26020046_IDC(
@@ -77,7 +78,12 @@ import "DPI-C" function void pmem_write(input int waddr, input int wdata, input 
 import "DPI-C" function void ebreak(input bit eb);
 
     assign iRAM = l?pmem_read(ramAddr):0;
-    always @(*) begin
+    // always @(posedge clk) begin
+    //     if (l) begin // 有读请求时
+    //       iRAM <= pmem_read(ramAddr);
+    //     end
+    // end
+    always @(posedge clk) begin
         if (s) begin // 有写请求时
           pmem_write(ramAddr, wRAM, {4'b0,wmask});
         end

@@ -25,6 +25,13 @@ ifeq ($(t),ysyx_26020046_minirv)
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
 	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
 endif
+ifeq ($(t),ysyx_26020046_minirv_sta)
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
+	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
+endif
 # all: $(BINS)
 # bin/%: vsrc/%.v csrc/%.cpp | build/% bin
 # 	mkdir -p $(dir $@)
@@ -61,7 +68,8 @@ sim:bin/$(t) wave
 clean:
 	rm -rf bin/* build/*
 run:bin/$(tU)
-	./bin/$(tU)
+	./bin/$(tU) $(ARG) $(xEb)
+do:bin/$(tU)
 gtk:
 	gtkwave wave/$(tU).vcd
 log:
@@ -73,18 +81,18 @@ val:bin/$(t)
 	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tU)
 
 chk:
-	@echo "$(t)"
-	@echo "$(tV)"
-	@echo "$(tC)"
-	@echo "$(tU)"
-	@echo "$(tVd)"
+	@echo "t=$(t)"
+	@echo "tV=$(tV)"
+	@echo "tC=$(tC)"
+	@echo "tU=$(tU)"
+	@echo "tVd=$(tVd)"
 	verilator --lint-only -Wall $(tVd) -top-module $(t)
 syn:$(tV) chk
-	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES=$(tVd)
+	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES="$(tVd)
 	cp -r $(YOSYS_STA_HOME)/result/$(t)*-500MHz ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 sta:$(tV)
-	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES=$(tVd)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=$(t) RTL_FILES="$(tVd)"
 	cp -r $(YOSYS_STA_HOME)/result/$(t)*-500MHz ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 symy:
