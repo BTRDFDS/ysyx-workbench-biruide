@@ -1,8 +1,9 @@
-module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,code,iRAM,pc,ramAddr,wRAM,we,he,oe);
+module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,code,iRAM,pc,ramAddr,wRAM);
+//,we,he,oe
 input clk;
 input [DATA_WIDTH-1:0] code,iRAM;
 output reg [DATA_WIDTH-1:0] pc,ramAddr,wRAM;
-output we,he,oe;
+// output we,he,oe;
 
 wire [ADDR_WIDTH-1:0] cR1,cR2,cRd;
 wire add,lui,l,s,jalr,w,eRd;
@@ -60,10 +61,19 @@ ysyx_26020046_minirv_LSU #(DATA_WIDTH) ysyx_26020046_LSU(
     .oRAM(oRAM),
     .ramAddr(ramAddr),
     .wRAM(wRAM),
-    .rAdr(rAdr),
-    .we(we),
-    .he(he),
-    .oe(oe)
+    .rAdr(rAdr)//,
+    // .we(we),
+    // .he(he),
+    // .oe(oe)
 );
-    // always@(posedge clk) pc <= pc+1;
+    always@(posedge clk) begin
+        $display("code=%x",code);
+        $display("cR1=%x,oR1=%x,cR2=%x,oR2=%x,cRd=%x,imm=%x,imi=%x", cR1,oR1,cR2,oR2,cRd,imm,imi);
+        //打印所有的wire
+        $display("add=%x,lui=%x,l=%x,s=%x,jalr=%x,w=%x,eRd=%x", add,lui,l,s,jalr,w,eRd);
+        $display("adr=%x,oRAM=%x,pc=%x,ramAddr=%x,wRAM=%x", adr,oRAM,pc,ramAddr,wRAM);
+        $display("iRd=%x,rAdr=%x", iRd,rAdr);
+        $display("iRAM=%x", iRAM);
+        
+    end
 endmodule

@@ -40,8 +40,8 @@ module ysyx_26020046_minirv_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32)(code,cR1,cR2,
   // ysyx_26020046_mux2nM #(1,DATA_WIDTH) muxS(.out(imm),.addr(s),.in({{1'b0,im1},{1'b1,im0}}));
   always@(*)begin
     case(s)
-      1'b0: imm=im0;
-      1'b1: imm=im1;
+      1'b0: imm=im1;
+      1'b1: imm=im0;
     endcase
   end
 endmodule

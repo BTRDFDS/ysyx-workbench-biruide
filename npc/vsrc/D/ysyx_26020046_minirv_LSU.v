@@ -1,9 +1,10 @@
-module ysyx_26020046_minirv_LSU #(DATA_WIDTH=32)(clk,s,w,l,jalr,adr,oR2,iRAM,pc,oRAM,ramAddr,wRAM,rAdr,we,he,oe);
+module ysyx_26020046_minirv_LSU #(DATA_WIDTH=32)(clk,s,w,l,jalr,adr,oR2,iRAM,pc,oRAM,ramAddr,wRAM,rAdr);//,we,he,oe
 input clk,s,w,l,jalr;
 input [DATA_WIDTH-1:0] adr,oR2,iRAM;
 output reg [DATA_WIDTH-1:0] pc,oRAM,wRAM;
 output [DATA_WIDTH-1:0] ramAddr,rAdr;
-output we,he,oe;
+// output we,he,oe;
+
 
 //s模块
 assign ramAddr=w?{adr[31:2],2'b0}:adr;
@@ -35,9 +36,12 @@ assign rAdr=snpc;
 always@(*)begin
     case(jalr)
         1'b0:dnpc=snpc;
-        1'b1:dnpc=oR2;
+        1'b1:dnpc=adr;
     endcase
 end
 
-always@(posedge clk)pc<=dnpc;
+always@(posedge clk)begin
+    pc<=dnpc;
+    $display("pc=0x%x,dnpc=0x%x,snpc=0x%x",pc,dnpc,snpc);
+end
 endmodule

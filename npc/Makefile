@@ -36,7 +36,8 @@ endif
 # 	cp build/$*/V$(notdir $*) $@
 # 	git add .
 # all: $(BINS)
-bin/%: vsrc/%.v csrc/%.cpp | build/% bin
+# bin/%: vsrc/%.v csrc/%.cpp | build/% bin
+bin/%: $(tVd) $(tC) | build/% bin
 	mkdir -p $(dir $@)
 	verilator --lint-only -Wall $(tVd) --top-module $(notdir $*) -Wno-DECLFILENAME
 	verilator $(VERILATOR_CFLAGS)  $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
