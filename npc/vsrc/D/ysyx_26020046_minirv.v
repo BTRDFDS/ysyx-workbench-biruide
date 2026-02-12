@@ -1,6 +1,6 @@
-module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,code,pc);
-//,we,he,oe
-input clk;
+module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32,PC_RESET=32'h00000000) (clk,reset,code,pc);
+//32'h80000000
+input clk,reset;
 input [DATA_WIDTH-1:0] code;
 output reg [DATA_WIDTH-1:0] pc;
 // output we,he,oe;
@@ -44,6 +44,7 @@ ysyx_26020046_minirv_ALU #(DATA_WIDTH) ysyx_26020046_ALU(
 );
 ysyx_26020046_minirv_Reg #(ADDR_WIDTH,DATA_WIDTH) ysyx_26020046_Reg(
     .clk(clk),
+    .reset(reset),
     .iRd(iRd),
     .cRd(cRd),
     .cR1(cR1),
@@ -53,8 +54,9 @@ ysyx_26020046_minirv_Reg #(ADDR_WIDTH,DATA_WIDTH) ysyx_26020046_Reg(
     .oR2(oR2),
     .a0(a0)
 );
-ysyx_26020046_minirv_LSU #(DATA_WIDTH) ysyx_26020046_LSU(
+ysyx_26020046_minirv_LSU #(DATA_WIDTH,PC_RESET) ysyx_26020046_LSU(
     .clk(clk),
+    .reset(reset),
     .s(s),
     .w(w),
     .l(l),
@@ -87,14 +89,10 @@ import "DPI-C" function void ebreak(input bit eb);
 
     always@(posedge clk) begin
         $display("code=%x",code);
-        $display("cR1=%x,oR1=%x,cR2=%x,oR2=%x,cRd=%x,imm=%x,imi=%x", cR1,oR1,cR2,oR2,cRd,imm,imi);
-        $display("add=%x,lui=%x,l=%x,s=%x,jalr=%x,w=%x,eRd=%x", add,lui,l,s,jalr,w,eRd);
-        $display("adr=%x,oRAM=%x,pc=%x,ramAddr=%x,wRAM=%x", adr,oRAM,pc,ramAddr,wRAM);
-        $display("iRd=%x,rAdr=%x", iRd,rAdr);
-        $display("iRAM=%x", iRAM);
-        $display("wmask=%x", wmask);
-        $display("a0=%x", a0);
-
+        $display("cR1=%x oR1=%x cR2=%x oR2=%x cRd=%x imm=%x imi=%x", cR1,oR1,cR2,oR2,cRd,imm,imi);
+        $display("add=%x lui=%x l=%x s=%x jalr=%x w=%x eRd=%x", add,lui,l,s,jalr,w,eRd);
+        $display("adr=%x oRAM=%x pc=%x ramAddr=%x wRAM=%x", adr,oRAM,pc,ramAddr,wRAM);
+        $display("iRd=%x rAdr=%x iRAM=%x wmask=%x a0=%x reset=%x", iRd,rAdr,iRAM,wmask,a0,reset);
     end
 
 endmodule

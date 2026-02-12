@@ -69,6 +69,9 @@ log:
 tree:
 	exa --grid --color=always --sort=name *
 
+val:bin/$(t)
+	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tU)
+
 chk:
 	@echo "$(t)"
 	@echo "$(tV)"

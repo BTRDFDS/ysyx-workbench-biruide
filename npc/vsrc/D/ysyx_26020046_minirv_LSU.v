@@ -1,5 +1,5 @@
-module ysyx_26020046_minirv_LSU #(DATA_WIDTH=32)(clk,s,w,l,jalr,adr,oR2,iRAM,pc,oRAM,ramAddr,wRAM,rAdr,wmask);//,we,he,oe
-input clk,s,w,l,jalr;
+module ysyx_26020046_minirv_LSU #(DATA_WIDTH=32,PC_RESET=32'h80000000)(clk,reset,s,w,l,jalr,adr,oR2,iRAM,pc,oRAM,ramAddr,wRAM,rAdr,wmask);
+input clk,reset,s,w,l,jalr;
 input [DATA_WIDTH-1:0] adr,oR2,iRAM;
 output reg [DATA_WIDTH-1:0] pc,oRAM,wRAM;
 output [DATA_WIDTH-1:0] ramAddr,rAdr;
@@ -60,7 +60,7 @@ always@(*)begin
 end
 
 always@(posedge clk)begin
-    pc<=dnpc;
-    $display("pc=0x%x,dnpc=0x%x,snpc=0x%x",pc,dnpc,snpc);
+    pc<=reset?PC_RESET:dnpc;
+    $display("pc=0x%x,dnpc=0x%x,snpc=0x%x",pc,dnpc,snpc,reset);
 end
 endmodule

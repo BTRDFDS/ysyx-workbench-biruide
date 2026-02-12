@@ -20,23 +20,24 @@ Vysyx_26020046_minirv* top;
 // 	0x00008067,
 // };
 
+//0x80000000
+#define PC_RESET 0
+#define RAM_RESET 0
 #define max 262143
+
 uint32_t M[max];
+uint32_t pc;
 
 extern "C" int pmem_read(int raddr) {
-	printf("pmem_read 0x%x(0x%x):%x\n",raddr,raddr>>2,M[raddr>>2]);
-	return M[raddr >> 2];
-  // 总是读取地址为`raddr & ~0x3u`的4字节返回
+	printf("pmem_read 0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddr-RAM_RESET),(raddr-RAM_RESET)>>2,M[(raddr-RAM_RESET)>>2]);
+	return M[(raddr-RAM_RESET) >> 2];
 }
+
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
-  // 总是往地址为`waddr & ~0x3u`的4字节按写掩码`wmask`写入`wdata`,wdata默认从低位开始取值
-  // `wmask`中每比特表示`wdata`中1个字节的掩码,
-  // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-  //wmask目前是要么是全是1要么是独热码
-	printf("pmem_write 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,M[waddr>>2],wdata,wmask);
+	printf("pmem_write 0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-RAM_RESET),(waddr-RAM_RESET)>>2,M[(waddr-RAM_RESET)>>2],wdata,wmask);
   if((wmask&0b1111)==0b1111){
 	printf("all\n");
-    M[waddr>>2]=wdata;
+    M[(waddr-RAM_RESET)>>2]=wdata;
   }else{
 	printf("part\n");
 	uint32_t mask1=0xffffffff;
@@ -63,12 +64,12 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 			data=0;
 			break;
 	}
-	uint32_t temp=M[waddr>>2];
+	uint32_t temp=M[(waddr-RAM_RESET)>>2];
 	temp&=mask1;
 	temp|=data;
-	M[waddr>>2]=temp;
+	M[(waddr-RAM_RESET)>>2]=temp;
   }
-	printf("become 0x%x(0x%x):%x\n",waddr,waddr>>2,M[waddr>>2]);
+	printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-RAM_RESET),(waddr-RAM_RESET)>>2,M[(waddr-RAM_RESET)>>2]);
 }
 
 extern "C" void ebreak(unsigned char eb){
@@ -83,7 +84,6 @@ extern "C" void ebreak(unsigned char eb){
 		exit(1);
 	}
 }
-
 
 int main(int argc, char** argv) {
 
@@ -103,14 +103,23 @@ int main(int argc, char** argv) {
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new Vysyx_26020046_minirv{contextp};
-  
-  uint32_t pc=0;
+
+	top->clk=0;
+	top->reset=1;
+	top->eval();
+	top->clk=1;
+	top->reset=1;
+	top->eval();
+	top->clk=0;
+	top->reset=0;
+	top->eval();
+
 	pc=top->pc;
-	top->code=M[pc>>2];
-  for(uint32_t i=0;(i<30000);i++){//30000
+	top->code=M[(pc-PC_RESET)>>2];
+  for(uint32_t i=0;;i++){//30000
 	top->clk=1;
 	pc=top->pc;
-	top->code=M[pc>>2];
+	top->code=M[(pc-PC_RESET)>>2];
 	top->eval();
 
 	top->clk=0;
