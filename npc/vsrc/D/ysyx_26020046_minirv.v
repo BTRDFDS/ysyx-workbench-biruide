@@ -1,14 +1,14 @@
-module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (
-    input clk,
-    input [DATA_WIDTH-1:0] code,
-    output reg [DATA_WIDTH-1:0] pc
-);
+module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,code,iRAM,pc,ramAddr,wRAM,we,he,oe);
+input clk;
+input [DATA_WIDTH-1:0] code,iRAM;
+output reg [DATA_WIDTH-1:0] pc,ramAddr,wRAM;
+output we,he,oe;
+
 wire [ADDR_WIDTH-1:0] cR1,cR2,cRd;
-wire add,addi,lui,l,s,jalr,w,eRd,lbu,lw,sw,sb;
-wire [DATA_WIDTH-1:0] adr,iRd,oR1,oR2
+wire add,lui,l,s,jalr,w,eRd;
+wire [DATA_WIDTH-1:0] adr,iRd,oR1,oR2,oRAM,imm,imi,rAdr;
 
-
-ysyx_26020046_minirv_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32) ysyx_26020046_IDC(
+ysyx_26020046_minirv_IDC #(ADDR_WIDTH,DATA_WIDTH) ysyx_26020046_IDC(
     .code(code),
     .cR1(cR1),
     .cR2(cR2),
@@ -16,19 +16,14 @@ ysyx_26020046_minirv_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32) ysyx_26020046_IDC(
     .imm(imm),
     .imi(imi),
     .add(add),
-    .addi(addi),
     .lui(lui),
     .l(l),
     .s(s),
     .jalr(jalr),
     .w(w),
-    .eRd(eRd),
-    .lbu(lbu),
-    .lw(lw),
-    .sw(sw),
-    .sb(sb)
+    .eRd(eRd)
 );
-ysyx_26020046_minirv_ALU #(DATA_WIDTH=32)(
+ysyx_26020046_minirv_ALU #(DATA_WIDTH) ysyx_26020046_ALU(
     .oR1(oR1),
     .oR2(oR2),
     .imm(imm),
@@ -42,8 +37,8 @@ ysyx_26020046_minirv_ALU #(DATA_WIDTH=32)(
     .jalr(jalr),
     .iRd(iRd)
 );
-ysyx_26020046_minirv_Reg #(ADDR_WIDTH = 5, DATA_WIDTH = 32) ysyx_26020046_Reg(
-    .clk(ckl),
+ysyx_26020046_minirv_Reg #(ADDR_WIDTH,DATA_WIDTH) ysyx_26020046_Reg(
+    .clk(clk),
     .iRd(iRd),
     .cRd(cRd),
     .cR1(cR1),
@@ -52,5 +47,23 @@ ysyx_26020046_minirv_Reg #(ADDR_WIDTH = 5, DATA_WIDTH = 32) ysyx_26020046_Reg(
     .oR1(oR1),
     .oR2(oR2)
 );
-    always@(posedge clk) pc <= pc+1;
+ysyx_26020046_minirv_LSU #(DATA_WIDTH) ysyx_26020046_LSU(
+    .clk(clk),
+    .s(s),
+    .w(w),
+    .l(l),
+    .jalr(jalr),
+    .adr(adr),
+    .oR2(oR2),
+    .iRAM(iRAM),
+    .pc(pc),
+    .oRAM(oRAM),
+    .ramAddr(ramAddr),
+    .wRAM(wRAM),
+    .rAdr(rAdr),
+    .we(we),
+    .he(he),
+    .oe(oe)
+);
+    // always@(posedge clk) pc <= pc+1;
 endmodule
