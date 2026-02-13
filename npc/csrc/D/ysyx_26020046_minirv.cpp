@@ -22,18 +22,25 @@ Vysyx_26020046_minirv* top;
 
 //0x80000000
 #define ADDR_RESET 0x80000000
-#define max 262143
+#define max 262144
 
 uint32_t M[max];
 uint32_t pc;
 
 extern "C" int pmem_read(int raddr) {
-	printf("pmem_read 0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddr-ADDR_RESET),(raddr-ADDR_RESET)>>2,M[(raddr-ADDR_RESET)>>2]);
+	printf("pmem_read : ");
+	if(((raddr-ADDR_RESET)>>2)>max){
+		printf("\033[1;31merror x%x => x%x => x%x > x%x\033[0m\n",raddr,(raddr-ADDR_RESET),((raddr-ADDR_RESET)>>2),max);
+		// exit(-1);
+		return 0;
+	}
+	printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddr-ADDR_RESET),(raddr-ADDR_RESET)>>2,M[(raddr-ADDR_RESET)>>2]);
 	return M[(raddr-ADDR_RESET) >> 2];
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
-	printf("pmem_write 0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask);
+	printf("pmem_write ");
+	printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask);
   if((wmask&0b1111)==0b1111){
 	printf("all\n");
     M[(waddr-ADDR_RESET)>>2]=wdata;
@@ -88,10 +95,10 @@ int main(int argc, char** argv) {
 	const char *p={"hex/sum.bin"};
     FILE *file;
 	if(argc>1&&argv[1]!=NULL){
-		printf("bin:%s ",argv[1]);
+		printf("\n!!bin:%s ",argv[1]);
 		file = fopen(argv[1],"rb");
 	}else{
-		printf("bin:%s ",p);
+		printf("\n!!bin:%s ",p);
 		file = fopen(p,"rb");
 	}
     // FILE *file = fopen("hex/mem.bin","rb");
@@ -105,11 +112,13 @@ int main(int argc, char** argv) {
 	// for(int i=0;i<16;i++){printf("M[%d]=0x%x\n",i,M[i]);}
 	if(argc>1&&argv[1]!=NULL){
 		if(argc>2&&argv[2]!=NULL){
-			printf("ebreak at 0x%lx\n",strtoul(argv[2], NULL,0));
+			printf("ebreak at 0x%lx\n\n",strtoul(argv[2], NULL,0));
 			M[strtoul(argv[2],NULL,0)]=0x00100073;
+		}else{
+			printf("\n\n");
 		}
 	}else{
-		printf("ebreak at 0x%x\n",0x8A);
+		printf("ebreak at 0x%x\n\n",0x8A);
     	M[0x8A] = 0x00100073;//sum
 	}
 	// M[0x488]=0x00100073;//mem
@@ -117,6 +126,7 @@ int main(int argc, char** argv) {
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new Vysyx_26020046_minirv{contextp};
+	top->pcReset=ADDR_RESET;
 
 	top->clk=0;
 	top->reset=1;
@@ -131,14 +141,18 @@ int main(int argc, char** argv) {
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
 	printf("!! pc=%d M[0]=0x%x] reset finish\n\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]);
-  for(uint32_t i=0;i<=30000;i++){//30000
+  for(uint32_t i=0;i<=60000;i++){//30000
 	top->clk=1;
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
 	top->eval();
+	printf("clk up finish\n");
 
 	top->clk=0;
+	pc=top->pc;
+	top->code=M[(pc-ADDR_RESET)>>2];
 	top->eval();
+	printf("clk down finish\n");
 
 	printf("i=%d pc=%x(%x)\n\n",i,pc,(pc-ADDR_RESET)>>2);
   }
