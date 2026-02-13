@@ -38,3 +38,4 @@
 [          xori] [1;31m***FAIL***[0m
 [           div] [1;31m***FAIL***[0m
 [          divu] [1;31m***FAIL***[0m
+[           mul] [1;31m***FAIL***[0m
