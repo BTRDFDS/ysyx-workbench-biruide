@@ -38,7 +38,10 @@ enum {
 #define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 7, 7) << 11) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1); } while(0)
 
 int32_t riscv32mDiv(int32_t rs1,int32_t rs2){
-  if(rs2==0){printf("div 0\n");exit(-1);}
+  if(rs2==0){
+    printf("div 0\n");
+    exit(-1);
+  }
   else if(rs1==INT32_MIN&&rs2==-1){return INT32_MIN;}
   else return rs1/rs2;
 }
