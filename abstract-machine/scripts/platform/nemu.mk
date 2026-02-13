@@ -29,7 +29,7 @@ image: image-dep
 run: insert-arg
 ifeq ($(TEST_AM),1)
 	echo "TEST_AM is defined, running with test_am"
-	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin CFLAGS_BUILD+="-DAUTO_RUN" CONFIG_ITRACE_COND=1
+	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin CFLAGS_BUILD+="-DAUTO_RUN"
 else
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 endif
