@@ -57,6 +57,16 @@ run: all
 
 gdb: all
 
+change:$$(call find_src,add)
+	@/bin/echo -e "NAME = add\nSRCS = $$(call find_src,add)\nINC_PATH += $(shell pwd)/env/p \
+		$(shell pwd)/isa/macros/scalar\ninclude $${AM_HOME}/Makefile" > Makefile.add
+	make -f Makefile.add ARCH=$(ARCH) run TEST_AM=$(t) -B
+	-@rm -f Makefile.add
+ifeq ($(t),1)
+	@echo "change to auto"
+else
+	@echo "change to debug"
+endif
 clean:
 	rm -rf Makefile-* build/
 
