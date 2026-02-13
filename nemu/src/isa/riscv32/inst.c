@@ -70,7 +70,7 @@ uint32_t riscv32mRemU(uint32_t rs1,uint32_t rs2){
     // exit(-1);
     return rs1;
   }
-  else if(rs1==INT32_MIN&&rs2==-1){return -1;}
+  else if(rs1==INT32_MIN&&rs2==-1){return INT32_MIN;}
   else return rs1%rs2;
 }
 
