@@ -47,8 +47,8 @@ endif
 bin/%: $(tVd) $(tC) | build/% bin
 	mkdir -p $(dir $@)
 	verilator --lint-only -Wall $(tVd) --top-module $(notdir $*) -Wno-DECLFILENAME
-	verilator $(VERILATOR_CFLAGS)  $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
-	--top-module $(notdir $*) $(ePrintf) \
+	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
+	--top-module $(notdir $*) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	cp build/$*/V$(notdir $*) $@

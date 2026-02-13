@@ -91,9 +91,10 @@ import "DPI-C" function void ebreak(input bit eb);
     end
 
     always@(*)begin
-        if(stop) ebreak(eb);
+        if(stop&(~reset)) ebreak(eb);
     end
 
+`ifdef DEBUG
     always@(posedge clk) begin
         $display("code=%x",code);
         $display("cR1=%x oR1=%x cR2=%x oR2=%x cRd=%x imm=%x imi=%x", cR1,oR1,cR2,oR2,cRd,imm,imi);
@@ -101,5 +102,6 @@ import "DPI-C" function void ebreak(input bit eb);
         $display("adr=%x oRAM=%x pc=%x ramAddr=%x wRAM=%x", adr,oRAM,pc,ramAddr,wRAM);
         $display("iRd=%x rAdr=%x iRAM=%x wmask=%x a0=%x reset=%x", iRd,rAdr,iRAM,wmask,a0,reset);
     end
+`endif
 
 endmodule

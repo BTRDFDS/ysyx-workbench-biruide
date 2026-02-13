@@ -50,7 +50,8 @@ module ysyx_26020046_minirv_IDC #(ADDR_WIDTH = 5, DATA_WIDTH = 32)(code,a0,cR1,c
       stop=1'b1;
       eb=(a0==32'b0);
     end else begin
-      stop=1'b0;
+      stop=~(|{add,addi,lui,l,s,jalr});
+      // stop=0;
       eb=1'b0;
     end
   end
