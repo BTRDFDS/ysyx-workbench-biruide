@@ -71,7 +71,7 @@ uint32_t riscv32mRemU(uint32_t rs1,uint32_t rs2){
     return rs1;
   }
   else if(rs1==INT32_MIN&&rs2==-1){return 0;}
-  else return rs1/rs2;
+  else return rs1%rs2;
 }
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
