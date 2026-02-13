@@ -12,3 +12,4 @@
 [           jal] [1;32mPASS[0m
 [          jalr] [1;32mPASS[0m
 [            lb] [1;32mPASS[0m
+[           lbu] [1;32mPASS[0m
