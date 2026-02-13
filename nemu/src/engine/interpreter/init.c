@@ -27,7 +27,7 @@ void engine_start() {
 #ifdef CONFIG_TARGET_AM
   cpu_exec(-1);
 #elif AUTO_RUN
-  printf("TEST_AM\n");
+  printf("AUTO_RUN\n");
   cmd_t("c");
 #else
   /* Receive commands from user. */
