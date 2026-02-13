@@ -41,3 +41,4 @@
 [           mul] [1;32mPASS[0m
 [          mulh] [1;32mPASS[0m
 [        mulhsu] [1;32mPASS[0m
+[         mulhu] [1;32mPASS[0m
