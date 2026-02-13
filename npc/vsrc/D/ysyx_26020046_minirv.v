@@ -1,7 +1,7 @@
-module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32,PC_RESET=32'h80000000) (clk,reset,code,pc);
+module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,code,pcReset,pc);
 //32'h80000000
 input clk,reset;
-input [DATA_WIDTH-1:0] code;
+input [DATA_WIDTH-1:0] code,pcReset;
 output reg [DATA_WIDTH-1:0] pc;
 // output we,he,oe;
 
@@ -55,13 +55,14 @@ ysyx_26020046_minirv_Reg #(ADDR_WIDTH,DATA_WIDTH) ysyx_26020046_Reg(
     .oR2(oR2),
     .a0(a0)
 );
-ysyx_26020046_minirv_LSU #(DATA_WIDTH,PC_RESET) ysyx_26020046_LSU(
+ysyx_26020046_minirv_LSU #(DATA_WIDTH) ysyx_26020046_LSU(
     .clk(clk),
     .reset(reset),
     .s(s),
     .w(w),
     .l(l),
     .jalr(jalr),
+    .pcReset(pcReset),
     .adr(adr),
     .oR2(oR2),
     .iRAM(iRAM),
@@ -77,7 +78,7 @@ import "DPI-C" function int pmem_read(input int raddr);
 import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
 import "DPI-C" function void ebreak(input bit eb);
 
-    assign iRAM = l?pmem_read(ramAddr):0;
+    assign iRAM = l&clk?pmem_read(ramAddr):0;
     // always @(posedge clk) begin
     //     if (l) begin // 有读请求时
     //       iRAM <= pmem_read(ramAddr);

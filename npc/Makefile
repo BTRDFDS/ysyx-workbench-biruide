@@ -48,7 +48,7 @@ bin/%: $(tVd) $(tC) | build/% bin
 	mkdir -p $(dir $@)
 	verilator --lint-only -Wall $(tVd) --top-module $(notdir $*) -Wno-DECLFILENAME
 	verilator $(VERILATOR_CFLAGS)  $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
-	--top-module $(notdir $*) \
+	--top-module $(notdir $*) $(ePrintf) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	cp build/$*/V$(notdir $*) $@
@@ -68,6 +68,12 @@ sim:bin/$(t) wave
 clean:
 	rm -rf bin/* build/*
 run:bin/$(tU)
+# 	valgrind \
+# 	--leak-check=no \
+# 	--show-error-list=yes \
+# 	--track-origins=yes \
+# 	--error-limit=no \
+
 	./bin/$(tU) $(ARG) $(xEb)
 do:bin/$(tU)
 gtk:

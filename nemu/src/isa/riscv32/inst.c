@@ -37,7 +37,42 @@ enum {
 // #define immJ() do { *imm = SEXT((BITS(i, 31, 31) << 19) | (BITS(i, 19, 12) << 11) | (BITS(i, 20, 20) << 10) | BITS(i, 30, 21) , 20) << 1;} while(0)
 #define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 7, 7) << 11) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1); } while(0)
 
-
+int32_t riscv32mDiv(int32_t rs1,int32_t rs2){
+  if(rs2==0){
+    printf("div 0\n");
+    // exit(-1);
+    return -1;
+  }
+  else if(rs1==INT32_MIN&&rs2==-1){return INT32_MIN;}
+  else return rs1/rs2;
+}
+uint32_t riscv32mDivU(uint32_t rs1,uint32_t rs2){
+  if(rs2==0){
+    printf("divU 0\n");
+    // exit(-1);
+    return -1;
+  }
+  else if(rs1==INT32_MIN&&rs2==-1){return 0;}
+  else return rs1/rs2;
+}
+int32_t riscv32mRem(int32_t rs1,int32_t rs2){
+  if(rs2==0){
+    printf("rem 0\n");
+    // exit(-1);
+    return rs1;
+  }
+  else if(rs1==INT32_MIN&&rs2==-1){return 0;}
+  else return rs1%rs2;
+}
+uint32_t riscv32mRemU(uint32_t rs1,uint32_t rs2){
+  if(rs2==0){
+    printf("remU 0\n");
+    // exit(-1);
+    return rs1;
+  }
+  else if(rs1==INT32_MIN&&rs2==-1){return INT32_MIN;}
+  else return rs1%rs2;
+}
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst;
@@ -116,10 +151,10 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 001 ????? 0110011", MULH     , R, R(rd) = (( int64_t)SEXT(src1,32) * ( int64_t)SEXT(src2,32))>>32);
   INSTPAT("0000001 ????? ????? 010 ????? 0110011", MULHSU   , R, R(rd) = (( int64_t)SEXT(src1,32) * (uint64_t)src2)>>32);
   INSTPAT("0000001 ????? ????? 011 ????? 0110011", MULHU    , R, R(rd) = ((uint64_t)src1 * (uint64_t)src2)>>32);
-  INSTPAT("0000001 ????? ????? 100 ????? 0110011", DIV      , R, R(rd) =  ( int32_t)src1 / ( int32_t)src2);
-  INSTPAT("0000001 ????? ????? 101 ????? 0110011", DIVU     , R, R(rd) =  (uint32_t)src1 / (uint32_t)src2);
-  INSTPAT("0000001 ????? ????? 110 ????? 0110011", REM      , R, R(rd) =  ( int32_t)src1 % ( int32_t)src2);
-  INSTPAT("0000001 ????? ????? 111 ????? 0110011", REMU     , R, R(rd) =  (uint32_t)src1 % (uint32_t)src2);
+  INSTPAT("0000001 ????? ????? 100 ????? 0110011", DIV      , R, R(rd) =  riscv32mDiv (( int32_t)src1, ( int32_t)src2));
+  INSTPAT("0000001 ????? ????? 101 ????? 0110011", DIVU     , R, R(rd) =  riscv32mDivU((uint32_t)src1, (uint32_t)src2));
+  INSTPAT("0000001 ????? ????? 110 ????? 0110011", REM      , R, R(rd) =  riscv32mRem (( int32_t)src1, ( int32_t)src2));
+  INSTPAT("0000001 ????? ????? 111 ????? 0110011", REMU     , R, R(rd) =  riscv32mRemU((uint32_t)src1, (uint32_t)src2));
   //未能匹配
   INSTPAT("??????? ????? ????? ??? ????? ???????", inv      , N, INV(s->pc));
   INSTPAT_END();
