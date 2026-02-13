@@ -4,3 +4,4 @@
 [          andi] [1;31m***FAIL***[0m
 [         auipc] [1;31m***FAIL***[0m
 [           beq] [1;31m***FAIL***[0m
+[           bge] [1;31m***FAIL***[0m
