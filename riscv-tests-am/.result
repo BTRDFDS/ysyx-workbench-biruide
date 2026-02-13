@@ -27,3 +27,4 @@
 [           slt] [1;31m***FAIL***[0m
 [          slti] [1;31m***FAIL***[0m
 [         sltiu] [1;31m***FAIL***[0m
+[          sltu] [1;31m***FAIL***[0m
