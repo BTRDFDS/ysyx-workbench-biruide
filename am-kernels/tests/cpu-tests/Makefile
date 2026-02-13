@@ -10,12 +10,8 @@ COLOR_NONE  = \033[0m
 t ?= 0
 
 ALL = $(basename $(notdir $(shell find tests/. -name "*.c")))
-cleanNemu:
-	make -C $(NEMU_HOME) clean
-all: $(if $(filter 1,$(t)), cleanNemu) $(addprefix Makefile., $(ALL))
-ifeq ($(t),1)
-	make -C $(NEMU_HOME) clean
-endif
+
+all: $(addprefix Makefile., $(ALL))
 	@echo "test list [$(words $(ALL)) item(s)]:" $(ALL)
 
 $(ALL): %: Makefile.%
@@ -36,6 +32,15 @@ run: all
 
 gdb: all
 
+change:tests/dummy.c latest
+	@/bin/echo -e "NAME = dummy\nSRCS = tests/dummy\ninclude $${AM_HOME}/Makefile" > Makefile.dummy
+	make -f Makefile.dummy ARCH=$(ARCH) run TEST_AM=$(t) XEB=$(XEB) -B
+	-@rm -f Makefile.dummy
+ifeq ($(t),1)
+	@echo "change to auto"
+else
+	@echo "change to debug"
+endif
 
 clean:
 	rm -rf Makefile.* build/

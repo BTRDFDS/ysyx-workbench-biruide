@@ -27,11 +27,11 @@ image: image-dep
 
 run: insert-arg
 # 	@echo "TODO: add command here to run simulation"
-	@echo "ARG=$(IMAGE).bin xEb=$(XEB)"
-	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB)
-# ifeq ($(TEST_AM),1)
-# 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) ePrintf=-D'$strobe(...)='
-# else
+# 	@echo "ARG=$(IMAGE).bin xEb=$(XEB)"
 # 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB)
-# endif
+ifeq ($(TEST_AM),1)
+	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) 
+else
+	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) ePrintf=-DDEBUG
+endif
 .PHONY: insert-arg

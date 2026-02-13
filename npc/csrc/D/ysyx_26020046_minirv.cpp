@@ -28,24 +28,36 @@ uint32_t M[max];
 uint32_t pc;
 
 extern "C" int pmem_read(int raddr) {
+#ifdef DEBUG
 	printf("pmem_read : ");
+#endif
 	if(((raddr-ADDR_RESET)>>2)>max){
+#ifdef DEBUG
 		printf("\033[1;31merror x%x => x%x => x%x > x%x\033[0m\n",raddr,(raddr-ADDR_RESET),((raddr-ADDR_RESET)>>2),max);
+#endif
 		// exit(-1);
 		return 0;
 	}
+#ifdef DEBUG
 	printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddr-ADDR_RESET),(raddr-ADDR_RESET)>>2,M[(raddr-ADDR_RESET)>>2]);
+#endif
 	return M[(raddr-ADDR_RESET) >> 2];
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
+#ifdef DEBUG
 	printf("pmem_write ");
 	printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask);
+#endif
   if((wmask&0b1111)==0b1111){
+#ifdef DEBUG
 	printf("all\n");
+#endif
     M[(waddr-ADDR_RESET)>>2]=wdata;
   }else{
+#ifdef DEBUG
 	printf("part\n");
+#endif
 	uint32_t mask1=0xffffffff;
 	uint32_t data=wdata&0xff;
 	switch(wmask&0x0f){
@@ -75,7 +87,9 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	temp|=data;
 	M[(waddr-ADDR_RESET)>>2]=temp;
   }
+#ifdef DEBUG
 	printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2]);
+#endif
 }
 
 extern "C" void ebreak(unsigned char eb){
@@ -95,10 +109,18 @@ int main(int argc, char** argv) {
 	const char *p={"hex/sum.bin"};
     FILE *file;
 	if(argc>1&&argv[1]!=NULL){
+
+#ifdef DEBUG
 		printf("\n!!bin:%s ",argv[1]);
+#endif
+
 		file = fopen(argv[1],"rb");
 	}else{
+
+#ifdef DEBUG
 		printf("\n!!bin:%s ",p);
+#endif
+
 		file = fopen(p,"rb");
 	}
     // FILE *file = fopen("hex/mem.bin","rb");
@@ -136,25 +158,34 @@ int main(int argc, char** argv) {
 	top->eval();
 	top->clk=0;
 	top->reset=0;
-	top->eval();
-
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
+	top->eval();
+
+#ifdef DEBUG
 	printf("!! pc=%d M[0]=0x%x] reset finish\n\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]);
-  for(uint32_t i=0;i<=60000;i++){//30000
+#endif
+
+  for(uint32_t i=0;i<=10000000;i++){//30000
 	top->clk=1;
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
 	top->eval();
+
+#ifdef DEBUG
 	printf("clk up finish\n");
+#endif
 
 	top->clk=0;
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
 	top->eval();
-	printf("clk down finish\n");
 
+#ifdef DEBUG
+	printf("clk down finish\n");
 	printf("i=%d pc=%x(%x)\n\n",i,pc,(pc-ADDR_RESET)>>2);
+#endif
+
   }
 	delete top;
 	delete contextp;

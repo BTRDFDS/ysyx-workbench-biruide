@@ -61,6 +61,10 @@ end
 
 always@(posedge clk)begin
     pc<=reset?pcReset:dnpc;
+
+`ifdef DEBUG
     $display("pc=0x%x,dnpc=0x%x,snpc=0x%x reset=%d",pc,dnpc,snpc,reset);
+`endif
+
 end
 endmodule
