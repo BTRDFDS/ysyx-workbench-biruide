@@ -1,4 +1,4 @@
-NAME = andi
-SRCS = isa/rv32ui/andi.S
+NAME = auipc
+SRCS = isa/rv32ui/auipc.S
 INC_PATH += /home/biruide/ysyx-workbench/riscv-tests-am/env/p 	/home/biruide/ysyx-workbench/riscv-tests-am/isa/macros/scalar
 include /home/biruide/ysyx-workbench/abstract-machine/Makefile
