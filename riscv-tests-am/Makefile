@@ -30,8 +30,12 @@ COLOR_NONE  = \033[0m
 define find_src
   $(filter %/$(1).S,$(ALL_SRCS))
 endef
-
-all: $(addprefix Makefile-, $(ALL))
+cleanNemu:
+	make -C $(NEMU_HOME) clean
+all:$(if $(filter 1,$(t)), cleanNemu) $(addprefix Makefile-, $(ALL))
+ifeq ($(t),1)
+	make -C $(NEMU_HOME) clean
+endif
 	@echo "test list [$(words $(ALL)) item(s)]:" $(ALL)
 
 $(ALL): %: Makefile-%
@@ -40,7 +44,7 @@ $(ALL): %: Makefile-%
 Makefile-%: $$(call find_src,%)
 	@/bin/echo -e "NAME = $*\nSRCS = $<\nINC_PATH += $(shell pwd)/env/p \
 		$(shell pwd)/isa/macros/scalar\ninclude $${AM_HOME}/Makefile" > $@
-	@if make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS); then \
+	@if make -s -f $@ ARCH=$(ARCH) $(MAKECMDGOALS) TEST_AM=$(t); then \
 		printf "[%14s] $(COLOR_GREEN)PASS$(COLOR_NONE)\n" $* >> $(RESULT); \
 	else \
 		printf "[%14s] $(COLOR_RED)***FAIL***$(COLOR_NONE)\n" $* >> $(RESULT); \
