@@ -5,3 +5,4 @@
 [         auipc] [1;31m***FAIL***[0m
 [           beq] [1;31m***FAIL***[0m
 [           bge] [1;31m***FAIL***[0m
+[          bgeu] [1;31m***FAIL***[0m
