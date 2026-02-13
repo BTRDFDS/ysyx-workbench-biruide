@@ -9,3 +9,4 @@
 [           blt] [1;31m***FAIL***[0m
 [          bltu] [1;31m***FAIL***[0m
 [           bne] [1;31m***FAIL***[0m
+[           jal] [1;31m***FAIL***[0m
