@@ -29,3 +29,4 @@
 [         sltiu] [1;32mPASS[0m
 [          sltu] [1;32mPASS[0m
 [           sra] [1;32mPASS[0m
+[          srai] [1;32mPASS[0m
