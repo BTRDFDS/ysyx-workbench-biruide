@@ -41,7 +41,7 @@ int32_t riscv32mDiv(int32_t rs1,int32_t rs2){
   if(rs2==0){
     printf("div 0\n");
     // exit(-1);
-    return 0;
+    return -1;
   }
   else if(rs1==INT32_MIN&&rs2==-1){return INT32_MIN;}
   else return rs1/rs2;
