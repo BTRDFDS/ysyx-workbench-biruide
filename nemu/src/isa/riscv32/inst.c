@@ -48,9 +48,9 @@ int32_t riscv32mDiv(int32_t rs1,int32_t rs2){
 }
 uint32_t riscv32mDivU(uint32_t rs1,uint32_t rs2){
   if(rs2==0){
-    printf("div 0\n");
+    printf("divU 0\n");
     // exit(-1);
-    return -1;
+    return 0;
   }
   else if(rs1==INT32_MIN&&rs2==-1){return INT32_MIN;}
   else return rs1/rs2;
