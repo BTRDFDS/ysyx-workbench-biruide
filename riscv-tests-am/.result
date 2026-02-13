@@ -2,3 +2,4 @@
 [          addi] [1;32mPASS[0m
 [           and] [1;32mPASS[0m
 [          andi] [1;32mPASS[0m
+[         auipc] [1;32mPASS[0m
