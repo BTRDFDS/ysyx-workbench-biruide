@@ -39,6 +39,8 @@ void init_log(const char *log_file) {
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
   Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");
+  if(log_iringbuf_file!=NULL)
+    free(log_iringbuf_file);
 }
 
 bool log_enable() {
