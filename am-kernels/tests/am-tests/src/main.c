@@ -13,8 +13,10 @@ static const char *tests[256] = {
   ['v'] = "display test",
   ['a'] = "audio test",
   ['p'] = "x86 virtual memory test",
+#ifdef UIN_NEMU
   ['s'] = "screensaver",
   ['r'] = "riscvEMU",
+#endif
 };
 
 int main(const char *args) {
@@ -28,8 +30,10 @@ int main(const char *args) {
     CASE('v', video_test, IOE);
     CASE('a', audio_test, IOE);
     CASE('p', vm_test, CTE(vm_handler), VME(simple_pgalloc, simple_pgfree));
+#ifdef UIN_NEMU
     CASE('s', screensaver, IOE);
     CASE('r', riscvEMU,IOE)
+#endif
     case 'H':
     default:
       printf("Usage: make run mainargs=*\n");
