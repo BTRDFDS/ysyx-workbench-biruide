@@ -46,20 +46,20 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   #define iringmax 16
   static int iringbufCount=0;
   static char iringbufChar[iringmax][128];
-  static bool minCount=0;
   if(MUXDEF(CONFIG_TRACE,(g_nr_guest_inst>=CONFIG_TRACE_START)&&(g_nr_guest_inst<=CONFIG_TRACE_END),true)&&log_iringbuf_fp!=NULL){
     //先清空
-    memset(iringbufChar[iringbufCount],0,sizeof(iringbufChar[iringbufCount]));
-    strncpy(iringbufChar[iringbufCount],_this->logbuf,sizeof(iringbufChar[iringbufCount]));
-    if(iringbufCount==iringmax-1&&minCount==0){minCount=1;}
+    memset(iringbufChar[iringbufCount%iringmax],0,sizeof(iringbufChar[iringbufCount%iringmax]));
+    strncpy(iringbufChar[iringbufCount%iringmax],_this->logbuf,sizeof(iringbufChar[iringbufCount%iringmax]));
 
-    iringbufCount = (iringbufCount + 1) % iringmax;
+    // if(iringbufCount==iringmax-1&&minCount==0){minCount=1;}
+    // iringbufCount = (iringbufCount + 1) % iringmax;
+    iringbufCount++;
 
     fseek(log_iringbuf_fp,0,SEEK_SET);
     assert(ftruncate(fileno(log_iringbuf_fp), 0)==0);
 
-    for(int i=0;minCount?i<iringmax:i<iringbufCount;i++){
-      if(i==iringbufCount-1||i==iringmax-1){
+    for(int i=0;i<iringbufCount%iringmax;i++){
+      if(i==(iringbufCount%iringmax)-1){
         fprintf(log_iringbuf_fp,"-->\t%s",iringbufChar[i]);
       }
       else{fprintf(log_iringbuf_fp,"\t%s\n",iringbufChar[i]);}
