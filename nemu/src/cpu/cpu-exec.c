@@ -33,10 +33,6 @@ static bool g_print_step = false;
 
 void device_update();
 
-#ifndef CONFIG_TARGET_AM
-extern FILE *log_iringbuf_fp;
-#endif
-
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
@@ -45,10 +41,27 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
 #ifndef CONFIG_TARGET_AM
+extern FILE *log_iringbuf_fp;
   #define iringmax 16
-  printf("%s\n",_this->logbuf);
+  if(MUXDEF(CONFIG_TRACE,(g_nr_guest_inst>=CONFIG_TRACE_START)&&(g_nr_guest_inst<=CONFIG_TRACE_END),true)&&log_iringbuf_fp!=NULL){
+      printf("%s\n",_this->logbuf);
+        fprintf(log_iringbuf_fp,"%s\n",_this->logbuf);
+        fflush(log_iringbuf_fp);
+  }
 #endif
 }
+
+// void log_writeDO(const char *format, ...) {
+//     extern FILE* log_fp;
+    
+//     if (MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START)&&(g_nr_guest_inst <= CONFIG_TRACE_END), true) && log_fp != NULL) {
+//         va_list args;
+//         va_start(args, format);
+//         vfprintf(log_fp, format, args);
+//         va_end(args);
+//         fflush(log_fp);
+//     }
+// }
 
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
