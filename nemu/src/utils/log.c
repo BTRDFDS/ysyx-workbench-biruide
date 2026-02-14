@@ -29,9 +29,13 @@ void init_log(const char *log_file) {
     FILE *fp = fopen(log_file, "w");
     Assert(fp, "Can not open '%s'", log_file);
     log_fp = fp;
+
     log_iringbuf_file = malloc(strlen(log_file) + strlen("_iringbuf") + 1);
     strcpy(log_iringbuf_file, log_file);
     strcat(log_iringbuf_file, "_iringbuf");
+    FILE *fp_iringbuf = fopen(log_iringbuf_file, "w");
+    Assert(fp_iringbuf, "Can not open '%s'", log_iringbuf_file);
+    log_iringbuf_fp = fp_iringbuf;
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
   Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");
