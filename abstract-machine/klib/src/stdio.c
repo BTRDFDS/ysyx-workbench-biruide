@@ -5,8 +5,86 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-int printf(const char *fmt, ...) {
-  panic("Not implemented");
+int printf(const char *fmt, ...) {//TODO
+  // panic("Not implemented");
+  if(fmt==NULL){panic("fmt is NULL");}
+  va_list argp;
+  va_start(argp, fmt);
+  int count=0;
+  while(*fmt!='\0'){
+    // *out=*fmt;
+    if(*fmt=='%'){
+      fmt++;
+      switch(*fmt){
+        case 'c':
+          putch(va_arg(argp, int));
+          count++;
+          fmt++;
+          break;
+        case 's':
+          char *str=va_arg(argp, char*);
+          for(int i=0;str[i]!='\0'&&i<100;i++){
+            putch(str[i]);
+            count++;
+          }
+          fmt++;
+          break;
+        case 'd':
+          fmt++;
+          #define MAX 11
+          int num=va_arg(argp, int);
+          char number[MAX]={0};
+          int point=MAX-1;
+          if(num==0){
+            putch('0');
+            count++;
+          }
+          else if(num<0){
+            putch('-');
+            count++;
+          }
+          while(num>0&&point>= 0){
+              number[point]=(num % 10)+'0';
+              num/= 10;
+              point--;
+          }
+          for(int i=point+1;i<MAX;i++){
+              if(number[i]!='\0'){
+                putch(number[i]);
+                count++;
+              }
+          }
+          break;
+        case '%':
+          putch('%');
+          count++;
+          fmt++;
+          break;
+        default :panic("printf error:%%");break;
+      }
+    }else if(*fmt=='\\'){
+      fmt++;
+      switch (*fmt)
+      {
+        case 'n':
+          putch('\n');
+          count++;
+          fmt++;
+          break;
+        case '\\':
+          putch('\\');
+          count++;
+          fmt++;
+        default :panic("printf error:\\");break;
+      }
+    }else{
+      putch(*fmt);
+      count++;
+      fmt++;
+    }
+  }
+  va_end(argp);
+  return count;
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
@@ -15,7 +93,6 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 
 int sprintf(char *out, const char *fmt, ...) {//DONE:hello-str
   // panic("Not implemented");
-  //只能用str系列的函数，不能用其他的所有
   if(out==NULL){panic("out is NULL");}
   if(fmt==NULL){panic("fmt is NULL");}
   va_list argp;
@@ -68,6 +145,7 @@ int sprintf(char *out, const char *fmt, ...) {//DONE:hello-str
     }
   }
   *out='\0';
+  va_end(argp);
   return out-start;
 }
 
