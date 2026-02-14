@@ -58,7 +58,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     fseek(log_iringbuf_fp,0,SEEK_SET);
     assert(ftruncate(fileno(log_iringbuf_fp), 0)==0);
 
-    for(int i=0;i<iringbufCount%iringmax;i++){
+    for(int i=0;i<(iringbufCount>=iringmax?iringmax:iringbufCount);i++){
       if(i==(iringbufCount%iringmax)-1){
         fprintf(log_iringbuf_fp,"-->\t%s",iringbufChar[i]);
       }
