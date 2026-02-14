@@ -28,7 +28,7 @@ void init_log(const char *log_file,const char *log_iringbuf_file) {
     FILE *fp = fopen(log_file, "w");
     Assert(fp, "Can not open '%s'", log_file);
     log_fp = fp;
-    log_iringbuf_file=log_file;
+    log_iringbuf_file=log_file;//TODO
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
   Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");
