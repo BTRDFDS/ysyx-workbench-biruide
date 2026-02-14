@@ -14,7 +14,7 @@ int printf(const char *fmt, ...) {//TODO
   int printfNumber=0;
   while(*fmt!='\0'){
     // *out=*fmt;
-    if(*fmt=='%'){
+    if(*fmt=='%'||printfNumber>0){
       fmt++;
       switch(*fmt){
         case 'c':
