@@ -19,15 +19,19 @@ extern uint64_t g_nr_guest_inst;
 
 #ifndef CONFIG_TARGET_AM
 FILE *log_fp = NULL;
+FILE *log_iringbuf_fp = NULL;
 
-void init_log(const char *log_file) {
+void init_log(const char *log_file,const char *log_iringbuf_file) {
   log_fp = stdout;
+  log_iringbuf_fp=stdout;
   if (log_file != NULL) {
     FILE *fp = fopen(log_file, "w");
     Assert(fp, "Can not open '%s'", log_file);
     log_fp = fp;
+    log_iringbuf_file=log_file;
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
+  Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");
 }
 
 bool log_enable() {
