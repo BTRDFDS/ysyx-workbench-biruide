@@ -55,7 +55,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
       // printf("%s\n",_this->logbuf);
       //   fprintf(log_iringbuf_fp,"%s\n",_this->logbuf);
       //   fflush(log_iringbuf_fp);
-    for(int i=0;i<iringmax;i++){
+    for(int i=0;minCount?i<iringbufCount+1:i<iringmax;i++){
       if(i==iringbufCount){fprintf(log_iringbuf_fp,"%s <--\n",iringbufChar[i]);}
       else{fprintf(log_iringbuf_fp,"%s\n",iringbufChar[i]);}
     }
