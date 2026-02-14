@@ -47,4 +47,14 @@ bool log_enable() {
   return MUXDEF(CONFIG_TRACE, (g_nr_guest_inst >= CONFIG_TRACE_START) &&
          (g_nr_guest_inst <= CONFIG_TRACE_END), false);
 }
+
+void closeLog(){
+  if(log_fp!=NULL&&log_fp!=stdout){fclose(log_fp);}
+  if(log_iringbuf_fp!=NULL&&log_iringbuf_fp!=stdout){fclose(log_iringbuf_fp);}
+}
+
+void writeIringbufLog(const char *format, ...) {
+  
+}
+
 #endif
