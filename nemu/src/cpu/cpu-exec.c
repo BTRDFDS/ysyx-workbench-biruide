@@ -58,8 +58,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
       //   fflush(log_iringbuf_fp);
 
     fseek(log_iringbuf_fp,0,SEEK_SET);
-    int res=ftruncate(fileno(log_iringbuf_fp), 0);
-    printf("%d\n",res);
+    assert(ftruncate(fileno(log_iringbuf_fp), 0)==0);
+    
     for(int i=0;minCount?i<iringmax:i<iringbufCount;i++){
       if(i==iringbufCount-1){
         // printf("--> %s\n",iringbufChar[i]);
