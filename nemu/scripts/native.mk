@@ -43,7 +43,7 @@ gdb: run-env
 
 val: run-env
 	$(call git_commit, "run NEMU")
-	valgrind --leak-check=full --show-leak-kinds=all ./$(NEMU_EXEC)
+	valgrind --leak-check=full --show-leak-kinds=all .$(NEMU_EXEC)
 
 clean-tools = $(dir $(shell find ./tools -maxdepth 2 -mindepth 2 -name "Makefile"))
 $(clean-tools):
