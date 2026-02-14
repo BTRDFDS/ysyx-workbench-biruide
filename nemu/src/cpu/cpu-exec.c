@@ -18,6 +18,7 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 #include "../monitor/sdb/sdb.h"
+#include <unistd.h>
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -55,6 +56,10 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
       // printf("%s\n",_this->logbuf);
       //   fprintf(log_iringbuf_fp,"%s\n",_this->logbuf);
       //   fflush(log_iringbuf_fp);
+
+    fseek(log_iringbuf_fp,0,SEEK_SET);
+    int res=ftruncate(fileno(log_iringbuf_fp), 0);
+    printf("%d\n",res);
     for(int i=0;minCount?i<iringmax:i<iringbufCount;i++){
       if(i==iringbufCount-1){
         // printf("--> %s\n",iringbufChar[i]);
