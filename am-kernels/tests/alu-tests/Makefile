@@ -9,3 +9,6 @@ $(GENERATOR): gen_alu_test.c
 
 $(SRCS): $(GENERATOR)
 	$^ > $@
+
+help:
+	@echo ""
