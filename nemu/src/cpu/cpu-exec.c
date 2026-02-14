@@ -33,6 +33,8 @@ static bool g_print_step = false;
 
 void device_update();
 
+extern FILE *log_iringbuf_fp;
+
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
