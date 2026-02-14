@@ -52,7 +52,10 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     memset(iringbufChar[iringbufCount],0,sizeof(iringbufChar[iringbufCount]));
     strncpy(iringbufChar[iringbufCount],_this->logbuf,sizeof(iringbufChar[iringbufCount]));
     if(iringbufCount==iringmax-1&&minCount==0){minCount=1;}
-    iringbufCount=(iringbufCount+1==iringbufCount)?0:iringbufCount+1;
+
+    iringbufCount = (iringbufCount + 1) % iringmax;
+
+    // iringbufCount=(iringbufCount+1==iringbufCount)?0:iringbufCount+1;
       // printf("%s\n",_this->logbuf);
       //   fprintf(log_iringbuf_fp,"%s\n",_this->logbuf);
       //   fflush(log_iringbuf_fp);
