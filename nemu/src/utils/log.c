@@ -22,15 +22,20 @@ FILE *log_fp = NULL;
 FILE *log_iringbuf_fp = NULL;
 FILE *log_mtraece_fp = NULL;
 
+char *log_file_printf=NULL;
+char *log_iringbuf_file=NULL;
+char *log_mtrace_file=NULL;
 void init_log(const char *log_file) {
   log_fp = stdout;
   log_iringbuf_fp=stdout;
   log_mtraece_fp=stdout;
 
-  char *log_iringbuf_file=NULL;
-  char *log_mtrace_file=NULL;
 
   if (log_file != NULL) {
+
+    log_file_printf=malloc(strlen(log_file));
+    strcpy(log_file_printf,log_file);
+
     FILE *fp = fopen(log_file, "w");
     Assert(fp, "Can not open '%s'", log_file);
     log_fp = fp;
@@ -67,11 +72,20 @@ bool log_enable() {
 }
 
 void closeLog(){
-  if(log_fp!=NULL&&log_fp!=stdout){fclose(log_fp);}
-  if(log_iringbuf_fp!=NULL&&log_iringbuf_fp!=stdout){fclose(log_iringbuf_fp);}
+  if(log_fp!=NULL&&log_fp!=stdout){
+    Log("Log is written to %s",log_file_printf);
+    fclose(log_fp);
+  }
+  if(log_iringbuf_fp!=NULL&&log_iringbuf_fp!=stdout){
+    Log("Log of iringbuf is written to %s",log_iringbuf_file);
+    fclose(log_iringbuf_fp);
+  }
 
 #ifdef CONFIG_MTRACE
-  if(log_mtraece_fp!=NULL&&log_mtraece_fp!=stdout){fclose(log_mtraece_fp);}
+  if(log_mtraece_fp!=NULL&&log_mtraece_fp!=stdout){
+    Log("Log of mtrace is written to %s",log_mtrace_file);
+    fclose(log_mtraece_fp);
+  }
 #endif
 }
 #endif
