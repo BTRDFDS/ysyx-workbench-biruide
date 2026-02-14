@@ -58,11 +58,11 @@ void init_log(const char *log_file) {
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
   Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");
-  if(log_iringbuf_file!=NULL)free(log_iringbuf_file);
+  // if(log_iringbuf_file!=NULL)free(log_iringbuf_file);
 
 #ifdef CONFIG_MTRACE
   Log("Log of mtrace is written to %s", log_mtrace_file ? log_mtrace_file : "stdout");
-  if(log_mtrace_file!=NULL)free(log_mtrace_file);
+  // if(log_mtrace_file!=NULL)free(log_mtrace_file);
 #endif
 }
 
