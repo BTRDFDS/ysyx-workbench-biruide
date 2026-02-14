@@ -73,17 +73,19 @@ bool log_enable() {
 
 void closeLog(){
   if(log_fp!=NULL&&log_fp!=stdout){
-    Log("Log is written to %s",log_file_printf);
+    if(log_file_printf!=NULL){Log("Log is written to %s",log_file_printf);free(log_file_printf);}
     fclose(log_fp);
   }
   if(log_iringbuf_fp!=NULL&&log_iringbuf_fp!=stdout){
-    Log("Log of iringbuf is written to %s",log_iringbuf_file);
+    // Log("Log of iringbuf is written to %s",log_iringbuf_file);
+    if(log_iringbuf_file!=NULL){Log("Log of iringbuf is written to %s",log_iringbuf_file);free(log_iringbuf_file);}
     fclose(log_iringbuf_fp);
   }
 
 #ifdef CONFIG_MTRACE
   if(log_mtraece_fp!=NULL&&log_mtraece_fp!=stdout){
-    Log("Log of mtrace is written to %s",log_mtrace_file);
+    if(log_mtrace_file!=NULL){Log("Log of mtrace is written to %s",log_mtrace_file);free(log_mtrace_file);}
+    // Log("Log of mtrace is written to %s",log_mtrace_file);
     fclose(log_mtraece_fp);
   }
 #endif
