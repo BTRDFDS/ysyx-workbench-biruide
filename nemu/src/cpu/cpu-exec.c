@@ -55,17 +55,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 
     iringbufCount = (iringbufCount + 1) % iringmax;
 
-    // iringbufCount=(iringbufCount+1==iringbufCount)?0:iringbufCount+1;
-      // printf("%s\n",_this->logbuf);
-      //   fprintf(log_iringbuf_fp,"%s\n",_this->logbuf);
-      //   fflush(log_iringbuf_fp);
-
     fseek(log_iringbuf_fp,0,SEEK_SET);
     assert(ftruncate(fileno(log_iringbuf_fp), 0)==0);
 
     for(int i=0;minCount?i<iringmax:i<iringbufCount;i++){
-      if(i==iringbufCount-1){
-        // printf("--> %s\n",iringbufChar[i]);
+      if(i==iringbufCount-1||i==iringmax-1){
         fprintf(log_iringbuf_fp,"-->\t%s",iringbufChar[i]);
       }
       else{fprintf(log_iringbuf_fp,"\t%s\n",iringbufChar[i]);}
