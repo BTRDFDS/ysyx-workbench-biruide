@@ -12,9 +12,10 @@ int printf(const char *fmt, ...) {//TODO
   va_start(argp, fmt);
   int count=0;
   int printfNumber=0;
+  bool getPrintfNumber=0;
   while(*fmt!='\0'){
     // *out=*fmt;
-    if(*fmt=='%'||printfNumber>0){
+    if(*fmt=='%'||getPrintfNumber==true){
       fmt++;
       switch(*fmt){
         case 'c':
@@ -65,18 +66,19 @@ int printf(const char *fmt, ...) {//TODO
               }
           }
           printfNumber=0;
+          getPrintfNumber=false;
           break;
           //数字位就先储存:接下来处理如%数字
-        case '0':printfNumber=printfNumber*10+0;break;
-        case '1':printfNumber=printfNumber*10+1;break;
-        case '2':printfNumber=printfNumber*10+2;break;
-        case '3':printfNumber=printfNumber*10+3;break;
-        case '4':printfNumber=printfNumber*10+4;break;
-        case '5':printfNumber=printfNumber*10+5;break;
-        case '6':printfNumber=printfNumber*10+6;break;
-        case '7':printfNumber=printfNumber*10+7;break;
-        case '8':printfNumber=printfNumber*10+8;break;
-        case '9':printfNumber=printfNumber*10+9;break;
+        case '0':printfNumber=printfNumber*10+0;getPrintfNumber=true;break;
+        case '1':printfNumber=printfNumber*10+1;getPrintfNumber=true;break;
+        case '2':printfNumber=printfNumber*10+2;getPrintfNumber=true;break;
+        case '3':printfNumber=printfNumber*10+3;getPrintfNumber=true;break;
+        case '4':printfNumber=printfNumber*10+4;getPrintfNumber=true;break;
+        case '5':printfNumber=printfNumber*10+5;getPrintfNumber=true;break;
+        case '6':printfNumber=printfNumber*10+6;getPrintfNumber=true;break;
+        case '7':printfNumber=printfNumber*10+7;getPrintfNumber=true;break;
+        case '8':printfNumber=printfNumber*10+8;getPrintfNumber=true;break;
+        case '9':printfNumber=printfNumber*10+9;getPrintfNumber=true;break;
         case '%':
           putch('%');
           count++;
