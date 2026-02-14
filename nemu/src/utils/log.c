@@ -72,11 +72,6 @@ bool log_enable() {
 }
 
 void closeLog(){
-  if(log_fp!=NULL&&log_fp!=stdout){
-    if(log_file_printf!=NULL){Log("Log is written to %s",log_file_printf);}
-    fclose(log_fp);
-  }
-  if(log_file_printf!=NULL){free(log_file_printf);}
   if(log_iringbuf_fp!=NULL&&log_iringbuf_fp!=stdout){
     // Log("Log of iringbuf is written to %s",log_iringbuf_file);
     if(log_iringbuf_file!=NULL){Log("Log of iringbuf is written to %s",log_iringbuf_file);}
@@ -92,5 +87,11 @@ void closeLog(){
   }
   if(log_mtrace_file!=NULL){free(log_mtrace_file);}
 #endif
+
+  if(log_fp!=NULL&&log_fp!=stdout){
+    if(log_file_printf!=NULL){Log("Log is written to %s",log_file_printf);}
+    fclose(log_fp);
+  }
+  if(log_file_printf!=NULL){free(log_file_printf);}
 }
 #endif
