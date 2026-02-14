@@ -17,7 +17,7 @@
 #include <memory/paddr.h>
 #include <libgen.h>
 void init_rand();
-void init_log(const char *log_file,const char *log_iringbuf_file);
+void init_log(const char *log_file);
 void init_mem();
 void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
@@ -42,7 +42,6 @@ static void welcome() {
 void sdb_set_batch_mode();
 
 static char *log_file = NULL;
-static char *log_iringbuf_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static int difftest_port = 1234;
@@ -109,7 +108,7 @@ void init_monitor(int argc, char *argv[]) {
   init_rand();
 
   /* Open the log file. */
-  init_log(log_file,log_iringbuf_file);
+  init_log(log_file);
 
   /* Initialize memory. */
   init_mem();

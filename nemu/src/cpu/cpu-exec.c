@@ -18,6 +18,7 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 #include "../monitor/sdb/sdb.h"
+#include <unistd.h>
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -39,6 +40,34 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+
+#ifndef CONFIG_TARGET_AM
+  extern FILE *log_iringbuf_fp;
+  #define iringmax 16
+  static int iringbufCount=0;
+  static char iringbufChar[iringmax][128];
+  if(MUXDEF(CONFIG_TRACE,(g_nr_guest_inst>=CONFIG_TRACE_START)&&(g_nr_guest_inst<=CONFIG_TRACE_END),true)&&log_iringbuf_fp!=NULL){
+    //先清空
+    memset(iringbufChar[iringbufCount%iringmax],0,sizeof(iringbufChar[iringbufCount%iringmax]));
+    strncpy(iringbufChar[iringbufCount%iringmax],_this->logbuf,sizeof(iringbufChar[iringbufCount%iringmax]));
+
+    // if(iringbufCount==iringmax-1&&minCount==0){minCount=1;}
+    // iringbufCount = (iringbufCount + 1) % iringmax;
+    iringbufCount++;
+
+    fseek(log_iringbuf_fp,0,SEEK_SET);
+    assert(ftruncate(fileno(log_iringbuf_fp), 0)==0);
+
+    for(int i=0;i<(iringbufCount>=iringmax?iringmax:iringbufCount);i++){
+      if(i==(iringbufCount%iringmax)-1||(iringbufCount!=0&&i==iringmax-1&&iringbufCount%iringmax==0)){
+        fprintf(log_iringbuf_fp,"-->\t%s",iringbufChar[i]);
+      }
+      else{fprintf(log_iringbuf_fp,"\t%s",iringbufChar[i]);}
+      if(i<(iringbufCount>=iringmax?iringmax:iringbufCount)-1){fprintf(log_iringbuf_fp,"\n");}
+    }
+    fflush(log_iringbuf_fp);
+  }
+#endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
