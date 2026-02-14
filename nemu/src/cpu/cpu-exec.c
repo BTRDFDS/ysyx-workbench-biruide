@@ -63,6 +63,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
         fprintf(log_iringbuf_fp,"-->\t%s",iringbufChar[i]);
       }
       else{fprintf(log_iringbuf_fp,"\t%s",iringbufChar[i]);}
+      if(i<(iringbufCount>=iringmax?iringmax:iringbufCount)){fprintf(log_iringbuf_fp,"\n");}
     }
     fflush(log_iringbuf_fp);
   }
