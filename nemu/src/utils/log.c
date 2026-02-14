@@ -33,7 +33,7 @@ void init_log(const char *log_file) {
 
   if (log_file != NULL) {
 
-    log_file_printf=malloc(strlen(log_file));
+    log_file_printf=malloc(strlen(log_file)+1);
     strcpy(log_file_printf,log_file);
 
     FILE *fp = fopen(log_file, "w");
