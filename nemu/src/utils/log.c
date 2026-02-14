@@ -20,11 +20,16 @@ extern uint64_t g_nr_guest_inst;
 #ifndef CONFIG_TARGET_AM
 FILE *log_fp = NULL;
 FILE *log_iringbuf_fp = NULL;
+FILE *log_mtraece_fp = NULL;
 
 void init_log(const char *log_file) {
   log_fp = stdout;
   log_iringbuf_fp=stdout;
+  log_mtraece_fp=stdout;
+
   char *log_iringbuf_file=NULL;
+  char *log_mtrace_file=NULL;
+
   if (log_file != NULL) {
     FILE *fp = fopen(log_file, "w");
     Assert(fp, "Can not open '%s'", log_file);
@@ -36,6 +41,14 @@ void init_log(const char *log_file) {
     FILE *fp_iringbuf = fopen(log_iringbuf_file, "w");
     Assert(fp_iringbuf, "Can not open '%s'", log_iringbuf_file);
     log_iringbuf_fp = fp_iringbuf;
+
+    log_mtrace_file = malloc(strlen(log_file) + strlen("_mtrace") + 1);
+    strcpy(log_mtrace_file, log_file);
+    strcat(log_mtrace_file, "_mtrace");
+    FILE *fp_mtrace = fopen(log_mtrace_file, "w");
+    Assert(fp_mtrace, "Can not open '%s'", log_mtrace_file);
+    log_mtraece_fp = fp_mtrace;
+
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
   Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");

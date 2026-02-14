@@ -76,6 +76,10 @@ void gen_expr(){
 
 int main(int argc, char *argv[]) {
 
+#ifdef CONFIG_MTRACE
+  printf("mtrace enabled\n");
+#endif
+
 
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
