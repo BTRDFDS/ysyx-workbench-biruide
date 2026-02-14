@@ -11,6 +11,7 @@ int printf(const char *fmt, ...) {//TODO
   va_list argp;
   va_start(argp, fmt);
   int count=0;
+  int printfNumber=0;
   while(*fmt!='\0'){
     // *out=*fmt;
     if(*fmt=='%'){
@@ -48,13 +49,34 @@ int printf(const char *fmt, ...) {//TODO
               num/= 10;
               point--;
           }
-          for(int i=point+1;i<MAX;i++){
+          int iNow=point+1;
+          if(printfNumber>0&&printfNumber<MAX-point-1){
+            iNow=MAX-1-printfNumber;
+          }else if(printfNumber>0&&printfNumber>MAX-point-1){
+            for(int i=0;i<(printfNumber-(MAX-point-1));i++){
+              putch('0');
+              count++;
+            }
+          }
+          for(int i=iNow;i<MAX;i++){
               if(number[i]!='\0'){
                 putch(number[i]);
                 count++;
               }
           }
+          printfNumber=0;
           break;
+          //数字位就先储存:接下来处理如%数字
+        case '0':printfNumber=printfNumber*10+0;break;
+        case '1':printfNumber=printfNumber*10+1;break;
+        case '2':printfNumber=printfNumber*10+2;break;
+        case '3':printfNumber=printfNumber*10+3;break;
+        case '4':printfNumber=printfNumber*10+4;break;
+        case '5':printfNumber=printfNumber*10+5;break;
+        case '6':printfNumber=printfNumber*10+6;break;
+        case '7':printfNumber=printfNumber*10+7;break;
+        case '8':printfNumber=printfNumber*10+8;break;
+        case '9':printfNumber=printfNumber*10+9;break;
         case '%':
           putch('%');
           count++;
