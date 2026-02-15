@@ -312,7 +312,9 @@ word_t eval(int p, int q, bool *success) {
         break;
       default: assert(0);
     }
+  #ifdef CONFIG_SHOW_EXPR
     Log("%u %c %u = %u", val1, tokens[op].type, val2,res);
+  #endif
     *success=true;
     return res;
   }
