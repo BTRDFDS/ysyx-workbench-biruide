@@ -68,7 +68,7 @@ void paddr_write(paddr_t addr, int len, word_t data) {
 
 #ifdef CONFIG_MTRACE
   extern FILE *log_mtraece_fp;
-  fprintf(log_mtraece_fp, "x%08x x%x=%08x\n", addr,len,data);
+  fprintf(log_mtraece_fp, "x%08x %x=%08x\n", addr,len,data);
 #endif
 
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
