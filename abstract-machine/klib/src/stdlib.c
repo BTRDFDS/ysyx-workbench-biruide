@@ -46,10 +46,9 @@ void *malloc(size_t size) {
   char *now = addr;
   addr += size;
   assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
-  // for (uint64_t *p = (uint64_t *)now; p<(uint64_t *)addr; p ++) {
-  //   *p = 0;
-  // }
-  memset((void *)now, 0, size);
+  for (uint64_t *p = (uint64_t *)now; p != (uint64_t *)addr; p ++) {
+    *p = 0;
+  }
   return now;
 }
 
