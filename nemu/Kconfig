@@ -144,7 +144,7 @@ config WATCH_POINT
 config SHOW_EXPR
   depends on TRACE
   bool "Enable shou expr log"
-  default y
+  default n
 
 config DTRACE
   depends on TRACE
