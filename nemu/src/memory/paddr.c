@@ -17,6 +17,7 @@
 #include <memory/paddr.h>
 #include <device/mmio.h>
 #include <isa.h>
+#include <common.h>
 
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
@@ -54,7 +55,7 @@ word_t paddr_read(paddr_t addr, int len) {
 
 #ifdef CONFIG_MTRACE
   extern FILE *log_mtraece_fp;
-  fprintf(log_mtraece_fp, "paddr_read addr=0x%08x len=0x%x(%d)\n", addr,len,len);
+  fprintf(log_mtraece_fp, "R x%08x %x(%d)\n", addr,len,len);
 #endif
 
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
@@ -67,7 +68,7 @@ void paddr_write(paddr_t addr, int len, word_t data) {
 
 #ifdef CONFIG_MTRACE
   extern FILE *log_mtraece_fp;
-  fprintf(log_mtraece_fp, "paddr_write addr=0x%08x len=0x%x(%d) data=0x%08x\n", addr,len,len,data);
+  fprintf(log_mtraece_fp, "W x%08x %x(%d)=%08x\n", addr,len,len,data);
 #endif
 
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
