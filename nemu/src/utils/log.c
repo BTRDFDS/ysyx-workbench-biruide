@@ -62,7 +62,7 @@ void init_log(const char *log_file) {
 #ifdef CONFIG_DTRACE
     log_dtrace_file = malloc(strlen(log_file) + strlen(".dtrace") + 1);
     strcpy(log_dtrace_file, log_file);
-    strcat(log_dtrace_file, ".mtrace");
+    strcat(log_dtrace_file, ".dtrace");
     FILE *fp_dtrace = fopen(log_dtrace_file, "w");
     Assert(fp_dtrace, "Can not open '%s'", log_dtrace_file);
     log_dtrace_fp = fp_dtrace;
