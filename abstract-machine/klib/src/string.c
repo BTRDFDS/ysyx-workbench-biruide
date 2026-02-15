@@ -71,6 +71,7 @@ void *memset(void *s, int c, size_t n) {//DONE:string
 
 void *memmove(void *dst, const void *src, size_t n) {
   // panic("Not implemented");
+  if(n==0){return dst;}
   if(dst==NULL){panic("error:dst is NULL");}
   if(src==NULL){panic("error:src is NULL");}
     char *d = dst;
