@@ -141,6 +141,11 @@ config WATCH_POINT
   bool "Enable watchpoint"
   default y
 
+config SHOW_EXPR
+  depends on TRACE
+  bool "Enable watchpoint"
+  default y
+
 config TRACE_START
   depends on TRACE
   int "When tracing is enabled (unit: number of instructions)"

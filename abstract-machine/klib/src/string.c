@@ -70,7 +70,22 @@ void *memset(void *s, int c, size_t n) {//DONE:string
 }
 
 void *memmove(void *dst, const void *src, size_t n) {
-  panic("Not implemented");
+  // panic("Not implemented");
+  if(n==0){return dst;}
+  if(dst==NULL){panic("error:dst is NULL");}
+  if(src==NULL){panic("error:src is NULL");}
+    char *d = dst;
+    const char *s = src;
+    if (d < s) {
+        for (size_t i = 0; i < n; i++) {
+            d[i] = s[i];
+        }
+    } else if (d > s) {
+        for (size_t i = n; i > 0; i--) {
+            d[i-1] = s[i-1];
+        }
+    }
+    return dst;
 }
 
 void *memcpy(void *out, const void *in, size_t n) {

@@ -47,7 +47,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   #define iringmax 16
   static int iringbufCount=0;
   static char iringbufChar[iringmax][128];
-  if(MUXDEF(CONFIG_TRACE,(g_nr_guest_inst>=CONFIG_TRACE_START)&&(g_nr_guest_inst<=CONFIG_TRACE_END),true)&&log_iringbuf_fp!=NULL){
+  if(log_iringbuf_fp!=NULL){
     //先清空
     memset(iringbufChar[iringbufCount%iringmax],0,sizeof(iringbufChar[iringbufCount%iringmax]));
     strncpy(iringbufChar[iringbufCount%iringmax],_this->logbuf,sizeof(iringbufChar[iringbufCount%iringmax]));
