@@ -68,7 +68,62 @@ int printf(const char *fmt, ...) {//TODO
           printfNumber=0;
           getPrintfNumber=false;
           break;
-          //数字位就先储存:接下来处理如%数字
+        case 'x':
+          fmt++;
+          #define MAX 11
+          int numX=va_arg(argp, int);
+          char numberX[MAX]={0};
+          int pointX=MAX-1;
+          if(numX==0){
+            putch('0');
+            count++;
+          }
+          else if(numX<0){
+            putch('-');
+            count++;
+          }
+          while(numX>0&&pointX>= 0){
+              // number[point]=(num % 10)+'0';
+              // num/= 10;
+              switch(numX%16){
+                case  0:numberX[pointX]='0';break;
+                case  1:numberX[pointX]='1';break;
+                case  2:numberX[pointX]='2';break;
+                case  3:numberX[pointX]='3';break;
+                case  4:numberX[pointX]='4';break;
+                case  5:numberX[pointX]='5';break;
+                case  6:numberX[pointX]='6';break;
+                case  7:numberX[pointX]='7';break;
+                case  8:numberX[pointX]='8';break;
+                case  9:numberX[pointX]='9';break;
+                case 10:numberX[pointX]='a';break;
+                case 11:numberX[pointX]='b';break;
+                case 12:numberX[pointX]='c';break;
+                case 13:numberX[pointX]='d';break;
+                case 14:numberX[pointX]='e';break;
+                case 15:numberX[pointX]='f';break;
+              }
+              numX/= 16;
+              pointX--;
+          }
+          int iNowX=pointX+1;
+          if(printfNumber>0&&printfNumber<MAX-pointX-1){
+            iNowX=MAX-1-printfNumber;
+          }else if(printfNumber>0&&printfNumber>MAX-pointX-1){
+            for(int i=0;i<(printfNumber-(MAX-pointX-1));i++){
+              putch('0');
+              count++;
+            }
+          }
+          for(int i=iNowX;i<MAX;i++){
+              if(numberX[i]!='\0'){
+                putch(numberX[i]);
+                count++;
+              }
+          }
+          printfNumber=0;
+          getPrintfNumber=false;
+          break;
         case '0':printfNumber=printfNumber*10+0;getPrintfNumber=true;break;
         case '1':printfNumber=printfNumber*10+1;getPrintfNumber=true;break;
         case '2':printfNumber=printfNumber*10+2;getPrintfNumber=true;break;

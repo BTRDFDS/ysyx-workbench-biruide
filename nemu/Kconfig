@@ -136,6 +136,11 @@ config MTRACE
   bool "Enable memory tracer"
   default y
 
+config WATCH_POINT
+  depends on TRACE
+  bool "Enable watchpoint"
+  default y
+
 config TRACE_START
   depends on TRACE
   int "When tracing is enabled (unit: number of instructions)"

@@ -42,6 +42,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
 #ifndef CONFIG_TARGET_AM
+#ifdef CONFIG_ITRACE
   extern FILE *log_iringbuf_fp;
   #define iringmax 16
   static int iringbufCount=0;
@@ -67,6 +68,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     }
     fflush(log_iringbuf_fp);
   }
+#endif
 #endif
 }
 
@@ -110,10 +112,12 @@ static void execute(uint64_t n) {
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
+#ifdef CONFIG_WATCH_POINT
     if(checkWp()==0){
       nemu_state.state=NEMU_STOP;
       break;
     }
+#endif
   }
 }
 
