@@ -38,12 +38,12 @@ void *malloc(size_t size) {
 // #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
 //   panic("Not implemented");
 // #endif
-  if(!addrInit){
+  if(addrInit==false){
     addr=(void *)ROUNDUP(heap.start, 8);
     addrInit = true;
   }
   size  = (size_t)ROUNDUP(size, 8);
-  char *now = addr;
+  void *now = addr;
   addr += size;
   assert((uintptr_t)heap.start <= (uintptr_t)addr && (uintptr_t)addr < (uintptr_t)heap.end);
   for (uint64_t *p = (uint64_t *)now; p != (uint64_t *)addr; p ++) {
