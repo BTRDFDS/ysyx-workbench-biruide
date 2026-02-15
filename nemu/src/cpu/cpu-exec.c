@@ -44,7 +44,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifndef CONFIG_TARGET_AM
 #ifdef CONFIG_ITRACE
   extern FILE *log_iringbuf_fp;
-  #define iringmax 16
+  #define iringmax 32
   static int iringbufCount=0;
   static char iringbufChar[iringmax][128];
   if(log_iringbuf_fp!=NULL){
