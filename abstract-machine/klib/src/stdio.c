@@ -117,7 +117,7 @@ int printf(const char *fmt, ...) {//TODO
           }
           for(int i=iNowX;i<MAX;i++){
               if(numberX[i]!='\0'){
-                putch(number[i]);
+                putch(numberX[i]);
                 count++;
               }
           }
