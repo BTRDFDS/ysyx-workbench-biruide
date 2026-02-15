@@ -143,7 +143,12 @@ config WATCH_POINT
 
 config SHOW_EXPR
   depends on TRACE
-  bool "Enable watchpoint"
+  bool "Enable shou expr log"
+  default y
+
+config DTRACE
+  depends on TRACE
+  bool "Enable device tracer"
   default y
 
 config TRACE_START
