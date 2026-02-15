@@ -4,8 +4,8 @@
 static uint64_t beginTime;
 void __am_timer_init() {
   uint32_t timeU,timeD;
-  timeD=inl(MMIO_BASE+0x48);
-  timeU=inl(MMIO_BASE+0x4C);
+  timeD=inl(RTC_ADDR);
+  timeU=inl(RTC_ADDR+4);
   beginTime=((uint64_t)timeU << 32) | (uint64_t)timeD;
   // printf("beginTime=%x timeU=%x timeD=%x\n",beginTime,timeU,timeD);
 }
@@ -13,8 +13,8 @@ void __am_timer_init() {
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   uint64_t nowTime;
   uint32_t timeU,timeD;
-  timeD=inl(MMIO_BASE+0x48);
-  timeU=inl(MMIO_BASE+0x4C);
+  timeD=inl(RTC_ADDR);
+  timeU=inl(RTC_ADDR+4);
   nowTime=((uint64_t)timeU << 32) | (uint64_t)timeD;
   uptime->us=nowTime-beginTime;
 }
