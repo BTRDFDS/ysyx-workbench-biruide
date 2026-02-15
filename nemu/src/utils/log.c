@@ -106,7 +106,7 @@ void closeLog(){
 #endif
 #ifdef CONFIG_DTRACE
   if(log_dtrace_fp!=NULL&&log_dtrace_fp!=stdout){
-    if(log_dtrace_file!=NULL){Log("Log of mtrace is written to %s",log_dtrace_file);}
+    if(log_dtrace_file!=NULL){Log("Log of dtrace is written to %s",log_dtrace_file);}
     fclose(log_dtrace_fp);
   }
   if(log_dtrace_file!=NULL){free(log_dtrace_file);}
