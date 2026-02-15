@@ -16,7 +16,8 @@ void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   timeD=inl(MMIO_BASE+0x48);
   timeU=inl(MMIO_BASE+0x4C);
   nowTime=((uint64_t)timeU << 32) | (uint64_t)timeD;
-  uptime->us=nowTime-beginTime;
+  // uptime->us=nowTime-beginTime;
+  uptime->us=nowTime;
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
