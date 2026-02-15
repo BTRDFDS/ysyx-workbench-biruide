@@ -55,7 +55,7 @@ word_t paddr_read(paddr_t addr, int len) {
 
 #ifdef CONFIG_MTRACE
   extern FILE *log_mtraece_fp;
-  fprintf(log_mtraece_fp, "R x%08x %x(%d)\n", addr,len,len);
+  fprintf(log_mtraece_fp, "x%08x x%x\n", addr,len);
 #endif
 
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
@@ -68,7 +68,7 @@ void paddr_write(paddr_t addr, int len, word_t data) {
 
 #ifdef CONFIG_MTRACE
   extern FILE *log_mtraece_fp;
-  fprintf(log_mtraece_fp, "W x%08x %x(%d)=%08x\n", addr,len,len,data);
+  fprintf(log_mtraece_fp, "x%08x x%x=%08x\n", addr,len,data);
 #endif
 
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
