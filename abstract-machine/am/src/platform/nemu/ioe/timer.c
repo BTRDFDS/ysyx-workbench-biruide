@@ -7,7 +7,7 @@ void __am_timer_init() {
   timeD=inl(MMIO_BASE+0x48);
   timeU=inl(MMIO_BASE+0x4C);
   beginTime=((uint64_t)timeU << 32) | (uint64_t)timeD;
-  // beginTime=
+  // printf("beginTime=%x timeU=%x timeD=%x\n",beginTime,timeU,timeD);
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
