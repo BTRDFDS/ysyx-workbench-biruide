@@ -60,6 +60,7 @@ static void storage_test() {
 
 void devscan() {
   printf("heap = [%08x, %08x)\n", heap.start, heap.end);
+  assert(heap.start != 0 && heap.end != 0);
   input_test();
   timer_test();
   video_test();
