@@ -36,7 +36,7 @@ static void *vmem = NULL;
 static uint32_t *vgactl_port_base = NULL;
 
 #ifdef CONFIG_VGA_SHOW_SCREEN
-// #ifndef CONFIG_TARGET_AM
+#ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
 
 static SDL_Renderer *renderer = NULL;
@@ -59,11 +59,12 @@ static void init_screen() {
 }
 
 static inline void update_screen() {
-  // printf("update screen\n");
+  printf("update screen begin\n");
   SDL_UpdateTexture(texture, NULL, vmem, SCREEN_W * sizeof(uint32_t));
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture, NULL, NULL);
   SDL_RenderPresent(renderer);
+  printf("update screen finish\n");
 }
 #else
 static void init_screen() {}
@@ -72,13 +73,13 @@ static inline void update_screen() {
   io_write(AM_GPU_FBDRAW, 0, 0, vmem, screen_width(), screen_height(), true);
 }
 #endif
-// #endif
+#endif
 
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
   if(mmio_read(CONFIG_VGA_CTL_MMIO+4,4)!=0){
-    // printf("update screen\n");
+    printf("update screen\n");
     update_screen();
     mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
   }
