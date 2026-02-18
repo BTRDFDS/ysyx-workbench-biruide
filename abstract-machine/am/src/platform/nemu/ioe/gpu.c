@@ -32,10 +32,10 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   if (ctl->sync) {
     outl(SYNC_ADDR, 1);
+    printf("x:%d,y:%d,w:%d,h:%d %d\n",ctl->x,ctl->y,ctl->w,ctl->h,ctl->sync);
   }else{
     outl(SYNC_ADDR, 0);
   }
-  printf("x:%d,y:%d,w:%d,h:%d %d\n",ctl->x,ctl->y,ctl->w,ctl->h,ctl->sync);
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
   uint32_t *pixels=ctl->pixels;
   for(uint32_t i=0;i<ctl->h;i++){
