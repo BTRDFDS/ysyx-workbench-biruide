@@ -36,7 +36,7 @@ static void *vmem = NULL;
 static uint32_t *vgactl_port_base = NULL;
 
 #ifdef CONFIG_VGA_SHOW_SCREEN
-#ifndef CONFIG_TARGET_AM
+// #ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
 
 static SDL_Renderer *renderer = NULL;
@@ -72,7 +72,7 @@ static inline void update_screen() {
   io_write(AM_GPU_FBDRAW, 0, 0, vmem, screen_width(), screen_height(), true);
 }
 #endif
-#endif
+// #endif
 
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
