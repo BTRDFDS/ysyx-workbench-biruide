@@ -36,11 +36,12 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   //   outl(FB_ADDR+i*4,ctl->pixels[i]);
   // }
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  uint32_t *pixels=ctl->pixels;
+  // uint32_t *pixels=ctl->pixels;
   for(uint32_t i=0;i<ctl->h;i++){
     for(uint32_t j=0;j<ctl->w;j++){
       // outl(FB_ADDR+((i+ctl->y)*initW+(j+ctl->x))*4,pixels[(i)*ctl->w+(j)]);
-      fb[((i+ctl->y)*initW+(j+ctl->x))] = pixels[(i)*ctl->w+(j)];
+      // fb[((i+ctl->y)*initW+(j+ctl->x))] = pixels[(i)*ctl->w+(j)];
+      fb[((i+ctl->y)*initW+(j+ctl->x))] = 0xff0000;
     }
   }
 }
