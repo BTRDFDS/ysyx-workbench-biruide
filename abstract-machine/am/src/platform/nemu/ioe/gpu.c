@@ -26,7 +26,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
     .vmemsz = (vagctl>>16)*(vagctl&0xffff)
     // .vmemsz = 120000
   };
-  printf("width:%d,height:%d vmemsz:%d\n",cfg->width,cfg->height,cfg->vmemsz);
+  // printf("width:%d,height:%d vmemsz:%d\n",cfg->width,cfg->height,cfg->vmemsz);
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
@@ -35,9 +35,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   }else{
     outl(SYNC_ADDR, 0);
   }
-  // for(int i=0;i<(ctl->w)*ctl->h;i++){
-  //   outl(FB_ADDR+i*4,ctl->pixels[i]);
-  // }
+  printf("x:%d,y:%d,w:%d,h:%d\n",ctl->x,ctl->y,ctl->w,ctl->h);
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
   uint32_t *pixels=ctl->pixels;
   for(uint32_t i=0;i<ctl->h;i++){
