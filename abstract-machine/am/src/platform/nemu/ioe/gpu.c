@@ -1,7 +1,7 @@
 #include <am.h>
 #include <nemu.h>
 
-#include <stdio.h>
+// #include <stdio.h>
 
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
@@ -32,7 +32,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   if (ctl->sync) {
     outl(SYNC_ADDR, 1);
-    printf("x:%d,y:%d,w:%d,h:%d %d\n",ctl->x,ctl->y,ctl->w,ctl->h,ctl->sync);
+    // printf("x:%d,y:%d,w:%d,h:%d %d\n",ctl->x,ctl->y,ctl->w,ctl->h,ctl->sync);
   }else{
     outl(SYNC_ADDR, 0);
   }
