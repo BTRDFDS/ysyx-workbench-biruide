@@ -80,6 +80,7 @@ void vga_update_screen() {
   //   io_write(AM_GPU_FBDRAW, 0, 0, 0, 0, 0, false);
   // }
   if(mmio_read(CONFIG_VGA_CTL_MMIO+4,4)!=0){
+    printf("update screen\n");
     update_screen();
     mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
   }
