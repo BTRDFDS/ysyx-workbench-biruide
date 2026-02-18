@@ -15,6 +15,7 @@
 
 #include <common.h>
 #include <device/map.h>
+#include <device/mmio.h>
 
 #define SCREEN_W (MUXDEF(CONFIG_VGA_SIZE_800x600, 800, 400))
 #define SCREEN_H (MUXDEF(CONFIG_VGA_SIZE_800x600, 600, 300))
@@ -54,9 +55,11 @@ static void init_screen() {
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
       SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
   SDL_RenderPresent(renderer);
+    printf("finish init screen\n");
 }
 
 static inline void update_screen() {
+  // printf("update screen\n");
   SDL_UpdateTexture(texture, NULL, vmem, SCREEN_W * sizeof(uint32_t));
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -74,11 +77,11 @@ static inline void update_screen() {
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
-  // if(io_read(AM_GPU_FBDRAW).sync==true){
-  //   update_screen();
-  //   io_write(AM_GPU_FBDRAW, 0, 0, 0, 0, 0, false);
-  // }
-  map_read(CONFIG_VGA_CTL_MMIO+4,4,);
+  if(mmio_read(CONFIG_VGA_CTL_MMIO+4,4)!=0){
+    // printf("update screen\n");
+    update_screen();
+    mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
+  }
 }
 
 void init_vga() {
