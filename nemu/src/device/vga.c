@@ -47,16 +47,49 @@ static void init_screen() {
   char title[128];
   sprintf(title, "%s-NEMU", str(__GUEST_ISA__));
   // SDL_Init(SDL_INIT_VIDEO);
-  if(SDL_Init(SDL_INIT_VIDEO) != 0) {printf("ERROR: SDL_Init failed\n");exit(-1);}else{printf("SDL_Init success\n");}
-  SDL_CreateWindowAndRenderer(
+  // SDL_CreateWindowAndRenderer(
+  //     screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+  //     screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+  //     0, &window, &renderer);
+  // SDL_SetWindowTitle(window, title);
+  // texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+  //     SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
+  // SDL_RenderPresent(renderer);
+    // printf("finish init screen\n");
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    printf("SDL_Init failed: %s\n", SDL_GetError());
+    return;
+  }
+  
+  if (SDL_CreateWindowAndRenderer(
       screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
       screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
-      0, &window, &renderer);
+      0, &window, &renderer) != 0) {
+    printf("SDL_CreateWindowAndRenderer failed: %s\n", SDL_GetError());
+    return;
+  }
+  
+  if (window == NULL) {
+    printf("Failed to create window: %s\n", SDL_GetError());
+    return;
+  }
+  
+  if (renderer == NULL) {
+    printf("Failed to create renderer: %s\n", SDL_GetError());
+    return;
+  }
+  
   SDL_SetWindowTitle(window, title);
+  
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
       SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
+  
+  if (texture == NULL) {
+    printf("Failed to create texture: %s\n", SDL_GetError());
+    return;
+  }
+  
   SDL_RenderPresent(renderer);
-    // printf("finish init screen\n");
 }
 
 static inline void update_screen() {
