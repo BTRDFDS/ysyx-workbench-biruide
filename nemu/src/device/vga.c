@@ -73,7 +73,7 @@ static void init_screen() {
   SDL_SetWindowTitle(window, title);
   
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-      SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
+      SDL_TEXTUREACCESS_STREAMING, screen_width(), screen_height());
   
   if (texture == NULL) {
     printf("Failed to create texture: %s\n", SDL_GetError());
@@ -157,12 +157,12 @@ void vga_update_screen() {
 // #ifdef CONFIG_TARGET_AM
 //   printf("use CONFIG_TARGET_AM\n");
 // #endif
-  }else{
-    const char* sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      printf("[VGA] SDL error: %s\n", sdl_error);
-    }
-    update_screen();
+  // }else{
+  //   const char* sdl_error = SDL_GetError();
+  //   if (sdl_error && sdl_error[0] != '\0') {
+  //     printf("[VGA] SDL error: %s\n", sdl_error);
+  //   }
+  //   update_screen();
   }
 }
 
