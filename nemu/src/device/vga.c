@@ -97,6 +97,18 @@ void vga_update_screen() {
     printf("%8x %8x %8x %8x\n",mmio_read(CONFIG_FB_ADDR,4),mmio_read(CONFIG_FB_ADDR+4,4),mmio_read(CONFIG_FB_ADDR+8,4),mmio_read(CONFIG_FB_ADDR+12,4));
     printf("update screen\n");
     update_screen();
+
+    if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());
+    }else {printf("%dx%d\n", screen_width(), screen_height());}
+
+    if (vmem!=NULL){printf("pixels:0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)  vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
+
+    const char* sdl_error = SDL_GetError();
+    if (sdl_error && sdl_error[0] != '\0') {
+      printf("[VGA] SDL error: %s\n", sdl_error);
+      SDL_ClearError();
+    }
+
     mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
 #ifdef CONFIG_VGA_SHOW_SCREEN
   printf("use CONFIG_VGA_SHOW_SCREEN\n");
@@ -104,14 +116,6 @@ void vga_update_screen() {
 #ifdef CONFIG_TARGET_AM
   printf("use CONFIG_TARGET_AM\n");
 #endif
-  if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());
-  }else {printf("%dx%d\n", screen_width(), screen_height());}
-  if (vmem!=NULL){printf("pixels:0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
-  // exit(0);
-  // j++;
-  // }else if(j!=0){
-  //   j++;
-  // }else{update_screen();}
   }
 }
 
