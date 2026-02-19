@@ -81,14 +81,14 @@ void video_test() {
       // return;
       update();
       printf("update finish\n");
-      return;
+      // return;
       printf("redraw begin\n");
       redraw();
       printf("redraw finish\n");
       last = upt;
       fps ++;
       printf("update\n");
-      return;
+      // return;
     }
     if (upt - fps_last > 1000) {
       // display fps every 1s

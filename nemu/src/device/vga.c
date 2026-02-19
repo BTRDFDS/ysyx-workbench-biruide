@@ -91,6 +91,8 @@ static inline void update_screen() {
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
+  static int j=0;
+  if(j>=2){exit(0);}
   if(mmio_read(CONFIG_VGA_CTL_MMIO+4,4)!=0){
     printf("%8x %8x %8x\n",mmio_read(CONFIG_FB_ADDR,4),mmio_read(CONFIG_FB_ADDR+4,4),mmio_read(CONFIG_FB_ADDR+8,4));
     printf("update screen\n");
@@ -106,6 +108,7 @@ void vga_update_screen() {
   }else {printf("Texture created successfully: %dx%d\n", screen_width(), screen_height());}
   if (vmem!=NULL){printf("First 4 pixels: 0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
   // exit(0);
+  j++;
   }
 }
 
