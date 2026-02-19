@@ -118,8 +118,8 @@ static inline void update_screen() {
   // printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
   if(vmem==NULL){printf("ERROR: vmem==NULL\n");return;}
   uint32_t* test_pixel = (uint32_t*)vmem;
-  for (int i = 0; i < 2; i++) {
-    for (int j = 0; j < 2; j++) {
+  for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < 100; j++) {
       test_pixel[j * SCREEN_W + i] = 0xFFFF0000; // ARGB 格式的红色
     }
   }
