@@ -33,5 +33,6 @@ void picture_test() {
   }
   show(); // 绘制一次
   // 保持程序运行，防止退出
+  printf("into while\n");
   while (1);
 }
