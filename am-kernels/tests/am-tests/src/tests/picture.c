@@ -29,7 +29,7 @@ void picture_test() {
   printf("into picture\n");
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      canvas[i][j] = 0xf0000ff;
+      canvas[i][j] = 0xff0000ff;
     }
   }
   show(); // 绘制一次

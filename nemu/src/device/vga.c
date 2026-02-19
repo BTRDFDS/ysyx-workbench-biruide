@@ -55,7 +55,7 @@ static void init_screen() {
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
       SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
   SDL_RenderPresent(renderer);
-    printf("finish init screen\n");
+    // printf("finish init screen\n");
 }
 
 static inline void update_screen() {
@@ -132,5 +132,4 @@ void init_vga() {
   add_mmio_map("vmem", CONFIG_FB_ADDR, vmem, screen_size(), NULL);
   IFDEF(CONFIG_VGA_SHOW_SCREEN, init_screen());
   IFDEF(CONFIG_VGA_SHOW_SCREEN, memset(vmem, 0, screen_size()));
-  printf("finish init_vga");
 }
