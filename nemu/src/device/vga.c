@@ -115,7 +115,7 @@ static void init_screen() {
 }
 
 static inline void update_screen() {
-  printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
+  // printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
   if (texture == NULL || renderer == NULL) {
     printf("ERROR: SDL resources not initialized\n");
     return;
@@ -133,7 +133,7 @@ static inline void update_screen() {
   // SDL_RenderClear(renderer);
   // SDL_RenderCopy(renderer, texture, NULL, NULL);
   SDL_RenderPresent(renderer);
-  printf("update_screen finish: pitch=%ld\n", screen_width() * sizeof(uint32_t));
+  // printf("update_screen finish: pitch=%ld\n", screen_width() * sizeof(uint32_t));
 }
 #else
 static void init_screen() {}
@@ -151,7 +151,7 @@ void vga_update_screen() {
   // if(j>=10){exit(0);}
   if(mmio_read(CONFIG_VGA_CTL_MMIO+4,4)!=0){
     printf("%8x %8x %8x %8x\n",mmio_read(CONFIG_FB_ADDR,4),mmio_read(CONFIG_FB_ADDR+4,4),mmio_read(CONFIG_FB_ADDR+8,4),mmio_read(CONFIG_FB_ADDR+12,4));
-    printf("update screen\n");
+    // printf("update screen\n");
     update_screen();
 
     if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());
@@ -161,7 +161,7 @@ void vga_update_screen() {
 
     const char* sdl_error = SDL_GetError();
     if (sdl_error && sdl_error[0] != '\0') {
-      printf("[VGA] SDL error: %s\n", sdl_error);
+      // printf("[VGA] SDL error: %s\n", sdl_error);
     }
 
     mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
@@ -171,12 +171,12 @@ void vga_update_screen() {
 // #ifdef CONFIG_TARGET_AM
 //   printf("use CONFIG_TARGET_AM\n");
 // #endif
-  // }else{
-  //   const char* sdl_error = SDL_GetError();
-  //   if (sdl_error && sdl_error[0] != '\0') {
-  //     printf("[VGA] SDL error: %s\n", sdl_error);
-  //   }
-  //   update_screen();
+  }else{
+    const char* sdl_error = SDL_GetError();
+    if (sdl_error && sdl_error[0] != '\0') {
+      // printf("[VGA] SDL error: %s\n", sdl_error);
+    }
+    update_screen();
   }
 }
 
