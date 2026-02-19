@@ -59,12 +59,19 @@ static void init_screen() {
 }
 
 static inline void update_screen() {
-  printf("update screen begin\n");
+  printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
+  if (texture == NULL || renderer == NULL) {
+    printf("ERROR: SDL resources not initialized\n");
+    return;
+  }
+  if (SDL_UpdateTexture(texture, NULL, vmem, screen_width() * sizeof(uint32_t)) != 0) {
+    printf("ERROR: SDL_UpdateTexture failed: %s\n", SDL_GetError());
+  }
   SDL_UpdateTexture(texture, NULL, vmem, screen_width() * sizeof(uint32_t));
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture, NULL, NULL);
   SDL_RenderPresent(renderer);
-  printf("update screen finish\n");
+  printf("update_screen finish: pitch=%ld\n", screen_width() * sizeof(uint32_t));
 }
 #else
 static void init_screen() {}
