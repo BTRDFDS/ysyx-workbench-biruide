@@ -54,6 +54,7 @@ static void init_screen() {
     const char* sdl_error1 = SDL_GetError();
     if (sdl_error1 && sdl_error1[0] != '\0') {
       printf("1[VGA] SDL error: %s\n", sdl_error1);
+      SDL_ClearError();
     }
   
   if (SDL_CreateWindowAndRenderer(
@@ -66,6 +67,7 @@ static void init_screen() {
     const char* sdl_error2 = SDL_GetError();
     if (sdl_error2 && sdl_error2[0] != '\0') {
       printf("2[VGA] SDL error: %s\n", sdl_error2);
+      SDL_ClearError();
     }
   
   if (window == NULL) {printf("window == NULL\n");return;}
@@ -76,6 +78,7 @@ static void init_screen() {
     const char* sdl_error3 = SDL_GetError();
     if (sdl_error3 && sdl_error3[0] != '\0') {
       printf("3[VGA] SDL error: %s\n", sdl_error3);
+      SDL_ClearError();
     }
   
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -84,6 +87,7 @@ static void init_screen() {
     const char* sdl_error4 = SDL_GetError();
     if (sdl_error4 && sdl_error4[0] != '\0') {
       printf("4[VGA] SDL error: %s\n", sdl_error4);
+      SDL_ClearError();
     }
   
   if (texture == NULL) {printf("texture==NULL\n");return;}
@@ -99,12 +103,14 @@ static void init_screen() {
     const char* sdl_error5 = SDL_GetError();
     if (sdl_error5 && sdl_error5[0] != '\0') {
       printf("5[VGA] SDL error: %s\n", sdl_error5);
+      SDL_ClearError();
     }
   SDL_RenderPresent(renderer);
     // printf("finish init screen\n");
     const char* sdl_error6 = SDL_GetError();
     if (sdl_error6 && sdl_error6[0] != '\0') {
       printf("6[VGA] SDL error: %s\n", sdl_error6);
+      SDL_ClearError();
     }
 }
 
