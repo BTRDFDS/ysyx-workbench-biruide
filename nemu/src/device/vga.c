@@ -56,7 +56,6 @@ static void init_screen() {
       printf("1[VGA] SDL error: %s\n", sdl_error1);
       SDL_ClearError();
     }
-      SDL_ClearError();
   
   if (SDL_CreateWindowAndRenderer(
       screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
