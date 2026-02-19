@@ -51,9 +51,9 @@ static void init_screen() {
     printf("SDL_Init failed: %s\n", SDL_GetError());
     return;
   }
-    const char* sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      printf("1[VGA] SDL error: %s\n", sdl_error);
+    const char* sdl_error1 = SDL_GetError();
+    if (sdl_error1 && sdl_error1[0] != '\0') {
+      printf("1[VGA] SDL error: %s\n", sdl_error1);
     }
   
   if (SDL_CreateWindowAndRenderer(
@@ -63,9 +63,9 @@ static void init_screen() {
     printf("SDL_CreateWindowAndRenderer failed: %s\n", SDL_GetError());
     return;
   }
-    sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      printf("2[VGA] SDL error: %s\n", sdl_error);
+    const char* sdl_error2 = SDL_GetError();
+    if (sdl_error2 && sdl_error2[0] != '\0') {
+      printf("2[VGA] SDL error: %s\n", sdl_error2);
     }
   
   if (window == NULL) {printf("window == NULL\n");return;}
@@ -73,17 +73,17 @@ static void init_screen() {
   
   SDL_SetWindowTitle(window, title);
   
-    sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      printf("3[VGA] SDL error: %s\n", sdl_error);
+    const char* sdl_error3 = SDL_GetError();
+    if (sdl_error3 && sdl_error3[0] != '\0') {
+      printf("3[VGA] SDL error: %s\n", sdl_error3);
     }
   
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
       SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
   
-    sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      printf("4[VGA] SDL error: %s\n", sdl_error);
+    const char* sdl_error4 = SDL_GetError();
+    if (sdl_error4 && sdl_error4[0] != '\0') {
+      printf("4[VGA] SDL error: %s\n", sdl_error4);
     }
   
   if (texture == NULL) {printf("texture==NULL\n");return;}
@@ -96,15 +96,15 @@ static void init_screen() {
   // SDL_SetWindowTitle(window, title);
   // texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
   //     SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
-    sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      printf("5[VGA] SDL error: %s\n", sdl_error);
+    const char* sdl_error5 = SDL_GetError();
+    if (sdl_error5 && sdl_error5[0] != '\0') {
+      printf("5[VGA] SDL error: %s\n", sdl_error5);
     }
   SDL_RenderPresent(renderer);
     // printf("finish init screen\n");
-    sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      printf("6[VGA] SDL error: %s\n", sdl_error);
+    const char* sdl_error6 = SDL_GetError();
+    if (sdl_error6 && sdl_error6[0] != '\0') {
+      printf("6[VGA] SDL error: %s\n", sdl_error6);
     }
 }
 
