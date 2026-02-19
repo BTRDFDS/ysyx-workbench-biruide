@@ -58,8 +58,8 @@ void update() {
       int x1 = x + dx[d], y1 = y + dy[d];
       if (x1 >= 0 && x1 < N && y1 >= 0 && y1 < N && !used[x1][y1]) {
         x = x1; y = y1;
-        used[x][y] = 1;return;
-        canvas[x][y] = p(init + step / 2);
+        used[x][y] = 1;
+        canvas[x][y] = p(init + step / 2);return;
         break;
       }
       d = (d + 1) % 4;
