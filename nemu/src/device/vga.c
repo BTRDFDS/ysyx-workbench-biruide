@@ -150,7 +150,7 @@ void vga_update_screen() {
   // static int j=0;
   // if(j>=10){exit(0);}
   if(mmio_read(CONFIG_VGA_CTL_MMIO+4,4)!=0){
-    printf("%8x %8x %8x %8x\n",mmio_read(CONFIG_FB_ADDR,4),mmio_read(CONFIG_FB_ADDR+4,4),mmio_read(CONFIG_FB_ADDR+8,4),mmio_read(CONFIG_FB_ADDR+12,4));
+    // printf("%8x %8x %8x %8x\n",mmio_read(CONFIG_FB_ADDR,4),mmio_read(CONFIG_FB_ADDR+4,4),mmio_read(CONFIG_FB_ADDR+8,4),mmio_read(CONFIG_FB_ADDR+12,4));
     // printf("update screen\n");
     update_screen();
 
