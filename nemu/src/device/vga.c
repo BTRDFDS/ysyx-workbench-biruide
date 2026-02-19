@@ -81,8 +81,8 @@ static void init_screen() {
       SDL_ClearError();
     }
   
-  texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888,
-      SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
+  texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+      SDL_TEXTUREACCESS_STREAMING, screen_width(), screen_height());
   
     const char* sdl_error4 = SDL_GetError();
     if (sdl_error4 && sdl_error4[0] != '\0') {
