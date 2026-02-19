@@ -49,10 +49,10 @@ void update() {
     for (int j = 0; j < N; j ++) {
       used[i][j] = 0;
     }
-return;
+
   int init = tsc * 1;
   canvas[0][0] = p(init); used[0][0] = 1;
-  int x = 0, y = 0, d = 0;
+  int x = 0, y = 0, d = 0;return;
   for (int step = 1; step < N * N; step ++) {
     for (int t = 0; t < 4; t ++) {
       int x1 = x + dx[d], y1 = y + dy[d];
