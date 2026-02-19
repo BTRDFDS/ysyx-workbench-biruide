@@ -90,6 +90,10 @@ static void init_screen() {
   //     SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
   SDL_RenderPresent(renderer);
     // printf("finish init screen\n");
+    const char* sdl_error = SDL_GetError();
+    if (sdl_error && sdl_error[0] != '\0') {
+      printf("[VGA] SDL error: %s\n", sdl_error);
+    }
 }
 
 static inline void update_screen() {
@@ -112,10 +116,6 @@ static inline void update_screen() {
   // SDL_RenderCopy(renderer, texture, NULL, NULL);
   SDL_RenderPresent(renderer);
   printf("update_screen finish: pitch=%ld\n", screen_width() * sizeof(uint32_t));
-    const char* sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      printf("[VGA] SDL error: %s\n", sdl_error);
-    }
 }
 #else
 static void init_screen() {}
