@@ -48,12 +48,12 @@ static void init_screen() {
   sprintf(title, "%s-NEMU", str(__GUEST_ISA__));
   SDL_Init(SDL_INIT_VIDEO);
   SDL_CreateWindowAndRenderer(
-      screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
-      screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+      SCREEN_W * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+      SCREEN_H * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
       0, &window, &renderer);
   SDL_SetWindowTitle(window, title);
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-      SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
+      SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
   SDL_RenderPresent(renderer);
     // printf("finish init screen\n");
     const char* sdl_error = SDL_GetError();
@@ -69,7 +69,7 @@ static inline void update_screen() {
     printf("ERROR: SDL resources not initialized\n");
     return;
   }
-  if (SDL_UpdateTexture(texture, NULL, vmem, screen_width() * sizeof(uint32_t)) != 0) {
+  if (SDL_UpdateTexture(texture, NULL, vmem, SCREEN_W * sizeof(uint32_t)) != 0) {
     printf("ERROR: SDL_UpdateTexture failed: %s\n", SDL_GetError());
   }
   if( SDL_RenderClear(renderer) != 0) {
