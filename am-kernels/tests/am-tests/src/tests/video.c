@@ -44,12 +44,12 @@ void update() {
   static int dy[4] = {1, 0, -1, 0};
 
   tsc ++;
-return;
+
   for (int i = 0; i < N; i ++)
     for (int j = 0; j < N; j ++) {
       used[i][j] = 0;
     }
-
+return;
   int init = tsc * 1;
   canvas[0][0] = p(init); used[0][0] = 1;
   int x = 0, y = 0, d = 0;
