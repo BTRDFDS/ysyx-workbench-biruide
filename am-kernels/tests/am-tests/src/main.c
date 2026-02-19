@@ -30,6 +30,7 @@ int main(const char *args) {
     CASE('v', video_test, IOE);
     CASE('a', audio_test, IOE);
     CASE('p', vm_test, CTE(vm_handler), VME(simple_pgalloc, simple_pgfree));
+    CASE('q', picture_test, IOE);
 #ifdef UIN_NEMU
     CASE('s', screensaver, IOE);
     CASE('r', riscvEMU,IOE)
