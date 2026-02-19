@@ -82,8 +82,8 @@ static void init_screen() {
     }
   
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-      SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
-  
+      SDL_TEXTUREACCESS_STREAMING, screen_width(), screen_height());
+  //SDL_TEXTUREACCESS_STATIC
     const char* sdl_error4 = SDL_GetError();
     if (sdl_error4 && sdl_error4[0] != '\0') {
       printf("4[VGA] SDL error: %s\n", sdl_error4);
@@ -120,14 +120,14 @@ static inline void update_screen() {
   uint32_t* test_pixel = (uint32_t*)vmem;
   for (int i = 0; i < 100; i++) {
     for (int j = 0; j < 100; j++) {
-      test_pixel[j * SCREEN_W + i] = 0x7f982Cf1; // ARGB 格式的红色
+      test_pixel[j * screen_width() + i] = 0x7f982Cf1; // ARGB 格式的红色
     }
   }
   if (texture == NULL || renderer == NULL) {
     printf("ERROR: SDL resources not initialized\n");
     return;
   }
-  if (SDL_UpdateTexture(texture, NULL, vmem, SCREEN_W * sizeof(uint32_t)) != 0) {
+  if (SDL_UpdateTexture(texture, NULL, vmem, screen_width() * sizeof(uint32_t)) != 0) {
     printf("ERROR: SDL_UpdateTexture failed: %s\n", SDL_GetError());
   }
   if( SDL_RenderClear(renderer) != 0) {
