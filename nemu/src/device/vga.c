@@ -72,7 +72,7 @@ static void init_screen() {
   
   SDL_SetWindowTitle(window, title);
   
-  texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB888,
+  texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
       SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
   
   if (texture == NULL) {
