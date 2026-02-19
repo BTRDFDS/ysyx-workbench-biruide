@@ -96,6 +96,15 @@ void vga_update_screen() {
 #ifdef CONFIG_TARGET_AM
   printf("use CONFIG_TARGET_AM\n");
 #endif
+  if (texture == NULL) {
+    printf("ERROR: Failed to create texture: %s\n", SDL_GetError());
+  } else {
+    printf("Texture created successfully: %dx%d\n", screen_width(), screen_height());
+  }
+  if (vmem != NULL) {
+    printf("First 4 pixels: 0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);
+  }
+
   }
 }
 
