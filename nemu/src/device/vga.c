@@ -47,7 +47,7 @@ static void init_screen() {
   char title[128];
   sprintf(title, "%s-NEMU", str(__GUEST_ISA__));
   // SDL_Init(SDL_INIT_VIDEO);
-  if(SDL_Init(SDL_INIT_VIDEO) != 0) {printf("ERROR: SDL_Init failed\n");exit(-1);}
+  if(SDL_Init(SDL_INIT_VIDEO) != 0) {printf("ERROR: SDL_Init failed\n");exit(-1);}else{printf("SDL_Init success\n");}
   SDL_CreateWindowAndRenderer(
       screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
       screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
