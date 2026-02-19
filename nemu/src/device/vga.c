@@ -65,12 +65,8 @@ static void init_screen() {
   //   return;
   // }
 
-    // 先手动创建窗口
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                              screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
-                              screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
-                              SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    // 【核心修改】强制创建软件渲染器，彻底解决WSL2硬件渲染不兼容
+  
+    window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 
     const char* sdl_error2 = SDL_GetError();
@@ -124,7 +120,7 @@ static void init_screen() {
 }
 
 static inline void update_screen() {
-  printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
+  // printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
   if(vmem==NULL){printf("ERROR: vmem==NULL\n");return;}
   uint32_t* test_pixel = (uint32_t*)vmem;
   for (int i = 0; i < 100; i++) {
