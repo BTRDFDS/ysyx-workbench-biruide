@@ -26,6 +26,7 @@ void show() {
   io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
 }
 void picture_test() {
+  printf("into picture\n");
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       canvas[i][j] = 0xf000ff;
