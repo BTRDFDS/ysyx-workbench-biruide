@@ -120,7 +120,7 @@ static inline void update_screen() {
   uint32_t* test_pixel = (uint32_t*)vmem;
   for (int i = 0; i < 100; i++) {
     for (int j = 0; j < 100; j++) {
-      test_pixel[j * SCREEN_W + i] = 0xFFFF0000; // ARGB 格式的红色
+      test_pixel[j * SCREEN_W + i] = 0x7f982Cf1; // ARGB 格式的红色
     }
   }
   if (texture == NULL || renderer == NULL) {
