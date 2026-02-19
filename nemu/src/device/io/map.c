@@ -77,13 +77,8 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
     #include <execinfo.h>
     fprintf(log_dtrace_fp,"map %s x%x(%x)<=%x",map->name,addr,len,data);
     void *callstack[64];
-    int i, frames = backtrace(callstack, 64);
-    char **symbols = backtrace_symbols(callstack, frames);
-    fprintf(log_dtrace_fp, "\nCall stack:\n");
-    for (i = 0; i < frames; i++) {
-        fprintf(log_dtrace_fp, "#%d %s\n", i, symbols[i]);
-    }
-    free(symbols);
+    int frames = backtrace(callstack, 64);
+    backtrace_symbols_fd(callstack, frames, fileno(log_dtrace_fp));
 #endif
 
   assert(len >= 1 && len <= 8);
