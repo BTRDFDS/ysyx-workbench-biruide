@@ -85,7 +85,7 @@ void video_test() {
       printf("%d: FPS = %d\n", upt, fps);
       fps_last = upt;
       fps = 0;
-    }
     return;
+    }
   }
 }
