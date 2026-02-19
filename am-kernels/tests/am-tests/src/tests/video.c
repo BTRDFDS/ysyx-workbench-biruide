@@ -73,22 +73,23 @@ void video_test() {
   int fps = 0;
 
   // while (1) {
-  for(int i=0;i<2;i++){
+  for(int i=0;i<1;i++){
     unsigned long upt = io_read(AM_TIMER_UPTIME).us / 1000;
     if (upt - last > 1000 / FPS) {
-      printf("update\n");
       update();
       redraw();
       last = upt;
       fps ++;
-    return;
+      printf("update\n");
+      return;
     }
     if (upt - fps_last > 1000) {
       // display fps every 1s
       printf("%d: FPS = %d\n", upt, fps);
       fps_last = upt;
       fps = 0;
-    return;
+      printf("fps\n");
+      return;
     }
   }
 }
