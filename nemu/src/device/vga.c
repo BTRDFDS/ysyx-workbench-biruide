@@ -116,6 +116,13 @@ static void init_screen() {
 
 static inline void update_screen() {
   // printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
+  if(vmem==NULL){printf("ERROR: vmem==NULL\n");return;}
+  uint32_t* test_pixel = (uint32_t*)vmem;
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+      test_pixel[j * SCREEN_W + i] = 0xFFFF0000; // ARGB 格式的红色
+    }
+  }
   if (texture == NULL || renderer == NULL) {
     printf("ERROR: SDL resources not initialized\n");
     return;
