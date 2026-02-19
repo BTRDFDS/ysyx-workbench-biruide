@@ -86,5 +86,6 @@ void video_test() {
       fps_last = upt;
       fps = 0;
     }
+    return;
   }
 }
