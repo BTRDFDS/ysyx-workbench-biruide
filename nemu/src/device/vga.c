@@ -82,7 +82,7 @@ static void init_screen() {
     }
   
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-      SDL_TEXTUREACCESS_STREAMING, screen_width(), screen_height());
+      SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
   
     const char* sdl_error4 = SDL_GetError();
     if (sdl_error4 && sdl_error4[0] != '\0') {
@@ -115,7 +115,7 @@ static void init_screen() {
 }
 
 static inline void update_screen() {
-  // printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
+  printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
   if(vmem==NULL){printf("ERROR: vmem==NULL\n");return;}
   uint32_t* test_pixel = (uint32_t*)vmem;
   for (int i = 0; i < 100; i++) {
