@@ -58,9 +58,9 @@ void add_mmio_map(const char *name, paddr_t addr, void *space, uint32_t len, io_
 
 /* bus interface */
 word_t mmio_read(paddr_t addr, int len) {
-#ifdef CONFIG_DTRACE
-    fprintf(log_dtrace_fp,"mmio x%x(%x) ",addr,len);
-#endif
+// #ifdef CONFIG_DTRACE
+//     fprintf(log_dtrace_fp,"mmio x%x(%x) ",addr,len);
+// #endif
   word_t data = map_read(addr, len, fetch_mmio_map(addr));
 // #ifdef CONFIG_DTRACE
 //     fprintf(log_dtrace_fp,"==%x\n",data);
@@ -69,9 +69,9 @@ word_t mmio_read(paddr_t addr, int len) {
 }
 
 void mmio_write(paddr_t addr, int len, word_t data) {
-#ifdef CONFIG_DTRACE
-    fprintf(log_dtrace_fp,"mmio x%x(%x)<=%x ",addr,len,data);
-#endif
+// #ifdef CONFIG_DTRACE
+//     fprintf(log_dtrace_fp,"mmio x%x(%x)<=%x ",addr,len,data);
+// #endif
   map_write(addr, len, data, fetch_mmio_map(addr));
 // #ifdef CONFIG_DTRACE
 //     fprintf(log_dtrace_fp," s\n");
