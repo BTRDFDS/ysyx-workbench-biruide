@@ -61,6 +61,11 @@ static void init_screen() {
       printf("[VGA] SDL error: %s\n", sdl_error);
       SDL_ClearError();
     }
+    sdl_error = SDL_GetError();
+    if (sdl_error && sdl_error[0] != '\0') {
+      printf("[VGA] SDL error: %s\n", sdl_error);
+      SDL_ClearError();
+    }
 }
 
 static inline void update_screen() {
