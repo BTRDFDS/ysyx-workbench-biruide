@@ -157,6 +157,8 @@ void vga_update_screen() {
 // #ifdef CONFIG_TARGET_AM
 //   printf("use CONFIG_TARGET_AM\n");
 // #endif
+  }else{
+    update_screen();
   }
 }
 
