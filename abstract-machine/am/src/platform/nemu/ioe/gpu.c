@@ -14,8 +14,8 @@ void __am_gpu_init() {
   initW = w;
   initH = h;
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  // for (i = 0; i < w * h; i ++) fb[i] = i;
-  for (i = 0; i < w * h; i ++) fb[i] = 0x2f02a67c;
+  for (i = 0; i < w * h; i ++) fb[i] = i;
+  // for (i = 0; i < w * h; i ++) fb[i] = 0x2f02a67c;
   outl(SYNC_ADDR, 1);
 }
 
@@ -34,8 +34,8 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   if (ctl->sync) {
     outl(SYNC_ADDR, 1);
     // printf("x:%d,y:%d,w:%d,h:%d %d\n",ctl->x,ctl->y,ctl->w,ctl->h,ctl->sync);
-  }else{
-    outl(SYNC_ADDR, 0);
+  // }else{
+  //   outl(SYNC_ADDR, 0);
   }
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
   uint32_t *pixels=ctl->pixels;

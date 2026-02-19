@@ -39,13 +39,13 @@ static uint32_t p(int tsc) {
 }
 
 void update() {
-  printf("into update\n");
+  // printf("into update\n");
   static int tsc = 0;
   static int dx[4] = {0, 1, 0, -1};
   static int dy[4] = {1, 0, -1, 0};
 
   tsc ++;
-  printf("first for\n");
+  // printf("first for\n");
   for (int i = 0; i < N; i ++)
     for (int j = 0; j < N; j ++) {
       used[i][j] = 0;
@@ -55,7 +55,7 @@ void update() {
   int init = tsc * 1;
   canvas[0][0] = p(init); used[0][0] = 1;
   int x = 0, y = 0, d = 0;
-  printf("second for\n");
+  // printf("second for\n");
   for (int step = 1; step < N * N; step ++) {
     for (int t = 0; t < 4; t ++) {
       int x1 = x + dx[d], y1 = y + dy[d];
@@ -75,22 +75,22 @@ void video_test() {
   unsigned long fps_last = 0;
   int fps = 0;
 
-  // while (1) {
-  for(int i=0;i<100;i++){
+  while (1) {
+  // for(int i=0;i<100;i++){
     unsigned long upt = io_read(AM_TIMER_UPTIME).us / 1000;
     if (upt - last > 1000 / FPS) {
       // printf("i==%d\n",i);
-      printf("update begin\n");
+      // printf("update begin\n");
       // return;
       update();
-      printf("update finish\n");
+      // printf("update finish\n");
       // return;
-      printf("redraw begin\n");
+      // printf("redraw begin\n");
       redraw();
-      printf("redraw finish\n");
+      // printf("redraw finish\n");
       last = upt;
       fps ++;
-      printf("update\n");
+      // printf("update\n");
       // return;
     }
     if (upt - fps_last > 1000) {
@@ -98,7 +98,7 @@ void video_test() {
       printf("%d: FPS = %d\n", upt, fps);
       fps_last = upt;
       fps = 0;
-      printf("fps\n");
+      // printf("fps\n");
       // return;
     }
   }

@@ -46,20 +46,88 @@ static void init_screen() {
   SDL_Window *window = NULL;
   char title[128];
   sprintf(title, "%s-NEMU", str(__GUEST_ISA__));
-  SDL_Init(SDL_INIT_VIDEO);
-  SDL_CreateWindowAndRenderer(
-      screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
-      screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
-      0, &window, &renderer);
+  
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    printf("SDL_Init failed: %s\n", SDL_GetError());
+    return;
+  }
+    const char* sdl_error1 = SDL_GetError();
+    if (sdl_error1 && sdl_error1[0] != '\0') {
+      printf("1[VGA] SDL error: %s\n", sdl_error1);
+      SDL_ClearError();
+    }
+  
+  // if (SDL_CreateWindowAndRenderer(
+  //     screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+  //     screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+  //     SDL_WINDOW_SHOWN, &window, &renderer) != 0) {
+  //   printf("SDL_CreateWindowAndRenderer failed: %s\n", SDL_GetError());
+  //   return;
+  // }
+
+  
+    window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+
+    const char* sdl_error2 = SDL_GetError();
+    if (sdl_error2 && sdl_error2[0] != '\0') {
+      printf("2[VGA] SDL error: %s\n", sdl_error2);
+      SDL_ClearError();
+    }
+  
+  if (window == NULL) {printf("window == NULL\n");return;}
+  if (renderer == NULL) {printf("renderer == NULL\n");return;}
+  
   SDL_SetWindowTitle(window, title);
+  
+    const char* sdl_error3 = SDL_GetError();
+    if (sdl_error3 && sdl_error3[0] != '\0') {
+      printf("3[VGA] SDL error: %s\n", sdl_error3);
+      SDL_ClearError();
+    }
+  
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-      SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
+      SDL_TEXTUREACCESS_STREAMING, screen_width(), screen_height());
+  //SDL_TEXTUREACCESS_STATIC
+    const char* sdl_error4 = SDL_GetError();
+    if (sdl_error4 && sdl_error4[0] != '\0') {
+      printf("4[VGA] SDL error: %s\n", sdl_error4);
+      SDL_ClearError();
+    }
+  
+  if (texture == NULL) {printf("texture==NULL\n");return;}
+
+  // SDL_Init(SDL_INIT_VIDEO);
+  // SDL_CreateWindowAndRenderer(
+  //     SCREEN_W * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+  //     SCREEN_H * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+  //     0, &window, &renderer);
+  // SDL_SetWindowTitle(window, title);
+  // texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+  //     SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
+    const char* sdl_error5 = SDL_GetError();
+    if (sdl_error5 && sdl_error5[0] != '\0') {
+      printf("5[VGA] SDL error: %s\n", sdl_error5);
+      SDL_ClearError();
+    }
   SDL_RenderPresent(renderer);
-    printf("finish init screen\n");
+    // printf("finish init screen\n");
+    const char* sdl_error6 = SDL_GetError();
+    if (sdl_error6 && sdl_error6[0] != '\0') {
+      printf("6[VGA] SDL error: %s\n", sdl_error6);
+      SDL_ClearError();
+    }
 }
 
 static inline void update_screen() {
-  printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
+  // printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
+  if(vmem==NULL){printf("ERROR: vmem==NULL\n");return;}
+  // uint32_t* test_pixel = (uint32_t*)vmem;
+  // for (int i = 0; i < 100; i++) {
+  //   for (int j = 0; j < 100; j++) {
+  //     test_pixel[j * screen_width() + i] = 0x7f982Cf1; // ARGB 格式的红色
+  //   }
+  // }
   if (texture == NULL || renderer == NULL) {
     printf("ERROR: SDL resources not initialized\n");
     return;
@@ -77,7 +145,7 @@ static inline void update_screen() {
   // SDL_RenderClear(renderer);
   // SDL_RenderCopy(renderer, texture, NULL, NULL);
   SDL_RenderPresent(renderer);
-  printf("update_screen finish: pitch=%ld\n", screen_width() * sizeof(uint32_t));
+  // printf("update_screen finish: pitch=%ld\n", screen_width() * sizeof(uint32_t));
 }
 #else
 static void init_screen() {}
@@ -91,26 +159,36 @@ static inline void update_screen() {
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
-  static int j=0;
-  if(j>=2){exit(0);}
+  // static int j=0;
+  // if(j>=10){exit(0);}
   if(mmio_read(CONFIG_VGA_CTL_MMIO+4,4)!=0){
-    printf("%8x %8x %8x\n",mmio_read(CONFIG_FB_ADDR,4),mmio_read(CONFIG_FB_ADDR+4,4),mmio_read(CONFIG_FB_ADDR+8,4));
-    printf("update screen\n");
+    // printf("%8x %8x %8x %8x\n",mmio_read(CONFIG_FB_ADDR,4),mmio_read(CONFIG_FB_ADDR+4,4),mmio_read(CONFIG_FB_ADDR+8,4),mmio_read(CONFIG_FB_ADDR+12,4));
+    // printf("update screen\n");
     update_screen();
+
+    if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());}
+    // else {printf("%dx%d\n", screen_width(), screen_height());}
+
+    // if (vmem!=NULL){printf("pixels:0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)  vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
+
+    const char* sdl_error = SDL_GetError();
+    if (sdl_error && sdl_error[0] != '\0') {
+      // printf("[VGA] SDL error: %s\n", sdl_error);
+    }
+
     mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
-#ifdef CONFIG_VGA_SHOW_SCREEN
-  printf("use CONFIG_VGA_SHOW_SCREEN\n");
-#endif
-#ifdef CONFIG_TARGET_AM
-  printf("use CONFIG_TARGET_AM\n");
-#endif
-  if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());
-  }else {printf("Texture created successfully: %dx%d\n", screen_width(), screen_height());}
-  if (vmem!=NULL){printf("First 4 pixels: 0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
-  // exit(0);
-  j++;
-  }else if(j!=0){
-    j++;
+// #ifdef CONFIG_VGA_SHOW_SCREEN
+//   printf("use CONFIG_VGA_SHOW_SCREEN\n");
+// #endif
+// #ifdef CONFIG_TARGET_AM
+//   printf("use CONFIG_TARGET_AM\n");
+// #endif
+  // }else{
+  //   const char* sdl_error = SDL_GetError();
+  //   if (sdl_error && sdl_error[0] != '\0') {
+  //     // printf("[VGA] SDL error: %s\n", sdl_error);
+  //   }
+  //   update_screen();
   }
 }
 
