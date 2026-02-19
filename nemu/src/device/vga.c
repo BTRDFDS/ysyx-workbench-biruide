@@ -60,13 +60,11 @@ static void init_screen() {
     printf("E1:");
     if (sdl_error && sdl_error[0] != '\0') {
       printf("[VGA] SDL error: %s\n", sdl_error);
-      SDL_ClearError();
     }
     sdl_error = SDL_GetError();
     printf("E2:\n");
     if (sdl_error && sdl_error[0] != '\0') {
       printf("[VGA] SDL error: %s\n", sdl_error);
-      SDL_ClearError();
     }
 }
 
@@ -118,7 +116,6 @@ void vga_update_screen() {
     const char* sdl_error = SDL_GetError();
     if (sdl_error && sdl_error[0] != '\0') {
       printf("[VGA] SDL error: %s\n", sdl_error);
-      SDL_ClearError();
     }
 
     mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
