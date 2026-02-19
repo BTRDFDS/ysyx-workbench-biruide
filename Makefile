@@ -75,3 +75,6 @@ gitLogAU:
 	git log --graph --date-order --pretty=format:"%h%x09(%ad) %s" --date=iso --decorate --all | grep -v "LAPTOP-3IAF75LK" > Log/gitLogAU.txt
 # 	git log --graph --date-order --pretty=reference --date=iso --decorate --all | grep -v "LAPTOP-3IAF75LK" > Log/gitLogAU.txt
 log:Log gitLog gitLogU gitLogA gitLogAU
+
+help:
+	@echo "make run ARCH=riscv32-nemu -B CFLAGS_BUILD+="-DAUTO_RUN" mainargs=k"

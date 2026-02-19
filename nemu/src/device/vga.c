@@ -67,7 +67,7 @@ static void init_screen() {
 
   
     window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 
     const char* sdl_error2 = SDL_GetError();
     if (sdl_error2 && sdl_error2[0] != '\0') {
