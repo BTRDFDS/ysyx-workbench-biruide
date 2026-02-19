@@ -49,7 +49,7 @@ void update() {
   for (int i = 0; i < N; i ++)
     for (int j = 0; j < N; j ++) {
       used[i][j] = 0;
-      printf("i=%d,j=%d\n",i,j);
+      // printf("i=%d,j=%d\n",i,j);
     }
 
   int init = tsc * 1;
