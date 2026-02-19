@@ -109,12 +109,12 @@ void vga_update_screen() {
     }
 
     mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
-#ifdef CONFIG_VGA_SHOW_SCREEN
-  printf("use CONFIG_VGA_SHOW_SCREEN\n");
-#endif
-#ifdef CONFIG_TARGET_AM
-  printf("use CONFIG_TARGET_AM\n");
-#endif
+// #ifdef CONFIG_VGA_SHOW_SCREEN
+//   printf("use CONFIG_VGA_SHOW_SCREEN\n");
+// #endif
+// #ifdef CONFIG_TARGET_AM
+//   printf("use CONFIG_TARGET_AM\n");
+// #endif
   }
 }
 
