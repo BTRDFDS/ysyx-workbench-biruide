@@ -171,12 +171,12 @@ void vga_update_screen() {
 // #ifdef CONFIG_TARGET_AM
 //   printf("use CONFIG_TARGET_AM\n");
 // #endif
-  }else{
-    const char* sdl_error = SDL_GetError();
-    if (sdl_error && sdl_error[0] != '\0') {
-      // printf("[VGA] SDL error: %s\n", sdl_error);
-    }
-    update_screen();
+  // }else{
+  //   const char* sdl_error = SDL_GetError();
+  //   if (sdl_error && sdl_error[0] != '\0') {
+  //     // printf("[VGA] SDL error: %s\n", sdl_error);
+  //   }
+  //   update_screen();
   }
 }
 
