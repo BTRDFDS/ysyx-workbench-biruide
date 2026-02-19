@@ -74,24 +74,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
 void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
 
 #ifdef CONFIG_DTRACE
-    #include <execinfo.h>
     fprintf(log_dtrace_fp,"map %s x%x(%x)<=%x",map->name,addr,len,data);
-    void *callstack[64];
-    int frames = backtrace(callstack, 64);
-    char **symbols = backtrace_symbols(callstack, frames);
-    for (int i = 0; i < frames; i++) {
-        char *func_name = symbols[i];
-        // 查找函数名（最后一个括号内的内容）
-        char *start = strchr(func_name, '(');
-        if (start) {
-            char *end = strchr(start, '+');
-            if (end) {
-                *end = '\0'; // 截断字符串
-                fprintf(log_dtrace_fp, "#%d %s\n", i, start + 1);
-            }
-        }
-    }
-    free(symbols);
 #endif
 
   assert(len >= 1 && len <= 8);

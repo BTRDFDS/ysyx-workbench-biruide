@@ -112,6 +112,7 @@ void vga_update_screen() {
   }
 
   }
+  exit(0);
 }
 
 void init_vga() {
