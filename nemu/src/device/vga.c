@@ -88,9 +88,13 @@ static void init_screen() {
   // SDL_SetWindowTitle(window, title);
   // texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
   //     SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
+    const char* sdl_error = SDL_GetError();
+    if (sdl_error && sdl_error[0] != '\0') {
+      printf("[VGA] SDL error: %s\n", sdl_error);
+    }
   SDL_RenderPresent(renderer);
     // printf("finish init screen\n");
-    const char* sdl_error = SDL_GetError();
+    sdl_error = SDL_GetError();
     if (sdl_error && sdl_error[0] != '\0') {
       printf("[VGA] SDL error: %s\n", sdl_error);
     }
