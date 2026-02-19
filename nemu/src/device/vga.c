@@ -154,8 +154,8 @@ void vga_update_screen() {
     // printf("update screen\n");
     update_screen();
 
-    if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());
-    }else {printf("%dx%d\n", screen_width(), screen_height());}
+    if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());}
+    // else {printf("%dx%d\n", screen_width(), screen_height());}
 
     // if (vmem!=NULL){printf("pixels:0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)  vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
 
