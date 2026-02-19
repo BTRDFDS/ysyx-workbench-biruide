@@ -73,7 +73,7 @@ void video_test() {
   int fps = 0;
 
   // while (1) {
-  for(int i=0;i<10;i++){
+  for(int i=0;i<100;i++){
     unsigned long upt = io_read(AM_TIMER_UPTIME).us / 1000;
     if (upt - last > 1000 / FPS) {
       update();
