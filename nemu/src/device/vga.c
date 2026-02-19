@@ -111,7 +111,8 @@ void vga_update_screen() {
   // j++;
   // }else if(j!=0){
   //   j++;
-  }else{update_screen();}
+  // }else{update_screen();}
+  }
 }
 
 void init_vga() {
