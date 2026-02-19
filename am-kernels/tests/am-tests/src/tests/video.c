@@ -79,6 +79,7 @@ void video_test() {
       printf("update begin\n");
       update();
       printf("update finish\n");
+      return;
       printf("redraw begin\n");
       redraw();
       printf("redraw finish\n");
