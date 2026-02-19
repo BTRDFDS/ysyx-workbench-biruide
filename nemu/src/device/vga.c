@@ -48,22 +48,36 @@ static void init_screen() {
   sprintf(title, "%s-NEMU", str(__GUEST_ISA__));
   SDL_Init(SDL_INIT_VIDEO);
   SDL_CreateWindowAndRenderer(
-      SCREEN_W * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
-      SCREEN_H * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+      screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
+      screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
       0, &window, &renderer);
   SDL_SetWindowTitle(window, title);
   texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-      SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
+      SDL_TEXTUREACCESS_STATIC, screen_width(), screen_height());
   SDL_RenderPresent(renderer);
     printf("finish init screen\n");
 }
 
 static inline void update_screen() {
-  // printf("update screen\n");
-  SDL_UpdateTexture(texture, NULL, vmem, SCREEN_W * sizeof(uint32_t));
-  SDL_RenderClear(renderer);
-  SDL_RenderCopy(renderer, texture, NULL, NULL);
+  printf("update_screen begin: vmem=%p, texture=%p, renderer=%p\n",vmem, texture, renderer);
+  if (texture == NULL || renderer == NULL) {
+    printf("ERROR: SDL resources not initialized\n");
+    return;
+  }
+  if (SDL_UpdateTexture(texture, NULL, vmem, screen_width() * sizeof(uint32_t)) != 0) {
+    printf("ERROR: SDL_UpdateTexture failed: %s\n", SDL_GetError());
+  }
+  if( SDL_RenderClear(renderer) != 0) {
+    printf("ERROR: SDL_RenderClear failed: %s\n", SDL_GetError());
+  }
+  if (SDL_RenderCopy(renderer, texture, NULL, NULL) != 0) {
+    printf("ERROR: SDL_RenderCopy failed: %s\n", SDL_GetError());
+  }
+  // SDL_UpdateTexture(texture, NULL, vmem, screen_width() * sizeof(uint32_t));
+  // SDL_RenderClear(renderer);
+  // SDL_RenderCopy(renderer, texture, NULL, NULL);
   SDL_RenderPresent(renderer);
+  printf("update_screen finish: pitch=%ld\n", screen_width() * sizeof(uint32_t));
 }
 #else
 static void init_screen() {}
@@ -77,10 +91,26 @@ static inline void update_screen() {
 void vga_update_screen() {
   // TODO: call `update_screen()` when the sync register is non-zero,
   // then zero out the sync register
+  static int j=0;
+  if(j>=2){exit(0);}
   if(mmio_read(CONFIG_VGA_CTL_MMIO+4,4)!=0){
-    // printf("update screen\n");
+    printf("%8x %8x %8x\n",mmio_read(CONFIG_FB_ADDR,4),mmio_read(CONFIG_FB_ADDR+4,4),mmio_read(CONFIG_FB_ADDR+8,4));
+    printf("update screen\n");
     update_screen();
     mmio_write(CONFIG_VGA_CTL_MMIO+4,4,0);
+#ifdef CONFIG_VGA_SHOW_SCREEN
+  printf("use CONFIG_VGA_SHOW_SCREEN\n");
+#endif
+#ifdef CONFIG_TARGET_AM
+  printf("use CONFIG_TARGET_AM\n");
+#endif
+  if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());
+  }else {printf("Texture created successfully: %dx%d\n", screen_width(), screen_height());}
+  if (vmem!=NULL){printf("First 4 pixels: 0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
+  // exit(0);
+  j++;
+  }else if(j!=0){
+    j++;
   }
 }
 

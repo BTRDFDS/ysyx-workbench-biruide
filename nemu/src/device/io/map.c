@@ -57,6 +57,7 @@ void init_map() {
 
 word_t map_read(paddr_t addr, int len, IOMap *map) {
 #ifdef CONFIG_DTRACE
+    // fprintf(log_dtrace_fp,"map %s x%x(%x)",map->name,addr,len);
     fprintf(log_dtrace_fp,"%s x%x(%x)",map->name,addr,len);
 #endif
   assert(len >= 1 && len <= 8);
@@ -66,7 +67,7 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
   word_t ret = host_read(map->space + offset, len);
 
 #ifdef CONFIG_DTRACE
-    fprintf(log_dtrace_fp,"=%x\n",ret);
+    fprintf(log_dtrace_fp,"==%x\n",ret);
 #endif
   return ret;
 }
@@ -74,7 +75,8 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
 void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
 
 #ifdef CONFIG_DTRACE
-    fprintf(log_dtrace_fp,"%s x%x(%x)<=%x ",map->name,addr,len,data);
+    // fprintf(log_dtrace_fp,"map %s x%x(%x)<=%x",map->name,addr,len,data);
+    fprintf(log_dtrace_fp,"%s x%x(%x)<=%x",map->name,addr,len,data);
 #endif
 
   assert(len >= 1 && len <= 8);
@@ -84,6 +86,6 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
   invoke_callback(map->callback, offset, len, true);
 
 #ifdef CONFIG_DTRACE
-    fprintf(log_dtrace_fp,"s \n");
+    fprintf(log_dtrace_fp," s\n");
 #endif
 }

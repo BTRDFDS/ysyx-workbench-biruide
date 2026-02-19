@@ -35,7 +35,7 @@ else
 endif
 
 gdb: insert-arg
-	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) gdb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) gdb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin CFLAGS_BUILD+="-g -DAUTO_RUN"
 val: insert-arg
 ifeq ($(TEST_AM),1)
 	echo "TEST_AM is defined, running with test_am"
