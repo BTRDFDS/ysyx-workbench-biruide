@@ -109,6 +109,8 @@ void vga_update_screen() {
   if (vmem!=NULL){printf("First 4 pixels: 0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
   // exit(0);
   j++;
+  }else if(j!=0){
+    j++;
   }
 }
 
