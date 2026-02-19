@@ -60,7 +60,7 @@ static void init_screen() {
   if (SDL_CreateWindowAndRenderer(
       screen_width() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
       screen_height() * (MUXDEF(CONFIG_VGA_SIZE_400x300, 2, 1)),
-      SDL_WINDOW_SHOWN, &window, &renderer) != 0) {
+      SDL_WINDOW_OPENGL, &window, &renderer) != 0) {
     printf("SDL_CreateWindowAndRenderer failed: %s\n", SDL_GetError());
     return;
   }
