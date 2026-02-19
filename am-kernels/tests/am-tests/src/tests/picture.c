@@ -26,10 +26,9 @@ void show() {
   io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
 }
 void picture_test() {
-  // 初始化 canvas 所有元素为纯色（例如红色）
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
-      canvas[i][j] = pixel(255, 0, 0); // 可根据需要修改 RGB 值
+      canvas[i][j] = 0xf000ff;
     }
   }
   show(); // 绘制一次
