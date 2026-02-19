@@ -96,7 +96,7 @@ void video_test() {
       fps_last = upt;
       fps = 0;
       printf("fps\n");
-      return;
+      // return;
     }
   }
 }
