@@ -157,7 +157,7 @@ void vga_update_screen() {
     if(texture==NULL){printf("ERROR: Failed to create texture: %s\n", SDL_GetError());
     }else {printf("%dx%d\n", screen_width(), screen_height());}
 
-    if (vmem!=NULL){printf("pixels:0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)  vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
+    // if (vmem!=NULL){printf("pixels:0x%08x 0x%08x 0x%08x 0x%08x\n",((uint32_t*)vmem)[0], ((uint32_t*)  vmem)[1],((uint32_t*)vmem)[2], ((uint32_t*)vmem)[3]);}
 
     const char* sdl_error = SDL_GetError();
     if (sdl_error && sdl_error[0] != '\0') {

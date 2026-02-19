@@ -80,17 +80,17 @@ void video_test() {
     unsigned long upt = io_read(AM_TIMER_UPTIME).us / 1000;
     if (upt - last > 1000 / FPS) {
       // printf("i==%d\n",i);
-      printf("update begin\n");
+      // printf("update begin\n");
       // return;
       update();
-      printf("update finish\n");
+      // printf("update finish\n");
       // return;
-      printf("redraw begin\n");
+      // printf("redraw begin\n");
       redraw();
-      printf("redraw finish\n");
+      // printf("redraw finish\n");
       last = upt;
       fps ++;
-      printf("update\n");
+      // printf("update\n");
       // return;
     }
     if (upt - fps_last > 1000) {
@@ -98,7 +98,7 @@ void video_test() {
       printf("%d: FPS = %d\n", upt, fps);
       fps_last = upt;
       fps = 0;
-      printf("fps\n");
+      // printf("fps\n");
       // return;
     }
   }
