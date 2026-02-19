@@ -90,13 +90,13 @@ static void init_screen() {
   //     SDL_TEXTUREACCESS_STATIC, SCREEN_W, SCREEN_H);
     const char* sdl_error = SDL_GetError();
     if (sdl_error && sdl_error[0] != '\0') {
-      printf("[VGA] SDL error: %s\n", sdl_error);
+      printf("1[VGA] SDL error: %s\n", sdl_error);
     }
   SDL_RenderPresent(renderer);
     // printf("finish init screen\n");
     sdl_error = SDL_GetError();
     if (sdl_error && sdl_error[0] != '\0') {
-      printf("[VGA] SDL error: %s\n", sdl_error);
+      printf("2[VGA] SDL error: %s\n", sdl_error);
     }
 }
 
