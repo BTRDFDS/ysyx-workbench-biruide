@@ -12,7 +12,7 @@
 #define COL_GREEN    0x00cc33
 #define COL_PURPLE   0x2a0a29
 
-#define speedDown 2
+#define speedDown 3
 
 enum { WHITE = 0, RED, GREEN, PURPLE };
 struct character {
