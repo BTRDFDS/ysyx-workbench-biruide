@@ -12,8 +12,8 @@
 #define COL_GREEN    0x00cc33
 #define COL_PURPLE   0x2a0a29
 
-#define speedMax 0.5
-#define speedMin 0.4
+#define speedMax 3
+#define speedMin 2
 
 enum { WHITE = 0, RED, GREEN, PURPLE };
 struct character {
