@@ -3,7 +3,7 @@
 #include <klib-macros.h>
 
 #define FPS            30
-#define CPS             2
+#define CPS             1
 #define CHAR_W          8
 #define CHAR_H         16
 #define NCHAR         128
