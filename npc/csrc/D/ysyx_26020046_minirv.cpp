@@ -23,9 +23,9 @@ Vysyx_26020046_minirv* top;
 
 //0x80000000
 #define ADDR_RESET 0x80000000
-#define max 2621440
+#define max 2048000
 
-#define timeADDR 0x10000000
+#define timeADDR 0xa0000048
 
 #define unlim 1
 #define step 10
@@ -35,17 +35,18 @@ uint32_t M[max];
 uint32_t pc;
 timespec st;
 extern "C" int pmem_read(int raddr) {
+	uint32_t raddrX=(uint32_t)raddr;
 #ifdef DEBUG
 	printf("pmem_read : ");
 #endif
+	if((raddrX>=(max+ADDR_RESET)|raddrX<=ADDR_RESET)&(raddrX!=0)){printf("pmem_read %x\n",raddrX);}
 	if(raddr==timeADDR){//返回微秒数
+		printf("pmem_read time:0x");
 		uint32_t time=0;
 		timespec t;
 		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");exit(-1);}
 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(st.tv_sec*1000000+st.tv_nsec/1000);
-#ifdef DEBUG
-	printf("pmem_read time:0x%x\n",time);
-#endif
+		printf("%x\n",time);
 		return time;
 	}
 	if(((raddr-ADDR_RESET)>>2)>max){
@@ -62,10 +63,18 @@ extern "C" int pmem_read(int raddr) {
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
+	uint32_t waddrX=(uint32_t)waddr;
 #ifdef DEBUG
 	printf("pmem_write ");
 	printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask);
 #endif
+	if((waddrX>=(max+ADDR_RESET)|waddrX<=ADDR_RESET)&(waddrX!=0)){printf("pmem_write %x\n",waddrX);}
+	if(waddrX==0x10000000){
+		// putchar(wdata);
+		printf("%c",wdata);
+		return;
+	}
+
   if((wmask&0b1111)==0b1111){
 #ifdef DEBUG
 	printf("all\n");
@@ -151,11 +160,10 @@ int main(int argc, char** argv) {
 	// for(int i=0;i<16;i++){printf("M[%d]=0x%x\n",i,M[i]);}
 	if(argc>1&&argv[1]!=NULL){
 		if(argc>2&&argv[2]!=NULL){
-			printf("ebreak at 0x%lx\n\n",strtoul(argv[2], NULL,0));
+			printf("ebreak at 0x%lx ",strtoul(argv[2], NULL,0));
 			M[strtoul(argv[2],NULL,0)]=0x00100073;
-		}else{
-			printf("\n\n");
 		}
+		printf("has open file %s\n",argv[1]);
 	}else{
 		printf("ebreak at 0x%x\n\n",0x8A);
     	M[0x8A] = 0x00100073;//sum
@@ -205,6 +213,9 @@ int main(int argc, char** argv) {
 	printf("i=%d pc=%x(%x)\n\n",i,pc,(pc-ADDR_RESET)>>2);
 #endif
 
+	if(i%1000000==0){
+		printf("step:%d\n",i);
+	}
   }
 	delete top;
 	delete contextp;
