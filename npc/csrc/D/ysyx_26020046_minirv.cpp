@@ -26,6 +26,7 @@ Vysyx_26020046_minirv* top;
 #define max 2048000
 
 #define timeADDR 0xa0000048
+#define serialADDR 0x10000000
 
 #define unlim 1
 #define step 10
@@ -39,7 +40,7 @@ extern "C" int pmem_read(int raddr) {
 #ifdef DEBUG
 	printf("pmem_read : ");
 #endif
-	if((raddrX>=(max+ADDR_RESET)|raddrX<=ADDR_RESET)&(raddrX!=0)){printf("pmem_read %x\n",raddrX);}
+	if((raddrX>=(max+ADDR_RESET)|raddrX<=ADDR_RESET)&(raddrX!=0)){printf("pmem_read %x %d\n",raddrX,raddr);}
 	if(raddr==timeADDR){//返回微秒数
 		printf("pmem_read time:0x");
 		uint32_t time=0;
@@ -68,7 +69,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	printf("pmem_write ");
 	printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask);
 #endif
-	if((waddrX>=(max+ADDR_RESET)|waddrX<=ADDR_RESET)&(waddrX!=0)){printf("pmem_write %x\n",waddrX);}
+	if((waddrX>=(max+ADDR_RESET)|waddrX<=ADDR_RESET)&(waddrX!=0)){printf("pmem_write %x %d\n",waddrX,waddr);}
 	if(waddrX==0x10000000){
 		// putchar(wdata);
 		printf("%c",wdata);
