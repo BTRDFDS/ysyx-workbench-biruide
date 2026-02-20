@@ -42,4 +42,4 @@
 
 #endif
 
-volatile static int dummy1;
+volatile static int dummy;
