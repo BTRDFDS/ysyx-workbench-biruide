@@ -56,7 +56,7 @@ void game_logic_update(int frame) {
         }
       } else {
         c->y += c->v;
-        if (c->y < 0) {
+        if (c->y < 0) {//飞回去了
           c->ch = '\0';
         }
         if (c->y + CHAR_H >= screen_h) {
