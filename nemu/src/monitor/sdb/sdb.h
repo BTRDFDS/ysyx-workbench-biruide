@@ -23,5 +23,3 @@ int cmd_t(char *args);
 void gen_expr();
 int checkWp();
 #endif
-
-volatile static int dummy;
