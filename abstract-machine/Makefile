@@ -8,16 +8,17 @@ html:
 ## 1. Basic Setup and Checks
 
 ### Default to create a bare-metal kernel image
-ifeq ($(MAKECMDGOALS),)
+ifeq ($(MAKECMDGOALS),)#默认以image为目标
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
 
 ### Override checks when `make clean/clean-all/html`
-ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
+ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)#不是这几个就继续
 
 ### Print build info message
-$(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
+$(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)] T1)
+# $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
@@ -99,13 +100,14 @@ LDFLAGS  += -z noexecstack $(addprefix -T, $(LDSCRIPTS))
 ## 4. Arch-Specific Configurations
 
 ### Paste in arch-specific configurations (e.g., from `scripts/x86_64-qemu.mk`)
-#使用特定架构与模拟器的配置（例如scripts/riscv32-nemu.mk）
+#使用特定架构与模拟器的配置（例如scripts/riscv32-nemu.mk）,如果是有行为的话
 -include $(AM_HOME)/scripts/$(ARCH).mk
 
 ## 5. Compilation Rules
 
 ### Rule (compile): a single `.c` -> `.o` (gcc)
 $(DST_DIR)/%.o: %.c
+# 	@echo "T.C"
 	@mkdir -p $(dir $@) && echo + CC $<
 	@$(CC) -std=gnu11 $(CFLAGS) -c -o $@ $(realpath $<)
 
@@ -121,6 +123,7 @@ $(DST_DIR)/%.o: %.cpp
 
 ### Rule (compile): a single `.S` -> `.o` (gcc, which preprocesses and calls as)
 $(DST_DIR)/%.o: %.S
+# 	@echo "T.S"
 	@mkdir -p $(dir $@) && echo + AS $<
 	@$(AS) $(ASFLAGS) -c -o $@ $(realpath $<)
 
@@ -133,6 +136,7 @@ else
 # $(1): library name
 define LIB_TEMPLATE =
 $$(AM_HOME)/$(1)/build/$(1)-$$(ARCH).a: force
+# 	@echo "T0"
 	@$$(MAKE) -s -C $$(AM_HOME)/$(1) archive
 LINKAGE += $$(AM_HOME)/$(1)/build/$(1)-$$(ARCH).a
 endef
@@ -160,6 +164,7 @@ endif
 image: image-dep
 archive: $(ARCHIVE)
 image-dep: $(IMAGE).elf
+# 	@echo "T image-dep"
 .PHONY: image image-dep archive run
 
 ### Force to rebuild a rule
