@@ -27,9 +27,9 @@ Vysyx_26020046_minirv* top;
 
 #define timeADDR 0x10000000
 
-#define unlim 0
+#define unlim 1
 #define step 10
-#define DEBUG
+// #define DEBUG
 
 uint32_t M[max];
 uint32_t pc;
@@ -182,7 +182,7 @@ int main(int argc, char** argv) {
 	top->eval();
 
 #ifdef DEBUG
-	printf("!! pc=%d M[0]=0x%x] reset finish\n\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]);
+	printf("\n!! pc=%d M[0]=0x%x] reset finish\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]);
 #endif
 
   for(uint32_t i=0;(i<=step)|unlim;i++){//30000
