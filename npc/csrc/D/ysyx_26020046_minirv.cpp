@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include "svdpi.h"
 #include "Vysyx_26020046_minirv__Dpi.h"
+#include <time.h>
 
 VerilatedContext* contextp;
 Vysyx_26020046_minirv* top;
@@ -22,15 +23,31 @@ Vysyx_26020046_minirv* top;
 
 //0x80000000
 #define ADDR_RESET 0x80000000
-#define max 262144
+#define max 2621440
+
+#define timeADDR 0x10000000
+
+#define unlim 0
+#define step 10
+#define DEBUG
 
 uint32_t M[max];
 uint32_t pc;
-
+timespec st;
 extern "C" int pmem_read(int raddr) {
 #ifdef DEBUG
 	printf("pmem_read : ");
 #endif
+	if(raddr==timeADDR){//返回微秒数
+		uint32_t time=0;
+		timespec t;
+		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");exit(-1);}
+		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(st.tv_sec*1000000+st.tv_nsec/1000);
+#ifdef DEBUG
+	printf("pmem_read time:0x%x\n",time);
+#endif
+		return time;
+	}
 	if(((raddr-ADDR_RESET)>>2)>max){
 #ifdef DEBUG
 		printf("\033[1;31merror x%x => x%x => x%x > x%x\033[0m\n",raddr,(raddr-ADDR_RESET),((raddr-ADDR_RESET)>>2),max);
@@ -145,6 +162,8 @@ int main(int argc, char** argv) {
 	}
 	// M[0x488]=0x00100073;//mem
 
+	if(clock_gettime(CLOCK_MONOTONIC,&st)!=0){printf("time err\n");exit(-1);}
+
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new Vysyx_26020046_minirv{contextp};
@@ -166,7 +185,7 @@ int main(int argc, char** argv) {
 	printf("!! pc=%d M[0]=0x%x] reset finish\n\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]);
 #endif
 
-  for(uint32_t i=0;i<=10000000;i++){//30000
+  for(uint32_t i=0;(i<=step)|unlim;i++){//30000
 	top->clk=1;
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
