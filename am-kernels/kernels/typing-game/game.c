@@ -2,8 +2,8 @@
 #include <klib.h>
 #include <klib-macros.h>
 
-#define FPS            15
-#define CPS             1
+#define FPS            30
+#define CPS             5//5有点太多了吧，在不削弱速度的情况下根本反应不过来
 #define CHAR_W          8
 #define CHAR_H         16
 #define NCHAR         128
@@ -12,6 +12,9 @@
 #define COL_GREEN    0x00cc33
 #define COL_PURPLE   0x2a0a29
 
+#define speedMax 1
+#define speedMin 0.5
+
 enum { WHITE = 0, RED, GREEN, PURPLE };
 struct character {
   char ch;
@@ -19,7 +22,7 @@ struct character {
 } chars[NCHAR];
 
 int screen_w, screen_h, hit, miss, wrong;
-uint32_t texture[3][26][CHAR_W * CHAR_H], blank[CHAR_W * CHAR_H];
+uint32_t texture[3][26][CHAR_W * CHAR_H], blank[CHAR_W * CHAR_H];//26个字母，每个有3种状态，每个有16*16的大小
 
 int min(int a, int b) {
   return (a < b) ? a : b;
@@ -36,7 +39,7 @@ void new_char() {
       c->ch = 'A' + randint(0, 25);
       c->x = randint(0, screen_w - CHAR_W);
       c->y = 0;
-      c->v = (screen_h - CHAR_H + 1) / randint(FPS * 3 / 2, FPS * 2);
+      c->v = (screen_h - CHAR_H + 1) / randint(FPS * speedMin, FPS * speedMax);
       c->t = 0;
       return;
     }
@@ -50,7 +53,7 @@ void game_logic_update(int frame) {
     if (c->ch) {
       if (c->t > 0) {
         if (--c->t == 0) {
-          c->ch = '\0';
+          c->ch = '\0';//等30帧再消失
         }
       } else {
         c->y += c->v;
@@ -61,7 +64,7 @@ void game_logic_update(int frame) {
           miss++;
           c->v = 0;
           c->y = screen_h - CHAR_H;
-          c->t = FPS;
+          c->t = FPS;//停留30帧
         }
       }
     }
@@ -112,20 +115,20 @@ void video_init() {
 
   extern char font[];
   for (int i = 0; i < CHAR_W * CHAR_H; i++)
-    blank[i] = COL_PURPLE;
+    blank[i] = COL_PURPLE;//纯空白的16*16格子
 
   uint32_t blank_line[screen_w];
   for (int i = 0; i < screen_w; i++)
-    blank_line[i] = COL_PURPLE;
+    blank_line[i] = COL_PURPLE;//纯空白的一行
 
   for (int y = 0; y < screen_h; y ++)
-    io_write(AM_GPU_FBDRAW, 0, y, blank_line, screen_w, 1, false);
+    io_write(AM_GPU_FBDRAW, 0, y, blank_line, screen_w, 1, false);//初始化，直接空白每一行
 
   for (int ch = 0; ch < 26; ch++) {
     char *c = &font[CHAR_H * ch];
     for (int i = 0, y = 0; y < CHAR_H; y++)
       for (int x = 0; x < CHAR_W; x++, i++) {
-        int t = (c[y] >> (CHAR_W - x - 1)) & 1;
+        int t = (c[y] >> (CHAR_W - x - 1)) & 1;//不超出左右且根据字符的形状确定的这一点是不是有东西
         texture[WHITE][ch][i] = t ? COL_WHITE : COL_PURPLE;
         texture[GREEN][ch][i] = t ? COL_GREEN : COL_PURPLE;
         texture[RED  ][ch][i] = t ? COL_RED   : COL_PURPLE;
@@ -157,7 +160,7 @@ int main() {
   while (1) {
     int frames = (io_read(AM_TIMER_UPTIME).us - t0) / (1000000 / FPS);
 
-    for (; current < frames; current++) {
+    for (; current < frames; current++) {//实际<理论
       game_logic_update(current);
     }
 
