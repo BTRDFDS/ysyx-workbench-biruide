@@ -4,6 +4,8 @@
 
 # 我的进度
 
+![GitHub 贡献图](https://ghchart.rshah.org/BTRDFDS)
+
 2026.01.20 今早起床后发现vscode无法打开，报错与日志如下。分析为最新提交的一个git分支文件为空文件导致的。，且所有的git命令都会返回error: object file is empty fatal: loose object  is corrupt 包括git checkout -f master。我的做法是进入.git/objects/中删除对应文件然后切换至master
 然后打开log找到最后一次的提交，通过修改.git\refs\heads里面的trace-ysyx的坐标将其中的空文件替换为旧的提交，成功救回来
 
