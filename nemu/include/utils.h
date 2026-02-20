@@ -75,3 +75,5 @@ uint64_t get_time();
 
 
 #endif
+
+volatile static int dummy;
