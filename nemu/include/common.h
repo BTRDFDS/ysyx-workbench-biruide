@@ -49,3 +49,5 @@ typedef uint16_t ioaddr_t;
 #endif
 
 void closeLog();
+
+volatile static int dummy;

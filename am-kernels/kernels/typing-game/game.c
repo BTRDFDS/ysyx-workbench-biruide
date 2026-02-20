@@ -56,7 +56,7 @@ void game_logic_update(int frame) {
         }
       } else {
         c->y += c->v;
-        if (c->y < 0) {
+        if (c->y < 0) {//飞回去了
           c->ch = '\0';
         }
         if (c->y + CHAR_H >= screen_h) {
@@ -73,7 +73,7 @@ void game_logic_update(int frame) {
 void render() {
   static int x[NCHAR], y[NCHAR], n = 0;
 
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) {//把字符的原本位置给擦除
     io_write(AM_GPU_FBDRAW, x[i], y[i], blank, CHAR_W, CHAR_H, false);
   }
 
@@ -87,7 +87,7 @@ void render() {
     }
   }
   io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
-  for (int i = 0; i < 40; i++) putch('\b');
+  for (int i = 0; i < 40; i++) putch('\b');//光标左移40
   printf("Hit: %d; Miss: %d; Wrong: %d", hit, miss, wrong);
 }
 
@@ -95,7 +95,7 @@ void check_hit(char ch) {
   int m = -1;
   for (int i = 0; i < LENGTH(chars); i++) {
     struct character *c = &chars[i];
-    if (ch == c->ch && c->v > 0 && (m < 0 || c->y > chars[m].y)) {
+    if (ch == c->ch && c->v > 0 && (m < 0 || c->y > chars[m].y)) {//点掉最下面的一个
       m = i;
     }
   }
