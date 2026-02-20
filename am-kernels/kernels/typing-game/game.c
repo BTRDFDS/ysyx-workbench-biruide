@@ -38,7 +38,7 @@ void new_char() {
       c->ch = 'A' + randint(0, 25);
       c->x = randint(0, screen_w - CHAR_W);
       c->y = 0;
-      c->v = (screen_h - CHAR_H + 1) / (randint(FPS * 3 / 2, FPS * 2)*speedDown);
+      c->v = (screen_h - CHAR_H + 1) / (randint(FPS * 3 / 2, FPS * 2)*speedDown);//减速
       c->t = 0;
       return;
     }
