@@ -50,4 +50,4 @@ typedef uint16_t ioaddr_t;
 
 void closeLog();
 
-volatile static int dummy;
+// volatile static int dummy;
