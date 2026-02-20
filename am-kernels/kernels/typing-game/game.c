@@ -12,8 +12,7 @@
 #define COL_GREEN    0x00cc33
 #define COL_PURPLE   0x2a0a29
 
-#define speedMax 3
-#define speedMin 2
+#define speed 0.5
 
 enum { WHITE = 0, RED, GREEN, PURPLE };
 struct character {
@@ -39,7 +38,7 @@ void new_char() {
       c->ch = 'A' + randint(0, 25);
       c->x = randint(0, screen_w - CHAR_W);
       c->y = 0;
-      c->v = (screen_h - CHAR_H + 1) / randint(FPS * speedMin, FPS * speedMax);
+      c->v = (screen_h - CHAR_H + 1) / randint(FPS * 3 / 2, FPS * 2);
       c->t = 0;
       return;
     }
