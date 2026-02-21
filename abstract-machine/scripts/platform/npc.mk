@@ -29,7 +29,7 @@ run: insert-arg
 # 	@echo "TODO: add command here to run simulation"
 # 	@echo "ARG=$(IMAGE).bin xEb=$(XEB)"
 # 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB)
-	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) 
+	make -C $(NPC_HOME) run t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB) 
 # ifeq ($(TEST_AM),1)
 # 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) 
 # else
@@ -39,9 +39,9 @@ gdb: insert-arg
 # 	@echo "TODO: add command here to run simulation"
 # 	@echo "ARG=$(IMAGE).bin xEb=$(XEB)"
 # 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB)
-	make -C $(NPC_HOME) gdb t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB)
+	make -C $(NPC_HOME) gdb t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
 val: insert-arg
-	make -C $(NPC_HOME) val t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB)
+	make -C $(NPC_HOME) val t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
 
 # ifeq ($(TEST_AM),1)
 # 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) 

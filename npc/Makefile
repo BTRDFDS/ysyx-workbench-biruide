@@ -18,23 +18,30 @@ ifeq ($(MAKECMDGOALS),gdb)
 endif
 
 t?=water
-tV=$(shell find vsrc -type f -name "$(t).v")
+tF?=t
+tV=$(shell find vsrc -type f -name "$(tF).v")
 tC=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
 tU=$(patsubst vsrc/%.v,%,$(tV))
 tVd=$(NPC_HOME)/$(tV)
-ifeq ($(t),ysyx_26020046_minirv)
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
+ifeq ($(t),minirv)
+	tF=ysyx_26020046_minirv
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
 	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
 endif
-ifeq ($(t),ysyx_26020046_minirv_sta)
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(t).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
+ifeq ($(t),minirv_sta)
+tF=ysyx_26020046_minirv_sta
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
+	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
 	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
+endif
+ifeq ($(t),minirvN)
+	tF=ysyx_26020046_minirvN
+	tVd=$(NPC_HOME)/$(patsubst vsrc/%.v,vsrc/%.sv,$(tV))
 endif
 # all: $(BINS)
 # bin/%: vsrc/%.v csrc/%.cpp | build/% bin
@@ -78,8 +85,8 @@ clean:
 run:bin/$(tU)
 	./bin/$(tU) $(ARG) $(xEb)
 gdb:bin/$(tU) log/$(dir $(tU))
-# 	./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_gdb.log
-	./bin/$(tU) $(ARG) $(xEb)
+	./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_gdb.log
+# 	./bin/$(tU) $(ARG) $(xEb)
 do:bin/$(tU)
 gtk:
 	gtkwave wave/$(tU).vcd
