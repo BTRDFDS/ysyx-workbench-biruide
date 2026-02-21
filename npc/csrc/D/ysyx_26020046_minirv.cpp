@@ -49,8 +49,12 @@ extern "C" int pmem_read(int raddr) {
 		// printf("%x\n",time);
 		return time;
 	}
-	if((raddrX>=(max+ADDR_RESET)|raddrX<=ADDR_RESET)&(raddrX!=0)){
-		// printf("read x%x %d when x%x %d\n",raddrX,raddr,pc,runStep);
+	if(((((raddrX-ADDR_RESET)>>2)>max)|raddrX<=ADDR_RESET)&(raddrX!=0)){
+
+#ifdef DEBUG
+		printf("err x%x %d when x%x %d\n",raddrX,raddr,pc,runStep);
+#endif
+
 		// exit(-1);
 		return 0;
 }
@@ -70,7 +74,6 @@ extern "C" int pmem_read(int raddr) {
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 #ifdef DEBUG
 	printf("pmem_write ");
-	printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask);
 #endif
 	uint32_t waddrX=(uint32_t)waddr;
 	if(waddrX==0x10000000){
@@ -79,8 +82,20 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		return;
 	}
 
-	if((waddrX>=(max+ADDR_RESET)|waddrX<=ADDR_RESET)&(waddrX!=0)){printf("pmem_write %x %d\n",waddrX,waddr);}
+	if((((waddrX-ADDR_RESET)>>2)>max|waddrX<=ADDR_RESET)&(waddrX!=0)){
+
+#ifdef DEBUG
+		printf("err x%x %d when x%x %d (x%x,x%x)\n",waddrX,waddr,pc,runStep,ADDR_RESET,max+ADDR_RESET);
+#endif
+
+		return;
+	}
+#ifdef DEBUG
+	printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask);
+#endif
+
 	if((wmask&0b1111)==0b1111){
+
 #ifdef DEBUG
 	printf("all\n");
 #endif
@@ -206,7 +221,7 @@ int main(int argc, char** argv) {
 	top->eval();
 
 #ifdef DEBUG
-	printf("clk up finish\n");
+	printf("clk up finish,npc=0x%x\n",(top->pc-ADDR_RESET)>>2);
 #endif
 
 	top->clk=0;

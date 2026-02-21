@@ -78,7 +78,8 @@ clean:
 run:bin/$(tU)
 	./bin/$(tU) $(ARG) $(xEb)
 gdb:bin/$(tU) log/$(dir $(tU))
-	./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_gdb.log
+# 	./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_gdb.log
+	./bin/$(tU) $(ARG) $(xEb)
 do:bin/$(tU)
 gtk:
 	gtkwave wave/$(tU).vcd
