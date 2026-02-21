@@ -95,8 +95,7 @@ void init_log(const char *log_file) {
 
   }
   Log("Log is written to %s", log_file_printf ? log_file_printf : "stdout");
-  free(log_file_copy);
-  // if( log_file_copy!=NULL){free(log_file_copy);}
+  if( log_file_copy!=NULL){free(log_file_copy);}
 }
 
 bool log_enable() {
