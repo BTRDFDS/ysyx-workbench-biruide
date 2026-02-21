@@ -16,6 +16,10 @@
 #include <isa.h>
 #include <memory/paddr.h>
 #include <libgen.h>
+
+
+#include <elf.h>
+
 void init_rand();
 void init_log(const char *log_file);
 void init_mem();
@@ -65,6 +69,27 @@ static long load_img() {
   assert(ret == 1);
 
   fclose(fp);
+
+#ifdef CONFIG_FTRACE
+  char *img_dir = malloc(strlen(img_file) + 1);
+  strcpy(img_dir, img_file);
+  char *elf_file= malloc(strlen(img_file)+strlen(".elf")+1);
+  strcpy(elf_file, img_dir);
+  strcat(elf_file, ".elf");
+  FILE *elf_fp = fopen(elf_file, "rb");
+  Assert(elf_fp, "Can not open '%s'", elf_file);
+  Elf32_Ehdr ehdr;
+  // fread(&ehdr, sizeof(ehdr), 1, elf_fp);
+  Assert(fread(&ehdr, sizeof(ehdr), 1, elf_fp) == 1, "Can't read elf header");
+  Elf32_Shdr *shdrs = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
+  lseek(elf_fp, ehdr.e_shoff, SEEK_SET);
+  read(elf_fp, shdrs, ehdr.e_shnum * sizeof(Elf32_Shdr));Elf32_Shdr *shstrtab_shdr = &shdrs[ehdr.e_shstrndx];
+
+  char *shstrtab = malloc(shstrtab_shdr->sh_size);
+  lseek(elf_fp, shstrtab_shdr->sh_offset, SEEK_SET);
+  read(elf_fp, shstrtab, shstrtab_shdr->sh_size);
+#endif
+
   return size;
 }
 

@@ -19,7 +19,6 @@
 #include <device/map.h>
 
 #include <common.h>
-extern FILE *log_dtrace_fp;
 
 #define IO_SPACE_MAX (32 * 1024 * 1024)
 
@@ -57,6 +56,7 @@ void init_map() {
 
 word_t map_read(paddr_t addr, int len, IOMap *map) {
 #ifdef CONFIG_DTRACE
+    extern FILE *log_dtrace_fp;
     // fprintf(log_dtrace_fp,"map %s x%x(%x)",map->name,addr,len);
     fprintf(log_dtrace_fp,"%s x%x(%x)",map->name,addr,len);
 #endif
@@ -75,8 +75,9 @@ word_t map_read(paddr_t addr, int len, IOMap *map) {
 void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
 
 #ifdef CONFIG_DTRACE
-    // fprintf(log_dtrace_fp,"map %s x%x(%x)<=%x",map->name,addr,len,data);
-    fprintf(log_dtrace_fp,"%s x%x(%x)<=%x",map->name,addr,len,data);
+  extern FILE *log_dtrace_fp;
+  // fprintf(log_dtrace_fp,"map %s x%x(%x)<=%x",map->name,addr,len,data);
+  fprintf(log_dtrace_fp,"%s x%x(%x)<=%x",map->name,addr,len,data);
 #endif
 
   assert(len >= 1 && len <= 8);
@@ -86,6 +87,6 @@ void map_write(paddr_t addr, int len, word_t data, IOMap *map) {
   invoke_callback(map->callback, offset, len, true);
 
 #ifdef CONFIG_DTRACE
-    fprintf(log_dtrace_fp," s\n");
+  fprintf(log_dtrace_fp," s\n");
 #endif
 }
