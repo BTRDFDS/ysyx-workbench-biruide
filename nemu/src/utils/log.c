@@ -37,7 +37,7 @@ void init_log(const char *log_file) {
   log_dtrace_fp=stdout;
 
   char *log_file_copy=malloc(strlen(log_file)+1);
-  strncpy (log_file_copy,log_file,strlen(log_file_copy)-1);
+  strcpy (log_file_copy,log_file);
   char *log_file_dir = strrchr(log_file_copy,'.');
   if( log_file_dir!=NULL){
     *log_file_dir='\0';
