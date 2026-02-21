@@ -24,9 +24,7 @@ $(BINARY):: compile_git
 
 # Some convenient rules
 
-#去掉.txt方便自定义
-# override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
-override ARGS ?= --log=$(BUILD_DIR)/nemu-log
+override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
 override ARGS += $(ARGS_DIFF)
 
 # Command to execute NEMU

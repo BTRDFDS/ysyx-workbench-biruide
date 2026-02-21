@@ -36,19 +36,26 @@ void init_log(const char *log_file) {
   log_mtrace_fp=stdout;
   log_dtrace_fp=stdout;
 
+  char *log_file_copy=malloc(strlen(log_file)+1);
+  strncpy (log_file_copy,log_file,strlen(log_file_copy));
+  char *log_file_dir = strrchr(log_file_copy,'.');
+  if( log_file_dir!=NULL){
+    *log_file_dir='\0';
+  }
+  
   if (log_file != NULL) {
 
-    log_file_printf=malloc(strlen(log_file)+strlen(".txt")+1);
-    strcpy(log_file_printf,log_file);
+    log_file_printf=malloc(strlen(log_file_copy)+strlen(".txt")+1);
+    strcpy(log_file_printf,log_file_copy);
     strcat(log_file_printf, ".txt");
 
-    FILE *fp = fopen(log_file, "w");
-    Assert(fp, "Can not open '%s'", log_file);
+    FILE *fp = fopen(log_file_copy, "w");
+    Assert(fp, "Can not open '%s'", log_file_copy);
     log_fp = fp;
 
 #ifdef CONFIG_IRINGTRACE
-    log_iringbuf_file = malloc(strlen(log_file) + strlen("_iringbuf.txt") + 1);
-    strcpy(log_iringbuf_file, log_file);
+    log_iringbuf_file = malloc(strlen(log_file_copy) + strlen("_iringbuf.txt") + 1);
+    strcpy(log_iringbuf_file, log_file_copy);
     strcat(log_iringbuf_file, "_iringbuf.txt");
     FILE *fp_iringbuf = fopen(log_iringbuf_file, "w");
     Assert(fp_iringbuf, "Can not open '%s'", log_iringbuf_file);
@@ -57,8 +64,8 @@ void init_log(const char *log_file) {
 #endif
 
 #ifdef CONFIG_MTRACE
-    log_mtrace_file = malloc(strlen(log_file) + strlen("_mtrace.txt") + 1);
-    strcpy(log_mtrace_file, log_file);
+    log_mtrace_file = malloc(strlen(log_file_copy) + strlen("_mtrace.txt") + 1);
+    strcpy(log_mtrace_file, log_file_copy);
     strcat(log_mtrace_file, "_mtrace.txt");
     FILE *fp_mtrace = fopen(log_mtrace_file, "w");
     Assert(fp_mtrace, "Can not open '%s'", log_mtrace_file);
@@ -67,8 +74,8 @@ void init_log(const char *log_file) {
 #endif
 
 #ifdef CONFIG_DTRACE
-    log_dtrace_file = malloc(strlen(log_file) + strlen("_dtrace.txt") + 1);
-    strcpy(log_dtrace_file, log_file);
+    log_dtrace_file = malloc(strlen(log_file_copy) + strlen("_dtrace.txt") + 1);
+    strcpy(log_dtrace_file, log_file_copy);
     strcat(log_dtrace_file, "_dtrace.txt");
     FILE *fp_dtrace = fopen(log_dtrace_file, "w");
     Assert(fp_dtrace, "Can not open '%s'", log_dtrace_file);
@@ -77,8 +84,8 @@ void init_log(const char *log_file) {
 #endif
 
 #ifdef CONFIG_FTRACE
-    log_ftrace_file = malloc(strlen(log_file) + strlen("_ftrace.txt") + 1);
-    strcpy(log_ftrace_file, log_file);
+    log_ftrace_file = malloc(strlen(log_file_copy) + strlen("_ftrace.txt") + 1);
+    strcpy(log_ftrace_file, log_file_copy);
     strcat(log_ftrace_file, "_ftrace.txt");
     FILE *fp_ftrace = fopen(log_ftrace_file, "w");
     Assert(fp_ftrace, "Can not open '%s'", log_ftrace_file);
@@ -87,7 +94,7 @@ void init_log(const char *log_file) {
 #endif
 
   }
-  Log("Log is written to %s", log_file ? log_file : "stdout");
+  Log("Log is written to %s", log_file_printf ? log_file_printf : "stdout");
 }
 
 bool log_enable() {
