@@ -131,6 +131,11 @@ config TRACE
   bool "Enable tracer"
   default y
 
+config IRINGTRACE
+  depends on TRACE
+  bool "Enable instruction ring tracer (iringbuf)"
+  default y
+
 config MTRACE
   depends on TRACE
   bool "Enable memory tracer"

@@ -46,12 +46,15 @@ void init_log(const char *log_file) {
     Assert(fp, "Can not open '%s'", log_file);
     log_fp = fp;
 
+#ifdef IRINGTRACE
     log_iringbuf_file = malloc(strlen(log_file) + strlen("_iringbuf.txt") + 1);
     strcpy(log_iringbuf_file, log_file);
     strcat(log_iringbuf_file, "_iringbuf.txt");
     FILE *fp_iringbuf = fopen(log_iringbuf_file, "w");
     Assert(fp_iringbuf, "Can not open '%s'", log_iringbuf_file);
     log_iringbuf_fp = fp_iringbuf;
+    Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");
+#endif
 
 #ifdef CONFIG_MTRACE
     log_mtrace_file = malloc(strlen(log_file) + strlen("_mtrace.txt") + 1);
@@ -85,8 +88,6 @@ void init_log(const char *log_file) {
 
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
-  Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");
-  // if(log_iringbuf_file!=NULL)free(log_iringbuf_file);
 }
 
 bool log_enable() {
