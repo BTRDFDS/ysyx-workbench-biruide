@@ -31,7 +31,7 @@ run: all
 	@grep -q "FAIL" $(RESULT); FAIL=$$?; rm $(RESULT); test $$FAIL -ne 0
 
 gdb: all
-
+val: all
 change:tests/dummy.c latest
 	@/bin/echo -e "NAME = dummy\nSRCS = tests/dummy\ninclude $${AM_HOME}/Makefile" > Makefile.dummy
 	make -f Makefile.dummy ARCH=$(ARCH) run TEST_AM=$(t) XEB=$(XEB) -B

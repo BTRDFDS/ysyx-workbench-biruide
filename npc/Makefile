@@ -13,6 +13,10 @@ INC_PATH ?=
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS)
 
+ifeq ($(MAKECMDGOALS),gdb)
+	ePrintf = -DDEBUG
+endif
+
 t?=water
 tV=$(shell find vsrc -type f -name "$(t).v")
 tC=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
@@ -56,6 +60,10 @@ bin/%: $(tVd) $(tC) | build/% bin
 
 bin:
 	mkdir -p bin
+log:
+	mkdir -p log
+log/%:
+	mkdir -p $@
 build/%:
 	mkdir -p $@
 wave:
@@ -68,23 +76,19 @@ sim:bin/$(t) wave
 clean:
 	rm -rf bin/* build/*
 run:bin/$(tU)
-# 	valgrind \
-# 	--leak-check=no \
-# 	--show-error-list=yes \
-# 	--track-origins=yes \
-# 	--error-limit=no \
-
 	./bin/$(tU) $(ARG) $(xEb)
+gdb:bin/$(tU) log/$(dir $(tU))
+	./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_gdb.log
 do:bin/$(tU)
 gtk:
 	gtkwave wave/$(tU).vcd
-log:
-	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2026-01-01"
+# log:
+# 	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2026-01-01"
 tree:
 	exa --grid --color=always --sort=name *
 
 val:bin/$(t)
-	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tU)
+	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_val.log
 
 chk:
 	@echo "t=$(t)"

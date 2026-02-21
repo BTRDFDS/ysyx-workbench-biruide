@@ -21,36 +21,40 @@ Vysyx_26020046_minirv* top;
 // 	0x00008067,
 // };
 
-//0x80000000
-#define ADDR_RESET 0x80000000
 #define max 2048000
 
-#define timeADDR 0xa0000048
+//0x80000000
+#define ADDR_RESET 0x80000000
+#define timeADDR   0x0200BFF8
 #define serialADDR 0x10000000
 
 #define unlim 1
-#define step 10
+#define step 6000
 // #define DEBUG
 
 uint32_t M[max];
-uint32_t pc;
+uint32_t runStep,pc;
 timespec st;
 extern "C" int pmem_read(int raddr) {
-	uint32_t raddrX=(uint32_t)raddr;
 #ifdef DEBUG
 	printf("pmem_read : ");
 #endif
-	if((raddrX>=(max+ADDR_RESET)|raddrX<=ADDR_RESET)&(raddrX!=0)){printf("pmem_read %x %d\n",raddrX,raddr);}
-	if(raddr==timeADDR){//返回微秒数
-		printf("pmem_read time:0x");
+	uint32_t raddrX=(uint32_t)raddr;
+	if(raddr==timeADDR){//返回毫秒数
+		// printf("pmem_read time:0x");
 		uint32_t time=0;
 		timespec t;
 		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");exit(-1);}
-		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(st.tv_sec*1000000+st.tv_nsec/1000);
-		printf("%x\n",time);
+		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(st.tv_sec*1000000+st.tv_nsec/1000);//微秒
+		// printf("%x\n",time);
 		return time;
 	}
-	if(((raddr-ADDR_RESET)>>2)>max){
+	if((raddrX>=(max+ADDR_RESET)|raddrX<=ADDR_RESET)&(raddrX!=0)){
+		// printf("read x%x %d when x%x %d\n",raddrX,raddr,pc,runStep);
+		// exit(-1);
+		return 0;
+}
+	if(((raddrX-ADDR_RESET)>>2)>max){
 #ifdef DEBUG
 		printf("\033[1;31merror x%x => x%x => x%x > x%x\033[0m\n",raddr,(raddr-ADDR_RESET),((raddr-ADDR_RESET)>>2),max);
 #endif
@@ -64,19 +68,19 @@ extern "C" int pmem_read(int raddr) {
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
-	uint32_t waddrX=(uint32_t)waddr;
 #ifdef DEBUG
 	printf("pmem_write ");
 	printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask);
 #endif
-	if((waddrX>=(max+ADDR_RESET)|waddrX<=ADDR_RESET)&(waddrX!=0)){printf("pmem_write %x %d\n",waddrX,waddr);}
+	uint32_t waddrX=(uint32_t)waddr;
 	if(waddrX==0x10000000){
 		// putchar(wdata);
 		printf("%c",wdata);
 		return;
 	}
 
-  if((wmask&0b1111)==0b1111){
+	if((waddrX>=(max+ADDR_RESET)|waddrX<=ADDR_RESET)&(waddrX!=0)){printf("pmem_write %x %d\n",waddrX,waddr);}
+	if((wmask&0b1111)==0b1111){
 #ifdef DEBUG
 	printf("all\n");
 #endif
@@ -133,7 +137,8 @@ extern "C" void ebreak(unsigned char eb){
 }
 
 int main(int argc, char** argv) {
-	const char *p={"hex/sum.bin"};
+	// const char *p={"hex/sum.bin"};
+	const char *p={"hex/mem.bin"};
     FILE *file;
 	if(argc>1&&argv[1]!=NULL){
 
@@ -150,7 +155,6 @@ int main(int argc, char** argv) {
 
 		file = fopen(p,"rb");
 	}
-    // FILE *file = fopen("hex/mem.bin","rb");
 	if(file==NULL){printf("can't open file\n");}
     fseek(file, 0, SEEK_END);
     long fileSize = ftell(file);
@@ -167,9 +171,9 @@ int main(int argc, char** argv) {
 		printf("has open file %s\n",argv[1]);
 	}else{
 		printf("ebreak at 0x%x\n\n",0x8A);
-    	M[0x8A] = 0x00100073;//sum
+    	// M[0x8A] = 0x00100073;//sum
+		M[0x488]=0x00100073;//mem
 	}
-	// M[0x488]=0x00100073;//mem
 
 	if(clock_gettime(CLOCK_MONOTONIC,&st)!=0){printf("time err\n");exit(-1);}
 
@@ -191,10 +195,11 @@ int main(int argc, char** argv) {
 	top->eval();
 
 #ifdef DEBUG
-	printf("\n!! pc=%d M[0]=0x%x] reset finish\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]);
+	printf("\n!! reset finish ");
+	printf("pc=%d M[0]=0x%x]\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]);
 #endif
 
-  for(uint32_t i=0;(i<=step)|unlim;i++){//30000
+  for(runStep=0;(runStep<=step)|unlim;runStep++){//30000
 	top->clk=1;
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
@@ -211,12 +216,12 @@ int main(int argc, char** argv) {
 
 #ifdef DEBUG
 	printf("clk down finish\n");
-	printf("i=%d pc=%x(%x)\n\n",i,pc,(pc-ADDR_RESET)>>2);
+	printf("runStep=%d pc=%x(%x)\n\n",runStep,pc,(pc-ADDR_RESET)>>2);
 #endif
 
-	if(i%1000000==0){
-		printf("step:%d\n",i);
-	}
+	// if(runStep%1000000==0){
+	// 	printf("step:%d\n",runStep);
+	// }
   }
 	delete top;
 	delete contextp;

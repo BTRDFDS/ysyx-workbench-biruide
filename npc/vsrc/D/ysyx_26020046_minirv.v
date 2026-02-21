@@ -79,10 +79,13 @@ import "DPI-C" function void pmem_write(input int waddr, input int wdata, input 
 import "DPI-C" function void ebreak(input bit eb);
 
     assign iRAM = l&clk?pmem_read(ramAddr):0;
+    // assign iRAM = l&(~clk)?pmem_read(ramAddr):0;
     // always @(posedge clk) begin
-    //     if (l) begin // 有读请求时
+    //     // if (l) begin // 有读请求时
+    //     if(code[6:0]==7'b0000011)begin
     //       iRAM <= pmem_read(ramAddr);
     //     end
+    //     // iRAM<=l?pmem_read(ramAddr):0;
     // end
     always @(posedge clk) begin
         if (s) begin // 有写请求时
@@ -95,7 +98,8 @@ import "DPI-C" function void ebreak(input bit eb);
     end
 
 `ifdef DEBUG
-    always@(posedge clk) begin
+    // always@(posedge clk) begin
+    always@(clk) begin
         $display("code=%x",code);
         $display("cR1=%x oR1=%x cR2=%x oR2=%x cRd=%x imm=%x imi=%x", cR1,oR1,cR2,oR2,cRd,imm,imi);
         $display("add=%x lui=%x l=%x s=%x jalr=%x w=%x eRd=%x", add,lui,l,s,jalr,w,eRd);
