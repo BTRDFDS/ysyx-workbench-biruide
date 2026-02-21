@@ -22,11 +22,13 @@ FILE *log_fp = NULL;
 FILE *log_iringbuf_fp = NULL;
 FILE *log_mtrace_fp = NULL;
 FILE *log_dtrace_fp = NULL;
+FILE *log_ftrace_fp = NULL;
 
 char *log_file_printf=NULL;
 char *log_iringbuf_file=NULL;
 char *log_mtrace_file=NULL;
 char *log_dtrace_file=NULL;
+char *log_ftrace_file=NULL;
 
 void init_log(const char *log_file) {
   log_fp = stdout;
@@ -58,6 +60,7 @@ void init_log(const char *log_file) {
     FILE *fp_mtrace = fopen(log_mtrace_file, "w");
     Assert(fp_mtrace, "Can not open '%s'", log_mtrace_file);
     log_mtrace_fp = fp_mtrace;
+    Log("Log of mtrace is written to %s", log_mtrace_file ? log_mtrace_file : "stdout");
 #endif
 
 #ifdef CONFIG_DTRACE
@@ -67,21 +70,23 @@ void init_log(const char *log_file) {
     FILE *fp_dtrace = fopen(log_dtrace_file, "w");
     Assert(fp_dtrace, "Can not open '%s'", log_dtrace_file);
     log_dtrace_fp = fp_dtrace;
+    Log("Log of dtrace is written to %s", log_dtrace_file ? log_dtrace_file : "stdout");
 #endif
+
+#ifdef CONFIG_FTRACE
+    log_ftrace_file = malloc(strlen(log_file) + strlen("_ftrace.txt") + 1);
+    strcpy(log_ftrace_file, log_file);
+    strcat(log_ftrace_file, "_ftrace.txt");
+    FILE *fp_ftrace = fopen(log_ftrace_file, "w");
+    Assert(fp_ftrace, "Can not open '%s'", log_ftrace_file);
+    log_ftrace_fp = fp_ftrace;
+    Log("Log of ftrace is written to %s", log_ftrace_file ? log_ftrace_file : "stdout");
+#endif
+
   }
   Log("Log is written to %s", log_file ? log_file : "stdout");
   Log("Log of iringbuf is written to %s", log_iringbuf_file ? log_iringbuf_file : "stdout");
   // if(log_iringbuf_file!=NULL)free(log_iringbuf_file);
-
-#ifdef CONFIG_MTRACE
-  Log("Log of mtrace is written to %s", log_mtrace_file ? log_mtrace_file : "stdout");
-  // if(log_mtrace_file!=NULL)free(log_mtrace_file);
-#endif
-
-#ifdef CONFIG_DTRACE
-  Log("Log of dtrace is written to %s", log_dtrace_file ? log_dtrace_file : "stdout");
-#endif
-
 }
 
 bool log_enable() {
@@ -105,12 +110,21 @@ void closeLog(){
   }
   if(log_mtrace_file!=NULL){free(log_mtrace_file);}
 #endif
+
 #ifdef CONFIG_DTRACE
   if(log_dtrace_fp!=NULL&&log_dtrace_fp!=stdout){
     if(log_dtrace_file!=NULL){Log("Log of dtrace is written to %s",log_dtrace_file);}
     fclose(log_dtrace_fp);
   }
   if(log_dtrace_file!=NULL){free(log_dtrace_file);}
+#endif
+
+#ifdef CONFIG_FTRACE
+  if(log_ftrace_fp!=NULL&&log_ftrace_fp!=stdout){
+    if(log_ftrace_file!=NULL){Log("Log of ftrace is written to %s",log_ftrace_file);}
+    fclose(log_ftrace_fp);
+  }
+  if(log_ftrace_file!=NULL){free(log_ftrace_file);}
 #endif
 
   if(log_fp!=NULL&&log_fp!=stdout){
