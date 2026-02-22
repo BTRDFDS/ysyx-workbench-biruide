@@ -74,6 +74,46 @@ uint32_t riscv32mRemU(uint32_t rs1,uint32_t rs2){
   else return rs1%rs2;
 }
 
+#ifdef CONFIG_FTRACE
+#include <common.h>
+
+extern FILE *log_ftrace_fp;
+static int ftraceCount = 0;
+
+void riscv32FtraceJalr(Decode *s,int rd){
+  if(s->isa.inst==0x00008067){
+    // printf("ret\n");
+    fprintf(log_ftrace_fp,"0x%8x : ",s->pc);
+    ftraceCount--;
+    for(int i=0;i<ftraceCount;i++){
+      fprintf(log_ftrace_fp,"\t");
+    }
+    fprintf(log_ftrace_fp,"ret [%s]\n",getFuncName(s->pc));
+  }else if(rd==1){
+    // printf("call\n");
+    fprintf(log_ftrace_fp,"0x%8x : ",s->pc);
+    for(int i=0;i<ftraceCount;i++){
+      fprintf(log_ftrace_fp,"\t");
+    }
+    fprintf(log_ftrace_fp,"call[%s@0x%8x]\n",getFuncName(s->dnpc),s->dnpc);
+    ftraceCount++;
+  }
+}
+void riscv32FtraceJal(Decode *s,int rd){
+  if(rd==1){
+    // printf("call\n");
+    fprintf(log_ftrace_fp,"0x%8x : ",s->pc);
+    for(int i=0;i<ftraceCount;i++){
+      fprintf(log_ftrace_fp,"\t");
+    }
+    fprintf(log_ftrace_fp,"call[%s@0x%8x]\n",getFuncName(s->dnpc),s->dnpc);
+    ftraceCount++;
+  }
+}
+#endif
+
+
+
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst;
   int rs1 = BITS(i, 19, 15);
@@ -106,8 +146,8 @@ static int decode_exec(Decode *s) {
   //RV32I
   INSTPAT("??????? ????? ????? ??? ????? 0110111", lui      , U, R(rd) = imm);
   INSTPAT("??????? ????? ????? ??? ????? 0010111", auipc    , U, R(rd) = s->pc + imm);
-  INSTPAT("??????? ????? ????? ??? ????? 1101111", jal      , J, R(rd) = s->snpc , s->dnpc = imm+s->pc);
-  INSTPAT("??????? ????? ????? 000 ????? 1100111", jalr     , I, R(rd) = s->snpc , s->dnpc = imm+src1);
+  INSTPAT("??????? ????? ????? ??? ????? 1101111", jal      , J, R(rd) = s->snpc , s->dnpc = imm+s->pc, riscv32FtraceJal(s,rd));
+  INSTPAT("??????? ????? ????? 000 ????? 1100111", jalr     , I, R(rd) = s->snpc , s->dnpc = imm+src1 ,riscv32FtraceJalr(s,rd));
   INSTPAT("??????? ????? ????? 000 ????? 1100011", beq      , B, s->dnpc = ((uint32_t)src1 == (uint32_t)src2)?imm+s->pc:s->snpc);
   INSTPAT("??????? ????? ????? 001 ????? 1100011", bne      , B, s->dnpc = ((uint32_t)src1 != (uint32_t)src2)?imm+s->pc:s->snpc);
   INSTPAT("??????? ????? ????? 100 ????? 1100011", blt      , B, s->dnpc = (( int32_t)src1 <  ( int32_t)src2)?imm+s->pc:s->snpc);

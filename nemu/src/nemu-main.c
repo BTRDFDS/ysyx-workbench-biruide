@@ -89,6 +89,9 @@ int main(int argc, char *argv[]) {
   
   engine_start();
 
+  //结束前的最终清理
   closeLog();
+  IFDEF(CONFIG_FTRACE, closeFtrace());
+
   return is_exit_status_bad();
 }
