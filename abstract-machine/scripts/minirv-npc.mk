@@ -15,4 +15,4 @@ AM_SRCS += riscv/npc/libgcc/div.S \
            riscv/npc/libgcc/ashldi3.c \
            riscv/npc/libgcc/unused.c
 
-TARGET=minirv
+TARGET=minirvN

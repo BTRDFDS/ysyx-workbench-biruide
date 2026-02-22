@@ -1,4 +1,4 @@
-module ysyx_26020046_minirvN #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,code,pcReset,pc);
+module ysyx_26020046_minirvS #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,code,pcReset,pc);
 //pcReset应该改成固定值
 input clk,reset;
 input [DATA_WIDTH-1:0] code,pcReset;

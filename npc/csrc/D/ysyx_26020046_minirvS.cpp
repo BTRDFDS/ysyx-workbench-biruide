@@ -1,15 +1,17 @@
-#include "Vysyx_26020046_minirv.h"
+#include "Vysyx_26020046_minirvS.h"
 #include "verilated.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h>
 #include "svdpi.h"
-#include "Vysyx_26020046_minirv__Dpi.h"
+#include "Vysyx_26020046_minirvS__Dpi.h"
 #include <time.h>
 
+//ysyx_26020046_minirvS
+
 VerilatedContext* contextp;
-Vysyx_26020046_minirv* top;
+Vysyx_26020046_minirvS* top;
 
 // uint32_t M[100000]={
 //     0x01400513,
@@ -198,7 +200,7 @@ int main(int argc, char** argv) {
 
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
-	top = new Vysyx_26020046_minirv{contextp};
+	top = new Vysyx_26020046_minirvS{contextp};
 	top->pcReset=addrReset;
 
 	top->clk=0;
