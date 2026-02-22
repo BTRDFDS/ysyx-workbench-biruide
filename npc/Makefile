@@ -19,10 +19,10 @@ endif
 
 t?=water
 tF?=t
-tV=$(shell find vsrc -type f -name "$(tF).v")
-tC=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
-tU=$(patsubst vsrc/%.v,%,$(tV))
-tVd=$(NPC_HOME)/$(tV)
+tV ?=$(shell find vsrc -type f -name "$(tF).v")
+tC ?=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
+tU ?=$(patsubst vsrc/%.v,%,$(tV))
+tVd?=$(NPC_HOME)/$(tV)
 ifeq ($(t),minirv)
 	tF=ysyx_26020046_minirv
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
@@ -39,9 +39,14 @@ tF=ysyx_26020046_minirv_sta
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
 	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
 endif
+ifeq ($(t),minirvS)
+	tF=ysyx_26020046_minirvS
+	tV=$(shell find vsrc -type f -name "$(tF).sv")
+	tU=$(patsubst vsrc/%.sv,%,$(tV))
+	tC=$(patsubst vsrc/%.sv,csrc/%.cpp,$(tV))
+endif
 ifeq ($(t),minirvN)
 	tF=ysyx_26020046_minirvN
-	tVd=$(NPC_HOME)/$(patsubst vsrc/%.v,vsrc/%.sv,$(tV))
 endif
 # all: $(BINS)
 # bin/%: vsrc/%.v csrc/%.cpp | build/% bin
@@ -56,10 +61,17 @@ endif
 # all: $(BINS)
 # bin/%: vsrc/%.v csrc/%.cpp | build/% bin
 bin/%: $(tVd) $(tC) | build/% bin
+
+# 	@echo "t=$(t)"
+# 	@echo "tV=$(tV)"
+# 	@echo "tC=$(tC)"
+# 	@echo "tU=$(tU)"
+# 	@echo "tVd=$(tVd)"
+
 	mkdir -p $(dir $@)
-	verilator --lint-only -Wall $(tVd) --top-module $(notdir $*) -Wno-DECLFILENAME
+	verilator --lint-only -Wall $(tVd) --top-module $(tF) -Wno-DECLFILENAME
 	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
-	--top-module $(notdir $*) \
+	--top-module $(tF) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	cp build/$*/V$(notdir $*) $@
