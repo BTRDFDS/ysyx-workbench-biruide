@@ -77,36 +77,36 @@ uint32_t riscv32mRemU(uint32_t rs1,uint32_t rs2){
 #ifdef CONFIG_FTRACE
 #include <common.h>
 
-extern FILE *log_dtrace_fp;
+extern FILE *log_ftrace_fp;
 static int ftraceCount = 0;
 
 void riscv32FtraceJalr(Decode *s,int rd){
   if(s->isa.inst==0x00008067){
     printf("ret\n");
-    fprintf(log_dtrace_fp,"0x%8x",s->pc);
+    fprintf(log_ftrace_fp,"0x%8x",s->pc);
     ftraceCount--;
     for(int i=0;i<ftraceCount;i++){
-      fprintf(log_dtrace_fp,"\t");
+      fprintf(log_ftrace_fp,"\t");
     }
-    fprintf(log_dtrace_fp,"ret [%s]\n",getFuncName(s->pc));
+    fprintf(log_ftrace_fp,"ret [%s]\n",getFuncName(s->pc));
   }else if(rd==1){
     printf("call\n");
-    fprintf(log_dtrace_fp,"0x%8x",s->pc);
+    fprintf(log_ftrace_fp,"0x%8x",s->pc);
     for(int i=0;i<ftraceCount;i++){
-      fprintf(log_dtrace_fp,"\t");
+      fprintf(log_ftrace_fp,"\t");
     }
-    fprintf(log_dtrace_fp,"call[%s@0x%8x]\n",getFuncName(s->dnpc),s->dnpc);
+    fprintf(log_ftrace_fp,"call[%s@0x%8x]\n",getFuncName(s->dnpc),s->dnpc);
     ftraceCount++;
   }
 }
 void riscv32FtraceJal(Decode *s,int rd){
   if(rd==1){
     printf("call\n");
-    fprintf(log_dtrace_fp,"0x%8x",s->pc);
+    fprintf(log_ftrace_fp,"0x%8x",s->pc);
     for(int i=0;i<ftraceCount;i++){
-      fprintf(log_dtrace_fp,"\t");
+      fprintf(log_ftrace_fp,"\t");
     }
-    fprintf(log_dtrace_fp,"call[%s@0x%8x]\n",getFuncName(s->dnpc),s->dnpc);
+    fprintf(log_ftrace_fp,"call[%s@0x%8x]\n",getFuncName(s->dnpc),s->dnpc);
     ftraceCount++;
   }
 }
