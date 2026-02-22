@@ -82,6 +82,7 @@ static int ftraceCount = 0;
 
 void riscv32FtraceJalr(Decode *s,int rd){
   if(s->isa.inst==0x00008067){
+    printf("ret\n");
     fprintf(log_dtrace_fp,"0x%8x",s->pc);
     ftraceCount--;
     for(int i=0;i<ftraceCount;i++){
@@ -89,6 +90,7 @@ void riscv32FtraceJalr(Decode *s,int rd){
     }
     fprintf(log_dtrace_fp,"ret [%s]\n",getFuncName(s->pc));
   }else if(rd==1){
+    printf("call\n");
     fprintf(log_dtrace_fp,"0x%8x",s->pc);
     for(int i=0;i<ftraceCount;i++){
       fprintf(log_dtrace_fp,"\t");
@@ -99,6 +101,7 @@ void riscv32FtraceJalr(Decode *s,int rd){
 }
 void riscv32FtraceJal(Decode *s,int rd){
   if(rd==1){
+    printf("call\n");
     fprintf(log_dtrace_fp,"0x%8x",s->pc);
     for(int i=0;i<ftraceCount;i++){
       fprintf(log_dtrace_fp,"\t");
