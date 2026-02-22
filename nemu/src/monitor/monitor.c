@@ -96,8 +96,8 @@ void errCtl(char *errcode){
 
 void init_ftrace(){
   if(img_file==NULL){
-    fTracer.has=false;
     Log("No image is given.ftrace maybe been close or output ???");
+    errCtl("img_file");
     return;
   }else{
     fTracer.has=true;
