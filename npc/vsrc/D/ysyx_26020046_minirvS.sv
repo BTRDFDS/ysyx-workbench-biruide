@@ -42,12 +42,6 @@ import "DPI-C" function void ebreak(input bit eb);
 	// assign sw =s&w;
 	assign imi = {fc7,cR2,cR1,fc3,12'b0};
 	assign imm = s?im0:im1;
-	// always_comb begin:get_imm
-	// 	case(s)
-	// 		1'b0: imm=im1;
-	// 		1'b1: imm=im0;
-	// 	endcase
-	// end
 
 	always_comb begin:check_code_or_ebreak
 		if(code==32'h100073)begin
@@ -82,27 +76,6 @@ import "DPI-C" function void ebreak(input bit eb);
 		endcase
 	end
 	assign adr=addRes;
-
-	// always_comb begin:add_res_or_imi
-	// 	case(lui)
-	// 		1'b0:lmer=addRes;
-	// 		1'b1:lmer=imi;
-	// 	endcase
-	// end
-
-	// always_comb begin:Lmer_or_ram_output
-	// 	case(l)
-	// 		1'b0:Ler=lmer;
-	// 		1'b1:Ler=oRAM;
-	// 	endcase
-	// end
-
-	// always_comb begin:jalr_res_or_Ler
-	// 	case(jalr)
-	// 		1'b0:iRd=Ler;
-	// 		1'b1:iRd=rAdr;
-	// 	endcase
-	// end
 
 //=======================Reg=======================
 

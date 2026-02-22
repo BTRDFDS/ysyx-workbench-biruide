@@ -51,9 +51,7 @@ int printf(const char *fmt, ...) {//TODO
               point--;
           }
           int iNow=point+1;
-          if(printfNumber>0&&printfNumber<MAX-point-1){
-            iNow=MAX-1-printfNumber;
-          }else if(printfNumber>0&&printfNumber>MAX-point-1){
+          if(printfNumber>0&&printfNumber>MAX-point-1){
             for(int i=0;i<(printfNumber-(MAX-point-1));i++){
               putch('0');
               count++;
@@ -69,6 +67,9 @@ int printf(const char *fmt, ...) {//TODO
           getPrintfNumber=false;
           break;
         case 'x':
+        case 'X':
+          bool isBig;
+          if(*fmt=='x'){isBig=false;}else{isBig=true;}
           fmt++;
           #define MAX 11
           int numX=va_arg(argp, int);
@@ -96,22 +97,20 @@ int printf(const char *fmt, ...) {//TODO
                 case  7:numberX[pointX]='7';break;
                 case  8:numberX[pointX]='8';break;
                 case  9:numberX[pointX]='9';break;
-                case 10:numberX[pointX]='a';break;
-                case 11:numberX[pointX]='b';break;
-                case 12:numberX[pointX]='c';break;
-                case 13:numberX[pointX]='d';break;
-                case 14:numberX[pointX]='e';break;
-                case 15:numberX[pointX]='f';break;
+                case 10:numberX[pointX]=isBig?'A':'a';break;
+                case 11:numberX[pointX]=isBig?'B':'b';break;
+                case 12:numberX[pointX]=isBig?'C':'c';break;
+                case 13:numberX[pointX]=isBig?'D':'d';break;
+                case 14:numberX[pointX]=isBig?'E':'e';break;
+                case 15:numberX[pointX]=isBig?'F':'f';break;
               }
               numX/= 16;
               pointX--;
           }
           int iNowX=pointX+1;
-          if(printfNumber>0&&printfNumber<MAX-pointX-1){
-            iNowX=MAX-1-printfNumber;
-          }else if(printfNumber>0&&printfNumber>MAX-pointX-1){
+          if(printfNumber>0&&printfNumber>MAX-pointX-1){
             for(int i=0;i<(printfNumber-(MAX-pointX-1));i++){
-              putch('0');
+              putch(' ');
               count++;
             }
           }
@@ -170,16 +169,16 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
   panic("Not implemented");
 }
 
-int sprintf(char *out, const char *fmt, ...) {//DONE:hello-str
-  // panic("Not implemented");
+int sprintf(char *out, const char *fmt, ...){
   if(out==NULL){panic("out is NULL");}
   if(fmt==NULL){panic("fmt is NULL");}
   va_list argp;
   va_start(argp, fmt);
-  char *start = out;
+  char *start=out;
+  int printfNumber=0;
+  bool getPrintfNumber=0;
   while(*fmt!='\0'){
-    // *out=*fmt;
-    if(*fmt=='%'){
+    if(*fmt=='%'||getPrintfNumber==true){
       fmt++;
       switch(*fmt){
         case 'c':
@@ -208,14 +207,107 @@ int sprintf(char *out, const char *fmt, ...) {//DONE:hello-str
               num/= 10;
               point--;
           }
-          for(int i=point+1;i<MAX;i++){
+          int iNow=point+1;
+          if(printfNumber>0&&printfNumber>MAX-point-1){
+            for(int i=0;i<(printfNumber-(MAX-point-1));i++){
+              *out=' ';
+              out++;
+            }
+          }
+          for(int i=iNow;i<MAX;i++){
               if(number[i]!='\0'){
                 *out=number[i];
                 out++;
               }
           }
+          printfNumber=0;
+          getPrintfNumber=false;
           break;
-        default :panic("sprintf error");break;
+        case 'x':
+        case 'X':
+          bool isBig;
+          if(*fmt=='x'){isBig=false;}else{isBig=true;}
+          fmt++;
+          #define MAX 11
+          int numX=va_arg(argp, int);
+          char numberX[MAX]={0};
+          int pointX=MAX-1;
+          if(numX==0){*out='0';out++;break;}
+          else if(numX<0){*out='-';out++;}
+          while(numX>0&&pointX>= 0){
+              // number[point]=(num % 10)+'0';
+              // num/= 10;
+              switch(numX%16){
+                case  0:numberX[pointX]='0';break;
+                case  1:numberX[pointX]='1';break;
+                case  2:numberX[pointX]='2';break;
+                case  3:numberX[pointX]='3';break;
+                case  4:numberX[pointX]='4';break;
+                case  5:numberX[pointX]='5';break;
+                case  6:numberX[pointX]='6';break;
+                case  7:numberX[pointX]='7';break;
+                case  8:numberX[pointX]='8';break;
+                case  9:numberX[pointX]='9';break;
+                case 10:numberX[pointX]=isBig?'A':'a';break;
+                case 11:numberX[pointX]=isBig?'B':'b';break;
+                case 12:numberX[pointX]=isBig?'C':'c';break;
+                case 13:numberX[pointX]=isBig?'D':'d';break;
+                case 14:numberX[pointX]=isBig?'E':'e';break;
+                case 15:numberX[pointX]=isBig?'F':'f';break;
+              }
+              numX/= 16;
+              pointX--;
+          }
+          int iNowX=pointX+1;
+          // if(printfNumber>0&&printfNumber<MAX-pointX-1){
+          //   iNowX=MAX-printfNumber;
+          // }else 
+          if(printfNumber>0&&printfNumber>MAX-pointX-1){
+            for(int i=0;i<(printfNumber-(MAX-pointX-1));i++){
+              *out='0';
+              out++;
+            }
+          }
+          for(int i=iNowX;i<MAX;i++){
+              if(numberX[i]!='\0'){
+                *out=numberX[i];
+                out++;
+              }
+          }
+          printfNumber=0;
+          getPrintfNumber=false;
+          break;
+        case '0':printfNumber=printfNumber*10+0;getPrintfNumber=true;break;
+        case '1':printfNumber=printfNumber*10+1;getPrintfNumber=true;break;
+        case '2':printfNumber=printfNumber*10+2;getPrintfNumber=true;break;
+        case '3':printfNumber=printfNumber*10+3;getPrintfNumber=true;break;
+        case '4':printfNumber=printfNumber*10+4;getPrintfNumber=true;break;
+        case '5':printfNumber=printfNumber*10+5;getPrintfNumber=true;break;
+        case '6':printfNumber=printfNumber*10+6;getPrintfNumber=true;break;
+        case '7':printfNumber=printfNumber*10+7;getPrintfNumber=true;break;
+        case '8':printfNumber=printfNumber*10+8;getPrintfNumber=true;break;
+        case '9':printfNumber=printfNumber*10+9;getPrintfNumber=true;break;
+        case '%':
+          *out='%';
+          out++;
+          fmt++;
+          break;
+        default :panic("printf error:%%");break;
+      }
+    }else if(*fmt=='\\'){
+      fmt++;
+      switch (*fmt)
+      {
+        case 'n':
+          *out='\n';
+          out++;
+          fmt++;
+          break;
+        case '\\':
+          *out='\\';
+          out++;
+          fmt++;
+        default :panic("printf error:\\");break;
       }
     }else{
       *out=*fmt;

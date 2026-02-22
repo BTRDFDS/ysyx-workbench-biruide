@@ -1,4 +1,5 @@
 #include <trap.h>
+#include <klib.h>
 
 #define N 64
 #define word uint8_t//按照字节操作，别动
@@ -120,6 +121,88 @@ void test_memcmp(){
 	}
 	printf(" memcmp test \033[1;32mPASS\033[0m\n");
 }
+
+void test_strlen(){
+	for(uint32_t l=0;l<N;l++){
+		for(uint32_t r=l+1;r<=N;r++){
+			reset(data1);
+			data1[r-1]='\0';
+			uint32_t len=strlen((char*)data1+l);
+			if(len!=r-l-1){
+				printf("strlen err l=%d r=%d len=%d\n",l,r,len);
+				assert(0);
+			}
+		}
+	}
+	printf(" strlen test \033[1;32mPASS\033[0m\n");
+}
+//第三类
+void test_sprintf(){
+	memset(data1,VAL,N);
+	memset(data2,VAL,N);
+	sprintf((char*)data1,"abcd123");
+	if(strcmp((char*)data1,"abcd123")!=0){
+		printf("sprintf err %s != abcd123\n",data1);
+		assert(0);
+	}
+	sprintf((char*)data2,"abcd%0d",123);
+	if(strcmp((char*)data2,"abcd123")!=0){
+		printf("sprintf err %s != abcd23\n",data2);
+		assert(0);
+	}
+	memset(data1,VAL,N);
+	memset(data2,VAL,N);
+	sprintf((char*)data1,"abcd%000001d",123);
+	if(strcmp((char*)data1,"abcd123")!=0){
+		printf("sprintf err %s != abcd123\n",data1);
+		assert(0);
+	}
+	sprintf((char*)data2,"abcd%02d",123);
+	if(strcmp((char*)data2,"abcd123")!=0){
+		printf("sprintf err %s != abcd123\n",data2);
+		assert(0);
+	}
+	memset(data1,VAL,N);
+	memset(data2,VAL,N);
+	sprintf((char*)data1,"abcd%4d",123);
+	if(strcmp((char*)data1,"abcd 123")!=0){
+		printf("sprintf err %s != abcd 123\n",data1);
+		assert(0);
+	}
+	sprintf((char*)data2,"abcd%0x",123);
+	if(strcmp((char*)data2,"abcd7b")!=0){
+	    printf("sprintf err %s != abcd7b\n",data2);
+		assert(0);
+	}
+
+	memset(data1,VAL,N);
+	memset(data2,VAL,N);
+	sprintf((char*)data1,"abcd%01x",123);
+	if(strcmp((char*)data1,"abcd7b")!=0){
+		printf("sprintf err %s != abcd7b\n",data1);
+		assert(0);
+	}
+	sprintf((char*)data2,"abcd%08X",123);
+	if(strcmp((char*)data2,"abcd0000007B")!=0){
+		printf("sprintf err %s != abcd0000007B\n",data2);
+		assert(0);
+	}
+
+	memset(data1,VAL,N);
+	memset(data2,VAL,N);
+	sprintf((char*)data1,"666%c",'P');
+	if(strcmp((char*)data1,"666P")!=0){
+		printf("sprintf err %s != 666P\n",data1);
+		assert(0);
+	}
+	sprintf((char*)data2,"666%s","well down");
+	if(strcmp((char*)data2,"666well down")!=0){
+		printf("sprintf err %s != 666well down\n",data2);
+		assert(0);
+	}
+
+	printf(" sprint test \033[1;32mPASS\033[0m\n");
+}
 int main() {
 	if(BEGIN<=0){
 		printf("BEGIN<=0\n");
@@ -131,6 +214,11 @@ int main() {
 	test_memcpy();
 	//第二类
 	test_memcmp();
+	test_strlen();
+	//第三类
+	test_sprintf();
+
+
 	printf("\033[1;32m ALL klib-tests PASS \033[0m\n");
 	return 0;
 }
