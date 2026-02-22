@@ -77,9 +77,9 @@ typedef struct {
     word_t start; // 函数起始地址
     word_t end;   // 函数结束地址 (start + size)
     char *name;     // 函数名指针 (直接指向 strtab 里的字符串)
-}funcAddr;
+}funcAddrName;
 typedef struct {
-    funcAddr *func;
+    funcAddrName *func;
     uint32_t funcNumber;    // 函数数量
     bool has;
 }funcTracer;
@@ -87,47 +87,71 @@ typedef struct {
 char *strtab=NULL;
 funcTracer fTracer;
 
+void errCtl(char *errcode){
+  fTracer.has=false;
+  extern FILE *log_ftrace_fp;
+  fprintf(log_ftrace_fp,"err %s .ftrace maybe been close or output ???\n",errcode);
+}
+
+
 void init_ftrace(){
   if(img_file==NULL){
     fTracer.has=false;
+    Log("No image is given.ftrace maybe been close or output ???");
     return;
   }else{
     fTracer.has=true;
   }
+
+FILE *elf_fp=NULL;
+Elf32_Ehdr ehdr;
+Elf32_Shdr *shdrs=NULL;
+Elf32_Shdr *shstrtab_shdr=NULL;
+//指针地址不是值
+Elf32_Shdr *symtab_sh=NULL; //函数查找表.symtab
+Elf32_Shdr *strtab_sh=NULL; //名字本.strtab
+
+Elf32_Sym *symtab=NULL;
+char *shstrtab=NULL;
+char *elf_file=NULL;
+
+
+  
   char *img_dir = malloc(strlen(img_file) + 1);
-  Assert(img_dir!=NULL,"err img_dir");
+  // Assert(img_dir!=NULL,"err img_dir");
+  if(img_dir==NULL){errCtl("img_dir");goto err;}
+
   strcpy(img_dir, img_file);
   char *dot = strrchr(img_dir, '.');
   if (dot!= NULL) {*dot= '\0';}
 
-  char *elf_file= malloc(strlen(img_file)+strlen(".elf")+1);
-  Assert(elf_file!=NULL,"err elf_file");
+  elf_file= malloc(strlen(img_file)+strlen(".elf")+1);
+  // Assert(elf_file!=NULL,"err elf_file");
+  if(elf_file==NULL){errCtl("elf_file");goto err;}
   strcpy(elf_file, img_dir);
   strcat(elf_file, ".elf");
-  FILE *elf_fp = fopen(elf_file, "rb");
-  Assert(elf_fp, "Can not open '%s'", elf_file);
+  elf_fp = fopen(elf_file, "rb");
+  // Assert(elf_fp, "Can not open '%s'", elf_file);
+  if(elf_fp==NULL){errCtl("open elf_fp");goto err;}
 
-  Elf32_Ehdr ehdr;
-  Assert(fread(&ehdr, sizeof(ehdr), 1, elf_fp) == 1, "err ehdr");
+  // Assert(fread(&ehdr, sizeof(ehdr), 1, elf_fp) == 1, "err ehdr");
+  if(fread(&ehdr,sizeof(ehdr),1,elf_fp)!=1){errCtl("fread ehdr");goto err;}
 
-  Elf32_Shdr *shdrs = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));//节头，e_shnum条，每条是Elf32_Shdr的大小
+  shdrs = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));//节头，e_shnum条，每条是Elf32_Shdr的大小
   Assert(shdrs!=NULL,"err shdrs");
   // fseek(elf_fp, ehdr.e_shoff, SEEK_SET);//从e_shoff开始
   // fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_fp);
   Assert(fseek(elf_fp,ehdr.e_shoff, SEEK_SET)==0,"err fseek shdrs");
   Assert(fread(shdrs,sizeof(Elf32_Shdr),ehdr.e_shnum,elf_fp)==ehdr.e_shnum,"err fread shdrs");
 
-  Elf32_Shdr *shstrtab_shdr = &shdrs[ehdr.e_shstrndx];
-  char *shstrtab = malloc(shstrtab_shdr->sh_size);//字符串表
+  shstrtab_shdr = &shdrs[ehdr.e_shstrndx];
+  shstrtab = malloc(shstrtab_shdr->sh_size);//字符串表
   Assert(shstrtab!=NULL,"err shstrtab");
   // fseek(elf_fp, shstrtab_shdr->sh_offset, SEEK_SET);
   // fread(shstrtab, shstrtab_shdr->sh_size, 1, elf_fp);
   Assert(fseek(elf_fp,shstrtab_shdr->sh_offset, SEEK_SET)==0,"err fseek shstrtab");
   Assert(fread(shstrtab,shstrtab_shdr->sh_size,1,elf_fp)==1,"err fread shstrtab");
 
-  //指针地址不是值
-  Elf32_Shdr *symtab_sh=NULL; //函数查找表.symtab
-  Elf32_Shdr *strtab_sh=NULL; //名字本.strtab
 
   for (int i = 0; i < ehdr.e_shnum; i++) {
     char *name = &shstrtab[shdrs[i].sh_name]; // 取出节的名字
@@ -137,7 +161,7 @@ void init_ftrace(){
   Assert(symtab_sh!=NULL,"err symtab_sh");
   Assert(strtab_sh!=NULL,"err strtab_sh");
 
-  Elf32_Sym *symtab=malloc(symtab_sh->sh_size);
+  symtab=malloc(symtab_sh->sh_size);
   Assert(symtab!=NULL, "err symtab");
   int sym_count=symtab_sh->sh_size/sizeof(Elf32_Sym);
   // fseek(elf_fp, symtab_sh->sh_offset, SEEK_SET);
@@ -153,7 +177,7 @@ void init_ftrace(){
   Assert(fread(strtab,strtab_sh->sh_size,1,elf_fp)==1,"err fread strtab");
 
   fTracer.funcNumber = 0;
-  fTracer.func = malloc(sym_count * sizeof(funcAddr));
+  fTracer.func = malloc(sym_count * sizeof(funcAddrName));
   Assert(fTracer.func!=NULL,"err tracer.func");
 
   for (int i = 0; i < sym_count; i++) {
@@ -167,10 +191,11 @@ void init_ftrace(){
     fTracer.funcNumber++;
   }
   if (fTracer.funcNumber<sym_count) {
-    funcAddr *temp = realloc(fTracer.func, fTracer.funcNumber * sizeof(funcAddr));
+    funcAddrName *temp = realloc(fTracer.func, fTracer.funcNumber * sizeof(funcAddrName));
     if (temp != NULL) {fTracer.func = temp;}
   }
 
+err:
   if(img_dir!=NULL){free(img_dir);}
   if(elf_file!=NULL){free(elf_file);}
   if(shdrs!=NULL){free(shdrs);}
