@@ -49,5 +49,7 @@ typedef uint16_t ioaddr_t;
 #endif
 
 void closeLog();
+void closeFtrace();
+char *getFuncName(word_t addr);
 
 // volatile static int dummy = 0;
