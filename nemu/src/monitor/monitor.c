@@ -81,12 +81,19 @@ typedef struct {
 typedef struct {
     funcAddr *func;
     uint32_t funcNumber;    // 函数数量
+    bool has;
 }funcTracer;
 
 char *strtab=NULL;
-funcTracer tracer;
+funcTracer fTracer;
 
 void init_ftrace(){
+  if(img_file==NULL){
+    fTracer.has=false;
+    return;
+  }else{
+    fTracer.has=true;
+  }
   char *img_dir = malloc(strlen(img_file) + 1);
   Assert(img_dir!=NULL,"err img_dir");
   strcpy(img_dir, img_file);
@@ -145,23 +152,23 @@ void init_ftrace(){
   Assert(fseek(elf_fp,strtab_sh->sh_offset,SEEK_SET)==0,"err fseek strtab");
   Assert(fread(strtab,strtab_sh->sh_size,1,elf_fp)==1,"err fread strtab");
 
-  tracer.funcNumber = 0;
-  tracer.func = malloc(sym_count * sizeof(funcAddr));
-  Assert(tracer.func!=NULL,"err tracer.func");
+  fTracer.funcNumber = 0;
+  fTracer.func = malloc(sym_count * sizeof(funcAddr));
+  Assert(fTracer.func!=NULL,"err tracer.func");
 
   for (int i = 0; i < sym_count; i++) {
     Elf32_Sym *sym = &symtab[i];
     if (ELF32_ST_TYPE(sym->st_info) != STT_FUNC){continue;}
     char *name = &strtab[sym->st_name];
     if (name[0] == '\0'){continue;}
-    tracer.func[tracer.funcNumber].start = sym->st_value;
-    tracer.func[tracer.funcNumber].end = sym->st_value + sym->st_size;
-    tracer.func[tracer.funcNumber].name = name;
-    tracer.funcNumber++;
+    fTracer.func[fTracer.funcNumber].start = sym->st_value;
+    fTracer.func[fTracer.funcNumber].end = sym->st_value + sym->st_size;
+    fTracer.func[fTracer.funcNumber].name = name;
+    fTracer.funcNumber++;
   }
-  if (tracer.funcNumber<sym_count) {
-    funcAddr *temp = realloc(tracer.func, tracer.funcNumber * sizeof(funcAddr));
-    if (temp != NULL) {tracer.func = temp;}
+  if (fTracer.funcNumber<sym_count) {
+    funcAddr *temp = realloc(fTracer.func, fTracer.funcNumber * sizeof(funcAddr));
+    if (temp != NULL) {fTracer.func = temp;}
   }
 
   if(img_dir!=NULL){free(img_dir);}
@@ -174,20 +181,22 @@ void init_ftrace(){
 
 char errName[]="???";
 char *getFuncName(word_t addr){
-  for (int i = 0; i < tracer.funcNumber; i++) {
-    if (addr >= tracer.func[i].start && addr < tracer.func[i].end){
-      return tracer.func[i].name;
+  if(fTracer.has==false){return errName;}
+  for (int i = 0; i < fTracer.funcNumber; i++) {
+    if (addr >= fTracer.func[i].start && addr < fTracer.func[i].end){
+      return fTracer.func[i].name;
     }
   }
   return errName;
 }
 
 void closeFtrace(){
+  if(fTracer.has==false){return;}
   if(strtab!=NULL){free(strtab);}
-  if(tracer.func!=NULL){
-    free(tracer.func);
-    tracer.func=NULL;
-    tracer.funcNumber=0;
+  if(fTracer.func!=NULL){
+    free(fTracer.func);
+    fTracer.func=NULL;
+    fTracer.funcNumber=0;
   }
 }
 #endif
