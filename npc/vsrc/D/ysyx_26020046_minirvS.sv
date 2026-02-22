@@ -155,7 +155,7 @@ import "DPI-C" function void ebreak(input bit eb);
 	end
 
 //=======================DEBUG=======================
-
+`ifdef SIMULATE
 `ifdef DEBUG
 	always@(clk) begin
     	$display("> pc=x%x dn=x%x sn=x%x reset= %x code=x%x",pc,dnpc,snpc,reset,code);
@@ -170,6 +170,7 @@ import "DPI-C" function void ebreak(input bit eb);
 		$display(" s8:x%8x s9:x%8x s10:x%8x s11:x%8x t3:x%8x t4:x%8x t5:x%8x t6:x%8x",gpr[24],gpr[25],gpr[26],gpr[27],gpr[28],gpr[29],gpr[30],gpr[31]);
 		$strobe("Reg[%d]=%x", cRd, gpr[cRd]);
 	end
+`endif
 `endif
 
 endmodule
