@@ -138,19 +138,25 @@ char *elf_file=NULL;
   if(fread(&ehdr,sizeof(ehdr),1,elf_fp)!=1){errCtl("fread ehdr");goto err;}
 
   shdrs = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));//节头，e_shnum条，每条是Elf32_Shdr的大小
-  Assert(shdrs!=NULL,"err shdrs");
+  // Assert(shdrs!=NULL,"err shdrs");
+  if(shdrs==NULL){errCtl("shdrs");goto err;}
   // fseek(elf_fp, ehdr.e_shoff, SEEK_SET);//从e_shoff开始
   // fread(shdrs, sizeof(Elf32_Shdr), ehdr.e_shnum, elf_fp);
-  Assert(fseek(elf_fp,ehdr.e_shoff, SEEK_SET)==0,"err fseek shdrs");
-  Assert(fread(shdrs,sizeof(Elf32_Shdr),ehdr.e_shnum,elf_fp)==ehdr.e_shnum,"err fread shdrs");
+  // Assert(fseek(elf_fp,ehdr.e_shoff, SEEK_SET)==0,"err fseek shdrs");
+  // Assert(fread(shdrs,sizeof(Elf32_Shdr),ehdr.e_shnum,elf_fp)==ehdr.e_shnum,"err fread shdrs");
+  if(fseek(elf_fp,ehdr.e_shoff,SEEK_SET)!=0){errCtl("fseek shdrs");goto err;}
+  if(fread(shdrs,sizeof(Elf32_Shdr),ehdr.e_shnum,elf_fp)!=ehdr.e_shnum){errCtl("fread shdrs");goto err;}
 
   shstrtab_shdr = &shdrs[ehdr.e_shstrndx];
   shstrtab = malloc(shstrtab_shdr->sh_size);//字符串表
-  Assert(shstrtab!=NULL,"err shstrtab");
+  // Assert(shstrtab!=NULL,"err shstrtab");
+  if(shstrtab==NULL){errCtl("shstrtab");goto err;}
   // fseek(elf_fp, shstrtab_shdr->sh_offset, SEEK_SET);
   // fread(shstrtab, shstrtab_shdr->sh_size, 1, elf_fp);
-  Assert(fseek(elf_fp,shstrtab_shdr->sh_offset, SEEK_SET)==0,"err fseek shstrtab");
-  Assert(fread(shstrtab,shstrtab_shdr->sh_size,1,elf_fp)==1,"err fread shstrtab");
+  // Assert(fseek(elf_fp,shstrtab_shdr->sh_offset, SEEK_SET)==0,"err fseek shstrtab");
+  // Assert(fread(shstrtab,shstrtab_shdr->sh_size,1,elf_fp)==1,"err fread shstrtab");
+  if(fseek(elf_fp,shstrtab_shdr->sh_offset,SEEK_SET)!=0){errCtl("fseek shstrtab");goto err;}
+  if(fread(shstrtab,shstrtab_shdr->sh_size,1,elf_fp)!=1){errCtl("fread shstrtab");goto err;}
 
 
   for (int i = 0; i < ehdr.e_shnum; i++) {
@@ -158,27 +164,36 @@ char *elf_file=NULL;
     if(strcmp(name,".symtab")==0){symtab_sh=&shdrs[i];}
     if(strcmp(name,".strtab")==0){strtab_sh=&shdrs[i];}
   }
-  Assert(symtab_sh!=NULL,"err symtab_sh");
-  Assert(strtab_sh!=NULL,"err strtab_sh");
+  // Assert(symtab_sh!=NULL,"err symtab_sh");
+  // Assert(strtab_sh!=NULL,"err strtab_sh");
+  if(symtab_sh==NULL){errCtl("symtab_sh");goto err;}
+  if(strtab_sh==NULL){errCtl("strtab_sh");goto err;}
 
   symtab=malloc(symtab_sh->sh_size);
-  Assert(symtab!=NULL, "err symtab");
+  // Assert(symtab!=NULL, "err symtab");
+  if(symtab==NULL){errCtl("symtab");goto err;}
   int sym_count=symtab_sh->sh_size/sizeof(Elf32_Sym);
   // fseek(elf_fp, symtab_sh->sh_offset, SEEK_SET);
   // fread(symtab, symtab_sh->sh_size,1,elf_fp);
-  Assert(fseek(elf_fp,symtab_sh->sh_offset,SEEK_SET)==0,"err fseek symtab");
-  Assert(fread(symtab,symtab_sh->sh_size,1,elf_fp)==1,"err fread symtab");
+  // Assert(fseek(elf_fp,symtab_sh->sh_offset,SEEK_SET)==0,"err fseek symtab");
+  // Assert(fread(symtab,symtab_sh->sh_size,1,elf_fp)==1,"err fread symtab");
+  if(fseek(elf_fp,symtab_sh->sh_offset,SEEK_SET)!=0){errCtl("fseek symtab");goto err;}
+  if(fread(symtab,symtab_sh->sh_size,1,elf_fp)!=1){errCtl("fread symtab");goto err;}
 
   strtab=malloc(strtab_sh->sh_size);
-  Assert(strtab!=NULL,"err strtab");
+  // Assert(strtab!=NULL,"err strtab");
+  if(strtab==NULL){errCtl("strtab");goto err;}
   // fseek(elf_fp,strtab_sh->sh_offset,SEEK_SET);
   // fread(strtab,strtab_sh->sh_size,1,elf_fp);
-  Assert(fseek(elf_fp,strtab_sh->sh_offset,SEEK_SET)==0,"err fseek strtab");
-  Assert(fread(strtab,strtab_sh->sh_size,1,elf_fp)==1,"err fread strtab");
+  // Assert(fseek(elf_fp,strtab_sh->sh_offset,SEEK_SET)==0,"err fseek strtab");
+  // Assert(fread(strtab,strtab_sh->sh_size,1,elf_fp)==1,"err fread strtab");
+  if(fseek(elf_fp,strtab_sh->sh_offset,SEEK_SET)!=0){errCtl("fseek strtab");goto err;}
+  if(fread(strtab,strtab_sh->sh_size,1,elf_fp)!=1){errCtl("fread strtab");goto err;}
 
   fTracer.funcNumber = 0;
   fTracer.func = malloc(sym_count * sizeof(funcAddrName));
-  Assert(fTracer.func!=NULL,"err tracer.func");
+  // Assert(fTracer.func!=NULL,"err tracer.func");
+  if(fTracer.func==NULL){errCtl("tracer.func");goto err;}
 
   for (int i = 0; i < sym_count; i++) {
     Elf32_Sym *sym = &symtab[i];
