@@ -15,8 +15,13 @@ logic add,addi,lui,l,s,jalr,w,eRd,stop,eb;//,lw,sw,sb,lbu
 import "DPI-C" function int pmem_read(input int raddr);
 import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
 import "DPI-C" function void ebreak(input bit eb);
+export "DPI-C" function getReg;
+function int getReg(input int addr);
+    return (addr == 0) ? 32'b0 : gpr[addr];
+endfunction
 
 //=======================IDC=======================
+
 	assign fc7=code[31:25];
 	assign cR2=code[24:20];
 	assign cR1=code[19:15];
@@ -159,6 +164,7 @@ import "DPI-C" function void ebreak(input bit eb);
 	end
 
 //=======================DEBUG=======================
+
 `ifdef SIMULATE
 `ifdef DEBUG
 	always@(clk) begin

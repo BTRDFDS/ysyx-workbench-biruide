@@ -1,50 +1,33 @@
-package minirvPackage;
-	parameter ADDR_WIDTH = 5;
-	parameter DATA_WIDTH = 32;
-
-	logic inClk,inReset;
-	logic [DATA_WIDTH-1:0] inPcReset,inCode,inPc;
-
-	logic [ADDR_WIDTH-1:0] cR1,cR2,cRd;
-	logic [DATA_WIDTH-1:0] adr,oR1,oR2,oRAM,imi,rAdr,ramAddr,wRAM,addRes,snpc,iRAM,dnpc,oRamB,imm,iRd;
-	logic [DATA_WIDTH-1:0] gpr [2**ADDR_WIDTH-1:1];
-	logic [3:0] wmask,hot;
-	logic [6:0] fc7,opc;
-	logic [2:0] fc3;
-	logic add,addi,lui,l,s,jalr,w,eRd,stop,eb;//,lw,sw,sb,lbu
-
-
-endpackage
-module ysyx_26020046_minirv(clk,reset,code,pcReset,pc);
-import minirvPackage::*;
+module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,code,pcReset,pc);
+//pcReset应该改成固定值
 input  logic clk,reset;
 input  logic [DATA_WIDTH-1:0] code,pcReset;
 output logic [DATA_WIDTH-1:0] pc;
 
+logic [ADDR_WIDTH-1:0] cR1,cR2,cRd;
+logic [DATA_WIDTH-1:0] adr,oR1,oR2,oRAM,imi,rAdr,ramAddr,wRAM,a0,addRes,snpc,iRAM,dnpc,oRamB,imm,iRd;
+logic [DATA_WIDTH-1:0] gpr [2**ADDR_WIDTH-1:1];
+logic [3:0] wmask,hot;
+logic [6:0] fc7,opc;
+logic [2:0] fc3;
+logic add,addi,lui,l,s,jalr,w,eRd,stop,eb;//,lw,sw,sb,lbu
 
-assign inClk=clk;
-assign inReset=reset;
-assign inCode=code;
-assign inPcReset=pcReset;
-assign pc=inPc;
+import "DPI-C" function int pmem_read(input int raddr);
+import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
+import "DPI-C" function void ebreak(input bit eb);
+export "DPI-C" function getReg;
+function int getReg(input int addr);
+    return (addr == 0) ? 32'b0 : gpr[addr];
+endfunction
 
-ysyx_26020046_minirvIDC IDC();
-ysyx_26020046_minirvALU ALU();
-ysyx_26020046_minirvReg REG();
-ysyx_26020046_minirvLSU LSU();
-ysyx_26020046_minirvDebug DEBUG();
+//=======================IDC=======================
 
-endmodule
-
-module ysyx_26020046_minirvIDC;
-	import minirvPackage::*;
-
-	assign fc7=inCode[31:25];
-	assign cR2=inCode[24:20];
-	assign cR1=inCode[19:15];
-	assign fc3=inCode[14:12];
-	assign cRd=inCode[11:07];
-	assign opc=inCode[06:00];
+	assign fc7=code[31:25];
+	assign cR2=code[24:20];
+	assign cR1=code[19:15];
+	assign fc3=code[14:12];
+	assign cRd=code[11:07];
+	assign opc=code[06:00];
 
 
 	assign add =(opc==7'b0110011);
@@ -70,22 +53,18 @@ module ysyx_26020046_minirvIDC;
 
 
 	always_comb begin:check_code_or_ebreak
-		if(inCode==32'h100073)begin
+		if(code==32'h100073)begin
 			stop=1'b1;
-			eb=(gpr[10]==32'b0);
+			eb=(a0==32'b0);
 		end else begin
 			stop=~(|{add,addi,lui,l,s,jalr});
 			eb=1'b0;
 		end
 	end
-endmodule
 
-module ysyx_26020046_minirvALU;
-	import minirvPackage::*;
+//=======================ALU=======================
 
 	logic [1:0]resChoose;
-	assign resChoose[0]=jalr|lui;
-	assign resChoose[1]=jalr|l;
 
 	always_comb begin:res_choose
 		case(resChoose)
@@ -93,10 +72,11 @@ module ysyx_26020046_minirvALU;
 			2'b01:iRd=imi;
 			2'b10:iRd=oRAM;
 			2'b11:iRd=rAdr;
-			default: iRd = addRes;
 		endcase
 	end
 
+	assign resChoose[0]=jalr|lui;
+	assign resChoose[1]=jalr|l;
 
 	always_comb begin:add_choose
 		case(add)
@@ -106,13 +86,10 @@ module ysyx_26020046_minirvALU;
 	end
 	assign adr=addRes;
 
-endmodule
+//=======================Reg=======================
 
-module ysyx_26020046_minirvReg;
-	import minirvPackage::*;
-
-	always_ff@(posedge inClk) begin:reg_write
-		if(inReset)begin
+	always_ff@(posedge clk) begin:reg_write
+		if(reset)begin
 			gpr[ 1]<=0;gpr[ 2]<=0;gpr[ 3]<=0;gpr[ 4]<=0;gpr[ 5]<=0;gpr[ 6]<=0;gpr[ 7]<=0;
 			gpr[ 8]<=0;gpr[ 9]<=0;gpr[10]<=0;gpr[11]<=0;gpr[12]<=0;gpr[13]<=0;gpr[14]<=0;gpr[15]<=0;
 			gpr[16]<=0;gpr[17]<=0;gpr[18]<=0;gpr[19]<=0;gpr[20]<=0;gpr[21]<=0;gpr[22]<=0;gpr[23]<=0;
@@ -124,14 +101,9 @@ module ysyx_26020046_minirvReg;
 
 	assign oR1 = (cR1==0)?0:gpr[cR1];
 	assign oR2 = (cR2==0)?0:gpr[cR2];
-	// assign a0 = gpr[10];
-endmodule
+	assign a0 = gpr[10];
 
-module ysyx_26020046_minirvLSU;
-import "DPI-C" function int pmem_read(input int raddr);
-import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
-
-	import minirvPackage::*;
+//=======================LSU=======================
 
 //s处理
 	assign ramAddr={adr[31:2],2'b0};
@@ -162,54 +134,54 @@ import "DPI-C" function void pmem_write(input int waddr, input int wdata, input 
 
 //pc处理
 
-	assign snpc=inPc+4;
+	assign snpc=pc+4;
 	assign rAdr=snpc;
 	assign dnpc=jalr?adr:snpc;
 
-	always_ff@(posedge inClk) begin:pc_write
-		inPc<=inReset?inPcReset:dnpc;
+	always_ff@(posedge clk) begin:pc_write
+		pc<=reset?pcReset:dnpc;
 	end
 
-	assign iRAM = l&inClk?pmem_read(ramAddr):0;
+	// assign iRAM = l&clk?pmem_read(ramAddr):0;
+
+	always_comb begin
+		if(l&clk)begin
+			$display("yRs %x",ramAddr);
+			iRAM = pmem_read(ramAddr);
+			$display("yRO");
+		end else begin
+			iRAM = 0;
+		end
+	end
 	
-	// assign iRAM = l&(~inClk)?pmem_read(ramAddr):0;
-	// always_ff@(posedge inClk) begin:control_read
+	// assign iRAM = l&(~clk)?pmem_read(ramAddr):0;
+	// always_ff@(posedge clk) begin:control_read
 	// 	if (l) begin // 有读请求时
-	// 	// if(inCode[6:0]==7'b0000011)begin
+	// 	// if(code[6:0]==7'b0000011)begin
 	// 		iRAM <= pmem_read(ramAddr);
 	// 	end
 	// 	// iRAM<=l?pmem_read(ramAddr):0;
 	// end
 
-	always_ff@(posedge inClk) begin:control_write
+	always_ff@(posedge clk) begin:control_write
 		if (s) begin // 有写请求时
 			pmem_write(ramAddr, wRAM, {4'b0,wmask});
 		end
 	end
 
-endmodule
-
-
-module ysyx_26020046_minirvDebug();
-	import minirvPackage::*;
-
-	import "DPI-C" function void ebreak(input bit eb);
 	always_comb begin:en_or_reset
-	    if(stop&(~inReset)) ebreak(eb);
+	    if(stop&(~reset)) ebreak(eb);
 	end
-	export "DPI-C" function getReg;
-	function int getReg(input int addr);
-		// $display("getReg addr");
-	    return (addr == 0) ? inPc : gpr[addr];
-	endfunction
+
+//=======================DEBUG=======================
 
 `ifdef DEBUG
-	always@(inClk) begin
-    	$display("> pc=x%x dn=x%x sn=x%x reset= %x code=x%x",inPc,dnpc,snpc,inReset,inCode);
+	always@(clk) begin
+    	$display("> pc=x%x dn=x%x sn=x%x reset= %x code=x%x",pc,dnpc,snpc,reset,code);
 		$display("cR1=x%x oR1 =x%x cR2=x%x oR2=x%x imi=x%x imm=x%x",cR1,oR1,cR2,oR2, imm,imi);
-		$display("adr=x%x oRAM=x%x ramAddr=x%x wRAM=x%x", adr,oRAM,ramAddr, wRAM);
 		$display("add=%x lui =%x l=%x s=%x jalr=%x w=%x",add,lui,  l,  s,jalr,  w);
-		$display("rAdr=x%x iRAM=x%x eb=%x wmask=x%x",rAdr,iRAM,eb,  wmask);
+		$display("adr=x%x oRAM=x%x pc=x%x ramAddr=x%x wRAM=x%x", adr,oRAM,pc,ramAddr, wRAM);
+		$display("rAdr=x%x iRAM=x%x a0=x%x wmask=x%x reset=x%x",rAdr,iRAM,a0,  wmask,reset);
 		$display("eRd=%x Reg[%d](0x%x)<=0x%x",eRd,cRd,gpr[cRd],iRd);
 		$display(" $0:x%8x ra:x%8x  sp:x%8x  gp:x%8x tp:x%8x t0:x%8x t1:x%8x t2:x%8x",      0,gpr[ 1],gpr[ 2],gpr[ 3],gpr[ 4],gpr[ 5],gpr[ 6],gpr[ 7]);
 		$display(" s0:x%8x s1:x%8x  a0:x%8x  a1:x%8x a2:x%8x a3:x%8x a4:x%8x a5:x%8x",gpr[ 8],gpr[ 9],gpr[10],gpr[11],gpr[12],gpr[13],gpr[14],gpr[15]);
@@ -218,5 +190,6 @@ module ysyx_26020046_minirvDebug();
 		$strobe("Reg[%d]=%x", cRd, gpr[cRd]);
 	end
 `endif
-endmodule
 
+
+endmodule

@@ -13,13 +13,10 @@ VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_minirv* top;//顶层模块
 svScope scope;//作用域
 
-//0x80000000
 #define ADDR_RESET 0x80000000
 #define timeADDR   0x0200BFF8
 #define serialADDR 0x10000000
 
-#define unlim 1
-#define step 6000
 // #define DEBUG
 
 #ifdef DEBUG
@@ -34,13 +31,14 @@ uint32_t runStep,pc;//运行步数
 timespec startTime;//开始时间
 uint32_t addrReset;//pc复位地址，用于区分0开始的内置程序和ADDR_RESET开始的外部程序
 
-extern "C" int getReg(int addr);
+extern "C" int getReg(int addr);//注意：0号寄存器指代pc
 
 void minirvClose();
 
 extern "C" int pmem_read(int raddr) {
 	IfDebug(printf("pmem_read : "););
 	uint32_t raddrX=(uint32_t)raddr;
+	// if(raddrX==0){return 0;}
 	if(raddr==timeADDR){//返回毫秒数
 		uint32_t time=0;
 		timespec t;
@@ -48,12 +46,12 @@ extern "C" int pmem_read(int raddr) {
 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
 		return time;
 	}
-	if(((((raddrX-addrReset)>>2)>memSize)|raddrX<=addrReset)&(raddrX!=0)){//超出mem
+	if(((((raddrX-addrReset)>>2)>=memSize)|raddrX<addrReset)|(raddrX==0)){//超出mem
 		IfDebug(printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddrX,raddr,pc,runStep););
 		return 0;
 	}
-	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddr-addrReset),(raddr-addrReset)>>2,M[(raddr-addrReset)>>2]););
-	return M[(raddr-addrReset) >> 2];
+	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddrX-addrReset),(raddrX-addrReset)>>2,M[(raddrX-addrReset)>>2]););
+	return M[(raddrX-addrReset) >> 2];
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
@@ -90,8 +88,10 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-addrReset),(waddr-addrReset)>>2,M[(waddr-addrReset)>>2]););
 }
 extern "C" void ebreak(unsigned char eb){
-	minirvClose();
 	printf("ebreak:");
+	// printf("%x\n",getReg(0));
+	// printf("%x\n",getReg(10));
+	minirvClose();
 	if(eb){printf("\033[1;32mHIT GOOD TRAP\033[0m\n");exit( 0);}
 	else  {printf("\033[1;31mHIT BAD  TRAP\033[0m\n");exit(-1);}
 }
@@ -106,7 +106,7 @@ void initMem(int argc, char** argv){
 		addrReset=ADDR_RESET;
 		file = fopen(argv[1],"rb");
 	}else{
-		printf("!!bin:%s ",defaultBin);
+		printf("!!defaultBin:%s ",defaultBin);
 		addrReset=0;
 		file = fopen(defaultBin,"rb");
 	}
@@ -123,7 +123,7 @@ void initMem(int argc, char** argv){
 			printf("ebreak at 0x%lx ",strtoul(argv[2], NULL,0));
 			M[strtoul(argv[2],NULL,0)]=0x00100073;
 		}
-		printf("has open file %s\n",argv[1]);
+		printf("has open file\n");
 	}else{
 		printf("ebreak at 0x%x\n",defaultEbAdder);
     	M[defaultEbAdder] = 0x00100073;//sum
@@ -131,12 +131,15 @@ void initMem(int argc, char** argv){
 }
 
 void initDevice(int argc, char** argv){
+	// IfDebug(printf("initDevice begin\n"););
+
 	if(clock_gettime(CLOCK_MONOTONIC,&startTime)!=0){printf("time err\n");exit(-1);}
 
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new Vysyx_26020046_minirv{contextp};
-	scope=svGetScopeFromName("TOP.ysyx_26020046_minirv");
+	// scope=svGetScopeFromName("TOP.ysyx_26020046_minirv");
+	scope=svGetScopeFromName("TOP.ysyx_26020046_minirv.DEBUG");
 	svSetScope(scope);
 }
 

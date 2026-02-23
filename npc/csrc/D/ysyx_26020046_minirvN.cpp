@@ -13,14 +13,13 @@ VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_minirvN* top;//顶层模块
 svScope scope;//作用域
 
-//0x80000000
 #define ADDR_RESET 0x80000000
 #define timeADDR   0x0200BFF8
 #define serialADDR 0x10000000
 
 #define unlim 1
 #define step 6000
-// #define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
     #define IfDebug(...) do { __VA_ARGS__; } while(0)

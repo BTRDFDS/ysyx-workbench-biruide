@@ -15,7 +15,7 @@ package minirvPackage;
 
 
 endpackage
-module ysyx_26020046_minirv(clk,reset,code,pcReset,pc);
+module ysyx_26020046_minirvNS(clk,reset,code,pcReset,pc);
 import minirvPackage::*;
 input  logic clk,reset;
 input  logic [DATA_WIDTH-1:0] code,pcReset;
