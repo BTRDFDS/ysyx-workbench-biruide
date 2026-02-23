@@ -19,14 +19,13 @@ endif
 
 
 
-t?=water
-tF?=t
-tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))
-# tC ?=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
-tU=$(notdir $(basename $(tV)))
-# tC=$(patsubst vsrc/%,csrc/%.cpp,$(basename $(tV)))
-tC?=$(shell find csrc -type f -name "$(tU).cpp")
-tVd?=$(NPC_HOME)/$(tV)
+t?=water#工程名称
+tF?=t#工程文件查找名
+tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))#工程文件查找结果
+tC?=$(shell find csrc -type f -name "$(tF).cpp")#驱动文件查找结果
+# tU?=$(notdir $(basename $(tV)))#工程全程
+tVd?=$(NPC_HOME)/$(tV)#工程文件绝对路径
+tCd?=$(NPC_HOME)/$(tC)#驱动文件绝对路径
 ifeq ($(t),minirvO)
 	tF=ysyx_26020046_minirvO
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
@@ -50,33 +49,23 @@ endif
 ifeq ($(t),minirv)
 	tF=ysyx_26020046_minirv
 endif
-# all: $(BINS)
-# bin/%: vsrc/%.v csrc/%.cpp | build/% bin
-# 	mkdir -p $(dir $@)
-# 	verilator --lint-only -Wall $< --top-module $(notdir $*) -Wno-DECLFILENAME
-# 	verilator $(VERILATOR_CFLAGS) $< --exe csrc/$*.cpp --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
-# 	--top-module $(notdir $*) \
-# 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
-# 	$(addprefix -LDFLAGS , $(LDFLAGS))
-# 	cp build/$*/V$(notdir $*) $@
-# 	git add .
-# all: $(BINS)
-# bin/%: vsrc/%.v csrc/%.cpp | build/% bin
-bin/%: $(tVd) $(tC) | build/% bin
 
-# 	@echo "t=$(t)"
-# 	@echo "tV=$(tV)"
-# 	@echo "tC=$(tC)"
-# 	@echo "tU=$(tU)"
-# 	@echo "tVd=$(tVd)"
+bin/%: $(tVd) $(tCd) | build/$(tF) bin
 
-	mkdir -p $(dir $@)
+	@echo "t=$(t)"
+	@echo "tF=$(tF)"
+	@echo "tV=$(tV)"
+	@echo "tC=$(tC)"
+	@echo "tVd=$(tVd)"
+	@echo "tCd=$(tCd)"
+
+	mkdir -p build/$(tF)
 	verilator --lint-only -Wall $(tVd) --top-module $(tF) -Wno-DECLFILENAME
-	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
+	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tCd) --Mdir build/$(tF) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(tF) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-	cp build/$*/V$(notdir $*) $@
+	cp build/$(tF)/V$(tF) bin/$(tF)
 	git add .
 
 bin:
@@ -90,24 +79,24 @@ build/%:
 wave:
 	mkdir -p wave
 
-sim:bin/$(tU) wave
+sim:bin/$(tF) wave
 	./bin/$(t)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	gtkwave wave/$(t).vcd
 clean:
 	rm -rf bin/* build/*
 
-run:bin/$(tU)
-	./bin/$(tU) $(ARG) $(xEb)
-gdb:bin/$(tU) log/$(dir $(tU))
-	./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_gdb.log
-# 	./bin/$(tU) $(ARG) $(xEb)
-val:bin/$(tU)
-	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_val.log
+run:bin/$(tF)
+	./bin/$(tF) $(ARG) $(xEb)
+gdb:bin/$(tF) log/$(dir $(tF))
+	./bin/$(tF) $(ARG) $(xEb) > log/$(tF)_gdb.log
+# 	./bin/$(tF) $(ARG) $(xEb)
+val:bin/$(tF)
+	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tF) $(ARG) $(xEb) > log/$(tF)_val.log
 
-do:bin/$(tU)
+do:bin/$(tF)
 gtk:
-	gtkwave wave/$(tU).vcd
+	gtkwave wave/$(tF).vcd
 # log:
 # 	git log --pretty=format:"%h | %ad | %s" --date=iso --abbrev-commit --no-merges --since="2026-01-01"
 tree:
@@ -116,22 +105,22 @@ tree:
 chk:
 # 	@echo "t=$(t)"
 # 	@echo "tV=$(tV)"
-# 	@echo "tC=$(tC)"
-# 	@echo "tU=$(tU)"
+# 	@echo "tCd=$(tCd)"
+# 	@echo "tF=$(tF)"
 # 	@echo "tVd=$(tVd)"
-	verilator --lint-only -Wall $(tVd) -top-module $(tU)
+	verilator --lint-only -Wall $(tVd) -top-module $(tF)
 syn:$(tV) chk
-	make -C $(YOSYS_STA_HOME) syn DESIGN=$(tU) RTL_FILES="$(tVd)
-	cp -r $(YOSYS_STA_HOME)/result/$(tU)*-500MHz ./result
+	make -C $(YOSYS_STA_HOME) syn DESIGN=$(tF) RTL_FILES="$(tVd)
+	cp -r $(YOSYS_STA_HOME)/result/$(tF)*-500MHz ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 sta:$(tV)
-	make -C $(YOSYS_STA_HOME) sta DESIGN=$(tU) RTL_FILES="$(tVd)"
-	cp -r $(YOSYS_STA_HOME)/result/$(tU)*-500MHz ./result
+	make -C $(YOSYS_STA_HOME) sta DESIGN=$(tF) RTL_FILES="$(tVd)"
+	cp -r $(YOSYS_STA_HOME)/result/$(tF)*-500MHz ./result
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 symy:
 	yosys yosys.tcl
 try:
-	cp -r $(YOSYS_STA_HOME)/result/$(tU)* ./result
+	cp -r $(YOSYS_STA_HOME)/result/$(tF)* ./result
 git:
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 include ../Makefile

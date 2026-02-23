@@ -143,6 +143,7 @@ import "DPI-C" function void pmem_write(input int waddr, input int wdata, input 
 			2'b01:hot=4'b0010;
 			2'b10:hot=4'b0100;
 			2'b11:hot=4'b1000;
+			default:hot=4'b00;
 		endcase
 	end
 
