@@ -36,7 +36,7 @@ Vysyx_26020046_minirvN* top;
 
 uint32_t M[max];
 uint32_t runStep,pc;
-timespec st;
+timespec startTime;
 
 uint32_t addrReset;
 
@@ -50,7 +50,7 @@ extern "C" int pmem_read(int raddr) {
 		uint32_t time=0;
 		timespec t;
 		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");exit(-1);}
-		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(st.tv_sec*1000000+st.tv_nsec/1000);//微秒
+		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
 		//printf("%x\n",time);
 		return time;
 	}
@@ -196,7 +196,7 @@ int main(int argc, char** argv) {
 		M[0x488]=0x00100073;//mem
 	}
 
-	if(clock_gettime(CLOCK_MONOTONIC,&st)!=0){printf("time err\n");exit(-1);}
+	if(clock_gettime(CLOCK_MONOTONIC,&startTime)!=0){printf("time err\n");exit(-1);}
 
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);

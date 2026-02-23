@@ -15,8 +15,13 @@ logic add,addi,lui,l,s,jalr,w,eRd,stop,eb;//,lw,sw,sb,lbu
 import "DPI-C" function int pmem_read(input int raddr);
 import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
 import "DPI-C" function void ebreak(input bit eb);
+export "DPI-C" function getReg;
+function int getReg(input int addr);
+    return (addr == 0) ? 32'b0 : gpr[addr];
+endfunction
 
-//=======================IDC=======================
+//NOTE - IDC ==============================================
+
 	assign fc7=code[31:25];
 	assign cR2=code[24:20];
 	assign cR1=code[19:15];
@@ -57,7 +62,7 @@ import "DPI-C" function void ebreak(input bit eb);
 		end
 	end
 
-//=======================ALU=======================
+//NOTE - ALU ==============================================
 
 	logic [1:0]resChoose;
 
@@ -81,8 +86,7 @@ import "DPI-C" function void ebreak(input bit eb);
 	end
 	assign adr=addRes;
 
-//=======================Reg=======================
-
+//NOTE - Reg ==============================================
 	always_ff@(posedge clk) begin:reg_write
 		if(reset)begin
 			gpr[ 1]<=0;gpr[ 2]<=0;gpr[ 3]<=0;gpr[ 4]<=0;gpr[ 5]<=0;gpr[ 6]<=0;gpr[ 7]<=0;
@@ -98,7 +102,7 @@ import "DPI-C" function void ebreak(input bit eb);
 	assign oR2 = (cR2==0)?0:gpr[cR2];
 	assign a0 = gpr[10];
 
-//=======================LSU=======================
+//NOTE - LSU ==============================================
 
 //s处理
 	assign ramAddr={adr[31:2],2'b0};
@@ -157,8 +161,7 @@ import "DPI-C" function void ebreak(input bit eb);
 	always_comb begin:en_or_reset
 	    if(stop&(~reset)) ebreak(eb);
 	end
-
-//=======================DEBUG=======================
+//NOTE - DEBUG ==============================================
 `ifdef SIMULATE
 `ifdef DEBUG
 	always@(clk) begin
