@@ -1,19 +1,16 @@
 module ysyx_26020046_minirvS #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,code,pcReset,pc);
 //pcReset应该改成固定值
-input clk,reset;
-input [DATA_WIDTH-1:0] code,pcReset;
-output reg [DATA_WIDTH-1:0] pc;
+input  logic clk,reset;
+input  logic [DATA_WIDTH-1:0] code,pcReset;
+output logic [DATA_WIDTH-1:0] pc;
 
-wire [ADDR_WIDTH-1:0] cR1,cR2,cRd;
-wire [DATA_WIDTH-1:0] adr,oR1,oR2,oRAM,imi,rAdr,ramAddr,wRAM,a0,im0,im1,adder,snpc;
-reg  [DATA_WIDTH-1:0] iRAM,in2,lmer,Ler,dnpc,oRamB,imm,iRd;
-reg  [DATA_WIDTH-1:0] gpr [2**ADDR_WIDTH-1:1];
-wire [3:0] wmask;
-reg  [3:0] hot;
-wire [6:0] fc7,opc;
-wire [2:0] fc3;
-wire add,addi,lui,l,s,jalr,w,eRd;//,lw,sw,sb,lbu
-reg  stop,eb;
+logic [ADDR_WIDTH-1:0] cR1,cR2,cRd;
+logic [DATA_WIDTH-1:0] adr,oR1,oR2,oRAM,imi,rAdr,ramAddr,wRAM,a0,addRes,snpc,iRAM,dnpc,oRamB,imm,iRd;
+logic [DATA_WIDTH-1:0] gpr [2**ADDR_WIDTH-1:1];
+logic [3:0] wmask,hot;
+logic [6:0] fc7,opc;
+logic [2:0] fc3;
+logic add,addi,lui,l,s,jalr,w,eRd,stop,eb;//,lw,sw,sb,lbu
 
 import "DPI-C" function int pmem_read(input int raddr);
 import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
@@ -27,8 +24,6 @@ import "DPI-C" function void ebreak(input bit eb);
 	assign cRd=code[11:07];
 	assign opc=code[06:00];
 
-	assign im0={{20{fc7[6]}},fc7,cRd};
-	assign im1={{20{fc7[6]}},fc7,cR2};
 
 	assign add =(opc==7'b0110011);
 	assign addi=(opc==7'b0010011);
@@ -43,14 +38,14 @@ import "DPI-C" function void ebreak(input bit eb);
 	// assign lw =l&w;
 	// assign sb =s&(~w);
 	// assign sw =s&w;
-	assign imi = {fc7,cR2,cR1,fc3,12'b0};
 
-	always_comb begin:get_imm
-		case(s)
-			1'b0: imm=im1;
-			1'b1: imm=im0;
-		endcase
-	end
+	// assign im0={{20{fc7[6]}},fc7,cRd};
+	// assign im1={{20{fc7[6]}},fc7,cR2};
+	// assign imm = s?im0:im1;
+	assign imi = {fc7,cR2,cR1,fc3,12'b0};
+	assign imm[31:5]={{20{fc7[6]}},fc7};
+	assign imm[ 4:0]=s?cRd:cR2;
+
 
 	always_comb begin:check_code_or_ebreak
 		if(code==32'h100073)begin
@@ -64,36 +59,27 @@ import "DPI-C" function void ebreak(input bit eb);
 
 //=======================ALU=======================
 
-	always_comb begin:get_add_in2
+	logic [1:0]resChoose;
+
+	always_comb begin:res_choose
+		case(resChoose)
+			2'b00:iRd=addRes;
+			2'b01:iRd=imi;
+			2'b10:iRd=oRAM;
+			2'b11:iRd=rAdr;
+		endcase
+	end
+
+	assign resChoose[0]=jalr|lui;
+	assign resChoose[1]=jalr|l;
+
+	always_comb begin:add_choose
 		case(add)
-			1'b0:in2=imm;
-			1'b1:in2=oR2;
+			1'b0:addRes=oR1+imm;
+			1'b1:addRes=oR1+oR2;
 		endcase
 	end
-
-	assign adder=oR1+in2;
-	assign adr=adder;
-
-	always_comb begin:add_res_or_imi
-		case(lui)
-			1'b0:lmer=adder;
-			1'b1:lmer=imi;
-		endcase
-	end
-
-	always_comb begin:Lmer_or_ram_output
-		case(l)
-			1'b0:Ler=lmer;
-			1'b1:Ler=oRAM;
-		endcase
-	end
-
-	always_comb begin:jalr_res_or_Ler
-		case(jalr)
-			1'b0:iRd=Ler;
-			1'b1:iRd=rAdr;
-		endcase
-	end
+	assign adr=addRes;
 
 //=======================Reg=======================
 
@@ -173,7 +159,7 @@ import "DPI-C" function void ebreak(input bit eb);
 	end
 
 //=======================DEBUG=======================
-
+`ifdef SIMULATE
 `ifdef DEBUG
 	always@(clk) begin
     	$display("> pc=x%x dn=x%x sn=x%x reset= %x code=x%x",pc,dnpc,snpc,reset,code);
@@ -188,6 +174,7 @@ import "DPI-C" function void ebreak(input bit eb);
 		$display(" s8:x%8x s9:x%8x s10:x%8x s11:x%8x t3:x%8x t4:x%8x t5:x%8x t6:x%8x",gpr[24],gpr[25],gpr[26],gpr[27],gpr[28],gpr[29],gpr[30],gpr[31]);
 		$strobe("Reg[%d]=%x", cRd, gpr[cRd]);
 	end
+`endif
 `endif
 
 endmodule

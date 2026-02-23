@@ -19,9 +19,10 @@ endif
 
 t?=water
 tF?=t
-tV ?=$(shell find vsrc -type f -name "$(tF).v")
-tC ?=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
-tU ?=$(patsubst vsrc/%.v,%,$(tV))
+tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))
+# tC ?=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
+tU=$(notdir $(basename $(tV)))
+tC=$(patsubst vsrc/%,csrc/%.cpp,$(basename $(tV)))
 tVd?=$(NPC_HOME)/$(tV)
 ifeq ($(t),minirv)
 	tF=ysyx_26020046_minirv
@@ -29,7 +30,6 @@ ifeq ($(t),minirv)
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
-	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
 endif
 ifeq ($(t),minirv_sta)
 tF=ysyx_26020046_minirv_sta
@@ -37,11 +37,9 @@ tF=ysyx_26020046_minirv_sta
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
-	tVd+= $(NPC_HOME)/$(shell find vsrc -type f -name "ysyx_26020046_Mux.v")
 endif
 ifeq ($(t),minirvS)
 	tF=ysyx_26020046_minirvS
-	tV=$(shell find vsrc -type f -name "$(tF).sv")
 endif
 ifeq ($(t),minirvN)
 	tF=ysyx_26020046_minirvN
@@ -59,10 +57,17 @@ endif
 # all: $(BINS)
 # bin/%: vsrc/%.v csrc/%.cpp | build/% bin
 bin/%: $(tVd) $(tC) | build/% bin
+
+# 	@echo "t=$(t)"
+# 	@echo "tV=$(tV)"
+# 	@echo "tC=$(tC)"
+# 	@echo "tU=$(tU)"
+# 	@echo "tVd=$(tVd)"
+
 	mkdir -p $(dir $@)
 	verilator --lint-only -Wall $(tVd) --top-module $(tF) -Wno-DECLFILENAME
-	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
-	--top-module $(notdir $*) \
+	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) -DSIMULATE --exe $(tC) --Mdir build/$* --build $(NVBOARD_ARCHIVE) \
+	--top-module $(tF) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	cp build/$*/V$(notdir $*) $@
@@ -102,11 +107,11 @@ val:bin/$(t)
 	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_val.log
 
 chk:
-	@echo "t=$(t)"
-	@echo "tV=$(tV)"
-	@echo "tC=$(tC)"
-	@echo "tU=$(tU)"
-	@echo "tVd=$(tVd)"
+# 	@echo "t=$(t)"
+# 	@echo "tV=$(tV)"
+# 	@echo "tC=$(tC)"
+# 	@echo "tU=$(tU)"
+# 	@echo "tVd=$(tVd)"
 	verilator --lint-only -Wall $(tVd) -top-module $(t)
 syn:$(tV) chk
 	make -C $(YOSYS_STA_HOME) syn DESIGN=$(t) RTL_FILES="$(tVd)

@@ -79,10 +79,6 @@ INCFLAGS += $(addprefix -I, $(INC_PATH))
 
 mode ?= 0
 
-ifeq ($(mode),1)
-# 	CFLAGS += -DTEST_AM
-# 	echo "TEST_AM"
-endif
 
 ARCH_H := arch/$(ARCH).h
 CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \

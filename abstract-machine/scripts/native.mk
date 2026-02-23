@@ -17,8 +17,13 @@ ASFLAGS += -fpie -pie
 comma = ,
 LDFLAGS_CXX = $(addprefix -Wl$(comma), $(LDFLAGS)) -pie -ldl $(shell sdl2-config --libs)
 
+ifeq ($(MAKECMDGOALS),gdb)
+CFLAGS += -g
+endif
+
+
 run: image
 	$(IMAGE).elf
 
 gdb: image
-	gdb -ex "handle SIGUSR1 SIGUSR2 SIGSEGV noprint nostop" $(IMAGE).elf
+	gdb -ex "handle SIGUSR1 SIGUSR2 SIGSEGV noprint nostop" $(IMAGE).elf -tui

@@ -5,14 +5,15 @@ input [DATA_WIDTH-1:0] code,pcReset;
 output reg [DATA_WIDTH-1:0] pc;
 
 wire [ADDR_WIDTH-1:0] cR1,cR2,cRd;
-wire [DATA_WIDTH-1:0] adr,iRd,oR1,oR2,oRAM,imm,imi,rAdr,ramAddr,wRAM,a0,im0,im1,adder,snpc;
-reg  [DATA_WIDTH-1:0] iRAM,in2,lmer,Ler,dnpc,oRamB;
+wire [DATA_WIDTH-1:0] adr,oR1,oR2,imi,rAdr,ramAddr,a0,im0,im1,adder,snpc;
+reg  [DATA_WIDTH-1:0] iRAM,in2,lmer,Ler,dnpc,oRamB,imm,iRd,oRAM,wRAM;
 reg  [DATA_WIDTH-1:0] gpr [2**ADDR_WIDTH-1:1];
 wire [3:0] wmask;
 reg  [3:0] hot;
 wire [6:0] fc7,opc;
 wire [2:0] fc3;
-wire add,addi,lui,l,s,jalr,w,eRd,stop,eb;//,lw,sw,sb,lbu
+wire add,addi,lui,l,s,jalr,w,eRd;//,lw,sw,sb,lbu
+reg  stop,eb;
 
 import "DPI-C" function int pmem_read(input int raddr);
 import "DPI-C" function void pmem_write(input int waddr, input int wdata, input byte wmask);
@@ -103,7 +104,7 @@ import "DPI-C" function void ebreak(input bit eb);
 			gpr[16]<=0;gpr[17]<=0;gpr[18]<=0;gpr[19]<=0;gpr[20]<=0;gpr[21]<=0;gpr[22]<=0;gpr[23]<=0;
 			gpr[24]<=0;gpr[25]<=0;gpr[26]<=0;gpr[27]<=0;gpr[28]<=0;gpr[29]<=0;gpr[30]<=0;gpr[31]<=0;
 		end else begin
-			if (en&&cRd!=0) gpr[cRd] <= iRd;
+			if (eRd&&cRd!=0) gpr[cRd] <= iRd;
     	end
 	end
 
@@ -168,14 +169,14 @@ import "DPI-C" function void ebreak(input bit eb);
 	end
 
 	assign iRAM = l&clk?pmem_read(ramAddr):0;
-	assign iRAM = l&(~clk)?pmem_read(ramAddr):0;
-	always @(posedge clk) begin
-		// if (l) begin // 有读请求时
-		if(code[6:0]==7'b0000011)begin
-			iRAM <= pmem_read(ramAddr);
-		end
-		// iRAM<=l?pmem_read(ramAddr):0;
-	end
+	// assign iRAM = l&(~clk)?pmem_read(ramAddr):0;
+	// always @(posedge clk) begin
+	// 	// if (l) begin // 有读请求时
+	// 	if(code[6:0]==7'b0000011)begin
+	// 		iRAM <= pmem_read(ramAddr);
+	// 	end
+	// 	// iRAM<=l?pmem_read(ramAddr):0;
+	// end
 
 	always @(posedge clk) begin
 		if (s) begin // 有写请求时
