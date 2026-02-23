@@ -20,7 +20,7 @@ function int getReg(input int addr);
     return (addr == 0) ? 32'b0 : gpr[addr];
 endfunction
 
-//NOTE - IDC ==============================================
+//=======================IDC=======================
 
 	assign fc7=code[31:25];
 	assign cR2=code[24:20];
@@ -62,7 +62,7 @@ endfunction
 		end
 	end
 
-//NOTE - ALU ==============================================
+//=======================ALU=======================
 
 	logic [1:0]resChoose;
 
@@ -86,7 +86,8 @@ endfunction
 	end
 	assign adr=addRes;
 
-//NOTE - Reg ==============================================
+//=======================Reg=======================
+
 	always_ff@(posedge clk) begin:reg_write
 		if(reset)begin
 			gpr[ 1]<=0;gpr[ 2]<=0;gpr[ 3]<=0;gpr[ 4]<=0;gpr[ 5]<=0;gpr[ 6]<=0;gpr[ 7]<=0;
@@ -102,7 +103,7 @@ endfunction
 	assign oR2 = (cR2==0)?0:gpr[cR2];
 	assign a0 = gpr[10];
 
-//NOTE - LSU ==============================================
+//=======================LSU=======================
 
 //s处理
 	assign ramAddr={adr[31:2],2'b0};
@@ -161,7 +162,9 @@ endfunction
 	always_comb begin:en_or_reset
 	    if(stop&(~reset)) ebreak(eb);
 	end
-//NOTE - DEBUG ==============================================
+
+//=======================DEBUG=======================
+
 `ifdef SIMULATE
 `ifdef DEBUG
 	always@(clk) begin

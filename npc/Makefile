@@ -87,7 +87,7 @@ build/%:
 wave:
 	mkdir -p wave
 
-sim:bin/$(t) wave
+sim:bin/$(tU) wave
 	./bin/$(t)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	gtkwave wave/$(t).vcd
@@ -106,7 +106,7 @@ gtk:
 tree:
 	exa --grid --color=always --sort=name *
 
-val:bin/$(t)
+val:bin/$(tU)
 	valgrind --leak-check=full --show-leak-kinds=all ./bin/$(tU) $(ARG) $(xEb) > log/$(tU)_val.log
 
 chk:

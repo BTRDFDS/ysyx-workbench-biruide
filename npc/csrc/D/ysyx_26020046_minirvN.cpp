@@ -1,3 +1,4 @@
+//ysyx_26020046_minirvN
 #include "Vysyx_26020046_minirvN.h"
 #include "verilated.h"
 #include <stdlib.h>
@@ -8,22 +9,9 @@
 #include "Vysyx_26020046_minirvN__Dpi.h"
 #include <time.h>
 
-//ysyx_26020046_minirvN
-
-VerilatedContext* contextp;
-Vysyx_26020046_minirvN* top;
-
-// uint32_t M[100000]={
-//     0x01400513,
-//     0x010000e7,
-//     0x00c000e7,
-//     // 0x00c00067,
-//     0x00100073,
-// 	0x00a50513,
-// 	0x00008067,
-// };
-
-#define max 2048000
+VerilatedContext* contextp;//verilator上下文
+Vysyx_26020046_minirvN* top;//顶层模块
+svScope scope;//作用域
 
 //0x80000000
 #define ADDR_RESET 0x80000000
@@ -34,145 +22,89 @@ Vysyx_26020046_minirvN* top;
 #define step 6000
 // #define DEBUG
 
-uint32_t M[max];
-uint32_t runStep,pc;
-timespec startTime;
+#ifdef DEBUG
+    #define IfDebug(...) do { __VA_ARGS__; } while(0)
+#else
+    #define IfDebug(...) ((void)0)
+#endif
 
-uint32_t addrReset;
+#define memSize 2048000
+uint32_t M[memSize];
+uint32_t runStep,pc;//运行步数
+timespec startTime;//开始时间
+uint32_t addrReset;//pc复位地址，用于区分0开始的内置程序和ADDR_RESET开始的外部程序
+
+extern "C" int getReg(int addr);
 
 extern "C" int pmem_read(int raddr) {
-#ifdef DEBUG
-	printf("pmem_read : ");
-#endif
+	IfDebug(printf("pmem_read : "););
 	uint32_t raddrX=(uint32_t)raddr;
 	if(raddr==timeADDR){//返回毫秒数
-		//printf("pmem_read time:0x");
 		uint32_t time=0;
 		timespec t;
 		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");exit(-1);}
 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
-		//printf("%x\n",time);
 		return time;
 	}
-	if(((((raddrX-addrReset)>>2)>max)|raddrX<=addrReset)&(raddrX!=0)){
-
-#ifdef DEBUG
-		printf("err x%x %d when x%x %d\n",raddrX,raddr,pc,runStep);
-#endif
-
-		// exit(-1);
-		return 0;
-}
-	if(((raddrX-addrReset)>>2)>max){
-#ifdef DEBUG
-		printf("\033[1;31merror x%x => x%x => x%x > x%x\033[0m\n",raddr,(raddr-addrReset),((raddr-addrReset)>>2),max);
-#endif
-		// exit(-1);
+	if(((((raddrX-addrReset)>>2)>memSize)|raddrX<=addrReset)&(raddrX!=0)){//超出mem
+		IfDebug(printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddrX,raddr,pc,runStep););
 		return 0;
 	}
-#ifdef DEBUG
-	printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddr-addrReset),(raddr-addrReset)>>2,M[(raddr-addrReset)>>2]);
-#endif
+	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddr-addrReset),(raddr-addrReset)>>2,M[(raddr-addrReset)>>2]););
 	return M[(raddr-addrReset) >> 2];
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
-#ifdef DEBUG
-	printf("pmem_write ");
-#endif
+	IfDebug(printf("pmem_write : "););
 	uint32_t waddrX=(uint32_t)waddr;
 	if(waddrX==0x10000000){
-		// putchar(wdata);
 		printf("%c",wdata);
 		return;
 	}
-
-	if((((waddrX-addrReset)>>2)>max|waddrX<=addrReset)&(waddrX!=0)){
-
-#ifdef DEBUG
-		printf("err x%x %d when x%x %d (x%x,x%x)\n",waddrX,waddr,pc,runStep,addrReset,max+addrReset);
-#endif
-
+	if((((waddrX-addrReset)>>2)>memSize|waddrX<=addrReset)&(waddrX!=0)){
+		IfDebug(printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,addrReset,memSize+addrReset););
 		return;
 	}
-#ifdef DEBUG
-	printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-addrReset),(waddr-addrReset)>>2,M[(waddr-addrReset)>>2],wdata,wmask);
-#endif
-
+	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-addrReset),(waddr-addrReset)>>2,M[(waddr-addrReset)>>2],wdata,wmask););
 	if((wmask&0b1111)==0b1111){
-
-#ifdef DEBUG
-	printf("all\n");
-#endif
-    M[(waddr-addrReset)>>2]=wdata;
-  }else{
-#ifdef DEBUG
-	printf("part\n");
-#endif
-	uint32_t mask1=0xffffffff;
-	uint32_t data=wdata&0xff;
-	switch(wmask&0x0f){
-		case 0b0001:
-			mask1=0xffffff00;
-			data=data;
-			break;
-		case 0b0010:
-			mask1=0xffff00ff;
-			data=data<<8;
-			break;
-		case 0b0100:
-			mask1=0xff00ffff;
-			data=data<<16;
-			break;
-		case 0b1000:
-			mask1=0x00ffffff;
-			data=data<<24;
-			break;
-		default    :
-			mask1=0xffffffff;
-			data=0;
-			break;
+		IfDebug(printf("all\n"););
+    	M[(waddr-addrReset)>>2]=wdata;
+	}else{
+		IfDebug(printf("part\n"););
+		uint32_t mask1=0xffffffff;
+		uint32_t data=wdata&0xff;
+		switch(wmask&0x0f){
+			case 0b0001:mask1=0xffffff00;data=data    ;break;
+			case 0b0010:mask1=0xffff00ff;data=data<< 8;break;
+			case 0b0100:mask1=0xff00ffff;data=data<<16;break;
+			case 0b1000:mask1=0x00ffffff;data=data<<24;break;
+			default    :mask1=0xffffffff;data=       0;break;
+		}
+		uint32_t temp=M[(waddr-addrReset)>>2];
+		temp&=mask1;
+		temp|=data;
+		M[(waddr-addrReset)>>2]=temp;
 	}
-	uint32_t temp=M[(waddr-addrReset)>>2];
-	temp&=mask1;
-	temp|=data;
-	M[(waddr-addrReset)>>2]=temp;
-  }
-#ifdef DEBUG
-	printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-addrReset),(waddr-addrReset)>>2,M[(waddr-addrReset)>>2]);
-#endif
+	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-addrReset),(waddr-addrReset)>>2,M[(waddr-addrReset)>>2]););
 }
-
 extern "C" void ebreak(unsigned char eb){
 	printf("ebreak:");
 	delete top;
 	delete contextp;
-	if(eb){
-		printf("\033[1;32mHIT GOOD TRAP\033[0m\n");
-		exit(0);
-	}else{
-	    printf("\033[1;31mHIT BAD TRAP\033[0m\n");
-		exit(-1);
-	}
+	if(eb){printf("\033[1;32mHIT GOOD TRAP\033[0m\n");exit( 0);}
+	else  {printf("\033[1;31mHIT BAD  TRAP\033[0m\n");exit(-1);}
 }
 
 int main(int argc, char** argv) {
-	// const char *p={"hex/sum.bin"};
-	const char *p={"hex/mem.bin"};
+	const char *p={"hex/sum.bin"};const uint32_t ebAdder=0x8A;
+	// const char *p={"hex/mem.bin"};const uint32_t ebAdder=0x488;
     FILE *file;
 	if(argc>1&&argv[1]!=NULL){
-
-#ifdef DEBUG
-		printf("\n!!bin:%s ",argv[1]);
-#endif
-
+		printf("!!bin:%s ",argv[1]);
 		addrReset=ADDR_RESET;
 		file = fopen(argv[1],"rb");
 	}else{
-
-#ifdef DEBUG
-		printf("\n!!bin:%s ",p);
-#endif
+		printf("!!bin:%s ",p);
 		addrReset=0;
 		file = fopen(p,"rb");
 	}
@@ -191,9 +123,8 @@ int main(int argc, char** argv) {
 		}
 		printf("has open file %s\n",argv[1]);
 	}else{
-		printf("ebreak at 0x%x\n\n",0x8A);
-    	// M[0x8A] = 0x00100073;//sum
-		M[0x488]=0x00100073;//mem
+		printf("ebreak at 0x%x\n",ebAdder);
+    	M[ebAdder] = 0x00100073;//sum
 	}
 
 	if(clock_gettime(CLOCK_MONOTONIC,&startTime)!=0){printf("time err\n");exit(-1);}
@@ -201,48 +132,28 @@ int main(int argc, char** argv) {
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new Vysyx_26020046_minirvN{contextp};
+	scope=svGetScopeFromName("TOP.ysyx_26020046_minirvN");
+	svSetScope(scope);
 	top->pcReset=addrReset;
 
-	top->clk=0;
-	top->reset=1;
-	top->eval();
-	top->clk=1;
-	top->reset=1;
-	top->eval();
-	top->clk=0;
-	top->reset=0;
+	top->clk=0;top->reset=1;top->eval();
+	top->clk=1;top->reset=1;top->eval();
 	pc=top->pc;
 	top->code=M[(pc-addrReset)>>2];
-	top->eval();
+	top->clk=0;top->reset=0;top->eval();
+	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",(pc-addrReset)>>2,M[(pc-addrReset)>>2]););
 
-#ifdef DEBUG
-	printf("\n!! reset finish ");
-	printf("pc=%d M[0]=0x%x]\n\n",(pc-addrReset)>>2,M[(pc-addrReset)>>2]);
-#endif
-
-  for(runStep=0;(runStep<=step)|unlim;runStep++){//30000
-	top->clk=1;
+  for(runStep=0;(runStep<=step)|unlim;runStep++){
 	pc=top->pc;
 	top->code=M[(pc-addrReset)>>2];
-	top->eval();
+	top->clk=1;top->eval();
+	IfDebug(printf("clk up finish,npc=0x%x\n",(top->pc-addrReset)>>2););
 
-#ifdef DEBUG
-	printf("clk up finish,npc=0x%x\n",(top->pc-addrReset)>>2);
-#endif
-
-	top->clk=0;
 	pc=top->pc;
 	top->code=M[(pc-addrReset)>>2];
-	top->eval();
+	top->clk=0;top->eval();
+	IfDebug(printf("clk down finish\n");printf("runStep=%d pc=%x(%x)\n\n",runStep,pc,(pc-addrReset)>>2););
 
-#ifdef DEBUG
-	printf("clk down finish\n");
-	printf("runStep=%d pc=%x(%x)\n\n",runStep,pc,(pc-addrReset)>>2);
-#endif
-
-	// if(runStep%1000000==0){
-	// 	printf("step:%d\n",runStep);
-	// }
   }
 	delete top;
 	delete contextp;

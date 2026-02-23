@@ -36,6 +36,8 @@ uint32_t addrReset;//pc复位地址，用于区分0开始的内置程序和ADDR_
 
 extern "C" int getReg(int addr);
 
+void minirvClose();
+
 extern "C" int pmem_read(int raddr) {
 	IfDebug(printf("pmem_read : "););
 	uint32_t raddrX=(uint32_t)raddr;
@@ -46,12 +48,8 @@ extern "C" int pmem_read(int raddr) {
 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
 		return time;
 	}
-	if(((((raddrX-addrReset)>>2)>memSize)|raddrX<=addrReset)&(raddrX!=0)){
-		IfDebug(printf("err x%x %d when x%x %d\n",raddrX,raddr,pc,runStep););
-		return 0;
-	}
-	if(((raddrX-addrReset)>>2)>memSize){
-		IfDebug(printf("\033[1;31merror x%x => x%x => x%x > x%x\033[0m\n",raddr,(raddr-addrReset),((raddr-addrReset)>>2),memSize););
+	if(((((raddrX-addrReset)>>2)>memSize)|raddrX<=addrReset)&(raddrX!=0)){//超出mem
+		IfDebug(printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddrX,raddr,pc,runStep););
 		return 0;
 	}
 	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddr-addrReset),(raddr-addrReset)>>2,M[(raddr-addrReset)>>2]););
@@ -66,7 +64,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		return;
 	}
 	if((((waddrX-addrReset)>>2)>memSize|waddrX<=addrReset)&(waddrX!=0)){
-		IfDebug(printf("err x%x %d when x%x %d (x%x,x%x)\n",waddrX,waddr,pc,runStep,addrReset,memSize+addrReset););
+		IfDebug(printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,addrReset,memSize+addrReset););
 		return;
 	}
 	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-addrReset),(waddr-addrReset)>>2,M[(waddr-addrReset)>>2],wdata,wmask););
@@ -92,25 +90,25 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-addrReset),(waddr-addrReset)>>2,M[(waddr-addrReset)>>2]););
 }
 extern "C" void ebreak(unsigned char eb){
+	minirvClose();
 	printf("ebreak:");
-	delete top;
-	delete contextp;
 	if(eb){printf("\033[1;32mHIT GOOD TRAP\033[0m\n");exit( 0);}
 	else  {printf("\033[1;31mHIT BAD  TRAP\033[0m\n");exit(-1);}
 }
 
-int main(int argc, char** argv) {
-	const char *p={"hex/sum.bin"};const uint32_t ebAdder=0x8A;
-	// const char *p={"hex/mem.bin"};const uint32_t ebAdder=0x488;
+
+void initMem(int argc, char** argv){
+	const char *defaultBin={"hex/sum.bin"};const uint32_t defaultEbAdder=0x8A;
+	// const char *p={"hex/mem.bin"};const uint32_t defaultEbAdder=0x488;
     FILE *file;
 	if(argc>1&&argv[1]!=NULL){
 		printf("!!bin:%s ",argv[1]);
 		addrReset=ADDR_RESET;
 		file = fopen(argv[1],"rb");
 	}else{
-		printf("!!bin:%s ",p);
+		printf("!!bin:%s ",defaultBin);
 		addrReset=0;
-		file = fopen(p,"rb");
+		file = fopen(defaultBin,"rb");
 	}
 	if(file==NULL){printf("can't open file\n");}
     fseek(file, 0, SEEK_END);
@@ -127,10 +125,12 @@ int main(int argc, char** argv) {
 		}
 		printf("has open file %s\n",argv[1]);
 	}else{
-		printf("ebreak at 0x%x\n",ebAdder);
-    	M[ebAdder] = 0x00100073;//sum
+		printf("ebreak at 0x%x\n",defaultEbAdder);
+    	M[defaultEbAdder] = 0x00100073;//sum
 	}
+}
 
+void initDevice(int argc, char** argv){
 	if(clock_gettime(CLOCK_MONOTONIC,&startTime)!=0){printf("time err\n");exit(-1);}
 
 	contextp = new VerilatedContext;
@@ -138,16 +138,22 @@ int main(int argc, char** argv) {
 	top = new Vysyx_26020046_minirv{contextp};
 	scope=svGetScopeFromName("TOP.ysyx_26020046_minirv");
 	svSetScope(scope);
+}
+
+void minirvReset(){
+	runStep=0;
 	top->pcReset=addrReset;
 
 	top->clk=0;top->reset=1;top->eval();
 	top->clk=1;top->reset=1;top->eval();
+
 	pc=top->pc;
 	top->code=M[(pc-addrReset)>>2];
 	top->clk=0;top->reset=0;top->eval();
 	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",(pc-addrReset)>>2,M[(pc-addrReset)>>2]););
+}
 
-  for(runStep=0;(runStep<=step)|unlim;runStep++){
+void minirvStep(){
 	pc=top->pc;
 	top->code=M[(pc-addrReset)>>2];
 	top->clk=1;top->eval();
@@ -157,9 +163,23 @@ int main(int argc, char** argv) {
 	top->code=M[(pc-addrReset)>>2];
 	top->clk=0;top->eval();
 	IfDebug(printf("clk down finish\n");printf("runStep=%d pc=%x(%x)\n\n",runStep,pc,(pc-addrReset)>>2););
+	runStep++;
+}
+void minirvRun(uint32_t times){
+    if(times==0){while(1){minirvStep();}}
+    for(int i=0;i<times;i++){minirvStep();}
+}
 
-  }
+void minirvClose(){
 	delete top;
 	delete contextp;
+}
+
+int main(int argc, char** argv) {
+	initMem(argc, argv);
+	initDevice(argc, argv);
+	minirvReset();
+	minirvRun(0);
+	minirvClose();
 	return -1;
 }
