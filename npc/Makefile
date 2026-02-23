@@ -17,9 +17,6 @@ ifeq ($(MAKECMDGOALS),gdb)
 	ePrintf = -DDEBUG
 endif
 
-# ifeq ($(MAKECMDGOALS),run)
-# 	ePrintf = -DDEBUG
-# endif
 
 t?=water
 tF?=t
