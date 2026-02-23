@@ -18,12 +18,14 @@ ifeq ($(MAKECMDGOALS),gdb)
 endif
 
 
+
 t?=water
 tF?=t
 tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))
 # tC ?=$(patsubst vsrc/%.v,csrc/%.cpp,$(tV))
 tU=$(notdir $(basename $(tV)))
-tC=$(patsubst vsrc/%,csrc/%.cpp,$(basename $(tV)))
+# tC=$(patsubst vsrc/%,csrc/%.cpp,$(basename $(tV)))
+tC?=$(shell find csrc -type f -name "$(tU).cpp")
 tVd?=$(NPC_HOME)/$(tV)
 ifeq ($(t),minirvO)
 	tF=ysyx_26020046_minirvO
