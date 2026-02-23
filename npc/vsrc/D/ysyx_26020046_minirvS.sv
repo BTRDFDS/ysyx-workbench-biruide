@@ -5,7 +5,7 @@ input  logic [DATA_WIDTH-1:0] code,pcReset;
 output logic [DATA_WIDTH-1:0] pc;
 
 logic [ADDR_WIDTH-1:0] cR1,cR2,cRd;
-logic [DATA_WIDTH-1:0] adr,oR1,oR2,oRAM,imi,rAdr,ramAddr,wRAM,a0,im0,im1,addRes,snpc,iRAM,dnpc,oRamB,imm,iRd;
+logic [DATA_WIDTH-1:0] adr,oR1,oR2,oRAM,imi,rAdr,ramAddr,wRAM,a0,addRes,snpc,iRAM,dnpc,oRamB,imm,iRd;
 logic [DATA_WIDTH-1:0] gpr [2**ADDR_WIDTH-1:1];
 logic [3:0] wmask,hot;
 logic [6:0] fc7,opc;
@@ -24,8 +24,6 @@ import "DPI-C" function void ebreak(input bit eb);
 	assign cRd=code[11:07];
 	assign opc=code[06:00];
 
-	assign im0={{20{fc7[6]}},fc7,cRd};
-	assign im1={{20{fc7[6]}},fc7,cR2};
 
 	assign add =(opc==7'b0110011);
 	assign addi=(opc==7'b0010011);
@@ -40,8 +38,14 @@ import "DPI-C" function void ebreak(input bit eb);
 	// assign lw =l&w;
 	// assign sb =s&(~w);
 	// assign sw =s&w;
+
+	// assign im0={{20{fc7[6]}},fc7,cRd};
+	// assign im1={{20{fc7[6]}},fc7,cR2};
+	// assign imm = s?im0:im1;
 	assign imi = {fc7,cR2,cR1,fc3,12'b0};
-	assign imm = s?im0:im1;
+	assign imm[31:5]={{20{fc7[6]}},fc7};
+	assign imm[ 4:0]=s?cRd:cR2;
+
 
 	always_comb begin:check_code_or_ebreak
 		if(code==32'h100073)begin
