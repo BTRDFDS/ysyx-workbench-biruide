@@ -25,6 +25,10 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {//TODO
       return false;
     }
   }
+  if(ref_r->pc != cpu.pc) {
+    printf("pc: %d != %d input pc=0x%x\n", ref_r->pc, cpu.pc, pc);
+    return false;
+  }
   return true;
 }
 

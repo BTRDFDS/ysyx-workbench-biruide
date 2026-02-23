@@ -1,3 +1,19 @@
+| * 413170c	(2026-02-23 09:34:07 +0800) 添加了printf的测试，进行了完善
+| * 4de7aa1	(2026-02-23 07:52:53 +0800) 小修：实现了v和sv的通用
+| * 0060104	(2026-02-22 22:35:52 +0800) 完成了更多的测试
+| * c57a69b	(2026-02-22 19:20:01 +0800) 第二类第一个完成
+| * 61d6881	(2026-02-22 17:58:11 +0800) 第一类完成
+| * aecc6e0	(2026-02-22 15:17:46 +0800) 进行了原版、N、S三版的minirv，完成cpu-tests的10次的平均用时分别是7.7499	6.8389	6.7674
+| * fabf47a	(2026-02-22 12:48:13 +0800) 完成ftrace，修改了错误的处理
+| * 963f50f	(2026-02-21 23:15:27 +0800) 开始尝试 elf.h
+|/  
+* de0794d	(2026-02-21 18:48:46 +0800) 重写了一个sv的minirv，挺好用的
+* 7b431ce	(2026-02-21 14:31:36 +0800) 推送，然后准备回到pa2
+* dde27c3	(2026-02-21 14:29:34 +0800) 给readme改了一下
+* a40e20f	(2026-02-21 14:24:02 +0800) 可以运行字符版本的超级玛丽
+* 60ff123	(2026-02-21 12:13:49 +0800) real-time clock test测试通过！
+* 1a42f67	(2026-02-21 00:00:36 +0800) 修复putch，还剩下世界的
+* 5d2f1ce	(2026-02-20 18:26:21 +0800) master合并完成
 * 14026cd	(2026-02-20 16:56:57 +0800) 合并完成的检查
 *   ad83b13	(2026-02-20 16:55:00 +0800) Merge branch 'pa2' into tracer-ysyx
 |\  
@@ -179,18 +195,6 @@
 * 3d4c65f	(2025-12-15 16:23:30 +0800) NJU-ProjectN/abstract-machine ics2024 initialized
 * a86ee21	(2025-12-15 16:19:53 +0800) NJU-ProjectN/nemu ics2024 initialized
 * 19e3c77	(2025-12-15 15:41:14 +0800) 填写信息
-| * 8644fa0	(2025-11-01 17:47:50 +0800) update whitelist
-| * 00c1b11	(2025-10-19 17:27:30 +0800) add whitelist
-| * 9c63362	(2025-10-07 15:45:28 +0800) add whitelist
-| * de53bd0	(2025-09-28 23:17:52 +0800) add whitelist
-| * 0aca177	(2025-09-28 14:27:49 +0800) add whitelist Yu Binrao
-| * ebecc8a	(2025-09-23 09:18:08 +0800) add whitelist Peng Peizhi
-| * cedcd2a	(2025-09-16 13:04:35 +0800) add whitelist Dong Fengjun
-| * d975419	(2025-09-06 19:27:43 +0800) add whitelist
-| * 791c4b1	(2025-09-06 19:26:49 +0800) add whitelist
-| * 67bd769	(2025-09-05 23:03:59 +0800) add whitelist
-| * c7a819a	(2025-04-24 13:48:15 +0800) add whitelist
-|/  
 * c074ba4	(2024-08-31 10:12:13 +0800) bump NEMU, AM and Navy-apps to ics2024
 * d111691	(2024-04-11 02:17:34 +0800) init.sh: modify the URL of chisel-playground
 *   45b0981	(2023-11-19 13:18:38 +0800) Merge pull request #15 from Wenz-jam/master
@@ -216,8 +220,6 @@
 *   dcd121c	(2022-03-16 15:53:33 +0800) Merge pull request #2 from huaixv/ysyx2204
 |\  
 | * dcb9466	(2022-03-08 18:50:09 +0800) fix: fix committed files not traced problem
-|/  
-| * e7175c1	(2022-03-08 15:30:11 +0800) Makefile: refactor git trace commands
 |/  
 * 6c7b39a	(2022-03-08 10:50:24 +0800) refactor
 *   aa59f01	(2022-03-08 10:40:25 +0800) Merge pull request #1 from huaixv/ysyx2204
