@@ -1,6 +1,8 @@
 #include <trap.h>
 #include <klib.h>
 
+#include <limits.h>
+
 #define N 64
 #define word uint8_t//按照字节操作，别动
 
@@ -201,7 +203,75 @@ void test_sprintf(){
 		assert(0);
 	}
 
+	//{0, INT_MAX / 17, INT_MAX, INT_MIN, INT_MIN + 1,UINT_MAX / 17, INT_MAX / 17, UINT_MAX};
+	memset(data1,VAL,N);
+	memset(data2,VAL,N);
+	sprintf((char*)data1,"%d",0);
+	if(strcmp((char*)data1,"0")!=0){
+		printf("sprintf err %s != 0\n",data1);
+		assert(0);
+	}
+	sprintf((char*)data2,"%d",INT_MAX/17);
+	if(strcmp((char*)data2,"126322567")!=0){
+		printf("sprintf err %s != 126322567\n",data2);
+		assert(0);
+	}
+	memset(data1,VAL,N);
+	memset(data2,VAL,N);
+	sprintf((char*)data1,"%d",INT_MAX);
+	if(strcmp((char*)data1,"2147483647")!=0){
+		printf("sprintf err %s != 2147483647\n",data1);
+		assert(0);
+	}
+	sprintf((char*)data2,"%17d",INT_MIN);
+	if(strcmp((char*)data2,"      -2147483648")!=0){
+		printf("sprintf err%s!=       -2147483648\n",data2);
+		assert(0);
+	}
+	memset(data1,VAL,N);
+	memset(data2,VAL,N);
+	sprintf((char*)data1,"%d",INT_MIN+1);
+	if(strcmp((char*)data1,"-2147483647")!=0){
+		printf("sprintf err %s != -2147483647\n",data1);
+		assert(0);
+	}
+	sprintf((char*)data2,"%d",UINT_MAX/17);
+	if(strcmp((char*)data2,"252645135")!=0){
+		printf("sprintf err %s != 252645135\n",data2);
+		assert(0);
+	}
+	memset(data1,VAL,N);
+	if(sprintf((char*)data1,"%d",INT_MAX/17)==-1){
+		printf("sprintf err %s != 6291456\n",data1);
+		assert(0);
+	}
+
+
 	printf(" sprint test \033[1;32mPASS\033[0m\n");
+}
+
+void test_printf(){
+	//{0, INT_MAX / 17, INT_MAX, INT_MIN, INT_MIN + 1,UINT_MAX / 17, INT_MAX / 17, UINT_MAX};
+	printf("%4d==   0\n",0);
+	printf("%1d==126322567\n",INT_MAX/17);
+	printf("%d==2147483647\n",INT_MAX);
+	printf("%d==-2147483648\n",INT_MIN);
+	printf("%d==-2147483647\n",INT_MIN+1);
+	printf("%d==252645135\n",UINT_MAX/17);
+	printf("%d==126322567\n",INT_MAX/17);
+	printf("%17d==               -1\n",UINT_MAX);
+	printf("%4x==   0\n",0);
+	printf("%1x==7878787\n",INT_MAX/17);
+	printf("%x==7fffffff\n",INT_MAX);
+	printf("%x==80000000\n",INT_MIN);
+	printf("%x==80000001\n",INT_MIN+1);
+	printf("%x==f0f0f0f\n",UINT_MAX/17);
+	printf("%X==7878787\n",INT_MAX/17);
+	printf("%17X==         FFFFFFFF\n",UINT_MAX);
+	printf("%c==P\n",'P');
+	printf("%s==well down\n","well down");
+
+    printf(" printf test maybe \033[1;32mPASS\033[0m,please check output\n");
 }
 int main() {
 	if(BEGIN<=0){
@@ -217,7 +287,7 @@ int main() {
 	test_strlen();
 	//第三类
 	test_sprintf();
-
+	test_printf();
 
 	printf("\033[1;32m ALL klib-tests PASS \033[0m\n");
 	return 0;
