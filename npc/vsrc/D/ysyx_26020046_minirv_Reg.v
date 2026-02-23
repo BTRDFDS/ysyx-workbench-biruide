@@ -1,5 +1,5 @@
-module ysyx_26020046_minirv_Reg #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,en,iRd,cRd,cR1,cR2,oR1,oR2,a0);
-  input clk,reset,en;
+module ysyx_26020046_minirv_Reg #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,eRd,iRd,cRd,cR1,cR2,oR1,oR2,a0);
+  input clk,reset,eRd;
   input [DATA_WIDTH-1:0] iRd;
   input [ADDR_WIDTH-1:0] cRd,cR1,cR2;
   output [DATA_WIDTH-1:0] oR1,oR2,a0;
@@ -12,12 +12,12 @@ module ysyx_26020046_minirv_Reg #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,en
       gpr[16]<=0;gpr[17]<=0;gpr[18]<=0;gpr[19]<=0;gpr[20]<=0;gpr[21]<=0;gpr[22]<=0;gpr[23]<=0;
       gpr[24]<=0;gpr[25]<=0;gpr[26]<=0;gpr[27]<=0;gpr[28]<=0;gpr[29]<=0;gpr[30]<=0;gpr[31]<=0;
     end else begin
-      if (en&&cRd!=0) gpr[cRd] <= iRd;
+      if (eRd&&cRd!=0) gpr[cRd] <= iRd;
     end
   end
 `ifdef DEBUG
   always @(clk) begin
-    $display("en=%o Reg[%d](0x%x)<=0x%x",en,cRd,gpr[cRd],iRd);
+    $display("en=%o Reg[%d](0x%x)<=0x%x",eRd,cRd,gpr[cRd],iRd);
     $strobe("Reg[%d]=%x", cRd, gpr[cRd]);
     // $strobe("00:0x%8x 01:0x%8x 02:0x%8x 03:0x%8x 04:0x%8x 05:0x%8x 06:0x%8x 07:0x%8x",0,gpr[01],gpr[02],gpr[03],gpr[04],gpr[05],gpr[06],gpr[07]);
     // $strobe("08:0x%8x 09:0x%8x 10:0x%8x 11:0x%8x 12:0x%8x 13:0x%8x 14:0x%8x 15:0x%8x",gpr[08],gpr[09],gpr[10],gpr[11],gpr[12],gpr[13],gpr[14],gpr[15]);

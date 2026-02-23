@@ -24,8 +24,8 @@ tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))
 tU=$(notdir $(basename $(tV)))
 tC=$(patsubst vsrc/%,csrc/%.cpp,$(basename $(tV)))
 tVd?=$(NPC_HOME)/$(tV)
-ifeq ($(t),minirv)
-	tF=ysyx_26020046_minirv
+ifeq ($(t),minirvO)
+	tF=ysyx_26020046_minirvO
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
 	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
@@ -43,6 +43,9 @@ ifeq ($(t),minirvS)
 endif
 ifeq ($(t),minirvN)
 	tF=ysyx_26020046_minirvN
+endif
+ifeq ($(t),minirv)
+	tF=ysyx_26020046_minirv
 endif
 # all: $(BINS)
 # bin/%: vsrc/%.v csrc/%.cpp | build/% bin

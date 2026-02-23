@@ -1,4 +1,4 @@
-module ysyx_26020046_minirv #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,code,pcReset,pc);
+module ysyx_26020046_minirvO #(ADDR_WIDTH = 5, DATA_WIDTH = 32) (clk,reset,code,pcReset,pc);
 //32'h80000000
 input clk,reset;
 input [DATA_WIDTH-1:0] code,pcReset;
@@ -50,7 +50,7 @@ ysyx_26020046_minirv_Reg #(ADDR_WIDTH,DATA_WIDTH) ysyx_26020046_Reg(
     .cRd(cRd),
     .cR1(cR1),
     .cR2(cR2),
-    .en(eRd),
+    .eRd(eRd),
     .oR1(oR1),
     .oR2(oR2),
     .a0(a0)

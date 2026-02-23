@@ -37,13 +37,18 @@ int printf(const char *fmt, ...) {//TODO
           int num=va_arg(argp, int);
           char number[MAXprintfD]={0};
           int point=MAXprintfD-1;
+          bool minus=false;
+          bool zero=false;
           if(num==0){
-            putch('0');
-            count++;
+            zero=true;
+            // putch('0');
+            // count++;
           }
           else if(num<0){
-            putch('-');
-            count++;
+            minus=true;
+            printfNumber--;
+            // putch('-');
+            // count++;
             while(num<0&&point>= 0){
               number[point]=-(num % 10)+'0';
               num/= 10;
@@ -59,15 +64,19 @@ int printf(const char *fmt, ...) {//TODO
           int iNow=point+1;
           if(printfNumber>0&&printfNumber>MAXprintfD-point-1){
             for(int i=0;i<(printfNumber-(MAXprintfD-point-1));i++){
-              putch('0');
+              putch(' ');
               count++;
             }
           }
-          for(int i=iNow;i<MAXprintfD;i++){
-              if(number[i]!='\0'){
-                putch(number[i]);
-                count++;
-              }
+          if(zero){putch('0');count++;}
+          else{
+            if(minus){putch('-');count++;}
+            for(int i=iNow;i<MAXprintfD;i++){
+                if(number[i]!='\0'){
+                  putch(number[i]);
+                  count++;
+                }
+            }
           }
           printfNumber=0;
           getPrintfNumber=false;
@@ -81,9 +90,11 @@ int printf(const char *fmt, ...) {//TODO
           unsigned numX=va_arg(argp, int);
           char numberX[MAXprintfX]={0};
           int pointX=MAXprintfX-1;
+          bool zeroX=false;
           if(numX==0){
-            putch('0');
-            count++;
+            // putch('0');
+            // count++;
+            zeroX=true;
           }
           while(numX>0&&pointX>= 0){
               // number[point]=(num % 10)+'0';
@@ -116,11 +127,14 @@ int printf(const char *fmt, ...) {//TODO
               count++;
             }
           }
-          for(int i=iNowX;i<MAXprintfX;i++){
-              if(numberX[i]!='\0'){
-                putch(numberX[i]);
-                count++;
-              }
+          if(zeroX){putch('0');count++;}
+          else{
+            for(int i=iNowX;i<MAXprintfX;i++){
+                if(numberX[i]!='\0'){
+                  putch(numberX[i]);
+                  count++;
+                }
+            }
           }
           printfNumber=0;
           getPrintfNumber=false;
@@ -202,10 +216,15 @@ int sprintf(char *out, const char *fmt, ...){
           int num=va_arg(argp, int);
           char number[MAXsprintfD]={0};
           int point=MAXsprintfD-1;
+          bool minus=false;
+          bool zero=false;
           // printf("num=%d point=%d\n",num,point);
-          if(num==0){*out='0';out++;break;}
+          // if(num==0){*out='0';out++;break;}
+          if(num==0){zero=true;}
           else if(num<0){
-            *out='-';out++;
+            // *out='-';out++;
+            printfNumber--;
+            minus=true;
             while(num<0&&point>= 0){
               number[point]=-(num % 10)+'0';
               num/= 10;
@@ -232,12 +251,15 @@ int sprintf(char *out, const char *fmt, ...){
               out++;
             }
           }
-          // printf("iNowX=%d printfNumber=%d pointX=%d num=%d\n",iNow,printfNumber,point,num);
-          for(int i=iNow;i<MAXsprintfD;i++){
-              if(number[i]!='\0'){
-                *out=number[i];
-                out++;
-              }
+          if(zero){*out='0';out++;}
+          else{
+            if(minus==true){*out='-';out++;}
+            for(int i=iNow;i<MAXsprintfD;i++){
+                if(number[i]!='\0'){
+                  *out=number[i];
+                  out++;
+                }
+            }
           }
           printfNumber=0;
           getPrintfNumber=false;
@@ -245,13 +267,15 @@ int sprintf(char *out, const char *fmt, ...){
         case 'x':
         case 'X':
           bool isBig;
+          bool zeroX=false;
           if(*fmt=='x'){isBig=false;}else{isBig=true;}
           fmt++;
           #define MAXsprintfX 11
           unsigned numX=va_arg(argp, int);
           char numberX[MAXsprintfX]={0};
           int pointX=MAXsprintfX-1;
-          if(numX==0){*out='0';out++;break;}
+          // if(numX==0){*out='0';out++;break;}
+          if(numX==0){zeroX=true;}
           while(numX>0&&pointX>= 0){
               // number[point]=(num % 10)+'0';
               // num/= 10;
@@ -277,20 +301,20 @@ int sprintf(char *out, const char *fmt, ...){
               pointX--;
           }
           int iNowX=pointX+1;
-          // if(printfNumber>0&&printfNumber<MAX-pointX-1){
-          //   iNowX=MAX-printfNumber;
-          // }else 
           if(printfNumber>0&&printfNumber>MAXsprintfX-pointX-1){
             for(int i=0;i<(printfNumber-(MAXsprintfX-pointX-1));i++){
               *out='0';
               out++;
             }
           }
-          for(int i=iNowX;i<MAXsprintfX;i++){
-              if(numberX[i]!='\0'){
-                *out=numberX[i];
-                out++;
-              }
+          if(zeroX){*out='0';out++;}
+          else{
+            for(int i=iNowX;i<MAXsprintfX;i++){
+                if(numberX[i]!='\0'){
+                  *out=numberX[i];
+                  out++;
+                }
+            }
           }
           printfNumber=0;
           getPrintfNumber=false;

@@ -3,7 +3,7 @@
 
 #include <limits.h>
 
-#define N 64
+#define N 32
 #define word uint8_t//按照字节操作，别动
 
 #define VAL 5
@@ -225,7 +225,7 @@ void test_sprintf(){
 	}
 	sprintf((char*)data2,"%17d",INT_MIN);
 	if(strcmp((char*)data2,"      -2147483648")!=0){
-		printf("sprintf err%s!=       -2147483648\n",data2);
+		printf("sprintf err>%s!=      -2147483648\n",data2);
 		assert(0);
 	}
 	memset(data1,VAL,N);
@@ -255,7 +255,7 @@ void test_printf(){
 	printf("%4d==   0\n",0);
 	printf("%1d==126322567\n",INT_MAX/17);
 	printf("%d==2147483647\n",INT_MAX);
-	printf("%d==-2147483648\n",INT_MIN);
+	printf("%17d==      -2147483648\n",INT_MIN);
 	printf("%d==-2147483647\n",INT_MIN+1);
 	printf("%d==252645135\n",UINT_MAX/17);
 	printf("%d==126322567\n",INT_MAX/17);
@@ -263,7 +263,7 @@ void test_printf(){
 	printf("%4x==   0\n",0);
 	printf("%1x==7878787\n",INT_MAX/17);
 	printf("%x==7fffffff\n",INT_MAX);
-	printf("%x==80000000\n",INT_MIN);
+	printf("%17x==         80000000\n",INT_MIN);
 	printf("%x==80000001\n",INT_MIN+1);
 	printf("%x==f0f0f0f\n",UINT_MAX/17);
 	printf("%X==7878787\n",INT_MAX/17);
