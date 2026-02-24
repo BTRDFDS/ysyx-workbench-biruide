@@ -13,13 +13,17 @@
 #define NPC_M_TRACE
 #define NPC_F_TRACE
 
-
+#define npcTraceIringSize 256
+#define npcTraceIringMax 16
 
 extern FILE *npctraceIringsFp;
 extern FILE *npctraceMtraceFp;
 extern FILE *npctraceFtraceFp;
 
-extern void NpcTraceInit();
+extern void NpcTraceInit(char *argv);
 extern void NpcTraceClose();
+extern void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc);
 
+extern void NpcTraceInitElf(char *img_file);
+extern char *getFuncName(uint32_t addr);
 #endif

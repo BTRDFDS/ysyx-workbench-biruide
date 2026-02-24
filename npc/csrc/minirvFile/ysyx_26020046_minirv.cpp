@@ -163,7 +163,7 @@ void initDevice(int argc, char** argv){
 	svSetScope(scope);
 
 	NpcSdbInit();
-	NpcTraceInit();
+	NpcTraceInit(argv[1]);
 }
 
 void minirvReset(){
@@ -180,8 +180,14 @@ void minirvReset(){
 }
 
 void minirvStep(){
+
 	pc=top->pc;
 	top->code=M[(pc-addrReset)>>2];
+
+	uint32_t nPc=pc;
+	uint32_t code=top->code;
+
+
 	top->clk=1;top->eval();
 	IfDebug(printf("clk up finish,npc=0x%x\n",(top->pc-addrReset)>>2););
 
@@ -190,6 +196,9 @@ void minirvStep(){
 	top->clk=0;top->eval();
 	IfDebug(printf("clk down finish\n");printf("runStep=%d pc=%x(%x)\n\n",runStep,pc,(pc-addrReset)>>2););
 	runStep++;
+
+	// printf("-");
+	NpcTraceWrite(nPc,code,pc);
 
 }
 void minirvRun(uint32_t times){

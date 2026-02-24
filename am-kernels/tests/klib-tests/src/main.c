@@ -3,7 +3,7 @@
 
 #include <limits.h>
 
-#define N 32
+#define N 16
 #define word uint8_t//按照字节操作，别动
 
 #define VAL 5
