@@ -121,8 +121,8 @@ void NpcTraceFtrace(uint32_t pc,uint32_t incode,char*mnemonic,uint32_t dnpc){
 		// printf(">");
 		// printf("ret\n");
 		fprintf(npctraceFtraceFp,"0x%8x: ",pc);
-		for(int i=1;i<ftraceCount&&ftraceCount>=0&&i<10;i++){
-			fprintf(npctraceFtraceFp,"    ");
+		for(int i=1;i<ftraceCount&&ftraceCount>=0;i++){
+			fprintf(npctraceFtraceFp,"\t");
 		}
 		ftraceCount--;
 		fprintf(npctraceFtraceFp,"ret [%s]\n",getFuncName(pc));
@@ -131,8 +131,8 @@ void NpcTraceFtrace(uint32_t pc,uint32_t incode,char*mnemonic,uint32_t dnpc){
 		// printf(">");
 		// printf("call\n");
 		fprintf(npctraceFtraceFp,"0x%8x: ",pc);
-		for(int i=0;i<ftraceCount&&ftraceCount>=0&&i<10;i++){
-			fprintf(npctraceFtraceFp,"    ");
+		for(int i=0;i<ftraceCount&&ftraceCount>=0;i++){
+			fprintf(npctraceFtraceFp,"\t");
 		}
 		ftraceCount++;
 		fprintf(npctraceFtraceFp,"call[%s@0x%8x]\n",getFuncName(dnpc),dnpc);
