@@ -92,7 +92,7 @@ void NpcTraceIrings(uint32_t pc,uint32_t incode,char*mnemonic,char*op){
 	if(npctraceIringsFp !=NULL){
 		memset(npctraceIrings[iringbufCount%npcTraceIringMax],0,sizeof(npctraceIrings[iringbufCount%npcTraceIringMax]));
 		// strncpy(npctraceIrings[iringbufCount%npcTraceIringMax],_this->logbuf,npcTraceIringSize);
-		sprintf(npctraceIrings[iringbufCount%npcTraceIringMax],"%x:%s\t%s",pc,mnemonic,op);
+		sprintf(npctraceIrings[iringbufCount%npcTraceIringMax],"%8x:%s\t%s",pc,mnemonic,op);
 		iringbufCount++;
 
 		fseek(npctraceIringsFp,0,SEEK_SET);
@@ -112,27 +112,32 @@ void NpcTraceMtraceWrite(uint32_t pc,uint32_t incode){
 		
 }
 void NpcTraceMtraceRead(uint32_t pc,uint32_t incode){
-    
+		
 }
 void NpcTraceFtrace(uint32_t pc,uint32_t incode,char*mnemonic,uint32_t dnpc){
+	printf("pc=%x incode=%x dnpc=%x incode&0x7FU=%x incode&0xF80U=%x ret=%x call1=%x call2=%x call=%x\n",pc,incode,dnpc,incode&0x7FU,incode&0xF80U,incode==0x00008067,((incode&0x7FU)==0x67U),((incode&0xF80U)==0x80U),((incode&0x7F)==0x67)&&((incode&0xF80)==0x80));
 	static uint32_t ftraceCount=0;
-  if(strcmp(mnemonic,"ret")==0){printf(">");
-    // printf("ret\n");
-    fprintf(npctraceFtraceFp,"0x%8x:",pc);
-    ftraceCount--;
-    for(int i=0;i<ftraceCount&&ftraceCount>=0&&i<10;i++){
-      fprintf(npctraceFtraceFp,"\t");
-    }
-    fprintf(npctraceFtraceFp,"ret [%s]\n",getFuncName(pc));
-  }else if(strcmp(mnemonic,"call")==0&&(incode&0xF80==0x80)){printf(">");
-    // printf("call\n");
-    fprintf(npctraceFtraceFp,"0x%8x:",pc);
-    for(int i=0;i<ftraceCount&&ftraceCount>=0&&i<10;i++){
-      fprintf(npctraceFtraceFp,"\t");
-    }
-    fprintf(npctraceFtraceFp,"call[%s@0x%8x]\n",getFuncName(dnpc),dnpc);
-    ftraceCount++;
-  }
+	if(incode==0x00008067){
+		// printf(">");
+		// printf("ret\n");
+		fprintf(npctraceFtraceFp,"0x%8x: ",pc);
+		ftraceCount--;
+		for(int i=0;i<ftraceCount&&ftraceCount>=0&&i<10;i++){
+			fprintf(npctraceFtraceFp," ");
+		}
+		fprintf(npctraceFtraceFp,"ret [%s]\n",getFuncName(pc));
+		fflush(npctraceFtraceFp);
+	}else if(((incode&0x7F)==0x67)&&((incode&0xF80)==0x80)){
+		// printf(">");
+		// printf("call\n");
+		fprintf(npctraceFtraceFp,"0x%8x:",pc);
+		for(int i=0;i<ftraceCount&&ftraceCount>=0&&i<10;i++){
+			fprintf(npctraceFtraceFp," ");
+		}
+		fprintf(npctraceFtraceFp,"call[%s@0x%8x]\n",getFuncName(dnpc),dnpc);
+		fflush(npctraceFtraceFp);
+		ftraceCount++;
+	}
 }
 void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc){
 	char mnemonic[32]={0};
