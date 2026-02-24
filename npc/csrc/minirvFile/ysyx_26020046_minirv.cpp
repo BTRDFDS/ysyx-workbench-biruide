@@ -9,6 +9,9 @@
 #include "Vysyx_26020046_minirv__Dpi.h"
 #include <time.h>
 
+#include <npcSdb.h>
+#include <npcTrace.h>
+
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_minirv* top;//顶层模块
 svScope scope;//作用域
@@ -30,10 +33,27 @@ uint32_t M[memSize];
 uint32_t runStep,pc;//运行步数
 timespec startTime;//开始时间
 uint32_t addrReset;//pc复位地址，用于区分0开始的内置程序和ADDR_RESET开始的外部程序
+bool hasEbreak=false;//是否遇到ebreak
 
-extern "C" int getReg(int addr);//注意：0号寄存器指代pc
-
+extern "C" int getReg(int addr);//注意：0号寄存器替代为pc
 void minirvClose();
+void minirvRun(uint32_t times);
+
+void NpcsdbGetGpr(){
+	for(uint32_t i=0;i<32;i++){
+		npcsdbGpr[i]=getReg(i);
+	}
+}
+uint32_t NpcsdbGetReg(uint32_t addr){
+    return getReg(addr);
+}
+uint32_t NpcsdbReadMem(uint32_t addr){
+    return M[(addr-addrReset)>>2];
+}
+void NpcsdbRun(uint32_t times){
+	minirvRun(times);
+}
+
 
 extern "C" int pmem_read(int raddr) {
 	IfDebug(printf("pmem_read : "););
@@ -61,7 +81,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		printf("%c",wdata);
 		return;
 	}
-	if((((waddrX-addrReset)>>2)>memSize|waddrX<=addrReset)&(waddrX!=0)){
+	if((((waddrX-addrReset)>>2)>memSize|waddrX<=addrReset)|(waddrX==0)){
 		IfDebug(printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,addrReset,memSize+addrReset););
 		return;
 	}
@@ -91,9 +111,9 @@ extern "C" void ebreak(unsigned char eb){
 	printf("ebreak:");
 	// printf("%x\n",getReg(0));
 	// printf("%x\n",getReg(10));
-	minirvClose();
-	if(eb){printf("\033[1;32mHIT GOOD TRAP\033[0m\n");exit( 0);}
-	else  {printf("\033[1;31mHIT BAD  TRAP\033[0m\n");exit(-1);}
+	// minirvClose();
+	if(eb){printf("\033[1;32mHIT GOOD TRAP\033[0m\n");hasEbreak=true;}
+	else  {printf("\033[1;31mHIT BAD  TRAP\033[0m\n");hasEbreak=true;}
 }
 
 
@@ -141,6 +161,9 @@ void initDevice(int argc, char** argv){
 	// scope=svGetScopeFromName("TOP.ysyx_26020046_minirv");
 	scope=svGetScopeFromName("TOP.ysyx_26020046_minirv.DEBUG");
 	svSetScope(scope);
+
+	NpcSdbInit();
+	NpcTraceInit();
 }
 
 void minirvReset(){
@@ -167,22 +190,44 @@ void minirvStep(){
 	top->clk=0;top->eval();
 	IfDebug(printf("clk down finish\n");printf("runStep=%d pc=%x(%x)\n\n",runStep,pc,(pc-addrReset)>>2););
 	runStep++;
+
 }
 void minirvRun(uint32_t times){
-    if(times==0){while(1){minirvStep();}}
-    for(int i=0;i<times;i++){minirvStep();}
+	if(hasEbreak){printf("has ebreak.ues 'q' to exit\n");}
+    else if(times==0){while(!hasEbreak){
+		minirvStep();
+		if(NpcsdbCheck()!=0){return;}
+	}}
+    else for(int i=0;i<times;i++){
+		minirvStep();
+		if(NpcsdbCheck()!=0){return;}
+	}
 }
 
 void minirvClose(){
+
+	NpcTraceClose();
+
 	delete top;
 	delete contextp;
+}
+
+void minirvBegin(){
+#ifdef DEBUG_SDB
+	NpcSdbMainloop();
+#else
+	minirvRun(0);
+#endif
 }
 
 int main(int argc, char** argv) {
 	initMem(argc, argv);
 	initDevice(argc, argv);
 	minirvReset();
-	minirvRun(0);
+
+	minirvBegin();
+
 	minirvClose();
-	return -1;
+
+	return hasEbreak?0:-1;
 }

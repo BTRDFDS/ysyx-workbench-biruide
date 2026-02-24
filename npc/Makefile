@@ -13,14 +13,20 @@ INC_PATH ?=
 INCFLAGS = $(addprefix -I, $(INC_PATH))
 CXXFLAGS += $(INCFLAGS)
 
+LDFLAGS += -lreadline
+LDFLAGS += -L$(NPC_HOME)/lib
+LDFLAGS += -lcapstone
 ifeq ($(MAKECMDGOALS),gdb)
-	ePrintf = -DDEBUG
+	VERILATOR_CFLAGS += -DDEBUG
+	CXXFLAGS += -DDEBUG
 endif
 
-
+ifeq ($(MAKECMDGOALS),sdb)
+	CXXFLAGS += -DDEBUG_SDB
+endif
 
 t?=water#工程名称
-tF?=t#工程文件查找名
+tF?=$(t)#工程文件查找名
 tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))#工程文件查找结果
 tC?=$(shell find csrc -type f -name "$(tF).cpp")#驱动文件查找结果
 # tU?=$(notdir $(basename $(tV)))#工程全程
@@ -48,6 +54,8 @@ ifeq ($(t),minirvN)
 endif
 ifeq ($(t),minirv)
 	tF=ysyx_26020046_minirv
+	tCd += $(NPC_HOME)/csrc/npcSdb/*
+	tCd += $(NPC_HOME)/csrc/npcTrace/*
 endif
 
 bin/%: $(tVd) $(tCd) | build/$(tF) bin
@@ -63,6 +71,7 @@ bin/%: $(tVd) $(tCd) | build/$(tF) bin
 	verilator --lint-only -Wall $(tVd) --top-module $(tF) -Wno-DECLFILENAME
 	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tCd) --Mdir build/$(tF) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(tF) \
+	-CFLAGS -I$(NPC_HOME)/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	cp build/$(tF)/V$(tF) bin/$(tF)
@@ -87,6 +96,8 @@ clean:
 	rm -rf bin/* build/*
 
 run:bin/$(tF)
+	./bin/$(tF) $(ARG) $(xEb)
+sdb:bin/$(tF)
 	./bin/$(tF) $(ARG) $(xEb)
 gdb:bin/$(tF) log/$(dir $(tF))
 	./bin/$(tF) $(ARG) $(xEb) > log/$(tF)_gdb.log
