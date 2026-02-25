@@ -9,9 +9,9 @@
 
 #include <capstone/capstone.h>
 
-#define NPC_I_TRACE
+// #define NPC_I_TRACE
 // #define NPC_M_TRACE
-#define NPC_F_TRACE
+// #define NPC_F_TRACE
 
 #define npcTraceIringSize 256
 #define npcTraceIringMax 16

@@ -68,6 +68,7 @@ ifeq ($(t),minirv)
 	tF=ysyx_26020046_minirv
 	tCd += $(NPC_HOME)/csrc/npcSdb/*
 	tCd += $(NPC_HOME)/csrc/npcTrace/*
+	tCd += $(NPC_HOME)/csrc/npcDifftest/*
 endif
 
 bin/%: $(tVd) $(tCd) | build/$(tF) bin

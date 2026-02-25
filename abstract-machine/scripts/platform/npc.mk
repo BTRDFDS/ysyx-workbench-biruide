@@ -29,6 +29,10 @@ run: insert-arg
 	make -C $(NPC_HOME) run t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
 gdb: insert-arg
 	make -C $(NPC_HOME) gdb t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
+sdb: insert-arg
+	make -C $(NPC_HOME) sdb t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
+dft: insert-arg
+	make -C $(NPC_HOME) dft t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
 val: insert-arg
 	make -C $(NPC_HOME) val t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
 
