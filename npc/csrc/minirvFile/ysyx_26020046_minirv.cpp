@@ -11,7 +11,97 @@
 
 #include <npcSdb.h>
 #include <npcTrace.h>
-#include <npcDifftest.h>
+
+
+#ifdef DIFFTEST
+
+#include <dlfcn.h>
+#include <cpu/difftest.h>
+#include <common.h>
+
+// Difftest相关变量
+static bool difftest_enabled = false;
+static void *difftest_handle = NULL;
+
+// NEMU difftest函数指针
+// static void (*ref_difftest_memcpy)(uint32_t addr, void *buf, size_t n, bool direction) = NULL;
+// static void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
+// static void (*ref_difftest_exec)(uint64_t n) = NULL;
+// static void (*ref_difftest_raise_intr)(uint32_t NO) = NULL;
+
+void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) = NULL;
+void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
+void (*ref_difftest_exec)(uint64_t n) = NULL;
+void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
+// CPU状态结构（必须与NEMU完全一致）
+typedef struct {
+    uint32_t gpr[32];
+    uint32_t pc;
+} riscv32_CPU_state;
+#endif
+
+
+
+
+
+
+#ifdef DIFFTEST
+static void difftest_check(uint32_t pc) {
+    if (!difftest_enabled || !ref_difftest_exec) return;
+
+    // 获取NPC当前寄存器状态
+    riscv32_CPU_state npc_state;
+    for (int i = 0; i < 32; i++) {
+        npc_state.gpr[i] = getReg(i);
+    }
+    npc_state.pc = pc;
+
+    // 执行一条指令
+    ref_difftest_exec(1);
+
+    // 获取NEMU执行后的状态
+    riscv32_CPU_state ref_state;
+    ref_difftest_regcpy(&ref_state, DIFFTEST_TO_DUT);
+
+    // 比较状态（注意x0寄存器必须为0）
+    npc_state.gpr[0] = 0;
+    ref_state.gpr[0] = 0;
+
+    // 检查寄存器是否一致
+    bool match = true;
+    if (npc_state.pc != ref_state.pc) {
+        printf("[DIFFTEST] PC mismatch: NPC=0x%08x, REF=0x%08x\n",
+               npc_state.pc, ref_state.pc);
+        match = false;
+    }
+
+    for (int i = 1; i < 32; i++) {
+        if (npc_state.gpr[i] != ref_state.gpr[i]) {
+            printf("[DIFFTEST] x%d mismatch: NPC=0x%08x, REF=0x%08x\n",
+                   i, npc_state.gpr[i], ref_state.gpr[i]);
+            match = false;
+        }
+    }
+
+    if (!match) {
+        printf("[DIFFTEST] Failed at pc=0x%08x\n", pc);
+        difftest_enabled = false; // 停止difftest
+    }
+}
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_minirv* top;//顶层模块
@@ -176,7 +266,46 @@ void initDevice(int argc, char** argv){
 	NpcSdbInit();
 	NpcTraceInit(argv[1]);
 
-	init_difftest("/home/biruide/ysyx-workbench/npc/lib/riscv32-nemu-interpreter-so",ADDR_RESET, memSize * 4);
+
+#ifdef DIFFTEST
+    // 加载NEMU动态库
+    const char *nemu_lib = "../lib/riscv32-nemu-interpreter-so";
+    difftest_handle = dlopen(nemu_lib, RTLD_LAZY);
+    if (!difftest_handle) {
+        printf("[DIFFTEST] Failed to load NEMU library: %s\n", dlerror());
+        return;
+    }
+
+    // 获取函数指针
+    ref_difftest_memcpy = (void (*)(uint32_t, void*, size_t, bool))dlsym(difftest_handle, "difftest_memcpy");
+    ref_difftest_regcpy = (void (*)(void*, bool))dlsym(difftest_handle, "difftest_regcpy");
+    ref_difftest_exec = (void (*)(uint64_t))dlsym(difftest_handle, "difftest_exec");ref_difftest_raise_intr = (void (*)(uint64_t))dlsym(difftest_handle, "difftest_raise_intr");
+
+    void (*ref_difftest_init)(int) = (void (*)(int))dlsym(difftest_handle, "difftest_init");
+
+    if (!ref_difftest_memcpy || !ref_difftest_regcpy ||
+        !ref_difftest_exec || !ref_difftest_raise_intr || !ref_difftest_init) {
+        printf("[DIFFTEST] Failed to get difftest function pointers\n");
+        dlclose(difftest_handle);
+        return;
+    }
+
+    // 初始化NEMU
+    ref_difftest_init(0);
+
+    // 同步内存到NEMU
+    uint32_t mem_size = memSize * sizeof(uint32_t);
+    ref_difftest_memcpy(addrReset, M, mem_size, DIFFTEST_TO_REF);
+
+    // 同步初始寄存器状态
+    riscv32_CPU_state init_state;
+    memset(&init_state, 0, sizeof(riscv32_CPU_state));
+    init_state.pc = addrReset;
+    ref_difftest_regcpy(&init_state, DIFFTEST_TO_REF);
+
+    difftest_enabled = true;
+    printf("[DIFFTEST] Initialized with NEMU library\n");
+#endif
 
 }
 
@@ -191,6 +320,7 @@ void minirvReset(){
 	top->code=M[(pc-addrReset)>>2];
 	top->clk=0;top->reset=0;top->eval();
 	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",(pc-addrReset)>>2,M[(pc-addrReset)>>2]););
+
 }
 
 void minirvStep(){
@@ -213,10 +343,13 @@ void minirvStep(){
 
 	// printf("-");
 	NpcTraceWrite(nPc,code,pc);
-    #ifdef DIFFTEST
-    difftest_step(nPc);
-    #endif
 
+#ifdef DIFFTEST
+    // 执行difftest检查
+    if (difftest_enabled) {
+        difftest_check(nPc);
+    }
+#endif
 }
 void minirvRun(uint32_t times){
 	if(hasEbreak){printf("has ebreak.ues 'q' to exit\n");}

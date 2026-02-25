@@ -24,11 +24,13 @@ endif
 ifeq ($(MAKECMDGOALS),sdb)
 CXXFLAGS += -DDEBUG_SDB
 endif
-ifeq ($(DIFFTEST),1)
+
+ifeq ($(MAKECMDGOALS),dft)
 CXXFLAGS += -DDIFFTEST
 LDFLAGS += -ldl
-LDFLAGS += -l:riscv32-nemu-interpreter-so
+CXXFLAGS += -I/$(NEMU_HOME)/include
 endif
+
 t?=water#工程名称
 tF?=$(t)#工程文件查找名
 tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))#工程文件查找结果
@@ -102,6 +104,8 @@ clean:
 run:bin/$(tF)
 	./bin/$(tF) $(ARG) $(xEb)
 sdb:bin/$(tF)
+	./bin/$(tF) $(ARG) $(xEb)
+dft:bin/$(tF)
 	./bin/$(tF) $(ARG) $(xEb)
 gdb:bin/$(tF) log/$(dir $(tF))
 	./bin/$(tF) $(ARG) $(xEb) > log/$(tF)_gdb.log
