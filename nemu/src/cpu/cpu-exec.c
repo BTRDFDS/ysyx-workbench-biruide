@@ -42,6 +42,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 
 #ifndef CONFIG_TARGET_AM
+#ifdef CONFIG_ITRACE 
 #ifdef CONFIG_IRINGTRACE
   extern FILE *log_iringbuf_fp;
   #define iringmax 16
@@ -68,6 +69,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     }
     fflush(log_iringbuf_fp);
   }
+#endif
 #endif
 #endif
 }
