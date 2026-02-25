@@ -31,6 +31,12 @@ LDFLAGS += -ldl
 CXXFLAGS += -I/$(NEMU_HOME)/include
 endif
 
+ifeq ($(MAKECMDGOALS),run)
+CXXFLAGS += -DDIFFTEST
+LDFLAGS += -ldl
+CXXFLAGS += -I/$(NEMU_HOME)/include
+endif
+
 t?=water#工程名称
 tF?=$(t)#工程文件查找名
 tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))#工程文件查找结果

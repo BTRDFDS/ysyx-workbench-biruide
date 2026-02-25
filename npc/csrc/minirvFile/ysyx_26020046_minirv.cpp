@@ -290,13 +290,14 @@ void initDevice(int argc, char** argv){
         return;
     }
 
+	printf("nemu 加载完成\n");
     // 初始化NEMU
     ref_difftest_init(0);
-
+	printf("nemu 初始化完成\n");
     // 同步内存到NEMU
     uint32_t mem_size = memSize * sizeof(uint32_t);
     ref_difftest_memcpy(addrReset, M, mem_size, DIFFTEST_TO_REF);
-
+	printf("nemu 内存同步完成\n");
     // 同步初始寄存器状态
     riscv32_CPU_state init_state;
     memset(&init_state, 0, sizeof(riscv32_CPU_state));
