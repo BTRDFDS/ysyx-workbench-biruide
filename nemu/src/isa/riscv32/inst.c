@@ -79,8 +79,10 @@ uint32_t riscv32mRemU(uint32_t rs1,uint32_t rs2){
 
 extern FILE *log_ftrace_fp;
 static int ftraceCount = 0;
+#endif
 
 void riscv32FtraceJalr(Decode *s,int rd){
+#ifdef CONFIG_FTRACE
   if(s->isa.inst==0x00008067){
     // printf("ret\n");
     fprintf(log_ftrace_fp,"0x%8x : ",s->pc);
@@ -98,8 +100,10 @@ void riscv32FtraceJalr(Decode *s,int rd){
     fprintf(log_ftrace_fp,"call[%s@0x%8x]\n",getFuncName(s->dnpc),s->dnpc);
     ftraceCount++;
   }
+#endif
 }
 void riscv32FtraceJal(Decode *s,int rd){
+#ifdef CONFIG_FTRACE
   if(rd==1){
     // printf("call\n");
     fprintf(log_ftrace_fp,"0x%8x : ",s->pc);
@@ -109,8 +113,8 @@ void riscv32FtraceJal(Decode *s,int rd){
     fprintf(log_ftrace_fp,"call[%s@0x%8x]\n",getFuncName(s->dnpc),s->dnpc);
     ftraceCount++;
   }
-}
 #endif
+}
 
 
 

@@ -269,7 +269,7 @@ void initDevice(int argc, char** argv){
 
 #ifdef DIFFTEST
     // 加载NEMU动态库
-    const char *nemu_lib = "../lib/riscv32-nemu-interpreter-so";
+    const char *nemu_lib = "/home/biruide/ysyx-workbench/npc/lib/riscv32-nemu-interpreter-so";
     difftest_handle = dlopen(nemu_lib, RTLD_LAZY);
     if (!difftest_handle) {
         printf("[DIFFTEST] Failed to load NEMU library: %s\n", dlerror());
