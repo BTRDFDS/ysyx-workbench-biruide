@@ -59,17 +59,22 @@ extern "C" int pmem_read(int raddr) {
 	IfDebug(printf("pmem_read : "););
 	uint32_t raddrX=(uint32_t)raddr;
 	// if(raddrX==0){return 0;}
-	if(raddr==timeADDR){//返回毫秒数
+	if(raddrX==timeADDR){//返回毫秒数
+		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddrX);
 		uint32_t time=0;
 		timespec t;
 		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");exit(-1);}
 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
+		NpcTraceMtrace("%d\n",time);
 		return time;
 	}
 	if(((((raddrX-addrReset)>>2)>=memSize)|raddrX<addrReset)|(raddrX==0)){//超出mem
 		IfDebug(printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddrX,raddr,pc,runStep););
 		return 0;
 	}
+
+	NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddrX);
+	NpcTraceMtrace("%x\n",M[(raddrX-addrReset)>>2]);
 	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddrX-addrReset),(raddrX-addrReset)>>2,M[(raddrX-addrReset)>>2]););
 	return M[(raddrX-addrReset) >> 2];
 }
@@ -79,6 +84,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	uint32_t waddrX=(uint32_t)waddr;
 	if(waddrX==0x10000000){
 		printf("%c",wdata);
+		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,waddrX,wdata);
 		return;
 	}
 	if((((waddrX-addrReset)>>2)>memSize|waddrX<=addrReset)|(waddrX==0)){
@@ -86,11 +92,15 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		return;
 	}
 	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-addrReset),(waddr-addrReset)>>2,M[(waddr-addrReset)>>2],wdata,wmask););
+	
+	NpcTraceMtrace("0x%8x w 0x%x M=0x%x",pc,waddrX,wdata);
 	if((wmask&0b1111)==0b1111){
 		IfDebug(printf("all\n"););
+		NpcTraceMtrace(" all\n");
     	M[(waddr-addrReset)>>2]=wdata;
 	}else{
 		IfDebug(printf("part\n"););
+		NpcTraceMtrace(" part\n");
 		uint32_t mask1=0xffffffff;
 		uint32_t data=wdata&0xff;
 		switch(wmask&0x0f){

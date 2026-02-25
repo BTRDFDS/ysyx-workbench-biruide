@@ -12,21 +12,18 @@ const char *npctraceMtraceFile={"log/mtrace.log"};
 const char *npctraceFtraceFile={"log/ftrace.log"};
 
 void NpcTraceInitFile(){
-
-		const char *npc_home = getenv("NPC_HOME");
-		if (npc_home == NULL) {
-				printf("err NPC_HEME\n");
-				return;
-		}
-
+#ifdef NPC_I_TRACE
 	npctraceIringsFp = fopen(npctraceIringsFile, "w");
 	if(npctraceIringsFp == NULL){printf("err:open %s",npctraceIringsFile);exit(-1);}
-
+#endif
+#ifdef NPC_M_TRACE
 	npctraceMtraceFp = fopen(npctraceMtraceFile, "w");
 	if(npctraceMtraceFp == NULL){printf("err:open %s",npctraceMtraceFile);exit(-1);}
-
+#endif
+#ifdef NPC_F_TRACE
 	npctraceFtraceFp = fopen(npctraceFtraceFile, "w");
 	if(npctraceFtraceFp == NULL){printf("err:open %s",npctraceFtraceFile);exit(-1);}
+#endif
 }
 
 void NpcTraceCloseFile(){
@@ -108,13 +105,19 @@ void NpcTraceIrings(uint32_t pc,uint32_t incode,char*mnemonic,char*op){
 		fflush(npctraceIringsFp);
 	}
 }
-void NpcTraceMtraceWrite(uint32_t pc,uint32_t incode){
-		
+void NpcTraceMtrace(const char *format, ...){
+#ifdef NPC_M_TRACE
+	if(npctraceMtraceFp!=NULL){
+		va_list args;
+		va_start(args, format);
+		if(vfprintf(npctraceMtraceFp,format,args)<0){printf("mtrace write err\n");exit(-1);}
+		else{fflush(npctraceMtraceFp);}
+		va_end(args);
+	}
+#endif
 }
-void NpcTraceMtraceRead(uint32_t pc,uint32_t incode){
-		
-}
-void NpcTraceFtrace(uint32_t pc,uint32_t incode,char*mnemonic,uint32_t dnpc){
+
+void NpcTraceFtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
 	// printf("pc=%x incode=%x dnpc=%x incode&0x7FU=%x incode&0xF80U=%x ret=%x call1=%x call2=%x call=%x\n",pc,incode,dnpc,incode&0x7FU,incode&0xF80U,incode==0x00008067,((incode&0x7FU)==0x67U),((incode&0xF80U)==0x80U),((incode&0x7F)==0x67)&&((incode&0xF80)==0x80));
 	static uint32_t ftraceCount=0;
 	if(incode==0x00008067){
@@ -140,6 +143,7 @@ void NpcTraceFtrace(uint32_t pc,uint32_t incode,char*mnemonic,uint32_t dnpc){
 	}
 }
 void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc){
+#ifdef NPC_I_TRACE
 	char mnemonic[32]={0};
 	char op[160]={0};
 	if(NpcTraceCapstone(incode,mnemonic,op)!=true){
@@ -147,5 +151,9 @@ void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc){
 			exit(-1);
 	}
 	NpcTraceIrings(pc,incode,mnemonic,op);
-	NpcTraceFtrace(pc,incode,mnemonic,dnpc);
+#endif
+
+#ifdef NPC_F_TRACE
+	NpcTraceFtrace(pc,incode,dnpc);
+#endif
 }

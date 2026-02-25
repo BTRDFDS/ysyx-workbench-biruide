@@ -10,7 +10,7 @@
 #include <capstone/capstone.h>
 
 #define NPC_I_TRACE
-#define NPC_M_TRACE
+// #define NPC_M_TRACE
 #define NPC_F_TRACE
 
 #define npcTraceIringSize 256
@@ -23,6 +23,7 @@ extern FILE *npctraceFtraceFp;
 extern void NpcTraceInit(char *argv);
 extern void NpcTraceClose();
 extern void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc);
+extern void NpcTraceMtrace(const char *format, ...);
 
 extern void NpcTraceInitElf(char *img_file);
 extern char *getFuncName(uint32_t addr);
