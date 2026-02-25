@@ -17,14 +17,18 @@ LDFLAGS += -lreadline
 LDFLAGS += -L$(NPC_HOME)/lib
 LDFLAGS += -lcapstone
 ifeq ($(MAKECMDGOALS),gdb)
-	VERILATOR_CFLAGS += -DDEBUG
-	CXXFLAGS += -DDEBUG
+VERILATOR_CFLAGS += -DDEBUG
+CXXFLAGS += -DDEBUG
 endif
 
 ifeq ($(MAKECMDGOALS),sdb)
-	CXXFLAGS += -DDEBUG_SDB
+CXXFLAGS += -DDEBUG_SDB
 endif
-
+ifeq ($(DIFFTEST),1)
+CXXFLAGS += -DDIFFTEST
+LDFLAGS += -ldl
+LDFLAGS += -l:riscv32-nemu-interpreter-so
+endif
 t?=water#工程名称
 tF?=$(t)#工程文件查找名
 tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))#工程文件查找结果

@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <regex.h>
 #include <string.h>
+#include <regex.h>
 
 #include <readline/readline.h>
 #include <readline/history.h>

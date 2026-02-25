@@ -156,7 +156,6 @@ import "DPI-C" function void pmem_write(input int waddr, input int wdata, input 
 			2'b01:oRamB={24'b0,iRAM[15:8]};
 			2'b10:oRamB={24'b0,iRAM[23:16]};
 			2'b11:oRamB={24'b0,iRAM[31:24]};
-			default:oRamB=0;
 		endcase
 	end
 

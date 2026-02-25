@@ -11,7 +11,6 @@
 
 #include <npcSdb.h>
 #include <npcTrace.h>
-#include <npcDifftest.h>
 
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_minirv* top;//顶层模块
@@ -175,9 +174,6 @@ void initDevice(int argc, char** argv){
 
 	NpcSdbInit();
 	NpcTraceInit(argv[1]);
-
-	init_difftest("/home/biruide/ysyx-workbench/npc/lib/riscv32-nemu-interpreter-so",ADDR_RESET, memSize * 4);
-
 }
 
 void minirvReset(){
@@ -213,9 +209,6 @@ void minirvStep(){
 
 	// printf("-");
 	NpcTraceWrite(nPc,code,pc);
-    #ifdef DIFFTEST
-    difftest_step(nPc);
-    #endif
 
 }
 void minirvRun(uint32_t times){
