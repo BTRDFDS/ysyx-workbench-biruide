@@ -1,15 +1,15 @@
-Generate the report at 2026-02-12T19:11:45, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
-+----------------------------------------------------------------+-----------+--------+-------------+----------------+------+
-| Net / Pin                                                      | MaxFanout | Fanout | FanoutSlack | LibCellPort    | Note |
-+----------------------------------------------------------------+-----------+--------+-------------+----------------+------+
-| ysyx_26020046_Reg.gpr[29]_9_                                   |           |        |             |                |      |
-| ysyx_26020046_Reg.gpr[29]_9__reg_p:Q                           | NA        | 2      | NA          | DFFQX1H7L/Q    |      |
-| ysyx_26020046_Reg.gpr[8]_2__MUX4X1P4H7L_A_1_Y                  |           |        |             |                |      |
-| ysyx_26020046_Reg.gpr[8]_2__MUX4X1P4H7L_A_1:Y                  | NA        | 1      | NA          | MUX4X1P4H7L/Y  |      |
-| ysyx_26020046_Reg.gpr[2]_11_                                   |           |        |             |                |      |
-| ysyx_26020046_Reg.gpr[2]_11__reg_p:Q                           | NA        | 2      | NA          | DFFQX1H7L/Q    |      |
-| ysyx_26020046_Reg.gpr[8]_19__MUX4X1H7L_A_Y                     |           |        |             |                |      |
-| ysyx_26020046_Reg.gpr[8]_19__MUX4X1H7L_A:Y                     | NA        | 1      | NA          | MUX4X1H7L/Y    |      |
-| ysyx_26020046_Reg.gpr[8]_19__MUX4X1P4H7L_A_Y_AOI22X0P5H7L_A1_Y |           |        |             |                |      |
-| ysyx_26020046_Reg.gpr[8]_19__MUX4X1P4H7L_A_Y_AOI22X0P5H7L_A1:Y | NA        | 1      | NA          | AOI22X0P5H7L/Y |      |
-+----------------------------------------------------------------+-----------+--------+-------------+----------------+------+
+Generate the report at 2026-02-26T15:46:53, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
++-----------------------------------------------------------------+-----------+--------+-------------+-----------------+------+
+| Net / Pin                                                       | MaxFanout | Fanout | FanoutSlack | LibCellPort     | Note |
++-----------------------------------------------------------------+-----------+--------+-------------+-----------------+------+
+| ysyx_26020046_Reg.gpr[18]_9__MUX2X0P5H7L_A_Y_OAI222X0P5H7L_A1_Y |           |        |             |                 |      |
+| ysyx_26020046_Reg.gpr[18]_9__MUX2X0P5H7L_A_Y_OAI222X0P5H7L_A1:Y | NA        | 1      | NA          | OAI222X0P5H7L/Y |      |
+| ysyx_26020046_Reg.gpr[26]_26_                                   |           |        |             |                 |      |
+| ysyx_26020046_Reg.gpr[26]_26__reg_p:Q                           | NA        | 2      | NA          | DFFQX1H7L/Q     |      |
+| ysyx_26020046_Reg.gpr[16]_9__MUX4X1P4H7L_A_Y_NOR2BX1H7L_AN_Z    |           |        |             |                 |      |
+| ysyx_26020046_Reg.gpr[16]_9__MUX4X1P4H7L_A_Y_NOR2BX1H7L_AN:Z    | NA        | 1      | NA          | NOR2BX1H7L/Z    |      |
+| ysyx_26020046_Reg.gpr[17]_16__AOI211X0P5H7L_A1_Y                |           |        |             |                 |      |
+| ysyx_26020046_Reg.gpr[17]_16__AOI211X0P5H7L_A1:Y                | NA        | 1      | NA          | AOI211X0P5H7L/Y |      |
+| ysyx_26020046_Reg.gpr[16]_7__MUX4X1P4H7L_A_Y_OAI21X0P5H7L_A1_Y  |           |        |             |                 |      |
+| ysyx_26020046_Reg.gpr[16]_7__MUX4X1P4H7L_A_Y_OAI21X0P5H7L_A1:Y  | NA        | 1      | NA          | OAI21X0P5H7L/Y  |      |
++-----------------------------------------------------------------+-----------+--------+-------------+-----------------+------+

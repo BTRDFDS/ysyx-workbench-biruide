@@ -23,7 +23,7 @@ package rv32iBasis;
 	parameter OP_FUN3_R1_0	= 3'b000;
 	parameter OP_FUN3_R1_1	= 3'b101;
 
-	parameter OP_FUN7_M		= 7'b0000001;
+	// parameter OP_FUN7_M		= 7'b0000001;
 
 	typedef logic [DATA_WIDTH-1:0] word_t;
 	typedef logic [REG_NUMBER-1:0] reg_t;
@@ -37,18 +37,22 @@ package rv32iBasis;
 		logic op;//特殊情况：add=>sub,slt=>sltu,srl=>sra,blt=>bltu,bge=>bgeu
 		logic [2:0] func;
 	} aluOp_t;
+	typedef struct packed {
+		logic [2:0] fun3;
+		logic s,l;
+	} lsuOp_t;
 endpackage
 
-module ysyx_260020046_rv32I(clk,reset,code,pc);
+module ysyx_26020046_rv32i(clk,reset,code,pc);
 	import rv32iBasis::*;
 	input logic clk,reset;
 	input word_t code;
 	output word_t pc;
 
 	aluOp_t aluOp;
-	word_t oR1,oR2,imm,data,addr,iRd;
+	word_t oR1,oR2,imm,imi,data,addr,iRd;
 	logic enB,enJ;
-	logic [2:0] fun3;
+	lsuOp_t lsuOp;
 	reg_t cRd,cR1,cR2;
 
 	ysyx_260020046_rv32iIDC IDC(.*);
@@ -58,24 +62,25 @@ module ysyx_260020046_rv32I(clk,reset,code,pc);
 
 endmodule
 
-module ysyx_260020046_rv32iIDC(code,aluOp,enJ,fun3);
+module ysyx_260020046_rv32iIDC(code,aluOp,enJ,lsuOp,imm,imi,cRd,cR1,cR2);
 	import rv32iBasis::*;
 	input word_t code;
 	output aluOp_t aluOp;
 	output logic enJ;
-	output logic[2:0] fun3;
+	output lsuOp_t lsuOp;
+	output word_t imm,imi;
+	output reg_t cRd,cR1,cR2;
 	word_t immI,immS,immB,immU,immJ;
-	reg_t r1,r2,rd;
 	logic [6:0] op;
-	logic [2:0] aluOpFunc;
+	logic [2:0] fun3;
 	logic [6:0] fun7;
-	logic opIj,opIa,opIl,opI_0,opI_1,opUi,opUp,opS,opB,opJ,opR,opR_0,opR_1,opEb,opNop,opSltu;
+	logic opIj,opIa,opIl,opI_0,opI_1,opUi,opUp,opS,opB,opJ,opR,opR_0,opR_1,opEb,opNop;
 
 	assign fun7=code[31:25];
-	assign r2  =code[24:20];
-	assign r1  =code[19:15];
+	assign cR2  =code[24:20];
+	assign cR1  =code[19:15];
 	assign fun3=code[14:12];
-	assign rd  =code[11: 7];
+	assign cRd  =code[11: 7];
 	assign op  =code[ 6: 0];
 
 	assign immI={{20{code[31]}},code[31:20] };
@@ -84,6 +89,21 @@ module ysyx_260020046_rv32iIDC(code,aluOp,enJ,fun3);
 	assign immJ={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
 	assign immU={code[31:12],12'b0 };
 
+	logic [1:0]choose;
+	assign choose[0]=opS|opJ;
+	assign choose[1]=opB|opJ;
+
+	always_comb begin
+		case(choose)
+			2'b00: imm=immI;
+			2'b01: imm=immS;
+			2'b10: imm=immB;
+			2'b11: imm=immJ;
+		endcase
+	end
+
+	assign imi=immU;
+
 	assign opIj =(op==OP_I_J)|(fun3==OP_FUN3_I0_0);
 	assign opIa =(op==OP_I_A)&(fun3!=OP_FUN3_I0_0 | fun3!=OP_FUN3_I1_0);
 	assign opI_0=(op==OP_I_A)&(fun3==OP_FUN3_I0_0)&(fun7==OP_FUN7_I_0);
@@ -91,7 +111,7 @@ module ysyx_260020046_rv32iIDC(code,aluOp,enJ,fun3);
 	assign opIl =(op==OP_I_L);
 	assign opUi =(op==OP_U_I);
 	assign opUp =(op==OP_U_P);
-	assign opS  =(op==OP_S  );
+	assign opS  =(op==OP_S  )&(fun3==3'b000|fun3==3'b001|fun3==3'b010);
 	assign opB  =(op==OP_B  );
 	assign opJ  =(op==OP_J  );
 	assign opR_0=(op==OP_R_0)&(fun7==OP_FUN7_I_0)&(fun3!=OP_FUN3_R1_0 & fun3!=OP_FUN3_R1_1);
@@ -100,6 +120,9 @@ module ysyx_260020046_rv32iIDC(code,aluOp,enJ,fun3);
 	assign opNop=(op==OP_NOP);
 
 	assign enJ=opJ|opIj;
+	assign lsuOp.fun3=fun3;
+	assign lsuOp.s=opS;
+	assign lsuOp.l=opIl;
 
 	assign opR=opR_0|opR_1;
 	assign aluOp.func=(opIa|opR)?fun3:3'b0;
@@ -108,14 +131,14 @@ module ysyx_260020046_rv32iIDC(code,aluOp,enJ,fun3);
 	import "DPI-C" function void stop(input bit eb);
 	always_comb begin : check
 		if(opEb) stop(1);
-		else if(~(|{opIj,opIa,opIl,opUi,opUp,opS,opB,opJ,opR,opR,opNop})) stop(0);
+		else if(~(|{opIj,opIa,opI_0,opI_1,opIl,opUi,opUp,opS,opB,opJ,opR,opR,opNop})) stop(0);
 	end
 
 endmodule
-module ysyx_260020046_rv32iALU(aluOp,oR1,oR2,pc,imm,data,addr,iRd,enB);
+module ysyx_260020046_rv32iALU(aluOp,oR1,oR2,pc,imm,imi,data,addr,iRd,enB);
 	import rv32iBasis::*;
 	input aluOp_t aluOp;
-	input word_t oR1,oR2,pc,imm,data;
+	input word_t oR1,oR2,pc,imm,imi,data;
 
 	output word_t addr,iRd;
 	output logic enB;
@@ -154,7 +177,7 @@ module ysyx_260020046_rv32iALU(aluOp,oR1,oR2,pc,imm,data,addr,iRd,enB);
 	always_comb begin : choose
 		case(aluOp.choose)
 			CHOOSE_OP_CAL	: iRd=result;
-			CHOOSE_OP_IMM	: iRd=imm;
+			CHOOSE_OP_IMM	: iRd=imi;
 			CHOOSE_OP_SNPC	: iRd=pc+4;
 			CHOOSE_OP_L		: iRd=data;
 			default			: iRd='0;
@@ -162,44 +185,59 @@ module ysyx_260020046_rv32iALU(aluOp,oR1,oR2,pc,imm,data,addr,iRd,enB);
 	end
 
 endmodule
-module ysyx_260020046_rv32iLSU(clk,reset,addr,oR2,enB,enJ,fun3,data,pc);
+module ysyx_260020046_rv32iLSU(clk,reset,addr,oR2,enB,enJ,lsuOp,data,pc);
 
 	import rv32iBasis::*;
 	input word_t addr,oR2;
 	input logic clk,reset,enB,enJ;
-	input [2:0] fun3;
+	input lsuOp_t lsuOp;
 	output word_t data,pc;
 
-	logic[3:0]hot;
-	word_t ramAddr,iRAM;
+	logic[3:0]hot,hotB,hotH,mask;
+	word_t ramAddr,iRAM,dataH,dataB;
 //s处理
 	assign ramAddr={addr[31:2],2'b0};
 
-	always_comb begin:get_hot
+	always_comb begin:get_hotB
 		case(addr[1:0])
-			2'b00:hot=4'b0001;
-			2'b01:hot=4'b0010;
-			2'b10:hot=4'b0100;
-			2'b11:hot=4'b1000;
-			default:hot=4'b00;
+			2'b00:hotB=4'b0001;
+			2'b01:hotB=4'b0010;
+			2'b10:hotB=4'b0100;
+			2'b11:hotB=4'b1000;
+			default:hotB=4'b00;
 		endcase
 	end
-
-	assign wmask=w?4'b1111:hot;
+	assign hot =4'b1111;
+	assign hotH=addr[1]?4'b1100:4'b0011;
+	assign mask=(|lsuOp.fun3)?(lsuOp.fun3[0]?hotH:hotB):hot;
 
 //l处理//TODO
+	always_comb begin
+		case(addr[1:0])
+			2'b00:dataB={24'b0,iRAM[7:0]};
+			2'b01:dataB={24'b0,iRAM[15:8]};
+			2'b10:dataB={24'b0,iRAM[23:16]};
+			2'b11:dataB={24'b0,iRAM[31:24]};
+			default:dataB=0;
+		endcase
+	end
+	always_comb begin
+		case(addr[1])
+			1'b0:dataH={16'b0,iRAM[15: 0]};
+			1'b1:dataH={iRAM[31:16],16'b0};
+			default:dataH=0;
+		endcase
+	end
 	always_comb begin:control_RAM_output
-		case(fun3)
-			3'b000 :data=iRAM;
-			3'b001 :data={24'b0,iRAM[15:8]};
-			3'b010 :data={24'b0,iRAM[23:16]};
-			3'b100 :data={24'b0,iRAM[31:24]};
-			3'b100 :data={24'b0,iRAM[31:24]};
+		case(lsuOp.fun3)
+			3'b000 :data={{24{dataB[ 7]}},dataB[ 7: 0]};
+			3'b001 :data={{16{dataH[15]}},dataH[15: 0]};
+			3'b010 :data=iRAM;
+			3'b100 :data=dataB;
+			3'b101 :data=dataH;
 			default:data=0;
 		endcase
 	end
-
-	assign oRAM=(l&w)?iRAM:oRamB;
 
 	always_ff @(posedge clk) begin : pc_write
 		if(reset) pc<=PC_RESET;
@@ -209,10 +247,10 @@ module ysyx_260020046_rv32iLSU(clk,reset,addr,oR2,enB,enJ,fun3,data,pc);
 
 	import "DPI-C" function int pmem_read(input int addr);
 	import "DPI-C" function void pmem_write(input int addr, input int data, input byte mask);
-	assign iRAM = l&inClk?pmem_read(ramAddr):0;
+	assign iRAM = lsuOp.l&clk?pmem_read(ramAddr):0;
 	always_ff@(posedge clk) begin:control_write
-		if (s) begin // 有写请求时
-			pmem_write(ramAddr, oR2, {4'b0,wmask});
+		if (lsuOp.s) begin // 有写请求时
+			pmem_write(ramAddr, oR2, {4'b0,mask});
 		end
 	end
 

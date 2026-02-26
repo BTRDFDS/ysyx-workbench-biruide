@@ -1,18 +1,18 @@
-Generate the report at 2026-02-12T19:11:45, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
+Generate the report at 2026-02-26T15:46:53, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
 Clock: core_clock
 +---------------------------------------------------+---------+-------+------+
 | Clock Pin                                         | Latency | Skew  |      |
 +---------------------------------------------------+---------+-------+------+
-| pc[9]_reg_p:CK (DFFQX1H7L)                        | 0.000   |       | rp-+ |
-| ysyx_26020046_Reg.gpr[9]_9__reg_p:CK (DFFQX1H7L)  | 0.000   | 0.000 | rp-+ |
+| pc[8]_reg_p:CK (DFFQX1H7L)                        | 0.000   |       | rp-+ |
+| ysyx_26020046_Reg.gpr[9]_8__reg_p:CK (DFFQX1H7L)  | 0.000   | 0.000 | rp-+ |
 | pc[4]_reg_p:CK (DFFQX1H7L)                        | 0.000   |       | rp-+ |
 | ysyx_26020046_Reg.gpr[9]_4__reg_p:CK (DFFQX1H7L)  | 0.000   | 0.000 | rp-+ |
-| pc[29]_reg_p:CK (DFFQX1H7L)                       | 0.000   |       | rp-+ |
-| ysyx_26020046_Reg.gpr[9]_29__reg_p:CK (DFFQX1H7L) | 0.000   | 0.000 | rp-+ |
-| pc[13]_reg_p:CK (DFFQX1H7L)                       | 0.000   |       | rp-+ |
-| ysyx_26020046_Reg.gpr[8]_13__reg_p:CK (DFFQX1H7L) | 0.000   | 0.000 | rp-+ |
-| pc[17]_reg_p:CK (DFFQX1H7L)                       | 0.000   |       | rp-+ |
-| ysyx_26020046_Reg.gpr[6]_17__reg_p:CK (DFFQX1H7L) | 0.000   | 0.000 | rp-+ |
+| pc[1]_reg_p:CK (DFFQX1H7L)                        | 0.000   |       | rp-+ |
+| ysyx_26020046_Reg.gpr[9]_1__reg_p:CK (DFFQX1H7L)  | 0.000   | 0.000 | rp-+ |
+| pc[26]_reg_p:CK (DFFQX1H7L)                       | 0.000   |       | rp-+ |
+| ysyx_26020046_Reg.gpr[8]_26__reg_p:CK (DFFQX1H7L) | 0.000   | 0.000 | rp-+ |
+| pc[25]_reg_p:CK (DFFQX1H7L)                       | 0.000   |       | rp-+ |
+| ysyx_26020046_Reg.gpr[7]_25__reg_p:CK (DFFQX1H7L) | 0.000   | 0.000 | rp-+ |
 +---------------------------------------------------+---------+-------+------+
 +----------------------------------------------------------------------+--------+-------------+------------+------------+-------+--------+
 | Point                                                                | Fanout | Capacitance | Resistance | Transition | Incr  | Path   |
@@ -20,7 +20,7 @@ Clock: core_clock
 | clock core_clock (rise edge)                                         |        |             |            | 0          | 0     |        |
 | clk (port)                                                           |        | 0.066       | 0.000      | 0.000      | 0.000 | 0.000r |
 | clk (net)                                                            | 63     |             |            |            |       |        |
-| pc[9]_reg_p:CK (DFFQX1H7L)                                           |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| pc[8]_reg_p:CK (DFFQX1H7L)                                           |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                                                                      |        |             |            |            |       |        |
 | clock core_clock (rise edge)                                         |        |             |            | 0          | 0     |        |
 | clk (port)                                                           |        | 0.089       | 0.000      | 0.000      | 0.000 | 0.000r |
@@ -28,7 +28,7 @@ Clock: core_clock
 | ysyx_26020046_Reg.gpr[9]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)  |        | 0.002       | 0.000      | 0.000      | 0.000 | 0.000r |
 | ysyx_26020046_Reg.gpr[9]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L) |        | 0.032       | 0.000      | 0.000      | 0.000 | 0.000r |
 | ysyx_26020046_Reg.gpr[9]_0__reg_p_CK (net)                           | 32     |             |            |            |       |        |
-| ysyx_26020046_Reg.gpr[9]_9__reg_p:CK (DFFQX1H7L)                     |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| ysyx_26020046_Reg.gpr[9]_8__reg_p:CK (DFFQX1H7L)                     |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                                                                      |        |             |            |            |       |        |
 | startpoint clock latency                                             |        |             |            |            | 0.000 |        |
 | endpoint clock latency                                               |        |             |            |            | 0.000 |        |
@@ -62,7 +62,10 @@ Clock: core_clock
 | clock core_clock (rise edge)                                         |        |             |            | 0          | 0     |        |
 | clk (port)                                                           |        | 0.066       | 0.000      | 0.000      | 0.000 | 0.000r |
 | clk (net)                                                            | 63     |             |            |            |       |        |
-| pc[29]_reg_p:CK (DFFQX1H7L)                                          |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| pc[0]_reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)                        |        | 0.002       | 0.000      | 0.000      | 0.000 | 0.000r |
+| pc[0]_reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L)                       |        | 0.002       | 0.000      | 0.000      | 0.000 | 0.000r |
+| pc[0]_reg_p_CK (net)                                                 | 2      |             |            |            |       |        |
+| pc[1]_reg_p:CK (DFFQX1H7L)                                           |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                                                                      |        |             |            |            |       |        |
 | clock core_clock (rise edge)                                         |        |             |            | 0          | 0     |        |
 | clk (port)                                                           |        | 0.089       | 0.000      | 0.000      | 0.000 | 0.000r |
@@ -70,7 +73,7 @@ Clock: core_clock
 | ysyx_26020046_Reg.gpr[9]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)  |        | 0.002       | 0.000      | 0.000      | 0.000 | 0.000r |
 | ysyx_26020046_Reg.gpr[9]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L) |        | 0.032       | 0.000      | 0.000      | 0.000 | 0.000r |
 | ysyx_26020046_Reg.gpr[9]_0__reg_p_CK (net)                           | 32     |             |            |            |       |        |
-| ysyx_26020046_Reg.gpr[9]_29__reg_p:CK (DFFQX1H7L)                    |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| ysyx_26020046_Reg.gpr[9]_1__reg_p:CK (DFFQX1H7L)                     |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                                                                      |        |             |            |            |       |        |
 | startpoint clock latency                                             |        |             |            |            | 0.000 |        |
 | endpoint clock latency                                               |        |             |            |            | 0.000 |        |
@@ -83,7 +86,7 @@ Clock: core_clock
 | clock core_clock (rise edge)                                         |        |             |            | 0          | 0     |        |
 | clk (port)                                                           |        | 0.066       | 0.000      | 0.000      | 0.000 | 0.000r |
 | clk (net)                                                            | 63     |             |            |            |       |        |
-| pc[13]_reg_p:CK (DFFQX1H7L)                                          |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| pc[26]_reg_p:CK (DFFQX1H7L)                                          |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                                                                      |        |             |            |            |       |        |
 | clock core_clock (rise edge)                                         |        |             |            | 0          | 0     |        |
 | clk (port)                                                           |        | 0.089       | 0.000      | 0.000      | 0.000 | 0.000r |
@@ -91,7 +94,7 @@ Clock: core_clock
 | ysyx_26020046_Reg.gpr[8]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)  |        | 0.002       | 0.000      | 0.000      | 0.000 | 0.000r |
 | ysyx_26020046_Reg.gpr[8]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L) |        | 0.032       | 0.000      | 0.000      | 0.000 | 0.000r |
 | ysyx_26020046_Reg.gpr[8]_0__reg_p_CK (net)                           | 32     |             |            |            |       |        |
-| ysyx_26020046_Reg.gpr[8]_13__reg_p:CK (DFFQX1H7L)                    |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| ysyx_26020046_Reg.gpr[8]_26__reg_p:CK (DFFQX1H7L)                    |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                                                                      |        |             |            |            |       |        |
 | startpoint clock latency                                             |        |             |            |            | 0.000 |        |
 | endpoint clock latency                                               |        |             |            |            | 0.000 |        |
@@ -104,15 +107,15 @@ Clock: core_clock
 | clock core_clock (rise edge)                                         |        |             |            | 0          | 0     |        |
 | clk (port)                                                           |        | 0.066       | 0.000      | 0.000      | 0.000 | 0.000r |
 | clk (net)                                                            | 63     |             |            |            |       |        |
-| pc[17]_reg_p:CK (DFFQX1H7L)                                          |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| pc[25]_reg_p:CK (DFFQX1H7L)                                          |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                                                                      |        |             |            |            |       |        |
 | clock core_clock (rise edge)                                         |        |             |            | 0          | 0     |        |
 | clk (port)                                                           |        | 0.089       | 0.000      | 0.000      | 0.000 | 0.000r |
 | clk (net)                                                            | 63     |             |            |            |       |        |
-| ysyx_26020046_Reg.gpr[6]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)  |        | 0.002       | 0.000      | 0.000      | 0.000 | 0.000r |
-| ysyx_26020046_Reg.gpr[6]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L) |        | 0.032       | 0.000      | 0.000      | 0.000 | 0.000r |
-| ysyx_26020046_Reg.gpr[6]_0__reg_p_CK (net)                           | 32     |             |            |            |       |        |
-| ysyx_26020046_Reg.gpr[6]_17__reg_p:CK (DFFQX1H7L)                    |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
+| ysyx_26020046_Reg.gpr[7]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)  |        | 0.002       | 0.000      | 0.000      | 0.000 | 0.000r |
+| ysyx_26020046_Reg.gpr[7]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L) |        | 0.032       | 0.000      | 0.000      | 0.000 | 0.000r |
+| ysyx_26020046_Reg.gpr[7]_0__reg_p_CK (net)                           | 32     |             |            |            |       |        |
+| ysyx_26020046_Reg.gpr[7]_25__reg_p:CK (DFFQX1H7L)                    |        | 0.001       | 0.000      | 0.000      | 0.000 | 0.000r |
 |                                                                      |        |             |            |            |       |        |
 | startpoint clock latency                                             |        |             |            |            | 0.000 |        |
 | endpoint clock latency                                               |        |             |            |            | 0.000 |        |

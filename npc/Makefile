@@ -53,10 +53,6 @@ ifeq ($(t),minirvO)
 endif
 ifeq ($(t),minirv_sta)
 tF=ysyx_26020046_minirv_sta
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_Reg.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_ALU.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_IDC.v,$(tV))
-	tVd+= $(NPC_HOME)/$(patsubst vsrc/%/$(tF).v,vsrc/%/ysyx_26020046_minirv_LSU.v,$(tV))
 endif
 ifeq ($(t),minirvS)
 	tF=ysyx_26020046_minirvS
@@ -66,6 +62,12 @@ ifeq ($(t),minirvN)
 endif
 ifeq ($(t),minirv)
 	tF=ysyx_26020046_minirv
+	tCd += $(NPC_HOME)/csrc/npcSdb/*
+	tCd += $(NPC_HOME)/csrc/npcTrace/*
+	tCd += $(NPC_HOME)/csrc/npcDifftest/*
+endif
+ifeq ($(t),rv32i)
+	tF=ysyx_26020046_rv32i
 	tCd += $(NPC_HOME)/csrc/npcSdb/*
 	tCd += $(NPC_HOME)/csrc/npcTrace/*
 	tCd += $(NPC_HOME)/csrc/npcDifftest/*
@@ -138,11 +140,11 @@ chk:
 syn:$(tV) chk
 	make -C $(YOSYS_STA_HOME) syn DESIGN=$(tF) RTL_FILES="$(tVd)
 	cp -r $(YOSYS_STA_HOME)/result/$(tF)*-500MHz ./result
-	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
+# 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 sta:$(tV)
 	make -C $(YOSYS_STA_HOME) sta DESIGN=$(tF) RTL_FILES="$(tVd)"
 	cp -r $(YOSYS_STA_HOME)/result/$(tF)*-500MHz ./result
-	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
+# 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 symy:
 	yosys yosys.tcl
 try:

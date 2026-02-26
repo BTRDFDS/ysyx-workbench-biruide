@@ -1,4 +1,4 @@
 
-29. Executing CHECK pass (checking for obvious problems).
+24. Executing CHECK pass (checking for obvious problems).
 Checking module ysyx_26020046_minirv_sta...
 Found and reported 0 problems.
