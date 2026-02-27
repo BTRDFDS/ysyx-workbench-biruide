@@ -31,11 +31,6 @@ LDFLAGS += -ldl
 CXXFLAGS += -I/$(NEMU_HOME)/include
 endif
 
-ifeq ($(MAKECMDGOALS),run)
-CXXFLAGS += -DDIFFTEST
-LDFLAGS += -ldl
-CXXFLAGS += -I/$(NEMU_HOME)/include
-endif
 
 t?=water#工程名称
 tF?=$(t)#工程文件查找名
@@ -116,6 +111,7 @@ sdb:bin/$(tF)
 	./bin/$(tF) $(ARG) $(xEb)
 dft:bin/$(tF)
 	./bin/$(tF) $(ARG) $(xEb)
+	./bin/$(tF) $(ARG) $(xEb) > log/$(tF)_dft.log
 gdb:bin/$(tF) log/$(dir $(tF))
 	./bin/$(tF) $(ARG) $(xEb) > log/$(tF)_gdb.log
 # 	./bin/$(tF) $(ARG) $(xEb)

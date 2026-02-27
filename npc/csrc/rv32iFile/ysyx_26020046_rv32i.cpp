@@ -34,8 +34,8 @@ svScope scope;//作用域
 uint32_t M[memSize];
 uint32_t runStep,pc;//运行步数
 timespec startTime;//开始时间
-uint32_t ADDR_RESET;//pc复位地址，用于区分0开始的内置程序和ADDR_RESET开始的外部程序
 bool hasEbreak=false;//是否遇到ebreak
+int result=-1;//返回值
 
 extern "C" int getReg(int addr);//注意：0号寄存器替代为pc
 void minirvClose();
@@ -98,29 +98,25 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		return;
 	}
 	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask););
-	
-	NpcTraceMtrace("0x%8x w 0x%x M=0x%x",pc,waddrX,wdata);
-	if((wmask&0b1111)==0b1111){
-		IfDebug(printf("all\n"););
-		NpcTraceMtrace(" all\n");
-    	M[(waddr-ADDR_RESET)>>2]=wdata;
-	}else{
-		IfDebug(printf("part\n"););
-		NpcTraceMtrace(" part\n");
-		uint32_t mask1=0xffffffff;
-		uint32_t data=wdata&0xff;
-		switch(wmask&0x0f){
-			case 0b0001:mask1=0xffffff00;data=data    ;break;
-			case 0b0010:mask1=0xffff00ff;data=data<< 8;break;
-			case 0b0100:mask1=0xff00ffff;data=data<<16;break;
-			case 0b1000:mask1=0x00ffffff;data=data<<24;break;
-			default    :mask1=0xffffffff;data=       0;break;
-		}
-		uint32_t temp=M[(waddr-ADDR_RESET)>>2];
-		temp&=mask1;
-		temp|=data;
-		M[(waddr-ADDR_RESET)>>2]=temp;
+
+	NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,waddrX,wdata,wmask);
+	uint32_t mask1=0xffffffff;
+	uint32_t data=wdata;
+	switch(wmask&0x0f){
+		case 0b0001:mask1=0xffffff00;data=data&0x00ff;data=data    ;break;
+		case 0b0010:mask1=0xffff00ff;data=data&0x00ff;data=data<< 8;break;
+		case 0b0100:mask1=0xff00ffff;data=data&0x00ff;data=data<<16;break;
+		case 0b1000:mask1=0x00ffffff;data=data&0x00ff;data=data<<24;break;
+		case 0b0011:mask1=0xffff0000;data=data&0xffff;data=data    ;break;
+		case 0b1100:mask1=0x0000ffff;data=data&0xffff;data=data<<16;break;
+		case 0b1111:mask1=0x00000000;data=data       ;data=data    ;break;
+		default    :mask1=0xffffffff;data=data&0x0000;data=       0;break;
 	}
+	uint32_t temp=M[(waddr-ADDR_RESET)>>2];
+	temp&=mask1;
+	temp|=data;
+	M[(waddr-ADDR_RESET)>>2]=temp;
+	NpcTraceMtrace(" become 0x%x\n",M[(waddr-ADDR_RESET)>>2]);
 	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2]););
 }
 extern "C" void stop(unsigned char eb){
@@ -132,11 +128,13 @@ extern "C" void stop(unsigned char eb){
 		if(getReg(10)==0){
 		printf("\033[1;32mHIT GOOD TRAP\033[0m\n");
 		hasEbreak=true;
+		result=0;
 		return;
 		}
 	}
-	printf("\033[1;31mHIT BAD  TRAP\033[0m\n");
+	printf("\033[1;31merror!!\033[0m\n");
 	hasEbreak=true;
+	result=-1;
 }
 
 
@@ -179,7 +177,6 @@ void initDevice(int argc, char** argv){
 
 void minirvReset(){
 	runStep=0;
-	top->pcReset=ADDR_RESET;
 
 	top->clk=0;top->reset=1;top->eval();
 	top->clk=1;top->reset=1;top->eval();
@@ -187,35 +184,42 @@ void minirvReset(){
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
 	top->clk=0;top->reset=0;top->eval();
-	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]););
 
+	// printf("pc=%x\n",pc);
+	// printf("初始化完成\n");
+	// printf("code=%x\n",top->code);
+	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]););
 }
 
 void minirvStep(){
-
 	pc=top->pc;
 	top->code=M[(pc-ADDR_RESET)>>2];
-
 	uint32_t nPc=pc;
 	uint32_t code=top->code;
 
-
+	// printf("%x\n",code);
 	top->clk=1;top->eval();
 	IfDebug(printf("clk up finish,npc=0x%x\n",(top->pc-ADDR_RESET)>>2););
 
 	pc=top->pc;
+	// printf("step begin 3\n");
+	// printf("pc=%x\n",pc);
 	top->code=M[(pc-ADDR_RESET)>>2];
+	// printf("step begin 2\n");
 	top->clk=0;top->eval();
+	// printf("step begin\n");
 	IfDebug(printf("clk down finish\n");printf("runStep=%d pc=%x(%x)\n\n",runStep,pc,(pc-ADDR_RESET)>>2););
 	runStep++;
 
-	// printf("-");
+	// printf("step finish\n");
 	NpcTraceWrite(nPc,code,pc);
 	NpcDifftestCheck(pc);
 }
 void minirvRun(uint32_t times){
+	// printf("times=%d\n",times);
 	if(hasEbreak){printf("has ebreak.ues 'q' to exit\n");}
     else if(times==0){while(!hasEbreak){
+		// printf("into while\n");
 		minirvStep();
 		if(NpcsdbCheck()!=0){return;}
 	}}
@@ -250,5 +254,5 @@ int main(int argc, char** argv) {
 
 	minirvClose();
 
-	return hasEbreak?0:-1;
+	return hasEbreak?result:-1;
 }

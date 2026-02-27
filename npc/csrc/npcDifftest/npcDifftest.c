@@ -12,10 +12,20 @@ typedef struct {
     uint32_t gpr[32];
     uint32_t pc;
 } riscv32_CPU_state;
+
+const char *npcDifftestRegs[32] = {//注意：0号寄存器替代为pc
+  "pc", "ra",  "sp",  "gp", "tp", "t0", "t1", "t2",
+  "s0", "s1",  "a0",  "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7",  "s2",  "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+};
+
 #endif
 
 void NpcDifftestCheck(uint32_t pc){
 #ifdef DIFFTEST
+    dftDebug(printf("NpcDifftestCheck\n"););
+
     if (difftest_enabled==false||ref_difftest_exec==NULL) return;
     riscv32_CPU_state npc_state;
     // for (int i = 0; i < 32; i++) {
@@ -38,10 +48,11 @@ void NpcDifftestCheck(uint32_t pc){
 
     for (int i = 1; i < 32; i++) {
         if (npc_state.gpr[i] != ref_state.gpr[i]) {
-            printf("[DIFFTEST] pc=0x%08x reg[0x%d] dut=0x%08x, ref=0x%08x\n",pc,i, npc_state.gpr[i], ref_state.gpr[i]);
+            printf("[DIFFTEST] pc=0x%08x reg[%s] dut=0x%08x, ref=0x%08x\n",pc,npcDifftestRegs[i], npc_state.gpr[i], ref_state.gpr[i]);
             difftest_enabled = false;
         }
     }
+    if(difftest_enabled==false)exit(-1);
 #endif
 }
 
@@ -54,7 +65,7 @@ void NpcDifftestInit(uint32_t memSize,uint32_t *M){
         printf("[DIFFTEST] NEMU err: %s\n", dlerror());
         return;
     }
-
+    dftDebug(printf("文件读取完成\n"););
     // 获取函数指针
     ref_difftest_memcpy = (void (*)(uint32_t, void*, size_t, bool))dlsym(difftestHandle, "difftest_memcpy");
     ref_difftest_regcpy = (void (*)(void*, bool))dlsym(difftestHandle, "difftest_regcpy");
@@ -66,16 +77,18 @@ void NpcDifftestInit(uint32_t memSize,uint32_t *M){
         dlclose(difftestHandle);
         return;
     }
+    dftDebug(printf("函数指针获取完成\n"););
 
     ref_difftest_init(0);
     uint32_t mem_size = memSize * sizeof(uint32_t);
     ref_difftest_memcpy(0x80000000, M, mem_size, DIFFTEST_TO_REF);
+    dftDebug(printf("内存转移完成\n"););
     // 同步初始寄存器状态
     riscv32_CPU_state init_state;
     memset(&init_state, 0, sizeof(riscv32_CPU_state));
     init_state.pc = 0x80000000;
     ref_difftest_regcpy(&init_state, DIFFTEST_TO_REF);
-
+    dftDebug(printf("寄存器同步完成\n"););
     difftest_enabled = true;
     // printf("[DIFFTEST] NEMU初始化完成\n");
 #endif

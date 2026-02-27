@@ -10,6 +10,14 @@
 #include <common.h>//需要NEMU_HOME
 #endif
 
+// #define NPC_DIFFTEST_DEBUG
+
+#ifdef NPC_DIFFTEST_DEBUG
+    #define dftDebug(...) do { __VA_ARGS__; } while(0)
+#else
+    #define dftDebug(...) ((void)0)
+#endif
+
 extern void NpcDifftestInit(uint32_t memSize,uint32_t *M);
 extern void NpcDifftestCheck(uint32_t pc);
 
