@@ -1,7 +1,7 @@
 TEST_ISA ?= i m #a f d c
 EXCLUDE_TEST ?= fence_i ma_data
 
-SUPPORTED_AM_ISA = riscv64 riscv32 riscv64e riscv32e minirv
+SUPPORTED_AM_ISA = riscv64 riscv32 riscv64e riscv32e minirv riscv32i
 AM_ISA = $(word 1, $(subst -, ,$(ARCH)))
 
 ifeq ($(findstring $(MAKECMDGOALS),clean),)  # ignore the commands if the target is clean
@@ -56,6 +56,7 @@ run: all
 	@grep -q "FAIL" $(RESULT); FAIL=$$?; rm $(RESULT); test $$FAIL -ne 0
 
 gdb: all
+dft: all
 
 change:$$(call find_src,add)
 	@/bin/echo -e "NAME = add\nSRCS = $$(call find_src,add)\nINC_PATH += $(shell pwd)/env/p \
