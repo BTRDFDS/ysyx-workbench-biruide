@@ -4,6 +4,11 @@ EXCLUDE_TEST ?= fence_i ma_data
 SUPPORTED_AM_ISA = riscv64 riscv32 riscv64e riscv32e minirv riscv32i
 AM_ISA = $(word 1, $(subst -, ,$(ARCH)))
 
+ifeq ($(AM_ISA),riscv32i)
+TEST_ISA= i
+endif
+
+
 ifeq ($(findstring $(MAKECMDGOALS),clean),)  # ignore the commands if the target is clean
 ifeq ($(filter $(SUPPORTED_AM_ISA), $(AM_ISA)), )
   $(error Expected $$ISA in {$(SUPPORTED_AM_ISA)}, Got "$(AM_ISA)")
