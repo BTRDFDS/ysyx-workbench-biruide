@@ -1,0 +1,171 @@
+I20260301 16:19:29.931416 36938 Sta.cc:383] read verilog file /home/biruide/ysyx-workbench/yosys-sta/result/ysyx_26020046_rv32iALU-500MHz/ysyx_26020046_rv32iALU.netlist.v start
+I20260301 16:19:29.932749 36938 VerilogParserRustC.cc:41] load verilog file /home/biruide/ysyx-workbench/yosys-sta/result/ysyx_26020046_rv32iALU-500MHz/ysyx_26020046_rv32iALU.netlist.v
+r str /home/biruide/ysyx-workbench/yosys-sta/result/ysyx_26020046_rv32iALU-500MHz/ysyx_26020046_rv32iALU.netlist.v
+I20260301 16:19:29.978247 36938 Sta.cc:391] read verilog end
+I20260301 16:19:29.978371 36938 Sta.cc:309] load lib start
+I20260301 16:19:29.980499 36971 Sta.cc:287] read liberty /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib start 
+I20260301 16:19:29.980654 36971 LibParserRustC.cc:1285] load liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+rust read lib file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+I20260301 16:19:34.794443 36971 LibParserRustC.cc:1294] load liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib success.
+I20260301 16:19:34.794514 36971 Sta.cc:297] read liberty /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib end 
+I20260301 16:19:34.794795 36938 Sta.cc:328] load lib end
+I20260301 16:19:34.794890 36938 Sta.cc:417] link design ysyx_26020046_rv32iALU start
+I20260301 16:19:34.796960 37042 LibParserRustC.cc:1304] link liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib start.
+I20260301 16:19:34.797858 37042 LibParserRustC.cc:666] unkown attri name: voltage_map in /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib line no 28
+I20260301 16:19:51.352653 37042 LibParserRustC.cc:1310] link liberty file /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib success.
+I20260301 16:19:51.455760 36938 Sta.cc:1106] link design ysyx_26020046_rv32iALU end
+I20260301 16:19:51.455833 36938 Sta.cc:1108] design ysyx_26020046_rv32iALU inst num: 1599
+I20260301 16:19:51.455900 36938 Sta.cc:1110] design ysyx_26020046_rv32iALU net num: 1802
+I20260301 16:19:51.455910 36938 Sta.cc:1112] design ysyx_26020046_rv32iALU port num: 268
+I20260301 16:19:51.455994 36938 Sta.cc:181] read sdc /home/biruide/ysyx-workbench/yosys-sta/scripts/default.sdc start 
+I20260301 16:19:51.461952 36938 Sta.cc:198] read sdc /home/biruide/ysyx-workbench/yosys-sta/scripts/default.sdc end 
+I20260301 16:19:51.462139 36938 StaBuildGraph.cc:315] build graph start
+I20260301 16:19:51.479961 36938 StaBuildGraph.cc:332] build graph end
+I20260301 16:19:51.480134 36938 Sta.cc:2834] update timing start
+I20260301 16:19:51.480525 36938 StaApplySdc.cc:698] apply sdc start
+I20260301 16:19:51.480628 36938 StaApplySdc.cc:729] apply sdc end
+I20260301 16:19:51.480649 36938 StaClockPropagation.cc:324] ideal clock propagation start
+I20260301 16:19:51.480669 36938 StaClockPropagation.cc:354] clock propagation clock num: 0
+I20260301 16:19:51.480674 36938 StaClockPropagation.cc:422] ideal clock propagation end
+I20260301 16:19:51.480691 36938 StaCheck.cc:129] found loop fwd start
+I20260301 16:19:51.481422 36938 StaCheck.cc:148] found loop fwd end
+I20260301 16:19:51.481444 36938 StaCheck.cc:150] found loop bwd start
+I20260301 16:19:51.481946 36938 StaCheck.cc:172] found loop bwd end
+I20260301 16:19:51.482010 36938 StaClockSlewDelayPropagation.cc:112] clock slew delay propagation start
+I20260301 16:19:51.482018 36938 StaClockSlewDelayPropagation.cc:130] propagating current clock queue vertexes number is 0
+I20260301 16:19:51.482023 36938 StaClockSlewDelayPropagation.cc:163] clock slew delay propagation end
+I20260301 16:19:51.482035 36938 StaClockSlewDelayPropagation.cc:166] clock slew delay propagation memory usage 0MB
+I20260301 16:19:51.482136 36938 StaClockSlewDelayPropagation.cc:169] clock slew delay propagation time elapsed 0.000125s
+I20260301 16:19:51.483091 36938 StaClockPropagation.cc:326] propagated(kNormal) clock propagation start
+I20260301 16:19:51.483109 36938 StaClockPropagation.cc:354] clock propagation clock num: 0
+I20260301 16:19:51.483147 36938 StaClockPropagation.cc:424] propagated(kNormal) clock propagation end
+I20260301 16:19:51.483157 36938 StaApplySdc.cc:698] apply sdc start
+I20260301 16:19:51.483162 36938 StaApplySdc.cc:729] apply sdc end
+I20260301 16:19:51.483165 36938 StaClockPropagation.cc:328] propagated(kGenerated) clock propagation start
+I20260301 16:19:51.483170 36938 StaClockPropagation.cc:354] clock propagation clock num: 0
+I20260301 16:19:51.483172 36938 StaClockPropagation.cc:426] propagated(kGenerated) clock propagation end
+I20260301 16:19:51.483175 36938 StaApplySdc.cc:698] apply sdc start
+I20260301 16:19:51.483178 36938 StaApplySdc.cc:729] apply sdc end
+I20260301 16:19:51.483217 36938 StaBuildPropTag.cc:325] build propagation tag start
+I20260301 16:19:51.483279 36938 StaBuildPropTag.cc:338] build propagation tag end
+I20260301 16:19:51.483332 36938 StaDataPropagation.cc:676] data fwd propagation start
+I20260301 16:19:51.483425 36938 StaDataPropagationBFS.cc:166] data fwd propagation bfs start
+I20260301 16:19:51.483937 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 203
+I20260301 16:19:51.486474 37118 StaDataPropagationBFS.cc:82] Thread 132855350949440 date fwd propagate found start vertex.aluOp_10_
+I20260301 16:19:51.486406 37107 StaDataPropagationBFS.cc:82] Thread 132855015405120 date fwd propagate found start vertex.aluOp_5_
+I20260301 16:19:51.486642 37110 StaDataPropagationBFS.cc:82] Thread 132855692781120 date fwd propagate found start vertex.aluOp_3_
+I20260301 16:19:51.486455 37108 StaDataPropagationBFS.cc:82] Thread 132855300593216 date fwd propagate found start vertex.aluOp_2_
+I20260301 16:19:51.486418 37109 StaDataPropagationBFS.cc:82] Thread 132855308985920 date fwd propagate found start vertex.aluOp_6_
+I20260301 16:19:51.486450 37116 StaDataPropagationBFS.cc:82] Thread 132855642424896 date fwd propagate found start vertex.aluOp_9_
+I20260301 16:19:51.486526 37113 StaDataPropagationBFS.cc:82] Thread 132855667603008 date fwd propagate found start vertex.aluOp_8_
+I20260301 16:19:51.486482 37111 StaDataPropagationBFS.cc:82] Thread 132855684388416 date fwd propagate found start vertex.aluOp_7_
+I20260301 16:19:51.486485 37119 StaDataPropagationBFS.cc:82] Thread 132855342556736 date fwd propagate found start vertex.oR1_0_
+I20260301 16:19:51.486410 37112 StaDataPropagationBFS.cc:82] Thread 132855675995712 date fwd propagate found start vertex.aluOp_4_
+I20260301 16:19:51.490239 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 491
+I20260301 16:19:51.498739 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 65
+I20260301 16:19:51.502300 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 229
+I20260301 16:19:51.507872 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 79
+I20260301 16:19:51.511268 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 431
+I20260301 16:19:51.517974 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 106
+I20260301 16:19:51.521909 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 587
+I20260301 16:19:51.528689 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 160
+I20260301 16:19:51.532212 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 736
+I20260301 16:19:51.541635 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 163
+I20260301 16:19:51.546085 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 584
+I20260301 16:19:51.553982 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 197
+I20260301 16:19:51.558032 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 399
+I20260301 16:19:51.563292 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 167
+I20260301 16:19:51.567492 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 273
+I20260301 16:19:51.573701 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 127
+I20260301 16:19:51.576946 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 203
+I20260301 16:19:51.581604 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 103
+I20260301 16:19:51.585143 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 150
+I20260301 16:19:51.588671 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 93
+I20260301 16:19:51.592713 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 137
+I20260301 16:19:51.597124 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 88
+I20260301 16:19:51.600206 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 129
+I20260301 16:19:51.604230 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 85
+I20260301 16:19:51.607669 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 117
+I20260301 16:19:51.610852 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 82
+I20260301 16:19:51.613961 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 91
+I20260301 16:19:51.617370 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 56
+I20260301 16:19:51.620162 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 59
+I20260301 16:19:51.623402 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 28
+I20260301 16:19:51.625451 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 28
+I20260301 16:19:51.628435 36938 StaDataPropagationBFS.cc:229] data fwd propagation bfs end
+I20260301 16:19:51.628587 36938 StaDataPropagationBFS.cc:232] data fwd propagation bfs memory usage 1974.14MB
+I20260301 16:19:51.628607 36938 StaDataPropagationBFS.cc:234] data fwd propagation bfs time elapsed 0.145182s
+I20260301 16:19:51.628613 36938 StaDataPropagation.cc:695] data fwd propagation end
+I20260301 16:19:51.628620 36938 StaDataPropagation.cc:676] data fwd propagation start
+I20260301 16:19:51.628638 36938 StaDataPropagationBFS.cc:166] data fwd propagation bfs start
+I20260301 16:19:51.628834 36938 StaDataPropagationBFS.cc:190] propagating current data queue vertexes number is 0
+I20260301 16:19:51.631170 36938 StaDataPropagationBFS.cc:229] data fwd propagation bfs end
+I20260301 16:19:51.631233 36938 StaDataPropagationBFS.cc:232] data fwd propagation bfs memory usage 0MB
+I20260301 16:19:51.631244 36938 StaDataPropagationBFS.cc:234] data fwd propagation bfs time elapsed 0.002608s
+I20260301 16:19:51.631251 36938 StaDataPropagation.cc:695] data fwd propagation end
+I20260301 16:19:51.631258 36938 StaAnalyze.cc:557] analyze timing path start
+I20260301 16:19:51.631263 36938 StaAnalyze.cc:565] analyze timing path end vertex 1 total 65 start
+[0;31mE20260301 16:19:51.631270 36938 StaAnalyze.cc:328] The output port iRd_10_ is not constrained
+[m[0;31mE20260301 16:19:51.633064 36938 StaAnalyze.cc:328] The output port iRd_10_ is not constrained
+[mI20260301 16:19:51.633080 36938 StaAnalyze.cc:599] analyze timing path end vertex 1 total 65 end
+[0;31mE20260301 16:19:51.633085 36938 StaAnalyze.cc:328] The output port iRd_11_ is not constrained
+[m[0;31mE20260301 16:19:51.633090 36938 StaAnalyze.cc:328] The output port iRd_11_ is not constrained
+[m[0;31mE20260301 16:19:51.633095 36938 StaAnalyze.cc:328] The output port iRd_12_ is not constrained
+[m[0;31mE20260301 16:19:51.633100 36938 StaAnalyze.cc:328] The output port iRd_12_ is not constrained
+[m[0;31mE20260301 16:19:51.633116 36938 StaAnalyze.cc:328] The output port iRd_13_ is not constrained
+[m[0;31mE20260301 16:19:51.633121 36938 StaAnalyze.cc:328] The output port iRd_13_ is not constrained
+[m[0;31mE20260301 16:19:51.633126 36938 StaAnalyze.cc:328] The output port iRd_14_ is not constrained
+[m[0;31mE20260301 16:19:51.633131 36938 StaAnalyze.cc:328] The output port iRd_14_ is not constrained
+[mI20260301 16:19:51.633138 36938 StaAnalyze.cc:565] analyze timing path end vertex 11 total 65 start
+I20260301 16:19:51.633142 36938 StaAnalyze.cc:599] analyze timing path end vertex 11 total 65 end
+I20260301 16:19:51.633149 36938 StaAnalyze.cc:565] analyze timing path end vertex 21 total 65 start
+I20260301 16:19:51.633153 36938 StaAnalyze.cc:599] analyze timing path end vertex 21 total 65 end
+I20260301 16:19:51.633158 36938 StaAnalyze.cc:565] analyze timing path end vertex 31 total 65 start
+I20260301 16:19:51.633162 36938 StaAnalyze.cc:599] analyze timing path end vertex 31 total 65 end
+I20260301 16:19:51.633168 36938 StaAnalyze.cc:565] analyze timing path end vertex 41 total 65 start
+I20260301 16:19:51.633172 36938 StaAnalyze.cc:599] analyze timing path end vertex 41 total 65 end
+I20260301 16:19:51.633176 36938 StaAnalyze.cc:565] analyze timing path end vertex 51 total 65 start
+I20260301 16:19:51.633183 36938 StaAnalyze.cc:599] analyze timing path end vertex 51 total 65 end
+I20260301 16:19:51.633186 36938 StaAnalyze.cc:565] analyze timing path end vertex 61 total 65 start
+I20260301 16:19:51.633190 36938 StaAnalyze.cc:599] analyze timing path end vertex 61 total 65 end
+I20260301 16:19:51.633194 36938 StaAnalyze.cc:603] analyze timing path end
+I20260301 16:19:51.633203 36938 StaApplySdc.cc:698] apply sdc start
+I20260301 16:19:51.633208 36938 StaApplySdc.cc:729] apply sdc end
+I20260301 16:19:51.633213 36938 StaDataPropagation.cc:698] data bwd propagation start
+I20260301 16:19:51.635350 36938 StaDataPropagation.cc:703] data bwd propagation end
+I20260301 16:19:51.635390 36938 Sta.cc:2895] update timing end
+I20260301 16:19:51.635433 36938 Sta.cc:2898] update timing memory usage 1974.14MB
+I20260301 16:19:51.635443 36938 Sta.cc:2900] update timing time elapsed 0.15531s
+I20260301 16:19:51.635717 36938 Sta.cc:2998] start write sta report.
+I20260301 16:19:51.635730 36938 Sta.cc:2999] output sta report path: /home/biruide/ysyx-workbench/yosys-sta/result/ysyx_26020046_rv32iALU-500MHz
+I20260301 16:19:51.637882 36938 Sta.cc:1885] 
++----------+-------------+------------+------------+---------------+------+-------+-----------+
+| Endpoint | Clock Group | Delay Type | Path Delay | Path Required | CPPR | Slack | Freq(MHz) |
++----------+-------------+------------+------------+---------------+------+-------+-----------+
+I20260301 16:19:51.637940 36938 Sta.cc:1886] 
++-------+------------+-----+
+| Clock | Delay Type | TNS |
++-------+------------+-----+
+I20260301 16:19:51.656378 36938 NetlistWriter.cc:52] start write verilog file /home/biruide/ysyx-workbench/yosys-sta/result/ysyx_26020046_rv32iALU-500MHz/ysyx_26020046_rv32iALU.v
+I20260301 16:19:51.714762 36938 NetlistWriter.cc:71] finish write verilog file /home/biruide/ysyx-workbench/yosys-sta/result/ysyx_26020046_rv32iALU-500MHz/ysyx_26020046_rv32iALU.v
+I20260301 16:19:51.715072 36938 Sta.cc:3111] used lib: /home/biruide/ysyx-workbench/yosys-sta/scripts/../pdk/icsprout55/IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL/liberty/ics55_LLSC_H7CL_typ_tt_1p2_25_nldm.lib
+I20260301 16:19:51.715142 36938 Sta.cc:3096] The timing engine run success.
+[0;31mE20260301 16:19:51.715695 36938 Log.cc:52] *** Aborted at 1772353191 (unix time) try "date -d @1772353191" if you are using GNU date ***
+[m[0;31mE20260301 16:19:51.716140 36938 Log.cc:52] PC: @                0x0 (unknown)
+[m[0;31mE20260301 16:19:51.716969 36938 Log.cc:52] *** SIGSEGV (@0x44) received by PID 36938 (TID 0x78d4e20a7080) from PID 68; stack trace: ***
+[m[0;31mE20260301 16:19:51.717057 36938 Log.cc:52]     @     0x57ee0c058c4e (unknown)
+[m[0;31mE20260301 16:19:51.717252 36938 Log.cc:52]     @     0x78d4e1a42520 (unknown)
+[m[0;31mE20260301 16:19:51.717294 36938 Log.cc:52]     @     0x57ee0be75f56 (unknown)
+[m[0;31mE20260301 16:19:51.717339 36938 Log.cc:52]     @     0x57ee0be7649d (unknown)
+[m[0;31mE20260301 16:19:51.717370 36938 Log.cc:52]     @     0x57ee0babd90c (unknown)
+[m[0;31mE20260301 16:19:51.717402 36938 Log.cc:52]     @     0x57ee0bd1f21b (unknown)
+[m[0;31mE20260301 16:19:51.717435 36938 Log.cc:52]     @     0x57ee0bd27438 (unknown)
+[m[0;31mE20260301 16:19:51.717466 36938 Log.cc:52]     @     0x57ee0bd28743 (unknown)
+[m[0;31mE20260301 16:19:51.717501 36938 Log.cc:52]     @     0x57ee0bddd058 (unknown)
+[m[0;31mE20260301 16:19:51.717533 36938 Log.cc:52]     @     0x57ee0bdeb4fc (unknown)
+[m[0;31mE20260301 16:19:51.717563 36938 Log.cc:52]     @     0x57ee0bd23266 (unknown)
+[m[0;31mE20260301 16:19:51.717597 36938 Log.cc:52]     @     0x57ee0b2dc32b (unknown)
+[m[0;31mE20260301 16:19:51.717703 36938 Log.cc:52]     @     0x78d4e1a29d90 (unknown)
+[m[0;31mE20260301 16:19:51.717785 36938 Log.cc:52]     @     0x78d4e1a29e40 __libc_start_main
+[m[0;31mE20260301 16:19:51.717819 36938 Log.cc:52]     @     0x57ee0b2eb8d1 (unknown)
+[m
