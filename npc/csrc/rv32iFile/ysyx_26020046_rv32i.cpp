@@ -148,7 +148,7 @@ extern "C" void stop(unsigned char eb){
 		return;
 		}
 	}
-	printf("\033[1;31merror!!\033[0m\n");
+	printf("\033[1;31merror!!\033[0m@0x%x\n",pc);
 	hasEbreak=true;
 	result=-1;
 }
