@@ -14,11 +14,6 @@ package rv32iBasis;
 	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
 	parameter OP_EBREAK	= 32'h00100073;
 
-	parameter OP_FUN3_I0_0	= 3'b001;
-	parameter OP_FUN3_I1_0	= 3'b101;
-	parameter OP_FUN3_R1_0	= 3'b000;
-	parameter OP_FUN3_R1_1	= 3'b101;
-
 	// parameter OP_FUN7_M		= 7'b0000001;
 
 	typedef logic [DATA_WIDTH-1:0] word_t;
@@ -59,9 +54,12 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 	input word_t code;
 	output word_t pc;
 
-	word_t oR1,oR2,imm,data,addr,iRd,cRd,cR1,cR2;
+	word_t oR1,oR2,imm,data,addr,iRd;
+	reg_t cRd,cR1,cR2;
 	logic enBfun,enJfun;
 	opCode_t opCode;
+	opIcod_t opIcod;
+	opRcod_t opRcod;
 	opBfun_t opBfun;
 	opLfun_t opLfun;
 	opSfun_t opSfun;
@@ -70,6 +68,18 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 	ysyx_260020046_rv32iALU ALU(.*);
 	ysyx_260020046_rv32iLSU LSU(.*);
 	ysyx_260020046_rv32iGPR GPR(.*);
+
+`ifdef RV32I_DEBUG
+	always @(posedge clk) begin
+		$display("pc=0x%x code=0x%x reset=%x",pc,code,reset);
+		$display("oR1=0x%x oR2=0x%x imm=0x%x data=0x%x addr=0x%x iRd=0x%x",oR1,oR2,imm,data,addr,iRd);
+		$display("cRd=0x%x cR1=0x%x cR2=0x%x",cRd,cR1,cR2);
+		$display("enBfun=%x enJfun=%x",enBfun,enJfun);
+		$display("opCode=%x opIcod=%x opRcod=%x opBfun=%x opLfun=%x opSfun=%x",opCode,opIcod,opRcod,opBfun,opLfun,opSfun);
+	end
+`endif
+
+
 
 endmodule
 
@@ -89,7 +99,6 @@ module ysyx_260020046_rv32iIDC(code,reset,enJfun,imm,cRd,cR1,cR2,opIcod,opRcod,o
 	opImmr_t opImmr;
 	opIner_t opIner;
 	logic [6:0] op;
-	logic [1:0]choose;
 	logic [2:0] fun3;
 	logic [6:0] fun7;
 	reg_t r1,r2,rd;
@@ -103,8 +112,8 @@ module ysyx_260020046_rv32iIDC(code,reset,enJfun,imm,cRd,cR1,cR2,opIcod,opRcod,o
 
 	assign opCode.Lui	=(op==OP_U_I);
 	assign opCode.Auipc	=(op==OP_U_P);
-	assign opCode.jal	=(op==OP_J__);
-	assign opCode.jalr	=(op==OP_I_J)&(fun3==3'b000);
+	assign opCode.Jal	=(op==OP_J__);
+	assign opCode.Jalr	=(op==OP_I_J)&(fun3==3'b000);
 	assign opBfun.Beq	=(op==OP_B__)&(fun3==3'b000);
 	assign opBfun.Bne	=(op==OP_B__)&(fun3==3'b001);
 	assign opBfun.Blt	=(op==OP_B__)&(fun3==3'b100);
@@ -138,11 +147,11 @@ module ysyx_260020046_rv32iIDC(code,reset,enJfun,imm,cRd,cR1,cR2,opIcod,opRcod,o
 	assign opRcod.Sra	=(op==OP_R__)&(fun3==3'b101)&(fun7==7'b0100000);
 	assign opRcod.Or	=(op==OP_R__)&(fun3==3'b110)&(fun7==7'b0000000);
 	assign opRcod.And	=(op==OP_R__)&(fun3==3'b111)&(fun7==7'b0000000);
-	assign opIner.Ebreak	=(code==OP_EBREAK);
+	assign opIner.Ebreak=(code==OP_EBREAK);
 
 
 	assign opCode.Bfun	=(|opBfun);
-	assign opCode.Mfun	=(|opSfun)|(opLfun);
+	assign opCode.Mfun	=(|opSfun)|(|opLfun);
 	
 	assign opImmr.immI	={{20{code[31]}},code[31:20] };
 	assign opImmr.immS	={{20{code[31]}},code[31:25], code[11:7] };
@@ -169,21 +178,26 @@ module ysyx_260020046_rv32iIDC(code,reset,enJfun,imm,cRd,cR1,cR2,opIcod,opRcod,o
 	end
 
 	assign enJfun=(opCode.Jal)|(opCode.Jalr);
+	assign cR1=r1;
+	assign cR2=r2;
+	assign cRd=(opIner.opB|opIner.opS)?'0:rd;
+
 
 	import "DPI-C" function void stop(input bit eb);
 	always_comb begin : check_ebreak_or_stop
 		if(opIner.Ebreak&(~reset)) stop(1);
-		else if(~(|opIner)) stop(0);
+		else if((~(|opIner))&(~reset)) stop(0);
 	end
 
 endmodule
-module ysyx_260020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,opCode,opBfun);
+module ysyx_260020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun);
 	import rv32iBasis::*;
-	input word_t oR1,oR2,pc,imm,imi,data;
+	input word_t oR1,oR2,pc,imm,data;
 	input opIcod_t opIcod;
 	input opRcod_t opRcod;
 	input opCode_t opCode;
 	input opBfun_t opBfun;
+	input opLfun_t opLfun;
 
 	output word_t addr,iRd;
 	output logic enBfun;
@@ -200,13 +214,13 @@ module ysyx_260020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod
 	assign choNpc=(opCode.Jal)|(opCode.Jalr);
 
 	always_comb begin : calculate
-		unique case(opRcod)
+		unique case('1)
 			opCode.Lui	:result=imm;
 			opCode.Auipc:result=imm+pc;
 			opCode.Jal	:result=imm+pc;
 			opCode.Jalr	:result=imm+oR1;
 			opCode.Bfun	:result=imm+pc;
-			opCode.Mfun	:result=addr;
+			opCode.Mfun	:result=imm+oR1;
 			opIcod.Addi	:result=imm+oR1;
 			opIcod.Slti	:result=  $signed(oR1) <  $signed(imm)?1:0;
 			opIcod.Sltiu:result=$unsigned(oR1) <$unsigned(imm)?1:0;
@@ -228,6 +242,11 @@ module ysyx_260020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod
 			opRcod.And	:result=oR1&oR2;
 			default		:result='0;
 		endcase
+	
+	`ifdef RV32I_DEBUG
+		$display("pc=%x oR1=%x oR2=%x imm=%x",pc,oR1,oR2,imm);
+		$strobe("result=%x data=%x",result,data);
+	`endif
 	end
 
 	always_comb begin : bFun
@@ -242,7 +261,7 @@ module ysyx_260020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod
 		endcase
 	end
 
-	assign addr=opCode.Mfun?result:0;
+	assign addr=(opCode.Mfun|opCode.Jal|opCode.Jalr)?result:0;
 	always_comb begin :choose
 		unique case('1)
 			choRes	:iRd=result;

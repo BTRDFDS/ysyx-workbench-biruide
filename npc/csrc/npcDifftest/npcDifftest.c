@@ -56,9 +56,14 @@ void NpcDifftestCheck(uint32_t pc){
 #endif
 }
 
-void NpcDifftestInit8(uint32_t memSize,uint8_t *M){
+void NpcDifftestInit8(uint32_t memSize,uint8_t *mem){
 #ifdef DIFFTEST
-    if(M==NULL){printf("M==NULL\n");}
+    if(mem==NULL){printf("mem==NULL\n");exit(-1);}
+    uint32_t *M=NULL;
+    M=(uint32_t*)malloc((memSize/4)*sizeof(uint32_t));
+    if(M==NULL){printf("M==NULL\n");exit(-1);}
+    memcpy(M,mem,(memSize/4)*sizeof(uint32_t));
+    if(M==NULL){printf("M==NULL\n");exit(-1);}
     const char *nemuLib = "/home/biruide/ysyx-workbench/npc/lib/riscv32-nemu-interpreter-so";
     difftestHandle = dlopen(nemuLib, RTLD_LAZY);
     if (!difftestHandle) {
@@ -80,8 +85,8 @@ void NpcDifftestInit8(uint32_t memSize,uint8_t *M){
     dftDebug(printf("函数指针获取完成\n"););
 
     ref_difftest_init(0);
-    uint32_t mem_size = memSize * sizeof(uint32_t);
-    ref_difftest_memcpy(0x80000000, M, mem_size, DIFFTEST_TO_REF);
+    uint32_t mem_size = (memSize/4) * sizeof(uint32_t);
+    ref_difftest_memcpy(0x80000000, M, mem_size/4, DIFFTEST_TO_REF);
     dftDebug(printf("内存转移完成\n"););
     // 同步初始寄存器状态
     riscv32_CPU_state init_state;
@@ -91,6 +96,7 @@ void NpcDifftestInit8(uint32_t memSize,uint8_t *M){
     dftDebug(printf("寄存器同步完成\n"););
     difftest_enabled = true;
     // printf("[DIFFTEST] NEMU初始化完成\n");
+    if(M!=NULL){free(M);}
 #endif
 }
 

@@ -70,7 +70,7 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 	gpr[0]=0;
 }
 
-extern "C" int pmem_read(int raddr) {
+extern "C" int pmem_read(int raddr) {//TODO
 	IfDebug(printf("pmem_read : "););
 	uint32_t raddrX=(uint32_t)raddr;
 	// if(raddrX==0){return 0;}
@@ -177,7 +177,7 @@ void initDevice(int argc, char** argv){
 
 	NpcSdbInit();
 	NpcTraceInit(argv[1]);
-	NpcDifftestInit32(memSize,mem);//TODO
+	NpcDifftestInit8(memSize,mem);//TODO
 
 }
 
@@ -194,7 +194,7 @@ void minirvReset(){
 	// printf("pc=%x\n",pc);
 	// printf("初始化完成\n");
 	// printf("code=%x\n",top->code);
-	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",(pc-ADDR_RESET)>>2,mem[(pc-ADDR_RESET)>>2]););
+	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",pc,MemRead(pc)););
 }
 
 void minirvStep(){
