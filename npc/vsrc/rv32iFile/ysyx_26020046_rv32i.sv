@@ -261,7 +261,7 @@ module ysyx_260020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod
 		endcase
 	end
 
-	assign addr=(opCode.Mfun|opCode.Jal|opCode.Jalr)?result:0;
+	assign addr=(opCode.Mfun|opCode.Jal|opCode.Jalr|opCode.Bfun)?result:0;
 	always_comb begin :choose
 		unique case('1)
 			choRes	:iRd=result;

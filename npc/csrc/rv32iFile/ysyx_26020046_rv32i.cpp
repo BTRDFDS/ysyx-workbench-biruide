@@ -30,7 +30,7 @@ svScope scope;//作用域
     #define IfDebug(...) ((void)0)
 #endif
 
-#define memSize 8388608
+#define memSize 33554432
 uint8_t mem[memSize];
 uint32_t runStep,pc;//运行步数
 timespec startTime;//开始时间
@@ -38,7 +38,7 @@ bool hasEbreak=false;//是否遇到ebreak
 int result=-1;//返回值
 
 uint32_t MemRead(uint32_t addr){//读取4个字节
-	if(addr<ADDR_RESET|((addr-ADDR_RESET+3)>=memSize)){printf("err addr %x@%x\n",addr,pc);exit(-1);}
+	if(addr<ADDR_RESET|((addr-ADDR_RESET+3)>=memSize)){printf("err addr %x@%x %d\n",addr,pc,(addr-ADDR_RESET)>>2);exit(-1);}
 	uint32_t temp=	((uint32_t)mem[addr-ADDR_RESET])|
 					(((uint32_t)mem[addr-ADDR_RESET+1])<<8)|
 					(((uint32_t)mem[addr-ADDR_RESET+2])<<16)|
@@ -109,22 +109,29 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,mem[(waddr-ADDR_RESET)>>2],wdata,wmask););//TODO
 
 	NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,waddrX,wdata,wmask);
-	uint32_t mask1=0xffffffff;
-	uint32_t data=wdata;
-	switch(wmask&0x0f){
-		case 0b0001:mask1=0xffffff00;data=data&0x00ff;data=data    ;break;
-		case 0b0010:mask1=0xffff00ff;data=data&0x00ff;data=data<< 8;break;
-		case 0b0100:mask1=0xff00ffff;data=data&0x00ff;data=data<<16;break;
-		case 0b1000:mask1=0x00ffffff;data=data&0x00ff;data=data<<24;break;
-		case 0b0011:mask1=0xffff0000;data=data&0xffff;data=data    ;break;
-		case 0b1100:mask1=0x0000ffff;data=data&0xffff;data=data<<16;break;
-		case 0b1111:mask1=0x00000000;data=data       ;data=data    ;break;
-		default    :mask1=0xffffffff;data=data&0x0000;data=       0;break;
+	// uint32_t mask1=0xffffffff;
+	// uint32_t data=wdata;
+	// switch(wmask&0x0f){
+	// 	case 0b0001:mask1=0xffffff00;data=data&0x00ff;data=data    ;break;
+	// 	case 0b0010:mask1=0xffff00ff;data=data&0x00ff;data=data<< 8;break;
+	// 	case 0b0100:mask1=0xff00ffff;data=data&0x00ff;data=data<<16;break;
+	// 	case 0b1000:mask1=0x00ffffff;data=data&0x00ff;data=data<<24;break;
+	// 	case 0b0011:mask1=0xffff0000;data=data&0xffff;data=data    ;break;
+	// 	case 0b1100:mask1=0x0000ffff;data=data&0xffff;data=data<<16;break;
+	// 	case 0b1111:mask1=0x00000000;data=data       ;data=data    ;break;
+	// 	default    :mask1=0xffffffff;data=data&0x0000;data=       0;break;
+	// }
+	// uint32_t temp=mem[(waddr-ADDR_RESET)>>2];//TODO
+	// temp&=mask1;
+	// temp|=data;
+	// mem[(waddr-ADDR_RESET)>>2]=temp;
+	for(int i=0;i<4;i++){
+		if((wmask&0x1)==1){
+			mem[waddrX-ADDR_RESET+i]=wdata&0xff;
+			wdata=wdata>>8;
+			wmask=wmask>>1;
+		}
 	}
-	uint32_t temp=mem[(waddr-ADDR_RESET)>>2];//TODO
-	temp&=mask1;
-	temp|=data;
-	mem[(waddr-ADDR_RESET)>>2]=temp;
 	NpcTraceMtrace(" become 0x%x\n",MemRead(waddrX));
 	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,mem[(waddr-ADDR_RESET)>>2]););
 }
