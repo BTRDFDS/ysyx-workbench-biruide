@@ -143,6 +143,11 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
   }
   return old;
 }
+word_t riscv32ecall(word_t pc){
+  mepc=pc;
+  mcause=11;
+  return mtvec;
+}
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst;
@@ -214,7 +219,7 @@ static int decode_exec(Decode *s) {
   // INSTPAT("??????? ????? ????? 000 ????? 0001111", fence    ,);
   // INSTPAT("1000001 10011 00000 000 00000 0001111", fence.tso,);
   // INSTPAT("0000000 10000 00000 000 00000 0001111", pause    ,);
-  // INSTPAT("0000000 00000 00000 000 00000 1110011", ecall    ,);
+  INSTPAT("0000000 00000 00000 000 00000 1110011", ecall    , N, s->pc=riscv32ecall(s->pc));
   INSTPAT("0000000 00001 00000 000 00000 1110011", ebreak   , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   //RV32M
   INSTPAT("0000001 ????? ????? 000 ????? 0110011", MUL      , R, R(rd) =  (uint32_t)src1 * (uint32_t)src2);
