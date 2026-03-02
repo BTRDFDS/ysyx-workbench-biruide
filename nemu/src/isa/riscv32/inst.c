@@ -146,6 +146,7 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
 word_t riscv32ecall(word_t pc){
   mepc=pc;
   mcause=11;
+  printf("ecall\n");
   return mtvec;
 }
 
