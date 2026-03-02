@@ -119,13 +119,15 @@ void riscv32FtraceJal(Decode *s,int rd){
 word_t mepc=0;
 word_t mcause=0;
 word_t mstatus=0;
+word_t mtvec=0;
 
 word_t riscv32zCsrrw(word_t rs1,word_t addr){
   word_t old=0;
   switch(addr){
     case 0x300:old=mstatus;mstatus=rs1;break;
+    case 0x305:old=mtvec;  mtvec=rs1;  break;
     case 0x341:old=mepc;   mepc=rs1;   break;
-    case 0x342:old=mcause; mcause=rs1;break;
+    case 0x342:old=mcause; mcause=rs1; break;
     default: panic("csrrw addr=%x",addr);
   }
   return old;
@@ -134,6 +136,7 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
   word_t old=0;
   switch(addr){
     case 0x300:old=mstatus;mstatus|=rs1;break;
+    case 0x305:old=mtvec;  mtvec  |=rs1;break;
     case 0x341:old=mepc;   mepc   |=rs1;break;
     case 0x342:old=mcause; mcause |=rs1;break;
     default: panic("csrrs addr=%x",addr);
