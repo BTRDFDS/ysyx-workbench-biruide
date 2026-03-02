@@ -118,7 +118,7 @@ void riscv32FtraceJal(Decode *s,int rd){
 
 word_t mepc=0;
 word_t mcause=0;
-word_t mstatus=0;
+word_t mstatus=0x1800;
 word_t mtvec=0;
 
 word_t riscv32zCsrrw(word_t rs1,word_t addr){
@@ -146,7 +146,7 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
 word_t riscv32ecall(word_t pc){
   mepc=pc;
   mcause=11;
-  printf("ecall\n");
+  // printf("ecall\n");
   return mtvec;
 }
 
