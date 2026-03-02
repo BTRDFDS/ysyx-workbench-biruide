@@ -116,7 +116,30 @@ void riscv32FtraceJal(Decode *s,int rd){
 #endif
 }
 
+word_t mepc=0;
+word_t mcause=0;
+word_t mstatus=0;
 
+word_t riscv32zCsrrw(word_t rs1,word_t addr){
+  word_t old=0;
+  switch(addr){
+    case 0x300:old=mstatus;mstatus=rs1;break;
+    case 0x341:old=mepc;   mepc=rs1;   break;
+    case 0x342:old=mcause; mcause=rs1;break;
+    default: panic("csrrw addr=%x",addr);
+  }
+  return old;
+}
+word_t riscv32zCsrrs(word_t rs1,word_t addr){
+  word_t old=0;
+  switch(addr){
+    case 0x300:old=mstatus;mstatus|=rs1;break;
+    case 0x341:old=mepc;   mepc   |=rs1;break;
+    case 0x342:old=mcause; mcause |=rs1;break;
+    default: panic("csrrs addr=%x",addr);
+  }
+  return old;
+}
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst;
@@ -199,6 +222,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 101 ????? 0110011", DIVU     , R, R(rd) =  riscv32mDivU((uint32_t)src1, (uint32_t)src2));
   INSTPAT("0000001 ????? ????? 110 ????? 0110011", REM      , R, R(rd) =  riscv32mRem (( int32_t)src1, ( int32_t)src2));
   INSTPAT("0000001 ????? ????? 111 ????? 0110011", REMU     , R, R(rd) =  riscv32mRemU((uint32_t)src1, (uint32_t)src2));
+  //RV32Z
+  INSTPAT("??????? ????? ????? 001 ????? 1110011", csrrw    , I, R(rd) = riscv32zCsrrw((uint32_t)src1, imm));
+  INSTPAT("??????? ????? ????? 010 ????? 1110011", csrrs    , I, R(rd) = riscv32zCsrrs((uint32_t)src1, imm));
   //未能匹配
   INSTPAT("??????? ????? ????? ??? ????? ???????", inv      , N, INV(s->pc));
   INSTPAT_END();
