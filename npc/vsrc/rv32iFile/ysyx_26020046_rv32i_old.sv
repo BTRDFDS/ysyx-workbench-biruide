@@ -45,7 +45,7 @@ package rv32iBasis;
 	} lsuOp_t;
 endpackage
 
-module ysyx_26020046_rv32i(clk,reset,code,pc);
+module ysyx_26020046_rv32i_old(clk,reset,code,pc);
 	import rv32iBasis::*;
 	input logic clk,reset;
 	input word_t code;
