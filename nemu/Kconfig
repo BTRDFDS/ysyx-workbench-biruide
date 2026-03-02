@@ -126,6 +126,9 @@ endmenu
 
 menu "Testing and Debugging"
 
+config AUTO_RUN
+  bool "auto run the nemu"
+  default y
 
 config TRACE
   bool "Enable tracer"

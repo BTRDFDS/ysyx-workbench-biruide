@@ -26,7 +26,7 @@ void engine_start() {
 // #endif
 #ifdef CONFIG_TARGET_AM
   cpu_exec(-1);
-#elif AUTO_RUN
+#elif AUTO_RUN|CONFIG_AUTO_RUN
   printf("AUTO_RUN\n");
   cmd_t("c");
 #else
