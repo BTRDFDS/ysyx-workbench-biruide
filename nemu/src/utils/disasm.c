@@ -72,8 +72,8 @@ void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte) {
 	size_t count = cs_disasm_dl(handle, code, nbyte, pc, 0, &insn);
   // assert(count == 1);
   if(count!=1){
-    printf("count=%ld\n",count);
-    printf("Disasm failed at pc = 0x%lx, nbyte = %d, code = %02x %02x %02x %02x\n", pc, nbyte, code[0], code[1], code[2], code[3]);
+    // printf("count=%ld\n",count);
+    // printf("Disasm failed at pc = 0x%lx, nbyte = %d, code = %02x %02x %02x %02x\n", pc, nbyte, code[0], code[1], code[2], code[3]);
     assert(count == 1);
   }
   int ret = snprintf(str, size, "%s", insn->mnemonic);
