@@ -146,12 +146,12 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
 word_t riscv32mret(){
   mstatus=0x1800;
   mcause=0;
-  return mepc;
+  return mepc+4;
 }
 word_t riscv32ecall(word_t pc){
   mepc=pc;
   mcause=11;
-  printf("ecall@0x%x to 0x%x\n",pc,mtvec);
+  // printf("ecall@0x%x to 0x%x\n",pc,mtvec);
   return mtvec;
 }
 
