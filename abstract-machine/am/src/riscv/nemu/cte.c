@@ -45,7 +45,6 @@ if ((void *)c < kstack.start) {
   c->mcause  = 0;
   c->mstatus = 0x1800;
   c->pdir = NULL;
-  printf("21\n");
   return c;
   // return NULL;
 }
