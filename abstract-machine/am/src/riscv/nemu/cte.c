@@ -51,6 +51,9 @@ if ((void *)c < kstack.start) {
   c->mcause  = 0;
   c->mstatus = 0x1800;
   c->pdir = NULL;
+    printf("mcause 0x%x\n",c->mcause);
+    printf("mstatus 0x%x\n",c->mstatus);
+    printf("mepc 0x%x\n",c->mepc);
   return c;
   // return NULL;
 }
