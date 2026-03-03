@@ -14,7 +14,6 @@ Context* __am_irq_handle(Context *c) {
     c = user_handler(ev, c);
     assert(c != NULL);
   }
-  printf("return to user\n");
   return c;
 }
 
@@ -26,6 +25,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 
   // register event handler
   user_handler = handler;
+  printf("1\n");
 
   return true;
 }
