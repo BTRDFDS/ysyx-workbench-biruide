@@ -151,7 +151,7 @@ word_t riscv32mret(){
 word_t riscv32ecall(word_t pc){
   mepc=pc;
   mcause=11;
-  // printf("ecall\n");
+  printf("ecall@0x%x to 0x%x\n",pc,mtvec);
   return mtvec;
 }
 
