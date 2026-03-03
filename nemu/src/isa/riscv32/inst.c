@@ -162,7 +162,7 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
 word_t riscv32mret(){
   mstatus=0x1800;
   mcause=0;
-  printf("mret to 0x%x\n",mepc+4);
+  // printf("mret to 0x%x\n",mepc+4);
   return mepc+4;
 }
 word_t riscv32ecall(word_t pc){
@@ -256,7 +256,7 @@ static int decode_exec(Decode *s) {
   //RV32Z
   INSTPAT("??????? ????? ????? 001 ????? 1110011", csrrw    , I, R(rd) = riscv32zCsrrw((uint32_t)src1, imm));
   INSTPAT("??????? ????? ????? 010 ????? 1110011", csrrs    , I, R(rd) = riscv32zCsrrs((uint32_t)src1, imm));
-  INSTPAT("0011000 00010 00000 000 00000 1110011", mret     , N, s->dnpc=riscv32mret(),printf("mret %x => %x\n",s->pc,s->dnpc),s->snpc=s->dnpc);
+  INSTPAT("0011000 00010 00000 000 00000 1110011", mret     , N, s->dnpc=riscv32mret(),printf("mret %x => %x\n",s->pc,s->dnpc));
   //未能匹配
   INSTPAT("??????? ????? ????? ??? ????? ???????", inv      , N, INV(s->pc));
   INSTPAT_END();
