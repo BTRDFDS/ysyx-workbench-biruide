@@ -50,7 +50,7 @@ if ((void *)c < kstack.start) {
   c->mepc = (uintptr_t)entry;
   c->mcause  = 0;
   c->mstatus = 0x1800;
-  c->pdir = NULL;
+  // c->pdir = NULL;
   printf("%d\n",sizeof(Context));
     // printf("mcause 0x%x\n",c->mcause);
     // printf("mstatus 0x%x\n",c->mstatus);
