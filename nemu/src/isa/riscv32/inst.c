@@ -122,13 +122,20 @@ word_t mstatus=0x1800;
 word_t mtvec=0;
 
 word_t riscv32zCsrrw(word_t rs1,word_t addr){
-  printf("csrrw addr=%x rs1=%x\n",addr,rs1);
+  // printf("csrrw addr=%x rs1=%x\n",addr,rs1);
   word_t old=0;
   switch(addr){
     case 0x300:old=mstatus;mstatus=rs1;break;
     case 0x305:old=mtvec;  mtvec=rs1;  break;
     case 0x341:old=mepc;   mepc=rs1;   break;
     case 0x342:old=mcause; mcause=rs1; break;
+    default: panic("csrrw addr=%x",addr);
+  }
+  switch(addr){
+    case 0x300:printf("mstatus %x => %x\n",old,mstatus);break;
+    case 0x305:printf("mtvec %x => %x\n",old,mtvec);break;
+    case 0x341:printf("mepc %x => %x\n",old,mepc);break;
+    case 0x342:printf("mcause %x => %x\n",old,mcause);break;
     default: panic("csrrw addr=%x",addr);
   }
   return old;
