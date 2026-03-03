@@ -134,6 +134,7 @@ word_t riscv32zCsrrw(word_t rs1,word_t addr){
   return old;
 }
 word_t riscv32zCsrrs(word_t rs1,word_t addr){
+  printf("csrrs addr=%x rs1=%x\n",addr,rs1);
   word_t old=0;
   switch(addr){
     case 0x300:old=mstatus;mstatus|=rs1;break;
