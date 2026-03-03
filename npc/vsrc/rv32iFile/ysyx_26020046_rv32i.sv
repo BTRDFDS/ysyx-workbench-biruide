@@ -87,7 +87,7 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 		$display("oR1=0x%x oR2=0x%x imm=0x%x data=0x%x addr=0x%x iRd=0x%x",oR1,oR2,imm,data,addr,iRd);
 		$display("cRd=0x%x cR1=0x%x cR2=0x%x",cRd,cR1,cR2);
 		$display("enBfun=%x enJfun=%x",enBfun,enJfun);
-		$display("opCode=%x opIcod=%x opRcod=%x opBfun=%x opLfun=%x opSfun=%x",opCode,opIcod,opRcod,opBfun,opLfun,opSfun);
+		$display("opCode=%d opIcod=%d opRcod=%d opBfun=%d opLfun=%d opSfun=%d",opCode,opIcod,opRcod,opBfun,opLfun,opSfun);
 	end
 `endif
 
