@@ -25,6 +25,7 @@ static Context *schedule(Event ev, Context *prev) {
 int main() {
   cte_init(schedule);
   pcb[0].cp = kcontext((Area) { pcb[0].stack, &pcb[0] + 1 }, f, (void *)1L);
+  if(pcb[0].cp==NULL){putch('N');}
   pcb[1].cp = kcontext((Area) { pcb[1].stack, &pcb[1] + 1 }, f, (void *)2L);
   yield();
   panic("Should not reach here!");
