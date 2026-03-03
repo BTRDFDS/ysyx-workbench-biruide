@@ -61,7 +61,7 @@ __am_asm_trap:
   call __am_irq_handle
 
   LOAD t1, OFFSET_STATUS(sp)
-  LOAD t2, OFFSET_EPC(sp)
+  LOAD t2, OFFSET_EPC(a0)
   csrw mstatus, t1
   csrw mepc, t2
 

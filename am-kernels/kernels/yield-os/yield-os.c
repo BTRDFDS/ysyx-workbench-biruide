@@ -19,7 +19,7 @@ static void f(void *arg) {
 }
 
 static Context *schedule(Event ev, Context *prev) {
-  panic("111");
+  // panic("111");
   current->cp = prev;
   current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   return current->cp;
