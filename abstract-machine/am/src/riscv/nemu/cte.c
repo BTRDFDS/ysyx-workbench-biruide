@@ -7,6 +7,7 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 Context* __am_irq_handle(Context *c) {
   putch('P');putch('\n');
   if (user_handler) {
+  putch('Q'+32);putch('\n');
     Event ev = {0};
     switch (c->mcause) {
       default: ev.event = EVENT_ERROR; break;
