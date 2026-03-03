@@ -34,6 +34,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   memset(c, 0, sizeof(Context));
   c->gpr[10] = (uintptr_t)arg;
   c->mepc = (uintptr_t)entry;
+  printf("21\n");
   return c;
   // return NULL;
 }
