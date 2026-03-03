@@ -146,6 +146,7 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
 word_t riscv32mret(){
   mstatus=0x1800;
   mcause=0;
+  printf("mret to 0x%x\n",mepc);
   return mepc+4;
 }
 word_t riscv32ecall(word_t pc){
