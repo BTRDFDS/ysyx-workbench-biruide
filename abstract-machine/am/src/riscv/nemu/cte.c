@@ -31,22 +31,22 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
 
-uintptr_t stack_top = (uintptr_t)kstack.end;
-stack_top &= ~0xF;
-  Context *c = (Context *)(stack_top - sizeof(Context));
-if ((void *)c < kstack.start) {
-    return NULL; // 栈空间不足，返回空指针
-}
-  memset(c, 0, sizeof(Context));
-  c->gpr[1] = 0;
-  c->gpr[2] = stack_top;
-  c->gpr[10] = (uintptr_t)arg;
-  c->mepc = (uintptr_t)entry;
-  c->mcause  = 0;
-  c->mstatus = 0x1800;
-  c->pdir = NULL;
-  return c;
-  // return NULL;
+// uintptr_t stack_top = (uintptr_t)kstack.end;
+// stack_top &= ~0xF;
+//   Context *c = (Context *)(stack_top - sizeof(Context));
+// if ((void *)c < kstack.start) {
+//     return NULL; // 栈空间不足，返回空指针
+// }
+//   memset(c, 0, sizeof(Context));
+//   c->gpr[1] = 0;
+//   c->gpr[2] = stack_top;
+//   c->gpr[10] = (uintptr_t)arg;
+//   c->mepc = (uintptr_t)entry;
+//   c->mcause  = 0;
+//   c->mstatus = 0x1800;
+//   c->pdir = NULL;
+//   return c;
+  return NULL;
 }
 
 void yield() {
