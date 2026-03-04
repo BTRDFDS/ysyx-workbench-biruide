@@ -5,8 +5,13 @@
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
+  // printf("");可行
+    // printf("s\n");
   // putch('P');putch('\n');
+  // putch('P');putch('\n');
+    // printf("s\n");
   if (user_handler) {
+  // putch('P');putch('\n');
   // putch('Q'+32);putch('\n');
     Event ev = {0};
     switch (c->mcause) {
@@ -20,7 +25,9 @@ Context* __am_irq_handle(Context *c) {
     // printf("mstatus 0x%x\n",c->mstatus);
     // printf("mepc 0x%x\n",c->mepc);
     // printf("s\n");
+  // putch('P');putch('\n');
   }
+  // printf("%x\n",c);
   return c;
 }
 
