@@ -165,8 +165,9 @@ word_t riscv32mret(){
   // printf("mret to 0x%x\n",mepc+4);
 #ifdef CONFIG_ETRACE
   extern FILE *log_etrace_fp;
-  printf("mret to 0x%x\n",mepc+4);
+  // printf("mret to 0x%x\n",mepc+4);
   fprintf(log_etrace_fp,"mret to 0x%x\n",mepc+4);
+  fflush(log_etrace_fp);
 #endif
   return mepc+4;
 }
@@ -176,8 +177,9 @@ word_t riscv32ecall(word_t pc){
   // printf("ecall@0x%x to 0x%x\n",pc,mtvec);
 #ifdef CONFIG_ETRACE
   extern FILE *log_etrace_fp;
-  printf("ecall@0x%x to 0x%x\n",pc,mtvec);
+  // printf("ecall@0x%x to 0x%x\n",pc,mtvec);
   fprintf(log_etrace_fp,"ecall@0x%x to 0x%x\n",pc,mtvec);
+  fflush(log_etrace_fp);
 #endif
   return mtvec;
 }
