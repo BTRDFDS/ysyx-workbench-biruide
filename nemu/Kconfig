@@ -134,6 +134,10 @@ config TRACE
   bool "Enable tracer"
   default y
 
+config LOGTRACE
+  bool "Enable tracer code to log"
+  default n
+
 config IRINGTRACE
   depends on TRACE
   bool "Enable instruction ring tracer (iringbuf)"
