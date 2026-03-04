@@ -122,6 +122,7 @@ word_t mstatus=0x1800;
 word_t mtvec=0;
 
 word_t riscv32zCsrrw(word_t rs1,word_t addr){
+  // printf("csrrw addr=%x rs1=%x ",addr,rs1);
   word_t old=0;
   switch(addr){
     case 0x300:old=mstatus;mstatus=rs1;break;
@@ -130,9 +131,17 @@ word_t riscv32zCsrrw(word_t rs1,word_t addr){
     case 0x342:old=mcause; mcause=rs1; break;
     default: panic("csrrw addr=%x",addr);
   }
+  // switch(addr){
+  //   case 0x300:printf("mstatus %x => %x\n",old,mstatus);break;
+  //   case 0x305:printf("mtvec %x => %x\n",old,mtvec);break;
+  //   case 0x341:printf("mepc %x => %x\n",old,mepc);break;
+  //   case 0x342:printf("mcause %x => %x\n",old,mcause);break;
+  //   default: panic("csrrw addr=%x",addr);
+  // }
   return old;
 }
 word_t riscv32zCsrrs(word_t rs1,word_t addr){
+  // printf("csrrs addr=%x rs1=%x ",addr,rs1);
   word_t old=0;
   switch(addr){
     case 0x300:old=mstatus;mstatus|=rs1;break;
@@ -141,12 +150,25 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
     case 0x342:old=mcause; mcause |=rs1;break;
     default: panic("csrrs addr=%x",addr);
   }
+  // switch(addr){
+  //   case 0x300:printf("mstatus %x => %x\n",old,mstatus);break;
+  //   case 0x305:printf("mtvec %x => %x\n",old,mtvec);break;
+  //   case 0x341:printf("mepc %x => %x\n",old,mepc);break;
+  //   case 0x342:printf("mcause %x => %x\n",old,mcause);break;
+  //   default: panic("csrrs addr=%x",addr);
+  // }
   return old;
+}
+word_t riscv32mret(){
+  mstatus=0x1800;
+  mcause=0;
+  // printf("mret to 0x%x\n",mepc+4);
+  return mepc+4;
 }
 word_t riscv32ecall(word_t pc){
   mepc=pc;
   mcause=11;
-  // printf("ecall\n");
+  // printf("ecall@0x%x to 0x%x\n",pc,mtvec);
   return mtvec;
 }
 
@@ -220,7 +242,7 @@ static int decode_exec(Decode *s) {
   // INSTPAT("??????? ????? ????? 000 ????? 0001111", fence    ,);
   // INSTPAT("1000001 10011 00000 000 00000 0001111", fence.tso,);
   // INSTPAT("0000000 10000 00000 000 00000 0001111", pause    ,);
-  INSTPAT("0000000 00000 00000 000 00000 1110011", ecall    , N, s->pc=riscv32ecall(s->pc));
+  INSTPAT("0000000 00000 00000 000 00000 1110011", ecall    , N, s->dnpc=riscv32ecall(s->pc));
   INSTPAT("0000000 00001 00000 000 00000 1110011", ebreak   , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   //RV32M
   INSTPAT("0000001 ????? ????? 000 ????? 0110011", MUL      , R, R(rd) =  (uint32_t)src1 * (uint32_t)src2);
@@ -234,6 +256,8 @@ static int decode_exec(Decode *s) {
   //RV32Z
   INSTPAT("??????? ????? ????? 001 ????? 1110011", csrrw    , I, R(rd) = riscv32zCsrrw((uint32_t)src1, imm));
   INSTPAT("??????? ????? ????? 010 ????? 1110011", csrrs    , I, R(rd) = riscv32zCsrrs((uint32_t)src1, imm));
+  INSTPAT("0011000 00010 00000 000 00000 1110011", mret     , N, s->dnpc=riscv32mret());
+  // INSTPAT("0011000 00010 00000 000 00000 1110011", mret     , N, s->dnpc=riscv32mret(),printf("mret %x => %x\n",s->pc,s->dnpc));
   //未能匹配
   INSTPAT("??????? ????? ????? ??? ????? ???????", inv      , N, INV(s->pc));
   INSTPAT_END();

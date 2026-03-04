@@ -9,14 +9,18 @@ typedef union {
 static PCB pcb[2], pcb_boot, *current = &pcb_boot;
 
 static void f(void *arg) {
+  // putch('0');
   while (1) {
+    // putch('1');
     putch("?AB"[(uintptr_t)arg > 2 ? 0 : (uintptr_t)arg]);
     for (int volatile i = 0; i < 100000; i++) ;
     yield();
   }
+  // putch('2');
 }
 
 static Context *schedule(Event ev, Context *prev) {
+  // panic("111");
   current->cp = prev;
   current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
   return current->cp;
