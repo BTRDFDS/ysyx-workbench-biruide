@@ -134,6 +134,10 @@ config TRACE
   bool "Enable tracer"
   default y
 
+config LOGTRACE
+  bool "Enable tracer code to log"
+  default n
+
 config IRINGTRACE
   depends on TRACE
   bool "Enable instruction ring tracer (iringbuf)"
@@ -162,6 +166,11 @@ config DTRACE
 config FTRACE
   depends on TRACE
   bool "Enable function tracer"
+  default y
+
+config ETRACE
+  depends on TRACE
+  bool "Enable error tracer"
   default y
 
 config TRACE_START

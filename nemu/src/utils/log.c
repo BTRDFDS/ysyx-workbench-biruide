@@ -23,18 +23,22 @@ FILE *log_iringbuf_fp = NULL;
 FILE *log_mtrace_fp = NULL;
 FILE *log_dtrace_fp = NULL;
 FILE *log_ftrace_fp = NULL;
+FILE *log_etrace_fp = NULL;
 
 char *log_file_printf=NULL;
 char *log_iringbuf_file=NULL;
 char *log_mtrace_file=NULL;
 char *log_dtrace_file=NULL;
 char *log_ftrace_file=NULL;
+char *log_etrace_file=NULL;
 
 void init_log(const char *log_file) {
   log_fp = stdout;
   log_iringbuf_fp=stdout;
   log_mtrace_fp=stdout;
   log_dtrace_fp=stdout;
+  log_ftrace_fp=stdout;
+  log_etrace_fp=stdout;
 
   char *log_file_copy=malloc(strlen(log_file)+1);
   strcpy (log_file_copy,log_file);
@@ -49,8 +53,8 @@ void init_log(const char *log_file) {
     strcpy(log_file_printf,log_file_copy);
     strcat(log_file_printf, ".txt");
 
-    FILE *fp = fopen(log_file_copy, "w");
-    Assert(fp, "Can not open '%s'", log_file_copy);
+    FILE *fp = fopen(log_file_printf, "w");
+    Assert(fp, "Can not open '%s'", log_file_printf);
     log_fp = fp;
 
 #ifdef CONFIG_IRINGTRACE
@@ -91,6 +95,16 @@ void init_log(const char *log_file) {
     Assert(fp_ftrace, "Can not open '%s'", log_ftrace_file);
     log_ftrace_fp = fp_ftrace;
     Log("Log of ftrace is written to %s", log_ftrace_file ? log_ftrace_file : "stdout");
+#endif
+
+#ifdef CONFIG_ETRACE
+    log_etrace_file = malloc(strlen(log_file_copy) + strlen("_etrace.txt") + 1);
+    strcpy(log_etrace_file, log_file_copy);
+    strcat(log_etrace_file, "_etrace.txt");
+    FILE *fp_etrace = fopen(log_etrace_file, "w");
+    Assert(fp_etrace, "Can not open '%s'", log_etrace_file);
+    log_etrace_fp = fp_etrace;
+    Log("Log of etrace is written to %s", log_etrace_file ? log_etrace_file : "stdout");
 #endif
 
   }
@@ -134,6 +148,14 @@ void closeLog(){
     fclose(log_ftrace_fp);
   }
   if(log_ftrace_file!=NULL){free(log_ftrace_file);}
+#endif
+
+#ifdef CONFIG_ETRACE
+  if(log_etrace_fp!=NULL&&log_etrace_fp!=stdout){
+    if(log_etrace_file!=NULL){Log("Log of etrace is written to %s",log_etrace_file);}
+    fclose(log_etrace_fp);
+  }
+  if(log_etrace_file!=NULL){free(log_etrace_file);}
 #endif
 
   if(log_fp!=NULL&&log_fp!=stdout){
