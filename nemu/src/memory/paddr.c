@@ -55,7 +55,9 @@ word_t paddr_read(paddr_t addr, int len) {
 
 #ifdef CONFIG_MTRACE
   extern FILE *log_mtrace_fp;
-  fprintf(log_mtrace_fp, "x%08x x%x\n", addr,len);
+  fprintf(log_mtrace_fp, "x%08x x%x ", addr,len);
+  if (likely(in_pmem(addr))) fprintf(log_mtrace_fp,"==%x",pmem_read(addr, len));
+  fprintf(log_mtrace_fp,"\n");
 #endif
 
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
