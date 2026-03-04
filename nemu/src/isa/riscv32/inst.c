@@ -169,6 +169,10 @@ word_t riscv32ecall(word_t pc){
   mepc=pc;
   mcause=11;
   // printf("ecall@0x%x to 0x%x\n",pc,mtvec);
+#ifdef CONFIG_FTRACE
+  extern FILE *log_etrace_fp;
+  fprintf(log_etrace_fp,"ecall@0x%x to 0x%x\n",pc,mtvec);
+#endif
   return mtvec;
 }
 

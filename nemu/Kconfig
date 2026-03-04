@@ -164,6 +164,11 @@ config FTRACE
   bool "Enable function tracer"
   default y
 
+config ETRACE
+  depends on TRACE
+  bool "Enable error tracer"
+  default y
+
 config TRACE_START
   depends on TRACE
   int "When tracing is enabled (unit: number of instructions)"
