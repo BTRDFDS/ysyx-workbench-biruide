@@ -21,7 +21,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {//TODO
   extern CPU_state cpu;
   for(int i = 0; i < 32; i++) {
     if (ref_r->gpr[i] != cpu.gpr[i]) {
-      printf("reg %d: %d != %x at pc=0x%x\n", i, ref_r->gpr[i], cpu.gpr[i], pc);
+      printf("reg %d: (ref)%x != (dut)%x at pc=0x%x\n", i, ref_r->gpr[i], cpu.gpr[i], pc);
       return false;
     }
   }
