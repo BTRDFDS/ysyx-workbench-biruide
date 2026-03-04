@@ -53,8 +53,8 @@ void init_log(const char *log_file) {
     strcpy(log_file_printf,log_file_copy);
     strcat(log_file_printf, ".txt");
 
-    FILE *fp = fopen(log_file_copy, "w");
-    Assert(fp, "Can not open '%s'", log_file_copy);
+    FILE *fp = fopen(log_file_printf, "w");
+    Assert(fp, "Can not open '%s'", log_file_printf);
     log_fp = fp;
 
 #ifdef CONFIG_IRINGTRACE
@@ -148,6 +148,14 @@ void closeLog(){
     fclose(log_ftrace_fp);
   }
   if(log_ftrace_file!=NULL){free(log_ftrace_file);}
+#endif
+
+#ifdef CONFIG_ETRACE
+  if(log_etrace_fp!=NULL&&log_etrace_fp!=stdout){
+    if(log_etrace_file!=NULL){Log("Log of etrace is written to %s",log_etrace_file);}
+    fclose(log_etrace_fp);
+  }
+  if(log_etrace_file!=NULL){free(log_etrace_file);}
 #endif
 
   if(log_fp!=NULL&&log_fp!=stdout){
