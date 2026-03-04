@@ -5,7 +5,7 @@
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
-  // printf("");可行
+  // printf("");
     // printf("s\n");
   // putch('P');putch('\n');
   // putch('P');putch('\n');
