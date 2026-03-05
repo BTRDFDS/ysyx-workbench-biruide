@@ -27,5 +27,9 @@ void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t t
 
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_addr, void *texit) {
   assert(0);
+  rt_uintptr_t stk = (rt_uintptr_t)stack_addr;
+  stk=stk&~0xf;
+  stk-=
+
   return NULL;
 }
