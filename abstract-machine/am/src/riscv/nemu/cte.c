@@ -40,7 +40,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
 
   c->mepc   = (uintptr_t)entry;
   c->gpr[2] = ctx_addr;
-  c->gpr[10]= (uintptr_t)arg;
+  // c->gpr[10]= (uintptr_t)arg;
 
     return c;
 }
