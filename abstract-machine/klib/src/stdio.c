@@ -12,12 +12,14 @@ int printf(const char *fmt, ...) {//TODO
   va_start(argp, fmt);
   int count=0;
   int printfNumber=0;
-  bool getPrintfNumber=0;
+  bool getPrintfNumber=false;
+  bool isLong=false;
   while(*fmt!='\0'){
     // *out=*fmt;
     if(*fmt=='%'||getPrintfNumber==true){
       fmt++;
       switch(*fmt){
+        case 'l':isLong=true;break;
         case 'c':
           putch(va_arg(argp, int));
           count++;
@@ -33,8 +35,13 @@ int printf(const char *fmt, ...) {//TODO
           break;
         case 'd':
           fmt++;
-          #define MAXprintfD 11
-          int num=va_arg(argp, int);
+          #define MAXprintfD 22
+          // int num=va_arg(argp, int);
+          int num=0;
+          if(isLong){
+            num=va_arg(argp, long);
+            isLong=false;
+          }else{num=va_arg(argp, int);}
           char number[MAXprintfD]={0};
           int point=MAXprintfD-1;
           bool minus=false;
