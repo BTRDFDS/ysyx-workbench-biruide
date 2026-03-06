@@ -32,7 +32,7 @@ svScope scope;//作用域
 
 #define memSize 33554432
 uint8_t mem[memSize];
-uint32_t runStep,pc;//运行步数
+uint32_t runStep,pc,code;//运行步数
 timespec startTime;//开始时间
 bool hasEbreak=false;//是否遇到ebreak
 int result=-1;//返回值
@@ -142,13 +142,18 @@ extern "C" void stop(unsigned char eb){
 	// minirvClose();
 	if(eb){
 		if(getReg(10)==0){
-		printf("\033[1;32mHIT GOOD TRAP\033[0m\n");
-		hasEbreak=true;
-		result=0;
-		return;
+			printf("\033[1;32mHIT GOOD TRAP\033[0m\n");
+			hasEbreak=true;
+			result=0;
+			return;
+		}else{
+			printf("\033[1;31mHIT BAD TRAP\033[0m\n");
+			hasEbreak=true;
+			result=-1;
+			return;
 		}
 	}
-	printf("\033[1;31merror!!\033[0m@0x%x\n",pc);
+	printf("\033[1;31merror!!\033[0m@0x%x==%x\n",pc,code);
 	hasEbreak=true;
 	result=-1;
 }
@@ -195,7 +200,8 @@ void minirvReset(){
 	top->clk=1;top->reset=1;top->eval();
 
 	pc=top->pc;
-	top->code=MemRead(pc);
+	code=MemRead(pc);
+	top->code=code;
 	top->clk=0;top->reset=0;top->eval();
 
 	// printf("pc=%x\n",pc);
@@ -206,9 +212,10 @@ void minirvReset(){
 
 void minirvStep(){
 	pc=top->pc;
-	top->code=MemRead(pc);
+	code=MemRead(pc);
+	top->code=code;
 	uint32_t nPc=pc;
-	uint32_t code=top->code;
+	uint32_t nCode=top->code;
 
 	// printf("%x\n",code);
 	top->clk=1;top->eval();
@@ -217,7 +224,8 @@ void minirvStep(){
 	pc=top->pc;
 	// printf("step begin 3\n");
 	// printf("pc=%x\n",pc);
-	top->code=MemRead(pc);
+	code=MemRead(pc);
+	top->code=code;
 	// printf("step begin 2\n");
 	top->clk=0;top->eval();
 	// printf("step begin\n");
@@ -225,7 +233,7 @@ void minirvStep(){
 	runStep++;
 
 	// printf("step finish\n");
-	NpcTraceWrite(nPc,code,pc);
+	NpcTraceWrite(nPc,nCode,pc);
 	NpcDifftestCheck(pc);
 }
 void minirvRun(uint32_t times){

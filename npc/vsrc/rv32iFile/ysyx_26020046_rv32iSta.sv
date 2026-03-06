@@ -1,4 +1,3 @@
-// `define RV32I_DEBUG
 `define REG_NUMBER 5
 `define DATA_WIDTH 32
 `define PC_RESET 32'h80000000
@@ -306,9 +305,6 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enBfun,enJfun,opLfun,opSfun,dat
 	end
 
 	always_ff @(posedge clk) begin : pc_write
-`ifdef RV32I_DEBUG
-		$display("pc=%x addr=%x enj=%x,enb=%x",pc,addr,enJfun,enBfun);
-`endif
 		if(reset) pc<=`PC_RESET;
 		else if(enJfun|enBfun) pc<=addr;
 		else pc<=pc+4;

@@ -11,7 +11,7 @@ extern char _pmem_start;
 Area heap = RANGE(&_heap_start, PMEM_END);
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
-void putch(char ch) {//TODO
+void putch(char ch) {
   //往0x10000000处写入字符串，即往串口写入字符串
   asm volatile("sw %0, 0(%1)" : : "r"(ch), "r"(0x10000000));  
 }
