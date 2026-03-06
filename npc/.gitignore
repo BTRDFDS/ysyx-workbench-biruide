@@ -11,7 +11,11 @@
 !.gitignore
 !README.md
 build/
-!result/*-500MHz/*
 bin/*
 !vsrc/*
 !syn/*
+result/*-500MHz/*
+!result/*-500MHz/*.txt
+!result/*-500MHz/*.rpt
+!result/*-500MHz/*.pwr
+result/*-500MHz/*_instance.pwr
