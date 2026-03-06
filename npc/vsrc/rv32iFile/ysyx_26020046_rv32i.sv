@@ -75,11 +75,11 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 	opCsrr_t opCsrr;
 	logic [11:0] csrAddr;
 
-	ysyx_260020046_rv32iIDC IDC(.*);
-	ysyx_260020046_rv32iALU ALU(.*);
-	ysyx_260020046_rv32iLSU LSU(.*);
-	ysyx_260020046_rv32iGPR GPR(.*);
-	ysyx_260020046_rv32iCSR CSR(.*);
+	ysyx_26020046_rv32iIDC IDC(.*);
+	ysyx_26020046_rv32iALU ALU(.*);
+	ysyx_26020046_rv32iLSU LSU(.*);
+	ysyx_26020046_rv32iGPR GPR(.*);
+	ysyx_26020046_rv32iCSR CSR(.*);
 
 `ifdef RV32I_DEBUG
 	always @(posedge clk) begin
@@ -95,7 +95,7 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 
 endmodule
 
-module ysyx_260020046_rv32iIDC(code,reset,enJfun,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun,csrAddr,opCsrr);
+module ysyx_26020046_rv32iIDC(code,reset,enJfun,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun,csrAddr,opCsrr);
 	import rv32iBasis::*;
 	input word_t code;
 	input logic reset;
@@ -206,7 +206,7 @@ module ysyx_260020046_rv32iIDC(code,reset,enJfun,imm,cRd,cR1,cR2,opIcod,opRcod,o
 	end
 
 endmodule
-module ysyx_260020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun,opCsrr,oCsr,iCsr,enCsr);
+module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun,opCsrr,oCsr,iCsr,enCsr);
 	import rv32iBasis::*;
 	input word_t oR1,oR2,pc,imm,data;
 	input opIcod_t opIcod;
@@ -293,7 +293,7 @@ module ysyx_260020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod
 	end
 
 endmodule
-module ysyx_260020046_rv32iLSU(clk,reset,addr,oR2,enBfun,enJfun,opLfun,opSfun,data,pc);
+module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enBfun,enJfun,opLfun,opSfun,data,pc);
 
 	import rv32iBasis::*;
 	input word_t addr,oR2;
@@ -347,7 +347,7 @@ module ysyx_260020046_rv32iLSU(clk,reset,addr,oR2,enBfun,enJfun,opLfun,opSfun,da
 	end
 
 endmodule
-module ysyx_260020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
+module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
 	import rv32iBasis::*;
 	input word_t pc,iRd;
 	input logic clk,reset;
@@ -386,7 +386,7 @@ module ysyx_260020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
 
 endmodule
 
-module ysyx_260020046_rv32iCSR(csrAddr,iCsr,oCsr,clk,reset,enCsr);
+module ysyx_26020046_rv32iCSR(csrAddr,iCsr,oCsr,clk,reset,enCsr);
 	import rv32iBasis::*;
 	input [11:0] csrAddr;
 	word_t mepc,mstatus,mcause;
