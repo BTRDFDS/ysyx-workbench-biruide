@@ -5,7 +5,8 @@ from pathlib import Path
 
 # global settings
 AM_HOME = Path(os.environ["AM_HOME"])
-AM_KERNELS_HOME = (AM_HOME / ".." / "am-kernels").resolve()
+# AM_KERNELS_HOME = (AM_HOME / ".." / "am-kernels").resolve()
+AM_KERNELS_HOME = Path(os.environ["AM_KERNELS_HOME"])
 app_dir_list = [
   AM_KERNELS_HOME / "kernels" / "hello",
   AM_KERNELS_HOME / "benchmarks" / "microbench",
