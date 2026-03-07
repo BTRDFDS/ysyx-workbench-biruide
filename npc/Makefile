@@ -1,13 +1,22 @@
+# include $(NVBOARD_HOME)/scripts/nvboard.mk
+include ../Makefile
+ifeq ($(NVB),1)
 include $(NVBOARD_HOME)/scripts/nvboard.mk
+NVBOARD_FLAGS = $(NVBOARD_ARCHIVE)
+else
+NVBOARD_FLAGS =
+endif
 
 MAKEFLAGS += -k
-FLAGS=  --debug --cc --trace -MMD -O0
+# FLAGS=  --debug --cc --trace -MMD -O0
+FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert
 VERILATOR_CFLAGS += $(FLAGS)
 
 vFile = $(shell find vsrc -type f -name "*.v")
 cFile = $(patsubst vsrc/%.v,csrc/%.cpp,$(vFile))
 BINS  = $(patsubst vsrc/%.v,bin/%,$(vFile))
 NAME  = $(basename $(vFile))
+CXXFLAGS += -O3 -march=native -fomit-frame-pointer
 
 INC_PATH ?=
 INCFLAGS = $(addprefix -I, $(INC_PATH))
@@ -107,6 +116,8 @@ clean:
 
 run:bin/$(tF)
 	./bin/$(tF) $(ARG) $(xEb)
+# 	perf record -g ./bin/$(tF) $(ARG) $(xEb)
+# 	perf stat ./bin/$(tF) $(ARG) $(xEb)
 # 	./bin/$(tF) $(ARG) $(xEb) > log/$(tF).log
 sdb:bin/$(tF)
 	./bin/$(tF) $(ARG) $(xEb)
@@ -148,4 +159,3 @@ try:
 	cp -r $(YOSYS_STA_HOME)/result/$(tF)* ./result
 git:
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
-include ../Makefile

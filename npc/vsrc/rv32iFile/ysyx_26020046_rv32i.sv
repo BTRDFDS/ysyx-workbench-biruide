@@ -104,10 +104,10 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 
 endmodule
 
-module ysyx_26020046_rv32iIDC(code,reset,enJfun,enMret,enEcall,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun,csrAddr,opCsrr,enCsr);
+module ysyx_26020046_rv32iIDC(clk,code,reset,enJfun,enMret,enEcall,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun,csrAddr,opCsrr,enCsr);
 	import rv32iBasis::*;
 	input word_t code;
-	input logic reset;
+	input logic clk,reset;
 	output logic enJfun,enMret,enEcall,enCsr;
 	output word_t imm;
 	output reg_t cRd,cR1,cR2;
@@ -225,9 +225,12 @@ module ysyx_26020046_rv32iIDC(code,reset,enJfun,enMret,enEcall,imm,cRd,cR1,cR2,o
 	assign cRd=(opIner.opB|opIner.opS)?'0:rd;
 
 	import "DPI-C" function void stop(input bit eb);
-	always_comb begin : check_ebreak_or_stop
-		if(opCsrr.Ebreak&(~reset)) stop(1);
-		else if((~((|opIner)|(|opCsrr)))&(~reset)) stop(0);
+	// always_comb begin : check_ebreak_or_stop
+	always_ff @(posedge clk) begin
+		if(~reset)begin
+			if(opCsrr.Ebreak) stop(1);
+			else if(~((|opIner)|(|opCsrr))) stop(0);
+		end
 	end
 
 endmodule

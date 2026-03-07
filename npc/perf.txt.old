@@ -1,0 +1,155 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 107K of event 'cpu-clock:upppH'
+# Event count (approx.): 26981000000
+#
+# Children      Self  Command          Shared Object         Symbol                                                                                   
+# ........  ........  ...............  ....................  .........................................................................................
+#
+    28.86%    28.86%  ysyx_26020046_r  libc.so.6             [.] pthread_mutex_trylock@@GLIBC_2.34
+            |          
+            |--28.09%--0
+            |          pthread_mutex_trylock@@GLIBC_2.34
+            |          
+             --0.74%--Vysyx_26020046_rv32i::eval_step()
+                       pthread_mutex_trylock@@GLIBC_2.34
+
+    28.15%     0.00%  ysyx_26020046_r  [unknown]             [.] 0000000000000000
+            |
+            ---0
+               |          
+                --28.09%--pthread_mutex_trylock@@GLIBC_2.34
+
+    20.28%    20.28%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] Vysyx_26020046_rv32i___024root___ico_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+            |          
+            |--10.54%--0x73792f6564697572
+            |          Vysyx_26020046_rv32i___024root___ico_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+            |          
+            |--5.98%--0x725f363430303230
+            |          Vysyx_26020046_rv32i___024root___ico_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+            |          
+             --3.42%--Vysyx_26020046_rv32i___024root___ico_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+
+    18.51%     5.59%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] Vysyx_26020046_rv32i___024root___eval(Vysyx_26020046_rv32i___024root*)
+            |          
+            |--14.63%--Vysyx_26020046_rv32i___024root___eval(Vysyx_26020046_rv32i___024root*)
+            |          |          
+            |           --12.71%--Vysyx_26020046_rv32i___024root___nba_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+            |          
+             --3.88%--0x73792f6564697572
+                       Vysyx_26020046_rv32i___024root___eval(Vysyx_26020046_rv32i___024root*)
+
+    14.55%    14.55%  ysyx_26020046_r  libc.so.6             [.] pthread_mutex_unlock@@GLIBC_2.2.5
+            |
+            ---pthread_mutex_unlock@@GLIBC_2.2.5
+
+    14.42%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x73792f6564697572
+            |
+            ---0x73792f6564697572
+               |          
+               |--10.54%--Vysyx_26020046_rv32i___024root___ico_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+               |          
+                --3.88%--Vysyx_26020046_rv32i___024root___eval(Vysyx_26020046_rv32i___024root*)
+
+    13.02%    13.02%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] Vysyx_26020046_rv32i___024root___nba_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+            |          
+             --12.71%--Vysyx_26020046_rv32i___024root___eval(Vysyx_26020046_rv32i___024root*)
+                       Vysyx_26020046_rv32i___024root___nba_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+
+     5.98%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x725f363430303230
+            |
+            ---0x725f363430303230
+               Vysyx_26020046_rv32i___024root___ico_sequent__TOP__0(Vysyx_26020046_rv32i___024root*)
+
+     4.93%     4.93%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] MemRead(unsigned int, memReadMode)
+            |          
+             --4.85%--MemRead(unsigned int, memReadMode)
+
+     3.98%     3.98%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] minirvStep()
+            |
+            ---minirvStep()
+
+     3.18%     0.71%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] Vysyx_26020046_rv32i::eval_step()
+            |
+            ---Vysyx_26020046_rv32i::eval_step()
+               |          
+               |--1.16%--VlDeleter::deleteAll()
+               |          
+               |--0.74%--pthread_mutex_trylock@@GLIBC_2.34
+               |          
+                --0.57%--pthread_mutex_trylock@plt
+
+     2.00%     2.00%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] VerilatedThreadMsgQueue::flush(VerilatedEvalMsgQueue*)
+            |          
+            |--1.15%--VerilatedThreadMsgQueue::flush(VerilatedEvalMsgQueue*)
+            |          
+             --0.85%--Verilated::endOfEval(VerilatedEvalMsgQueue*)
+                       VerilatedThreadMsgQueue::flush(VerilatedEvalMsgQueue*)
+
+     1.74%     1.74%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] VlDeleter::deleteAll()
+            |          
+            |--1.16%--Vysyx_26020046_rv32i::eval_step()
+            |          VlDeleter::deleteAll()
+            |          
+             --0.58%--VlDeleter::deleteAll()
+
+     1.67%     0.82%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] Verilated::endOfEval(VerilatedEvalMsgQueue*)
+            |
+            ---Verilated::endOfEval(VerilatedEvalMsgQueue*)
+               |          
+                --0.85%--VerilatedThreadMsgQueue::flush(VerilatedEvalMsgQueue*)
+
+     0.96%     0.96%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] checkWp()
+            |
+            ---checkWp()
+
+     0.57%     0.57%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] pthread_mutex_trylock@plt
+            |
+            ---Vysyx_26020046_rv32i::eval_step()
+               pthread_mutex_trylock@plt
+
+     0.37%     0.37%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] NpcsdbCheck()
+     0.33%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x76725f3634303032
+     0.31%     0.31%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] NpcTraceWrite(unsigned int, unsigned int, unsigned int)
+     0.27%     0.27%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] minirvRun(unsigned int)
+     0.26%     0.26%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] pmem_read
+     0.22%     0.22%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] pmem_write
+     0.19%     0.19%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] NpcTraceMtrace(char const*, ...)
+     0.17%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x757269622f656d6f
+     0.14%     0.14%  ysyx_26020046_r  libc.so.6             [.] __GI___libc_write
+     0.07%     0.07%  ysyx_26020046_r  libc.so.6             [.] putchar
+     0.06%     0.06%  ysyx_26020046_r  libc.so.6             [.] _IO_fflush
+     0.03%     0.03%  ysyx_26020046_r  libc.so.6             [.] _IO_file_write@@GLIBC_2.2.5
+     0.02%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x00007f77fbc423e0
+     0.02%     0.02%  ysyx_26020046_r  libc.so.6             [.] _IO_do_write@@GLIBC_2.2.5
+     0.02%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x00000001000349bb
+     0.01%     0.01%  ysyx_26020046_r  libc.so.6             [.] _IO_file_sync@@GLIBC_2.2.5
+     0.01%     0.01%  ysyx_26020046_r  libc.so.6             [.] _IO_file_overflow@@GLIBC_2.2.5
+     0.01%     0.01%  ysyx_26020046_r  libc.so.6             [.] __GI___pthread_disable_asynccancel
+     0.01%     0.01%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] pthread_mutex_unlock@plt
+     0.01%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x0000578a6a92eeb0
+     0.01%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x69757269622f656d
+     0.01%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x0000000100000000
+     0.00%     0.00%  ysyx_26020046_r  libc.so.6             [.] __GI___pthread_enable_asynccancel
+     0.00%     0.00%  ysyx_26020046_r  libc.so.6             [.] __overflow
+     0.00%     0.00%  ysyx_26020046_r  ysyx_26020046_rv32i   [.] NpcDifftestCheck(unsigned int)
+     0.00%     0.00%  ysyx_26020046_r  ld-linux-x86-64.so.2  [.] _dl_lookup_symbol_x
+     0.00%     0.00%  ysyx_26020046_r  libc.so.6             [.] clock_gettime@@GLIBC_2.17
+     0.00%     0.00%  ysyx_26020046_r  ld-linux-x86-64.so.2  [.] dl_main
+     0.00%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x0000000000000040
+     0.00%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x0000000000031602
+     0.00%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x000000000021ddc0
+     0.00%     0.00%  ysyx_26020046_r  ld-linux-x86-64.so.2  [.] do_lookup_x
+     0.00%     0.00%  ysyx_26020046_r  ld-linux-x86-64.so.2  [.] _dl_sysdep_start
+     0.00%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x00007f77fb9d2130
+     0.00%     0.00%  ysyx_26020046_r  [unknown]             [.] 0x00007f77fba7a8e8
+     0.00%     0.00%  ysyx_26020046_r  libc.so.6             [.] __mmap
+     0.00%     0.00%  ysyx_26020046_r  libc.so.6             [.] __strlen_avx2
+
+
+#
+# (Tip: Profiling branch (mis)predictions with: perf record -b / perf report)
+#
