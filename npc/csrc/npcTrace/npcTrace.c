@@ -118,28 +118,30 @@ void NpcTraceMtrace(const char *format, ...){
 }
 
 void NpcTraceFtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
+	#define FTRACE_COUNT_MAX 10
+	#define FTRACE_COUNT_ULM true
 	// printf("pc=%x incode=%x dnpc=%x incode&0x7FU=%x incode&0xF80U=%x ret=%x call1=%x call2=%x call=%x\n",pc,incode,dnpc,incode&0x7FU,incode&0xF80U,incode==0x00008067,((incode&0x7FU)==0x67U),((incode&0xF80U)==0x80U),((incode&0x7F)==0x67)&&((incode&0xF80)==0x80));
 	static uint32_t ftraceCount=0;
 	if(incode==0x00008067){
-		// printf(">");
-		// printf("ret\n");
+		// printf("ret");
 		fprintf(npctraceFtraceFp,"0x%8x: ",pc);
-		for(int i=1;i<ftraceCount&&ftraceCount>=0;i++){
+		for(int i=1;(i<ftraceCount)&&(ftraceCount>=0)&&((i<FTRACE_COUNT_MAX)||FTRACE_COUNT_ULM);i++){
 			fprintf(npctraceFtraceFp,"\t");
 		}
 		ftraceCount--;
 		fprintf(npctraceFtraceFp,"ret [%s]\n",getFuncName(pc));
 		fflush(npctraceFtraceFp);
-	}else if(((incode&0x7F)==0x67)&&((incode&0xF80)==0x80)){
-		// printf(">");
-		// printf("call\n");
+		// printf(">\n");
+	}else if((((incode&0x7F)==0x67)||((incode&0x7F)==0x6F))&&((incode&0xF80)==0x80)){
+		// printf("call");
 		fprintf(npctraceFtraceFp,"0x%8x: ",pc);
-		for(int i=0;i<ftraceCount&&ftraceCount>=0;i++){
+		for(int i=0;(i<ftraceCount)&&(ftraceCount>=0)&&((i<FTRACE_COUNT_MAX)||FTRACE_COUNT_ULM);i++){
 			fprintf(npctraceFtraceFp,"\t");
 		}
 		ftraceCount++;
 		fprintf(npctraceFtraceFp,"call[%s@0x%8x]\n",getFuncName(dnpc),dnpc);
 		fflush(npctraceFtraceFp);
+		// printf(">\n");
 	}
 }
 void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc){

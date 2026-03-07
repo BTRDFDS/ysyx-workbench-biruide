@@ -106,8 +106,8 @@ clean:
 	rm -rf bin/* build/*
 
 run:bin/$(tF)
-# 	./bin/$(tF) $(ARG) $(xEb) >log.txt
-	./bin/$(tF) $(ARG) $(xEb) > log/$(tF).log
+	./bin/$(tF) $(ARG) $(xEb)
+# 	./bin/$(tF) $(ARG) $(xEb) > log/$(tF).log
 sdb:bin/$(tF)
 	./bin/$(tF) $(ARG) $(xEb)
 dft:bin/$(tF)

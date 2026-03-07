@@ -30,15 +30,16 @@ svScope scope;//作用域
     #define IfDebug(...) ((void)0)
 #endif
 
-#define memSize 33554432
+#define memSize 0x8000000
 uint8_t mem[memSize];
 uint32_t runStep,pc,code;//运行步数
 timespec startTime;//开始时间
 bool hasEbreak=false;//是否遇到ebreak
 int result=-1;//返回值
+enum memReadMode{memReadRESET,memReadSTEP,memReadREAD,memReadWRITE,memReadSDB};
 
-uint32_t MemRead(uint32_t addr){//读取4个字节
-	if(addr<ADDR_RESET|((addr-ADDR_RESET+3)>=memSize)){printf("err addr %x@%x %d\n",addr,pc,(addr-ADDR_RESET)>>2);exit(-1);}
+uint32_t MemRead(uint32_t addr,memReadMode mode){//读取4个字节
+	if(addr<ADDR_RESET|((addr-ADDR_RESET+3)>=memSize)){printf("err addr=%x@%x %x at %x\n",addr,pc,(addr-ADDR_RESET),mode);exit(-1);}
 	uint32_t temp=	((uint32_t)mem[addr-ADDR_RESET])|
 					(((uint32_t)mem[addr-ADDR_RESET+1])<<8)|
 					(((uint32_t)mem[addr-ADDR_RESET+2])<<16)|
@@ -59,7 +60,7 @@ uint32_t NpcsdbGetReg(uint32_t addr){
     return getReg(addr);
 }
 uint32_t NpcsdbReadMem(uint32_t addr){
-	return MemRead(addr);
+	return MemRead(addr,memReadSDB);
 }
 void NpcsdbRun(uint32_t times){
 	minirvRun(times);
@@ -83,15 +84,15 @@ extern "C" int pmem_read(int raddr) {//TODO
 		NpcTraceMtrace("%d\n",time);
 		return time;
 	}
-	if(((((raddrX-ADDR_RESET)>>2)>=memSize)|raddrX<ADDR_RESET)|(raddrX==0)){//超出mem
+	if(raddrX<ADDR_RESET|((raddrX-ADDR_RESET+3)>=memSize)){//超出mem
 		IfDebug(printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddrX,raddr,pc,runStep););
 		return 0;
 	}
 
 	NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddrX);
-	NpcTraceMtrace("%x\n",MemRead(raddrX));//TODO
+	NpcTraceMtrace("%x\n",MemRead(raddrX,memReadREAD));//TODO
 	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddrX-ADDR_RESET),(raddrX-ADDR_RESET)>>2,mem[(raddrX-ADDR_RESET)>>2]););
-	return MemRead(raddrX);//TODO
+	return MemRead(raddrX,memReadREAD);//TODO
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
@@ -102,37 +103,24 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,waddrX,wdata);
 		return;
 	}
-	if((((waddrX-ADDR_RESET)>>2)>memSize|waddrX<=ADDR_RESET)|(waddrX==0)){
+	if(waddrX<ADDR_RESET|((waddrX-ADDR_RESET+3)>=memSize)){
 		IfDebug(printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,ADDR_RESET,memSize+ADDR_RESET););
+		printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,ADDR_RESET,memSize+ADDR_RESET);exit(-1);
 		return;
 	}
 	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,mem[(waddr-ADDR_RESET)>>2],wdata,wmask););//TODO
 
-	NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,waddrX,wdata,wmask);
-	// uint32_t mask1=0xffffffff;
-	// uint32_t data=wdata;
-	// switch(wmask&0x0f){
-	// 	case 0b0001:mask1=0xffffff00;data=data&0x00ff;data=data    ;break;
-	// 	case 0b0010:mask1=0xffff00ff;data=data&0x00ff;data=data<< 8;break;
-	// 	case 0b0100:mask1=0xff00ffff;data=data&0x00ff;data=data<<16;break;
-	// 	case 0b1000:mask1=0x00ffffff;data=data&0x00ff;data=data<<24;break;
-	// 	case 0b0011:mask1=0xffff0000;data=data&0xffff;data=data    ;break;
-	// 	case 0b1100:mask1=0x0000ffff;data=data&0xffff;data=data<<16;break;
-	// 	case 0b1111:mask1=0x00000000;data=data       ;data=data    ;break;
-	// 	default    :mask1=0xffffffff;data=data&0x0000;data=       0;break;
-	// }
-	// uint32_t temp=mem[(waddr-ADDR_RESET)>>2];//TODO
-	// temp&=mask1;
-	// temp|=data;
-	// mem[(waddr-ADDR_RESET)>>2]=temp;
+	NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,waddrX,MemRead(waddrX,memReadWRITE),wmask);
 	for(int i=0;i<4;i++){
 		if((wmask&0x1)==1){
-			mem[waddrX-ADDR_RESET+i]=wdata&0xff;
+			uint32_t addr=(waddrX-ADDR_RESET+i);
+			if(addr>=memSize){printf("err addr waddrX=%x addr=%x @%x %d\n",waddrX,addr,pc,runStep);exit(-1);}
+			mem[addr]=wdata&0xff;
 			wdata=wdata>>8;
 			wmask=wmask>>1;
 		}
 	}
-	NpcTraceMtrace(" become 0x%x\n",MemRead(waddrX));
+	NpcTraceMtrace(" become 0x%x\n",MemRead(waddrX,memReadWRITE));
 	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,mem[(waddr-ADDR_RESET)>>2]););
 }
 extern "C" void stop(unsigned char eb){
@@ -200,7 +188,7 @@ void minirvReset(){
 	top->clk=1;top->reset=1;top->eval();
 
 	pc=top->pc;
-	code=MemRead(pc);
+	code=MemRead(pc,memReadRESET);
 	top->code=code;
 	top->clk=0;top->reset=0;top->eval();
 
@@ -212,7 +200,7 @@ void minirvReset(){
 
 void minirvStep(){
 	pc=top->pc;
-	code=MemRead(pc);
+	code=MemRead(pc,memReadSTEP);
 	top->code=code;
 	uint32_t nPc=pc;
 	uint32_t nCode=top->code;
@@ -224,7 +212,7 @@ void minirvStep(){
 	pc=top->pc;
 	// printf("step begin 3\n");
 	// printf("pc=%x\n",pc);
-	code=MemRead(pc);
+	code=MemRead(pc,memReadSTEP);
 	top->code=code;
 	// printf("step begin 2\n");
 	top->clk=0;top->eval();

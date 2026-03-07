@@ -273,6 +273,35 @@ void test_printf(){
 
     printf(" printf test maybe \033[1;32mPASS\033[0m,please check output\n");
 }
+
+void test_csrr(){
+	uint32_t temp;
+	asm volatile("csrr %0, mcycle"    : "=r"(temp));printf("mcycle:   %x\n", temp);
+	asm volatile("csrr %0, mcycleh"   : "=r"(temp));printf("mcycleh:  %x\n", temp);
+	asm volatile("csrr %0, mvendorid" : "=r"(temp));printf("mvendorid:%x\n", temp);
+	asm volatile("csrr %0, marchid"   : "=r"(temp));printf("marchid:  %d\n", temp);
+	asm volatile("csrr %0, mcycle"    : "=r"(temp));printf("mcycle:   %x\n", temp);
+	asm volatile("csrr %0, mcycleh"   : "=r"(temp));printf("mcycleh:  %x\n", temp);
+	uint32_t time[10];
+	asm volatile("csrr %0, mcycle"  : "=r"(time[0]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[1]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[2]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[3]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[4]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[5]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[6]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[7]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[8]));
+	asm volatile("csrr %0, mcycle"  : "=r"(time[9]));
+	printf("time: %x %x %x %x %x %x %x %x %x %x\n", time[0], time[1], time[2], time[3], time[4], time[5], time[6], time[7], time[8], time[9]);
+	for(int i=0;i<9;i++){
+		if(time[i+1]-time[i]!=2){//会有压栈，需要2
+			printf("csrr test maybe \033[1;31mFAIL\033[0m\n");
+			assert(0);
+		}
+	}
+	printf(" csrr test maybe \033[1;32mPASS\033[0m,please check output\n");
+}
 int main() {
 	if(BEGIN<=0){
 		printf("BEGIN<=0\n");
@@ -289,6 +318,7 @@ int main() {
 	test_sprintf();
 	test_printf();
 
+	test_csrr();
 	printf("\033[1;32m ALL klib-tests PASS \033[0m\n");
 	return 0;
 }
