@@ -58,6 +58,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     uintptr_t stack_aligned = (uintptr_t)stack_addr & ~0xf;
     uintptr_t stack_top = stack_aligned;
     stack_top -= sizeof(contextUseArg);
+    stack_top -= 32;
     // contextUseArg arg;
     contextUseArg *arg = (contextUseArg *)stack_top;
     arg->tentry = tentry;
