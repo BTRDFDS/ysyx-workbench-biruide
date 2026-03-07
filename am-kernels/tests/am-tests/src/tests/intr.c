@@ -19,10 +19,13 @@ void hello_intr() {
   printf("  t = timer, d = device, y = yield\n");
   io_read(AM_INPUT_CONFIG);
   iset(1);
-  while (1) {
+  // while (1) {
+  for(int i=0;i<5;i++){
+    // putch('i');
     for (volatile int i = 0; i < 10000; i++) ;//10000000
     // printf("into yield\n");
     // putch('\n');
     yield();
   }
+    assert(0);
 }
