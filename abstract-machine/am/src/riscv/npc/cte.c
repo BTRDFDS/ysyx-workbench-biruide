@@ -34,7 +34,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   // return NULL;
   // uintptr_t ctx_addr = (uintptr_t)kstack.end - sizeof(Context);
-  // ctx_addr = ctx_addr & ~(uintptr_t)0xF;
+  // // ctx_addr = ctx_addr & ~(uintptr_t)0xF;
   // Context *c = (Context *)ctx_addr;
   Context *c = (Context *)kstack.end - 1;
 
