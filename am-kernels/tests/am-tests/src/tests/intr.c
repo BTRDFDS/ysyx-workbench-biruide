@@ -22,7 +22,7 @@ void hello_intr() {
   while (1) {
     for (volatile int i = 0; i < 10000000; i++) ;//10000000
     // printf("into yield\n");
-    // putch('\n');
+    putch('\n');
     yield();
   }
 }
