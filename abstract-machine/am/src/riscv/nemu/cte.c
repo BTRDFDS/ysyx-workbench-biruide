@@ -44,7 +44,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
   // c->gpr[2] = ctx_addr;
   c->gpr[2] = (uintptr_t)kstack.end;
   c->gpr[10]= (uintptr_t)arg;
-
+  c->pdir=NULL;
     return c;
 }
 
