@@ -58,15 +58,18 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     uintptr_t stack_aligned = (uintptr_t)stack_addr & ~0xf;
     uintptr_t stack_top = stack_aligned;
     stack_top -= sizeof(contextUseArg);
-    stack_top -= 32;
-    // contextUseArg arg;
     contextUseArg *arg = (contextUseArg *)stack_top;
+    // uintptr_t arg_addr = stack_aligned-sizeof(contextUseArg);
+    // uintptr_t stack_top = arg_addr&~0xf;
+    // contextUseArg *arg = (contextUseArg *)arg_addr;
     arg->tentry = tentry;
     arg->parameter = parameter;
     arg->texit = texit;
     Area kstack;
     kstack.start  = (void*)stack_aligned;
     kstack.end    = (void*)stack_top;
+    // kstack.start  = (void*)stack_top;
+    // kstack.end    = (void*)stack_aligned;
     // printf("rt_hw_stack_init\n");
     return (rt_uint8_t *)kcontext(kstack, contextUseFun, arg);
   }
