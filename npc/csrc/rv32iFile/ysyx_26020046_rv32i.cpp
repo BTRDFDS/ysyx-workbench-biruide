@@ -100,6 +100,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	uint32_t waddrX=(uint32_t)waddr;
 	if(waddrX==0x10000000){
 		printf("%c",wdata);
+		fflush(stdout);
 		// printf("1");exit(-1);
 		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,waddrX,wdata);
 		return;
