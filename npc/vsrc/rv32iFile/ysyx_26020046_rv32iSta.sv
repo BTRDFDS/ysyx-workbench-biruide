@@ -54,11 +54,11 @@
 	// } opCsrr_t;
 
 
-module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,addr,mask);
+module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,addrJ,addrM,mask);
 	// import rv32iBasis::*;
 	input logic clk,reset;
 	input word_t code,pmem_read;
-	output word_t pc,pmem_write,addr;
+	output word_t pc,pmem_write,addrJ,addrM;
 	output logic stop,eb;
 	output logic [3:0] mask;
 
@@ -195,7 +195,7 @@ module ysyx_26020046_rv32iIDC(code,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIcod,o
 	end
 
 endmodule
-module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun);
+module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addrJ,addrM,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun);
 	// import rv32iBasis::*;
 	input word_t oR1,oR2,pc,imm,data;
 	input opIcod_t opIcod;
@@ -203,7 +203,7 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,
 	input opCode_t opCode;
 	input opBfun_t opBfun;
 	input opLfun_t opLfun;
-	output word_t addr,iRd;
+	output word_t addrJ,addrM,iRd;
 	output logic enBfun;
 
 	word_t result;
@@ -215,12 +215,12 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,
 
 	always_comb begin : calculate
 		unique case('1)
-			opCode.Lui	:result=imm;
+			// opCode.Lui	:result=imm;
 			opCode.Auipc:result=imm+pc;
-			opCode.Jal	:result=imm+pc;
-			opCode.Jalr	:result=imm+oR1;
-			opCode.Bfun	:result=imm+pc;
-			opCode.Mfun	:result=imm+oR1;
+			// opCode.Jal	:result=imm+pc;
+			// opCode.Jalr	:result=imm+oR1;
+			// opCode.Bfun	:result=imm+pc;
+			// opCode.Mfun	:result=imm+oR1;
 			opIcod.Addi	:result=imm+oR1;
 			opIcod.Slti	:result=  $signed(oR1) <  $signed(imm)?1:0;
 			opIcod.Sltiu:result=$unsigned(oR1) <$unsigned(imm)?1:0;
@@ -256,7 +256,17 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,
 		endcase
 	end
 
-	assign addr=(opCode.Mfun|opCode.Jal|opCode.Jalr|opCode.Bfun)?result:0;
+	// assign addr=(opCode.Mfun|opCode.Jal|opCode.Jalr|opCode.Bfun)?result:0;
+	assign addrM=imm+oR1;
+	always_comb begin : J_addr
+		unique case('1)
+			opCode.Jal	:addrJ=imm+pc;
+			opCode.Jalr	:addrJ=addrM;
+			opCode.Bfun	:addrJ=imm+pc;
+			// opCode.Mfun	:addrJ=imm+oR1;
+			default		:addrJ='0;
+		endcase
+	end
 	always_comb begin :choose
 		unique case('1)
 			choRes	:iRd=result;
@@ -268,8 +278,8 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,
 	end
 
 endmodule
-module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enBfun,enJfun,opLfun,opSfun,data,pc,pmem_read,pmem_write,mask);
-	input word_t addr,oR2;
+module ysyx_26020046_rv32iLSU(clk,reset,addrJ,oR2,enBfun,enJfun,opLfun,opSfun,data,pc,pmem_read,pmem_write,mask);
+	input word_t addrJ,oR2;
 	input logic clk,reset,enBfun,enJfun;
 	input opLfun_t opLfun;
 	input opSfun_t opSfun;
@@ -294,19 +304,23 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enBfun,enJfun,opLfun,opSfun,dat
 //l处理
 
 	always_comb begin : choose_date_input
-		unique case('1)
-			opLfun.Lb	:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
-			opLfun.Lh	:data={{16{iRAM[15]}},iRAM[15: 0]};
-			opLfun.Lw	:data=iRAM;
-			opLfun.Lbu	:data={{24{1'b0}},iRAM[ 7: 0]};
-			opLfun.Lhu	:data={{16{1'b0}},iRAM[15: 0]};
-			default		:data=0;
-		endcase
+		if(opLfun.Lw)begin
+			data=iRAM;
+		end else begin
+			unique case('1)
+				opLfun.Lb	:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
+				opLfun.Lh	:data={{16{iRAM[15]}},iRAM[15: 0]};
+				// opLfun.Lw	:data=iRAM;
+				opLfun.Lbu	:data={{24{1'b0}},iRAM[ 7: 0]};
+				opLfun.Lhu	:data={{16{1'b0}},iRAM[15: 0]};
+				default		:data=0;
+			endcase			
+		end
 	end
 
 	always_ff @(posedge clk) begin : pc_write
 		if(reset) pc<=`PC_RESET;
-		else if(enJfun|enBfun) pc<=addr;
+		else if(enJfun|enBfun) pc<=addrJ;
 		else pc<=pc+4;
 	end
 
