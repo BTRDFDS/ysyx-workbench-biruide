@@ -81,10 +81,10 @@ module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,add
 
 endmodule
 
-module ysyx_26020046_rv32iIDC(code,clk,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun);
+module ysyx_26020046_rv32iIDC(code,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun);
 	// import rv32iBasis::*;
 	input word_t code;
-	input logic clk,reset;
+	input logic reset;
 	output logic enJfun,stop,eb;
 	output word_t imm;
 	output reg_t cRd,cR1,cR2;
@@ -166,78 +166,33 @@ module ysyx_26020046_rv32iIDC(code,clk,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIc
 	assign opIner.opU	=(opCode.Lui)|(opCode.Auipc);
 
 	always_comb begin : choose_imm
-		if(opIner.Ebreak)begin
 			unique case('1)
-				opIner.opI		:imm=opImmr.immI;
-				opIner.opU		:imm=opImmr.immU;
-				opIner.opS		:imm=opImmr.immS;
-				opIner.opB		:imm=opImmr.immB;
-				opIner.opJ		:imm=opImmr.immJ;
-				default   		:imm='0;
+			opIner.opI:imm=opImmr.immI;
+			opIner.opU:imm=opImmr.immU;
+			opIner.opS:imm=opImmr.immS;
+			opIner.opB:imm=opImmr.immB;
+			opIner.opJ:imm=opImmr.immJ;
+			default   :imm='0;
 			endcase
-		end else begin
-			imm='0;
-		end
 	end
-	// always_comb begin : choose_imm
-	// 	unique case('1)
-	// 		|opIcod		,|opLfun,		opCode.Jalr	:imm=opImmr.immI;
-	// 		opCode.Lui	,opCode.Auipc				:imm=opImmr.immU;
-	// 		|opSfun									:imm=opImmr.immS;
-	// 		|opBfun									:imm=opImmr.immB;
-	// 		opCode.Jal								:imm=opImmr.immJ;
-	// 		default   								:imm='0;
-	// 	endcase
-	// end
 
-	assign enJfun	=(opCode.Jal)|(opCode.Jalr);
-	// assign cR1	=(opIner.Ebreak)?0:r1;
-	// assign cR2	=(opIner.Ebreak)?0:r2;
-	// assign cRd	=(opIner.Ebreak|opIner.opB|opIner.opS)?'0:rd;
-	always_comb begin
-		if(opIner.Ebreak)begin
-			cR1='0;
-			cR2='0;
-			cRd='0;
-		end else begin
-			cR1=r1;
-			cR2=r2;
-			cRd=(opIner.opB|opIner.opS)?'0:rd;
-		end
-		
-	end
+	assign enJfun=(opCode.Jal)|(opCode.Jalr);
+	assign cR1=r1;
+	assign cR2=r2;
+	assign cRd=(opIner.opB|opIner.opS)?'0:rd;
 
 	always_comb begin : check_ebreak_or_stop
-		if(~reset)begin
-			if(opIner.Ebreak)begin
+		if(opIner.Ebreak&(~reset))begin
 				stop=1;
-				eb	=1;
-			end else if(~((|opIner)))begin
+				eb=1;
+		end else if((~((|opIner)))&(~reset))begin
 				stop=1;
-				eb	=0;
+				eb=0;
 			end else begin
 				stop=0;
-				eb	=0;
-			end
-		end else begin
-			stop=0;
-			eb	=0;
+				eb=0;
 		end
 	end
-	// always_ff@(posedge clk) begin : check_ebreak_or_stop
-	// 	if(~reset)begin
-	// 		if(opIner.Ebreak)begin
-	// 			stop<=1;
-	// 			eb	<=1;
-	// 		end else if(~((|opIner)))begin
-	// 			stop<=1;
-	// 			eb	<=0;
-	// 		end else begin
-	// 			stop<=0;
-	// 			eb	<=0;
-	// 		end
-	// 	end
-	// end
 
 endmodule
 module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun);
