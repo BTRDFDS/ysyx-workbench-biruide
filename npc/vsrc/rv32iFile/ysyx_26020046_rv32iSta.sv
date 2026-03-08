@@ -47,7 +47,7 @@
 	}opImmr_t;
 	typedef struct packed {
 	    logic opI,opU,opS,opB,opJ,opR;
-		logic Ebreak;	
+		// logic Ebreak;
 	} opIner_t;
 	// typedef struct packed {
 	// 	logic Csrrw,Csrrs;
@@ -100,6 +100,7 @@ module ysyx_26020046_rv32iIDC(code,clk,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIc
 	logic [2:0] fun3;
 	logic [6:0] fun7;
 	reg_t r1,r2,rd;
+	logic Ebreak;
 
 	assign fun7	=code[31:25];
 	assign r2	=code[24:20];
@@ -145,28 +146,41 @@ module ysyx_26020046_rv32iIDC(code,clk,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIc
 	assign opRcod.Sra	=(op==`OP_R__)&(fun3==3'b101)&(fun7==7'b0100000);
 	assign opRcod.Or	=(op==`OP_R__)&(fun3==3'b110)&(fun7==7'b0000000);
 	assign opRcod.And	=(op==`OP_R__)&(fun3==3'b111)&(fun7==7'b0000000);
-	assign opIner.Ebreak=(code==`OP_EBREAK);
+	assign Ebreak=(code==`OP_EBREAK);
 	// assign opCsrr.Csrrw=(op==OP_SCR)&(fun3==3'b001);
 	// assign opCsrr.Csrrs=(op==OP_SCR)&(fun3==3'b010);
 
-	assign opCode.Bfun	=(|opBfun);
-	assign opCode.Mfun	=(|opSfun)|(|opLfun);
+	// assign opCode.Bfun	=(|opBfun);
+	// assign opCode.Mfun	=(|opSfun)|(|opLfun);
 	
-	assign opImmr.immI	={{20{code[31]}},code[31:20] };
-	assign opImmr.immS	={{20{code[31]}},code[31:25], code[11:7] };
-	assign opImmr.immB	={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
-	assign opImmr.immJ	={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
-	assign opImmr.immU	={code[31:12],12'b0 };
+	// assign opImmr.immI	={{20{code[31]}},code[31:20] };
+	// assign opImmr.immS	={{20{code[31]}},code[31:25], code[11:7] };
+	// assign opImmr.immB	={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
+	// assign opImmr.immJ	={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
+	// assign opImmr.immU	={code[31:12],12'b0 };
 
-	assign opIner.opI	=(|opIcod)|(|opLfun)|(opCode.Jalr);
-	assign opIner.opR	=(|opRcod);
-	assign opIner.opS	=(|opSfun);
-	assign opIner.opB	=(|opBfun);
-	assign opIner.opJ	=(opCode.Jal);
-	assign opIner.opU	=(opCode.Lui)|(opCode.Auipc);
+	// assign opIner.opI	=(|opIcod)|(|opLfun)|(opCode.Jalr);
+	// assign opIner.opR	=(|opRcod);
+	// assign opIner.opS	=(|opSfun);
+	// assign opIner.opB	=(|opBfun);
+	// assign opIner.opJ	=(opCode.Jal);
+	// assign opIner.opU	=(opCode.Lui)|(opCode.Auipc);
 
 	always_comb begin : choose_imm
-		if(opIner.Ebreak)begin
+		if(Ebreak)begin
+			opCode.Bfun	=(|opBfun);
+			opCode.Mfun	=(|opSfun)|(|opLfun);
+			opImmr.immI	={{20{code[31]}},code[31:20] };
+			opImmr.immS	={{20{code[31]}},code[31:25], code[11:7] };
+			opImmr.immB	={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
+			opImmr.immJ	={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
+			opImmr.immU	={code[31:12],12'b0 };
+			opIner.opI	=(|opIcod)|(|opLfun)|(opCode.Jalr);
+			opIner.opR	=(|opRcod);
+			opIner.opS	=(|opSfun);
+			opIner.opB	=(|opBfun);
+			opIner.opJ	=(opCode.Jal);
+			opIner.opU	=(opCode.Lui)|(opCode.Auipc);
 			unique case('1)
 				opIner.opI		:imm=opImmr.immI;
 				opIner.opU		:imm=opImmr.immU;
@@ -177,25 +191,19 @@ module ysyx_26020046_rv32iIDC(code,clk,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIc
 			endcase
 		end else begin
 			imm='0;
+			opCode.Bfun	='0;
+			opCode.Mfun	='0;
+			opImmr		='0;
+			opIner		='0;
 		end
 	end
-	// always_comb begin : choose_imm
-	// 	unique case('1)
-	// 		|opIcod		,|opLfun,		opCode.Jalr	:imm=opImmr.immI;
-	// 		opCode.Lui	,opCode.Auipc				:imm=opImmr.immU;
-	// 		|opSfun									:imm=opImmr.immS;
-	// 		|opBfun									:imm=opImmr.immB;
-	// 		opCode.Jal								:imm=opImmr.immJ;
-	// 		default   								:imm='0;
-	// 	endcase
-	// end
 
 	assign enJfun	=(opCode.Jal)|(opCode.Jalr);
 	// assign cR1	=(opIner.Ebreak)?0:r1;
 	// assign cR2	=(opIner.Ebreak)?0:r2;
 	// assign cRd	=(opIner.Ebreak|opIner.opB|opIner.opS)?'0:rd;
 	always_comb begin
-		if(opIner.Ebreak)begin
+		if(Ebreak)begin
 			cR1='0;
 			cR2='0;
 			cRd='0;
@@ -207,37 +215,37 @@ module ysyx_26020046_rv32iIDC(code,clk,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIc
 		
 	end
 
-	// always_comb begin : check_ebreak_or_stop
-	// 	if(~reset)begin
-	// 		if(opIner.Ebreak)begin
-	// 			stop=1;
-	// 			eb	=1;
-	// 		end else if(~((|opIner)))begin
-	// 			stop=1;
-	// 			eb	=0;
-	// 		end else begin
-	// 			stop=0;
-	// 			eb	=0;
-	// 		end
-	// 	end else begin
-	// 		stop=0;
-	// 		eb	=0;
-	// 	end
-	// end
-	always_ff@(posedge clk) begin : check_ebreak_or_stop
+	always_comb begin : check_ebreak_or_stop
 		if(~reset)begin
-			if(opIner.Ebreak)begin
-				stop<=1;
-				eb	<=1;
+			if(Ebreak)begin
+				stop=1;
+				eb	=1;
 			end else if(~((|opIner)))begin
-				stop<=1;
-				eb	<=0;
+				stop=1;
+				eb	=0;
 			end else begin
-				stop<=0;
-				eb	<=0;
+				stop=0;
+				eb	=0;
 			end
+		end else begin
+			stop=0;
+			eb	=0;
 		end
 	end
+	// always_ff@(posedge clk) begin : check_ebreak_or_stop
+	// 	if(~reset)begin
+	// 		if(Ebreak)begin
+	// 			stop<=1;
+	// 			eb	<=1;
+	// 		end else if(~((|opIner)))begin
+	// 			stop<=1;
+	// 			eb	<=0;
+	// 		end else begin
+	// 			stop<=0;
+	// 			eb	<=0;
+	// 		end
+	// 	end
+	// end
 
 endmodule
 module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addrJ,addrM,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun);
