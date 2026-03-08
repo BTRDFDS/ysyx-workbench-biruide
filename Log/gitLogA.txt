@@ -1,3 +1,19 @@
+* 7184d79	(2026-03-08 14:31:37 +0800) 是AI+，目前的最优解
+* bbde7fd	(2026-03-08 14:30:55 +0800) A+IC结果
+* 073fee9	(2026-03-08 13:29:24 +0800) I+优化功耗
+* 8c1a511	(2026-03-08 13:08:50 +0800) 补完了优化日志
+* 281a42b	(2026-03-08 12:25:12 +0800) 综合优化效果明显
+* c0f31c4	(2026-03-08 11:39:10 +0800) 进行了拆分，还是不如第一版
+* 2537f6e	(2026-03-08 10:36:47 +0800) 切换回了第一版本，接下来试着拆分ALU
+* 790f6e9	(2026-03-08 09:49:13 +0800) 横批：用第一版
+* e9eb641	(2026-03-07 22:58:07 +0800) todo:进一步综合
+* 8f3dc5f	(2026-03-07 20:22:36 +0800) > run NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  20:22:36 up 12:51,  1 user,  load average: 0.83, 0.56, 0.39
+* ce11a50	(2026-03-07 20:22:36 +0800) > compile NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  20:22:36 up 12:51,  1 user,  load average: 0.73, 0.53, 0.38
+* 4ec76e3	(2026-03-07 18:41:09 +0800) > run NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  18:41:09 up 11:05,  1 user,  load average: 0.45, 0.47, 0.51
+* 9f2f01a	(2026-03-07 18:41:09 +0800) > compile NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  18:41:09 up 11:05,  1 user,  load average: 0.45, 0.47, 0.51
+* 0b1be08	(2026-03-07 18:39:41 +0800) > run NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  18:39:41 up 11:04,  1 user,  load average: 0.06, 0.35, 0.47
+* 750ec34	(2026-03-07 18:39:40 +0800) > compile NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  18:39:40 up 11:04,  1 user,  load average: 0.06, 0.35, 0.47
+* 5730968	(2026-03-07 18:00:10 +0800) 完成了RT-thread的3端测试
 * 6ba42b6	(2026-03-07 17:57:31 +0800) > run NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  17:57:31 up 10:19,  1 user,  load average: 0.42, 0.19, 0.31
 * f0d0f34	(2026-03-07 17:57:31 +0800) > compile NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  17:57:31 up 10:19,  1 user,  load average: 0.42, 0.19, 0.31
 * 3a6fa53	(2026-03-07 17:31:27 +0800) > run NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  17:31:27 up  9:52,  1 user,  load average: 0.93, 0.64, 0.83
