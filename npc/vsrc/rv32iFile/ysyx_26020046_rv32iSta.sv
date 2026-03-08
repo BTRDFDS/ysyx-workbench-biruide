@@ -81,10 +81,10 @@ module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,add
 
 endmodule
 
-module ysyx_26020046_rv32iIDC(code,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun);
+module ysyx_26020046_rv32iIDC(code,clk,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun);
 	// import rv32iBasis::*;
 	input word_t code;
-	input logic reset;
+	input logic reset,clk;
 	output logic enJfun,stop,eb;
 	output word_t imm;
 	output reg_t cRd,cR1,cR2;
@@ -207,37 +207,37 @@ module ysyx_26020046_rv32iIDC(code,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIcod,o
 		
 	end
 
-	always_comb begin : check_ebreak_or_stop
-		if(~reset)begin
-			if(opIner.Ebreak)begin
-				stop=1;
-				eb	=1;
-			end else if(~((|opIner)))begin
-				stop=1;
-				eb	=0;
-			end else begin
-				stop=0;
-				eb	=0;
-			end
-		end else begin
-			stop=0;
-			eb	=0;
-		end
-	end
-	// always_ff@(posedge clk) begin : check_ebreak_or_stop
+	// always_comb begin : check_ebreak_or_stop
 	// 	if(~reset)begin
 	// 		if(opIner.Ebreak)begin
-	// 			stop<=1;
-	// 			eb	<=1;
+	// 			stop=1;
+	// 			eb	=1;
 	// 		end else if(~((|opIner)))begin
-	// 			stop<=1;
-	// 			eb	<=0;
+	// 			stop=1;
+	// 			eb	=0;
 	// 		end else begin
-	// 			stop<=0;
-	// 			eb	<=0;
+	// 			stop=0;
+	// 			eb	=0;
 	// 		end
+	// 	end else begin
+	// 		stop=0;
+	// 		eb	=0;
 	// 	end
 	// end
+	always_ff@(posedge clk) begin : check_ebreak_or_stop
+		if(~reset)begin
+			if(opIner.Ebreak)begin
+				stop<=1;
+				eb	<=1;
+			end else if(~((|opIner)))begin
+				stop<=1;
+				eb	<=0;
+			end else begin
+				stop<=0;
+				eb	<=0;
+			end
+		end
+	end
 
 endmodule
 module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addrJ,addrM,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun);
