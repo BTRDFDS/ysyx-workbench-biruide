@@ -11,6 +11,8 @@
 !.gitignore
 !README.md
 !*.drawio
+!draw/*
+!*.png
 build/
 bin/*
 !vsrc/*
