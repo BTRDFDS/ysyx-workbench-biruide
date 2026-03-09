@@ -10,6 +10,7 @@
 !*.cpp
 !.gitignore
 !README.md
+!*.drawio
 build/
 bin/*
 !vsrc/*
