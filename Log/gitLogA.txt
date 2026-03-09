@@ -1,3 +1,8 @@
+* 485080e	(2026-03-09 17:24:08 +0800) > run NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  17:24:08 up  3:50,  1 user,  load average: 0.79, 0.82, 0.91
+* 7a294d7	(2026-03-09 17:24:08 +0800) > compile NEMU ysyx_26020046 Bi RuiDe Linux LAPTOP-3IAF75LK 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux  17:24:08 up  3:50,  1 user,  load average: 0.79, 0.82, 0.91
+* ff2eace	(2026-03-09 14:00:11 +0800) 进一步
+* e5f095c	(2026-03-09 13:54:55 +0800) 架构图
+* db778a4	(2026-03-08 14:45:34 +0800) 综合比较完成
 * 7184d79	(2026-03-08 14:31:37 +0800) 是AI+，目前的最优解
 * bbde7fd	(2026-03-08 14:30:55 +0800) A+IC结果
 * 073fee9	(2026-03-08 13:29:24 +0800) I+优化功耗
