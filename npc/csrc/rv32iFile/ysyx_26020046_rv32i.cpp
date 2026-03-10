@@ -197,7 +197,7 @@ void minirvReset(){
 	// printf("pc=%x\n",pc);
 	// printf("初始化完成\n");
 	// printf("code=%x\n",top->code);
-	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",pc,MemRead(pc)););
+	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",pc,MemRead(pc,memReadRESET)););
 }
 
 void minirvStep(){
