@@ -42,60 +42,56 @@ package rv32iBasis;
 		logic [4:0] rd;
 		logic [6:0] op;		
 	} code_t;
-	typedef enum logic[3:0] {ADD_,SLL_,SLT_,STLU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
-	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
-	typedef enum logic[1:0] {WRITE,READ_,JUMP_,NCCSR} ALUopCsr_t;
-	typedef enum logic[2:0] {R1I,PCI,CSR,NAD} ALUopADR_t;
-	typedef enum logic[3:0] {NCDA,CAL_,DATA,IMMR,SNPC,CSRR} ALUopCho_t;
-	typedef enum logic[1:0] {IR1,PC_} in1_t;
-	typedef enum logic[1:0] {IR2,IMM} in2_t;
-	typedef struct packed {
-		word_t		im;
-		in1_t		in1;
-		in2_t		in2;
 
-		ALUopCal_t 	cal;
-		ALUopBfu_t	bfu;
-		ALUopADR_t	adr;
-		ALUopCsr_t	csr;
-		ALUopCho_t	cho;
-	} opALU_t;
-	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;//NM插在中间，必要时可以去掉
 	typedef struct packed {
-		logic enS,enL;
-		LSUop_t op;
-	} opLSU_t;
-	typedef enum logic [1:0] {MRET_,ECALL,WIRTE,NCSR} CSRop_t;
+	    logic Add, Sub, Sll, Slt, Sltu, Xor, Srl, Sra, Or, And;
+	} opRcod_t;
 	typedef struct packed {
-		logic [11:0] addr;
-		CSRop_t op;
-	} opCSR_t;
+	    logic Addi, Slti, Sltiu, Xori, Ori, Andi, Slli, Srli, Srai;
+	} opIcod_t;
 	typedef struct packed {
-		word_t mepc,mstatus,mtvec,mcause,mcycle,mcycleh,marchid,mvendorid;
-	} sReg_t;
-	
+	    logic Lui,Auipc,Jal,Jalr,Bfun,Mfun;
+	} opCode_t;
+
 	typedef struct packed {
-		opALU_t ALU;//ALU
-		opLSU_t LSU;//LSU
-		opCSR_t CSR;//CSR
+	    logic Beq, Bne, Blt, Bge, Bltu, Bgeu;
+	} opBfun_t;
+	typedef struct packed {
+	    logic Lb, Lh, Lw, Lbu, Lhu;
+	} opLfun_t;
+	typedef struct packed {
+	    logic Sb, Sh, Sw;
+	} opSfun_t;
+	typedef struct packed {
+		word_t immI,immU,immS,immB,immJ;
+	}opImmr_t;
+	typedef struct packed {
+	    logic opI,opU,opS,opB,opJ,opR;
+	} opIner_t;
+	typedef struct packed {
+		logic Csrrw,Csrrs,Mret,Ecall,Ebreak;
+	} opCsrr_t;
+	typedef struct packed {
+		opIcod_t Icod;
+		opRcod_t Rcod;
+		opCode_t Code;
+		opBfun_t Bfun;
+		opLfun_t Lfun;
+		opSfun_t Sfun;
+		opCsrr_t Csrr;
+		opIner_t Iner;
 	} op_t;
 
-	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
-	typedef struct packed {
-		// logic I,U,S,B,J;
-		imCode_t m;
-		word_t mr;
-	}opImmr_t;
 endpackage
 
-module ysyx_26020046_rv32i(clk,reset,code,pc);
+module ysyx_26020046_rv32iOneHot(clk,reset,code,pc);
 	import rv32iBasis::*;
 	input logic clk,reset;
 	// input word_t code;
 	input code_t code;
 	output word_t pc;
 
-	word_t oR1,oR2,im,data,addr,iRd,iCsr,oCsr;
+	word_t oR1,oR2,imm,data,addr,iRd,iCsr,oCsr;
 	reg_t cRd,cR1,cR2;
 	logic enBfun,enJfun,enCsr,enMret,enEcall;
 	// opCode_t opCode;
@@ -117,7 +113,7 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 `ifdef RV32I_DEBUG
 	always @(posedge clk) begin
 		$display("pc=0x%x code=0x%x reset=%x op=%x fun7=%x",pc,code,reset,code.op,code.fun7);
-		$display("oR1=0x%x oR2=0x%x im=0x%x data=0x%x addr=0x%x iRd=0x%x",oR1,oR2,im,data,addr,iRd);
+		$display("oR1=0x%x oR2=0x%x imm=0x%x data=0x%x addr=0x%x iRd=0x%x",oR1,oR2,imm,data,addr,iRd);
 		$display("cRd=0x%x cR1=0x%x cR2=0x%x",cRd,cR1,cR2);
 		$display("enBfun=%x enJfun=%x",enBfun,enJfun);
 		$display("opCode=%d opIcod=%d opRcod=%d opBfun=%d opLfun=%d opSfun=%d onIner=%d",op.Code,op.Icod,op.Rcod,op.Bfun,op.Lfun,op.Sfun,op.Iner);
@@ -128,13 +124,13 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 
 endmodule
 
-module ysyx_26020046_rv32iIDC(clk,code,reset,enJfun,enMret,enEcall,im,cRd,cR1,cR2,op,enCsr,csrAddr);
+module ysyx_26020046_rv32iIDC(clk,code,reset,enJfun,enMret,enEcall,imm,cRd,cR1,cR2,op,enCsr,csrAddr);
 	import rv32iBasis::*;
 	// input word_t code;
 	input code_t code;
 	input logic clk,reset;
 	output logic enJfun,enMret,enEcall,enCsr;
-	output word_t im;
+	output word_t imm;
 	output reg_t cRd,cR1,cR2;
 	// output opIcod_t opIcod;
 	// output opRcod_t opRcod;
@@ -145,42 +141,72 @@ module ysyx_26020046_rv32iIDC(clk,code,reset,enJfun,enMret,enEcall,im,cRd,cR1,cR
 	// output opCsrr_t opCsrr;
 	output op_t op;
 	output logic [11:0] csrAddr;
-	opImmr_t Im;
+	opImmr_t opImmr;
+	// opIner_t opIner;
+	// logic [6:0] op;
+	// logic [2:0] fun3;
+	// logic [6:0] fun7;
+	// reg_t r1,r2,rd;
 
-	// assign Im.I	={{20{code[31]}},code[31:20] };
-	// assign Im.S	={{20{code[31]}},code[31:25], code[11:7] };
-	// assign Im.B	={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
-	// assign Im.J	={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
-	// assign Im.U	={code[31:12],12'b0 };
-	
-	always_comb begin : ID
-		Im.m=N;
-		op.ALU.in1=IR1;op.ALU.in2=IR2;
-		op.ALU.adr=NAD;op.ALU.cal=NCAL;op.ALU.bfu=NBFU;
-		op.ALU.choCsr=NCCSR;op.ALU.choDat=NCDA;
-		op.LSU.op=NM;op.LSU.enS=0;op.LSU.enL=0;
-		op.CSR.op=NCSR;op.CSR.addr=12'b0;
+	// assign fun7	=code[31:25];
+	// assign r2	=code[24:20];
+	// assign r1	=code[19:15];
+	// assign fun3	=code[14:12];
+	// assign rd	=code[11: 7];
+	// assign op	=code[ 6: 0];
 
-		unique case(code.op)
-			OP_U_I:begin op.ALU.choDat=IMMR;Im.m=U; end//lui
-			OP_U_P:begin op.ALU.cal=ADD_;op.ALU.in1=PC_;op.ALU.in2=IMM;Im.m=U; op.ALU.choDat=CAL_; end//auipc
-			OP_J__:begin op.ALU.adr=PCI;Im.m=J; op.ALU.choDat=SNPC; end//jal
-			OP_I_J:begin op.ALU.adr=R1I;cR1=code.r1;Im.m=I; op.ALU.choDat=SNPC;end//jalr
-			OP_B__:begin op.ALU.adr=PCI;Im.m=B; op.ALU.bfu=code.fun3;end//B系列判断指令
-			OP_I_L:begin op.ALU.adr=PCI;Im.m=I; op.ALU.choDat=DATA;end//l读取系列
-			OP_S__:begin op.ALU.adr=R1I;Im.m=S;end
-		endcase
+	assign op.Code.Lui	=(code.op==OP_U_I);
+	assign op.Code.Auipc=(code.op==OP_U_P);
+	assign op.Code.Jal	=(code.op==OP_J__);
+	assign op.Code.Jalr	=(code.op==OP_I_J)&(code.fun3==3'b000);
+	assign op.Bfun.Beq	=(code.op==OP_B__)&(code.fun3==3'b000);
+	assign op.Bfun.Bne	=(code.op==OP_B__)&(code.fun3==3'b001);
+	assign op.Bfun.Blt	=(code.op==OP_B__)&(code.fun3==3'b100);
+	assign op.Bfun.Bge	=(code.op==OP_B__)&(code.fun3==3'b101);
+	assign op.Bfun.Bltu	=(code.op==OP_B__)&(code.fun3==3'b110);
+	assign op.Bfun.Bgeu	=(code.op==OP_B__)&(code.fun3==3'b111);
+	assign op.Lfun.Lb	=(code.op==OP_I_L)&(code.fun3==3'b000);
+	assign op.Lfun.Lh	=(code.op==OP_I_L)&(code.fun3==3'b001);
+	assign op.Lfun.Lw	=(code.op==OP_I_L)&(code.fun3==3'b010);
+	assign op.Lfun.Lbu	=(code.op==OP_I_L)&(code.fun3==3'b100);
+	assign op.Lfun.Lhu	=(code.op==OP_I_L)&(code.fun3==3'b101);
+	assign op.Sfun.Sb	=(code.op==OP_S__)&(code.fun3==3'b000);
+	assign op.Sfun.Sh	=(code.op==OP_S__)&(code.fun3==3'b001);
+	assign op.Sfun.Sw	=(code.op==OP_S__)&(code.fun3==3'b010);
+	assign op.Icod.Addi	=(code.op==OP_I_A)&(code.fun3==3'b000);
+	assign op.Icod.Slti	=(code.op==OP_I_A)&(code.fun3==3'b010);
+	assign op.Icod.Sltiu=(code.op==OP_I_A)&(code.fun3==3'b011);
+	assign op.Icod.Xori	=(code.op==OP_I_A)&(code.fun3==3'b100);
+	assign op.Icod.Ori	=(code.op==OP_I_A)&(code.fun3==3'b110);
+	assign op.Icod.Andi	=(code.op==OP_I_A)&(code.fun3==3'b111);
+	assign op.Icod.Slli	=(code.op==OP_I_A)&(code.fun3==3'b001)&(code.fun7==7'b0000000);
+	assign op.Icod.Srli	=(code.op==OP_I_A)&(code.fun3==3'b101)&(code.fun7==7'b0000000);
+	assign op.Icod.Srai	=(code.op==OP_I_A)&(code.fun3==3'b101)&(code.fun7==7'b0100000);
+	assign op.Rcod.Add	=(code.op==OP_R__)&(code.fun3==3'b000)&(code.fun7==7'b0000000);
+	assign op.Rcod.Sub	=(code.op==OP_R__)&(code.fun3==3'b000)&(code.fun7==7'b0100000);
+	assign op.Rcod.Sll	=(code.op==OP_R__)&(code.fun3==3'b001)&(code.fun7==7'b0000000);
+	assign op.Rcod.Slt	=(code.op==OP_R__)&(code.fun3==3'b010)&(code.fun7==7'b0000000);
+	assign op.Rcod.Sltu	=(code.op==OP_R__)&(code.fun3==3'b011)&(code.fun7==7'b0000000);
+	assign op.Rcod.Xor	=(code.op==OP_R__)&(code.fun3==3'b100)&(code.fun7==7'b0000000);
+	assign op.Rcod.Srl	=(code.op==OP_R__)&(code.fun3==3'b101)&(code.fun7==7'b0000000);
+	assign op.Rcod.Sra	=(code.op==OP_R__)&(code.fun3==3'b101)&(code.fun7==7'b0100000);
+	assign op.Rcod.Or	=(code.op==OP_R__)&(code.fun3==3'b110)&(code.fun7==7'b0000000);
+	assign op.Rcod.And	=(code.op==OP_R__)&(code.fun3==3'b111)&(code.fun7==7'b0000000);
 	
-		unique case(Im.m)
-			N:op.ALU.im='0;
-			I:op.ALU.im={{20{code[31]}},code[31:20] };
-			S:op.ALU.im={{20{code[31]}},code[31:25], code[11:7] };
-			B:op.ALU.im={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
-			J:op.ALU.im={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
-			U:op.ALU.im={code[31:12],12'b0 };
-		endcase
-	end
+	assign op.Csrr.Ecall	=(code==OP_ECALL);
+	assign op.Csrr.Ebreak	=(code==OP_EBREAK);
+	assign op.Csrr.Mret		=(code==OP_MRET);
+	assign op.Csrr.Csrrw	=(code.op==OP_SCR)&(code.fun3==3'b001);
+	assign op.Csrr.Csrrs	=(code.op==OP_SCR)&(code.fun3==3'b010);
+
+	assign op.Code.Bfun	=(|op.Bfun);
+	assign op.Code.Mfun	=(|op.Sfun)|(|op.Lfun);
 	
+	assign opImmr.immI	={{20{code[31]}},code[31:20] };
+	assign opImmr.immS	={{20{code[31]}},code[31:25], code[11:7] };
+	assign opImmr.immB	={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
+	assign opImmr.immJ	={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
+	assign opImmr.immU	={code[31:12],12'b0 };
 
 	// assign csrAddr	=code[31:20];
 	assign enMret	=op.Csrr.Mret;
@@ -204,25 +230,21 @@ module ysyx_26020046_rv32iIDC(clk,code,reset,enJfun,enMret,enEcall,im,cRd,cR1,cR
 	assign op.Iner.opJ	=(op.Code.Jal);
 	assign op.Iner.opU	=(op.Code.Lui)|(op.Code.Auipc);
 
-	// always_comb begin : choose_imm
-	// 	unique case('1)
-	// 		op.Iner.opI:im=Imm.I;
-	// 		op.Iner.opU:im=Imm.U;
-	// 		op.Iner.opS:im=Imm.S;
-	// 		op.Iner.opB:im=Imm.B;
-	// 		op.Iner.opJ:im=Imm.J;
-	// 		default   :im='0;
-	// 	endcase
-	// end
+	always_comb begin : choose_imm
+		unique case('1)
+			op.Iner.opI:imm=opImmr.immI;
+			op.Iner.opU:imm=opImmr.immU;
+			op.Iner.opS:imm=opImmr.immS;
+			op.Iner.opB:imm=opImmr.immB;
+			op.Iner.opJ:imm=opImmr.immJ;
+			default   :imm='0;
+		endcase
+	end
 
 	assign enJfun=(op.Code.Jal)|(op.Code.Jalr);
-	// assign cR1=code.r1;
-	// assign cR2=code.r2;
-	// assign cRd=(op.Iner.opB|op.Iner.opS)?'0:code.rd;
-	assign cR1=(op.ALU.in1==IR1)?code.r1:'0;
-	assign cR2=(op.ALU.in2==IR2)?code.r2:'0;
-	assign cRd=(op.ALU.choDat==NCDA)?'0:code.rd;
-
+	assign cR1=code.r1;
+	assign cR2=code.r2;
+	assign cRd=(op.Iner.opB|op.Iner.opS)?'0:code.rd;
 
 	import "DPI-C" function void stop(input bit eb);
 	// always_comb begin : check_ebreak_or_stop
@@ -234,10 +256,10 @@ module ysyx_26020046_rv32iIDC(clk,code,reset,enJfun,enMret,enEcall,im,cRd,cR1,cR
 	end
 
 endmodule
-module ysyx_26020046_rv32iALU(oR1,oR2,pc,im,data,addr,iRd,enBfun,op,oCsr,iCsr);
+module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,op,oCsr,iCsr);
 	import rv32iBasis::*;
 	//
-	input word_t oR1,oR2,pc,im,data;
+	input word_t oR1,oR2,pc,imm,data;
 	// input opIcod_t opIcod;
 	// input opRcod_t opRcod;
 	// input opCode_t opCode;
@@ -263,21 +285,21 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,im,data,addr,iRd,enBfun,op,oCsr,iCsr);
 
 	always_comb begin : calculate
 		unique case('1)
-			op.Code.Lui		:result=im;
-			op.Code.Auipc	:result=im+pc;
-			op.Code.Jal		:result=im+pc;
-			op.Code.Jalr	:result=im+oR1;
-			op.Code.Bfun	:result=im+pc;
-			op.Code.Mfun	:result=im+oR1;
-			op.Icod.Addi	:result=im+oR1;
-			op.Icod.Slti	:result=  $signed(oR1) <  $signed(im)?1:0;
-			op.Icod.Sltiu	:result=$unsigned(oR1) <$unsigned(im)?1:0;
-			op.Icod.Xori	:result=oR1^im;
-			op.Icod.Ori		:result=oR1|im;
-			op.Icod.Andi	:result=oR1&im;
-			op.Icod.Slli	:result=oR1<<im[4:0];
-			op.Icod.Srli	:result=$unsigned(oR1)>> im[4:0];
-			op.Icod.Srai	:result=  $signed(oR1)>>>im[4:0];
+			op.Code.Lui		:result=imm;
+			op.Code.Auipc	:result=imm+pc;
+			op.Code.Jal		:result=imm+pc;
+			op.Code.Jalr	:result=imm+oR1;
+			op.Code.Bfun	:result=imm+pc;
+			op.Code.Mfun	:result=imm+oR1;
+			op.Icod.Addi	:result=imm+oR1;
+			op.Icod.Slti	:result=  $signed(oR1) <  $signed(imm)?1:0;
+			op.Icod.Sltiu	:result=$unsigned(oR1) <$unsigned(imm)?1:0;
+			op.Icod.Xori	:result=oR1^imm;
+			op.Icod.Ori		:result=oR1|imm;
+			op.Icod.Andi	:result=oR1&imm;
+			op.Icod.Slli	:result=oR1<<imm[4:0];
+			op.Icod.Srli	:result=$unsigned(oR1)>> imm[4:0];
+			op.Icod.Srai	:result=  $signed(oR1)>>>imm[4:0];
 			op.Rcod.Add		:result=oR1+oR2;
 			op.Rcod.Sub		:result=oR1-oR2;
 			op.Rcod.Sll		:result=oR1<<oR2[4:0];
@@ -289,14 +311,14 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,im,data,addr,iRd,enBfun,op,oCsr,iCsr);
 			op.Rcod.Or	:result=oR1|oR2;
 			op.Rcod.And	:result=oR1&oR2;
 			op.Csrr.Csrrs:result=oCsr|oR1;
-			op.Csrr.Csrrw:result=oR1;
+			// op.Csrr.Csrrw:result=oR1;
 			op.Csrr.Mret	:result=oCsr+4;
 			op.Csrr.Ecall:result=oCsr;
 			default		:result='0;
 		endcase
 	
 	`ifdef RV32I_DEBUG
-		$display("pc=%x oR1=%x oR2=%x im=%x",pc,oR1,oR2,im);
+		$display("pc=%x oR1=%x oR2=%x imm=%x",pc,oR1,oR2,imm);
 		$strobe("result=%x data=%x",result,data);
 	`endif
 	end
@@ -329,14 +351,14 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,im,data,addr,iRd,enBfun,op,oCsr,iCsr);
 		unique case('1)
 			choRes	:iRd=result;
 			choDat	:iRd=data;
-			choImm	:iRd=im;
+			choImm	:iRd=imm;
 			choNpc	:iRd=pc+4;
 			choCsr	:iRd=oCsr;
 			default	:iRd='0;
 		endcase
 
 `ifdef RV32I_DEBUG
-		$display("res %x dat %x im %x npc %x csr %x",choRes,choDat,choImm,choNpc,choCsr);
+		$display("res %x dat %x imm %x npc %x csr %x",choRes,choDat,choImm,choNpc,choCsr);
 `endif
 	end
 
