@@ -36,6 +36,7 @@ void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to) {
   contextFrom=from;
   contextTo=to;
   yield();
+  // assert(0);
 }
 
 void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread) {

@@ -185,8 +185,8 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 				OP_SCR_:begin//CSR指令
 					unique case(code.fun3)
 						3'b000:begin unique case(code)
-								OP_SCR_MRET__:begin op.CSR.op=MRET_;op.ALU.adr=ECL;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MTVEC;	end
-								OP_SCR_ECALL_:begin op.CSR.op=ECALL;op.ALU.adr=ECL;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MEPC;	end
+								OP_SCR_MRET__:begin op.CSR.op=MRET_;op.ALU.adr=ECL;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MEPC;	end
+								OP_SCR_ECALL_:begin op.CSR.op=ECALL;op.ALU.adr=ECL;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MTVEC;	end
 								OP_SCR_EBREAK:stop(1);
 								default:begin $fatal("ECL unknown op==0x%x",code);stop(0);end
 							endcase end
