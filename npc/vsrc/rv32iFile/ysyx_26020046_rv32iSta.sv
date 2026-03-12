@@ -1,393 +1,741 @@
-`define REG_NUMBER 5
-`define DATA_WIDTH 32
-`define PC_RESET 32'h80000000
-`define OP_I_J	7'b1100111//jalr	  +
-`define OP_I_A	7'b0010011//i运算	 运算器
-`define OP_I_L	7'b0000011//l系列	 +
-`define OP_U_I	7'b0110111//lui	   无
-`define OP_U_P	7'b0010111//auipc	 +
-`define OP_S__	7'b0100011//s系列	 +
-`define OP_B__	7'b1100011//b比较系列 比较
-`define OP_J__	7'b1101111//jal	   +
-`define OP_R__	7'b0110011//r运算	 运算器
+package rv32iBasis;
+// `define RV32I_DEBUG
+	parameter REG_NUMBER= 5;
+	parameter DATA_WIDTH= 32;
+	parameter PC_RESET	= 32'h80000000;
+	parameter OP_I_J	= 7'b1100111;//jalr	  +
+	parameter OP_I_A	= 7'b0010011;//i运算	 运算器
+	parameter OP_I_L	= 7'b0000011;//l系列	 +
+	parameter OP_U_I	= 7'b0110111;//lui	   无
+	parameter OP_U_P	= 7'b0010111;//auipc	 +
+	parameter OP_S__	= 7'b0100011;//s系列	 +
+	parameter OP_B__	= 7'b1100011;//b比较系列 比较
+	parameter OP_J__	= 7'b1101111;//jal	   +
+	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
 
-`define OP_EBREAK	= 32'h00100073
+	parameter OP_SCR_ECALL_	= 32'h00000073;
+	parameter OP_SCR_EBREAK	= 32'h00100073;
+	parameter OP_SCR_MRET__	= 32'h30200073;
 
-`define OP_SCR	= 7'b1110011//错误处理系列
-`define CSR_ADDR_MSTAUS	= 12'h300
-`define CSR_ADDR_MEPC		= 12'h341
-`define CSR_ADDR_MCAUSE	= 12'h342
+	parameter OP_SCR_	= 7'b1110011;//CSR系列
+	parameter CSR_ADDR_MSTAUS	= 12'h300;
+	parameter CSR_ADDR_MTVEC	= 12'h305;
+	parameter CSR_ADDR_MEPC		= 12'h341;
+	parameter CSR_ADDR_MCAUSE	= 12'h342;
+	parameter CSR_ADDR_MCYCLE	= 12'hb00;
+	parameter CSR_ADDR_MCYCLEH	= 12'hb80;
+	parameter CSR_ADDR_MVENDORID= 12'hf11;
+	parameter CSR_ADDR_MARCHID	= 12'hf12;
+	
+
+	parameter MSTATUS_RESET = 32'h1800;
 
 	// parameter OP_FUN7_M		= 7'b0000001;
 
-	typedef logic [`DATA_WIDTH-1:0] word_t;
-	typedef logic [`REG_NUMBER-1:0] reg_t;
+	typedef logic [DATA_WIDTH-1:0] word_t;
+	typedef logic [REG_NUMBER-1:0] reg_t;
+	typedef struct packed {
+		logic [6:0] fun7;
+		logic [4:0] r2;
+		logic [4:0] r1;
+		logic [2:0] fun3;
+		logic [4:0] rd;
+		logic [6:0] op;		
+	} code_t;
+	typedef enum logic[3:0] {ADD_,SLL_,SLT_,SLTU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
+	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
+	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
+	typedef enum logic[2:0] {R1I,PCI,ECL,ERE,NAD} ALUopADR_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef struct packed {
+		word_t		im;
+		in1_t		in1;
+		in2_t		in2;
+		logic enJcod;
 
+		ALUopCal_t 	cal;
+		ALUopBfu_t	bfu;
+		ALUopADR_t	adr;
+		ALUopCsr_t	csr;
+		ALUopCho_t	cho;
+	} opALU_t;
+	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;//NM插在中间，必要时可以去掉
 	typedef struct packed {
-	    logic Add, Sub, Sll, Slt, Sltu, Xor, Srl, Sra, Or, And;
-	} opRcod_t;
+		logic enS,enL,enJfun;
+		LSUop_t op;
+	} opLSU_t;
+	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
 	typedef struct packed {
-	    logic Addi, Slti, Sltiu, Xori, Ori, Andi, Slli, Srli, Srai;
-	} opIcod_t;
+		logic [11:0] addr;
+		CSRop_t op;
+	} opCSR_t;
+	
 	typedef struct packed {
-	    logic Lui,Auipc,Jal,Jalr,Bfun,Mfun;
-	} opCode_t;
+		opALU_t ALU;//ALU
+		opLSU_t LSU;//LSU
+		opCSR_t CSR;//CSR
+	} op_t;
 
-	typedef struct packed {
-	    logic Beq, Bne, Blt, Bge, Bltu, Bgeu;
-	} opBfun_t;
-	typedef struct packed {
-	    logic Lb, Lh, Lw, Lbu, Lhu;
-	} opLfun_t;
-	typedef struct packed {
-	    logic Sb, Sh, Sw;
-	} opSfun_t;
-	typedef struct packed {
-		word_t immI,immU,immS,immB,immJ;
-	}opImmr_t;
-	typedef struct packed {
-	    logic opI,opU,opS,opB,opJ,opR;
-		// logic Ebreak;
-	} opIner_t;
+	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
 	// typedef struct packed {
-	// 	logic Csrrw,Csrrs;
-	// } opCsrr_t;
+	// 	// logic I,U,S,B,J;
+	// 	imCode_t m;
+	// 	word_t mr;
+	// }opImmr_t;
+endpackage
 
+module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,addr,mask,enW);
+	parameter REG_NUMBER= 5;
+	parameter DATA_WIDTH= 32;
+	parameter PC_RESET	= 32'h80000000;
+	parameter OP_I_J	= 7'b1100111;//jalr	  +
+	parameter OP_I_A	= 7'b0010011;//i运算	 运算器
+	parameter OP_I_L	= 7'b0000011;//l系列	 +
+	parameter OP_U_I	= 7'b0110111;//lui	   无
+	parameter OP_U_P	= 7'b0010111;//auipc	 +
+	parameter OP_S__	= 7'b0100011;//s系列	 +
+	parameter OP_B__	= 7'b1100011;//b比较系列 比较
+	parameter OP_J__	= 7'b1101111;//jal	   +
+	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
 
-module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,addrJ,addrM,mask);
-	// import rv32iBasis::*;
+	parameter OP_SCR_ECALL_	= 32'h00000073;
+	parameter OP_SCR_EBREAK	= 32'h00100073;
+	parameter OP_SCR_MRET__	= 32'h30200073;
+
+	parameter OP_SCR_	= 7'b1110011;//CSR系列
+	parameter CSR_ADDR_MSTAUS	= 12'h300;
+	parameter CSR_ADDR_MTVEC	= 12'h305;
+	parameter CSR_ADDR_MEPC		= 12'h341;
+	parameter CSR_ADDR_MCAUSE	= 12'h342;
+	parameter CSR_ADDR_MCYCLE	= 12'hb00;
+	parameter CSR_ADDR_MCYCLEH	= 12'hb80;
+	parameter CSR_ADDR_MVENDORID= 12'hf11;
+	parameter CSR_ADDR_MARCHID	= 12'hf12;
+	
+
+	parameter MSTATUS_RESET = 32'h1800;
+
+	// parameter OP_FUN7_M		= 7'b0000001;
+
+	typedef logic [DATA_WIDTH-1:0] word_t;
+	typedef logic [REG_NUMBER-1:0] reg_t;
+	typedef struct packed {
+		logic [6:0] fun7;
+		logic [4:0] r2;
+		logic [4:0] r1;
+		logic [2:0] fun3;
+		logic [4:0] rd;
+		logic [6:0] op;		
+	} code_t;
+	typedef enum logic[3:0] {ADD_,SLL_,SLT_,SLTU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
+	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
+	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
+	typedef enum logic[2:0] {R1I,PCI,ECL,ERE,NAD} ALUopADR_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef struct packed {
+		word_t		im;
+		in1_t		in1;
+		in2_t		in2;
+		logic enJcod;
+
+		ALUopCal_t 	cal;
+		ALUopBfu_t	bfu;
+		ALUopADR_t	adr;
+		ALUopCsr_t	csr;
+		ALUopCho_t	cho;
+	} opALU_t;
+	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;//NM插在中间，必要时可以去掉
+	typedef struct packed {
+		logic enS,enL,enJfun;
+		LSUop_t op;
+	} opLSU_t;
+	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
+	typedef struct packed {
+		logic [11:0] addr;
+		CSRop_t op;
+	} opCSR_t;
+	
+	typedef struct packed {
+		opALU_t ALU;//ALU
+		opLSU_t LSU;//LSU
+		opCSR_t CSR;//CSR
+	} op_t;
+
+	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
 	input logic clk,reset;
-	input word_t code,pmem_read;
-	output word_t pc,pmem_write,addrJ,addrM;
-	output logic stop,eb;
-	output logic [3:0] mask;
+	input word_t pmem_read;
+	input code_t code;
+	output word_t pc,pmem_write,addr;
+	output logic stop,eb,enW;
+	assign pmem_write=oR2;
+	assign enW=op.LSU.enS;
 
-	word_t oR1,oR2,imm,data,iRd,iCsr,oCsr;
+	word_t oR1,oR2,data,iRd,iCsr,oCsr;
 	reg_t cRd,cR1,cR2;
-	logic enBfun,enJfun,enCsr;
-	opCode_t opCode;
-	opIcod_t opIcod;
-	opRcod_t opRcod;
-	opBfun_t opBfun;
-	opLfun_t opLfun;
-	opSfun_t opSfun;
+	op_t op;
+	logic enJfun;
+	output logic[3:0] mask;
 
 	ysyx_26020046_rv32iIDC IDC(.*);
 	ysyx_26020046_rv32iALU ALU(.*);
 	ysyx_26020046_rv32iLSU LSU(.*);
 	ysyx_26020046_rv32iGPR GPR(.*);
-
-
+	ysyx_26020046_rv32iCSR CSR(.*);
 
 endmodule
 
-module ysyx_26020046_rv32iIDC(code,clk,reset,enJfun,stop,eb,imm,cRd,cR1,cR2,opIcod,opRcod,opCode,opBfun,opLfun,opSfun);
-	// import rv32iBasis::*;
-	input word_t code;
-	input logic reset,clk;
-	output logic enJfun,stop,eb;
-	output word_t imm;
-	output reg_t cRd,cR1,cR2;
-	output opIcod_t opIcod;
-	output opRcod_t opRcod;
-	output opCode_t opCode;
-	output opBfun_t opBfun;
-	output opLfun_t opLfun;
-	output opSfun_t opSfun;
-	opImmr_t opImmr;
-	opIner_t opIner;
-	logic [6:0] op;
-	logic [2:0] fun3;
-	logic [6:0] fun7;
-	reg_t r1,r2,rd;
-	logic Ebreak;
+module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
+	parameter REG_NUMBER= 5;
+	parameter DATA_WIDTH= 32;
+	parameter PC_RESET	= 32'h80000000;
+	parameter OP_I_J	= 7'b1100111;//jalr	  +
+	parameter OP_I_A	= 7'b0010011;//i运算	 运算器
+	parameter OP_I_L	= 7'b0000011;//l系列	 +
+	parameter OP_U_I	= 7'b0110111;//lui	   无
+	parameter OP_U_P	= 7'b0010111;//auipc	 +
+	parameter OP_S__	= 7'b0100011;//s系列	 +
+	parameter OP_B__	= 7'b1100011;//b比较系列 比较
+	parameter OP_J__	= 7'b1101111;//jal	   +
+	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
 
-	assign fun7	=code[31:25];
-	assign r2	=code[24:20];
-	assign r1	=code[19:15];
-	assign fun3	=code[14:12];
-	assign rd	=code[11: 7];
-	assign op	=code[ 6: 0];
+	parameter OP_SCR_ECALL_	= 32'h00000073;
+	parameter OP_SCR_EBREAK	= 32'h00100073;
+	parameter OP_SCR_MRET__	= 32'h30200073;
 
-	assign opCode.Lui	=(op==`OP_U_I);
-	assign opCode.Auipc	=(op==`OP_U_P);
-	assign opCode.Jal	=(op==`OP_J__);
-	assign opCode.Jalr	=(op==`OP_I_J)&(fun3==3'b000);
-	assign opBfun.Beq	=(op==`OP_B__)&(fun3==3'b000);
-	assign opBfun.Bne	=(op==`OP_B__)&(fun3==3'b001);
-	assign opBfun.Blt	=(op==`OP_B__)&(fun3==3'b100);
-	assign opBfun.Bge	=(op==`OP_B__)&(fun3==3'b101);
-	assign opBfun.Bltu	=(op==`OP_B__)&(fun3==3'b110);
-	assign opBfun.Bgeu	=(op==`OP_B__)&(fun3==3'b111);
-	assign opLfun.Lb	=(op==`OP_I_L)&(fun3==3'b000);
-	assign opLfun.Lh	=(op==`OP_I_L)&(fun3==3'b001);
-	assign opLfun.Lw	=(op==`OP_I_L)&(fun3==3'b010);
-	assign opLfun.Lbu	=(op==`OP_I_L)&(fun3==3'b100);
-	assign opLfun.Lhu	=(op==`OP_I_L)&(fun3==3'b101);
-	assign opSfun.Sb	=(op==`OP_S__)&(fun3==3'b000);
-	assign opSfun.Sh	=(op==`OP_S__)&(fun3==3'b001);
-	assign opSfun.Sw	=(op==`OP_S__)&(fun3==3'b010);
-	assign opIcod.Addi	=(op==`OP_I_A)&(fun3==3'b000);
-	assign opIcod.Slti	=(op==`OP_I_A)&(fun3==3'b010);
-	assign opIcod.Sltiu	=(op==`OP_I_A)&(fun3==3'b011);
-	assign opIcod.Xori	=(op==`OP_I_A)&(fun3==3'b100);
-	assign opIcod.Ori	=(op==`OP_I_A)&(fun3==3'b110);
-	assign opIcod.Andi	=(op==`OP_I_A)&(fun3==3'b111);
-	assign opIcod.Slli	=(op==`OP_I_A)&(fun3==3'b001)&(fun7==7'b0000000);
-	assign opIcod.Srli	=(op==`OP_I_A)&(fun3==3'b101)&(fun7==7'b0000000);
-	assign opIcod.Srai	=(op==`OP_I_A)&(fun3==3'b101)&(fun7==7'b0100000);
-	assign opRcod.Add	=(op==`OP_R__)&(fun3==3'b000)&(fun7==7'b0000000);
-	assign opRcod.Sub	=(op==`OP_R__)&(fun3==3'b000)&(fun7==7'b0100000);
-	assign opRcod.Sll	=(op==`OP_R__)&(fun3==3'b001)&(fun7==7'b0000000);
-	assign opRcod.Slt	=(op==`OP_R__)&(fun3==3'b010)&(fun7==7'b0000000);
-	assign opRcod.Sltu	=(op==`OP_R__)&(fun3==3'b011)&(fun7==7'b0000000);
-	assign opRcod.Xor	=(op==`OP_R__)&(fun3==3'b100)&(fun7==7'b0000000);
-	assign opRcod.Srl	=(op==`OP_R__)&(fun3==3'b101)&(fun7==7'b0000000);
-	assign opRcod.Sra	=(op==`OP_R__)&(fun3==3'b101)&(fun7==7'b0100000);
-	assign opRcod.Or	=(op==`OP_R__)&(fun3==3'b110)&(fun7==7'b0000000);
-	assign opRcod.And	=(op==`OP_R__)&(fun3==3'b111)&(fun7==7'b0000000);
-	assign Ebreak=(code==`OP_EBREAK);
-	// assign opCsrr.Csrrw=(op==OP_SCR)&(fun3==3'b001);
-	// assign opCsrr.Csrrs=(op==OP_SCR)&(fun3==3'b010);
-
-	// assign opCode.Bfun	=(|opBfun);
-	// assign opCode.Mfun	=(|opSfun)|(|opLfun);
+	parameter OP_SCR_	= 7'b1110011;//CSR系列
+	parameter CSR_ADDR_MSTAUS	= 12'h300;
+	parameter CSR_ADDR_MTVEC	= 12'h305;
+	parameter CSR_ADDR_MEPC		= 12'h341;
+	parameter CSR_ADDR_MCAUSE	= 12'h342;
+	parameter CSR_ADDR_MCYCLE	= 12'hb00;
+	parameter CSR_ADDR_MCYCLEH	= 12'hb80;
+	parameter CSR_ADDR_MVENDORID= 12'hf11;
+	parameter CSR_ADDR_MARCHID	= 12'hf12;
 	
-	// assign opImmr.immI	={{20{code[31]}},code[31:20] };
-	// assign opImmr.immS	={{20{code[31]}},code[31:25], code[11:7] };
-	// assign opImmr.immB	={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
-	// assign opImmr.immJ	={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
-	// assign opImmr.immU	={code[31:12],12'b0 };
 
-	// assign opIner.opI	=(|opIcod)|(|opLfun)|(opCode.Jalr);
-	// assign opIner.opR	=(|opRcod);
-	// assign opIner.opS	=(|opSfun);
-	// assign opIner.opB	=(|opBfun);
-	// assign opIner.opJ	=(opCode.Jal);
-	// assign opIner.opU	=(opCode.Lui)|(opCode.Auipc);
+	parameter MSTATUS_RESET = 32'h1800;
 
-	always_comb begin : choose_imm
-		if(Ebreak)begin
-			opCode.Bfun	=(|opBfun);
-			opCode.Mfun	=(|opSfun)|(|opLfun);
-			opImmr.immI	={{20{code[31]}},code[31:20] };
-			opImmr.immS	={{20{code[31]}},code[31:25], code[11:7] };
-			opImmr.immB	={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
-			opImmr.immJ	={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
-			opImmr.immU	={code[31:12],12'b0 };
-			opIner.opI	=(|opIcod)|(|opLfun)|(opCode.Jalr);
-			opIner.opR	=(|opRcod);
-			opIner.opS	=(|opSfun);
-			opIner.opB	=(|opBfun);
-			opIner.opJ	=(opCode.Jal);
-			opIner.opU	=(opCode.Lui)|(opCode.Auipc);
-			unique case('1)
-				opIner.opI		:imm=opImmr.immI;
-				opIner.opU		:imm=opImmr.immU;
-				opIner.opS		:imm=opImmr.immS;
-				opIner.opB		:imm=opImmr.immB;
-				opIner.opJ		:imm=opImmr.immJ;
-				default   		:imm='0;
+	// parameter OP_FUN7_M		= 7'b0000001;
+
+	typedef logic [DATA_WIDTH-1:0] word_t;
+	typedef logic [REG_NUMBER-1:0] reg_t;
+	typedef struct packed {
+		logic [6:0] fun7;
+		logic [4:0] r2;
+		logic [4:0] r1;
+		logic [2:0] fun3;
+		logic [4:0] rd;
+		logic [6:0] op;		
+	} code_t;
+	typedef enum logic[3:0] {ADD_,SLL_,SLT_,SLTU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
+	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
+	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
+	typedef enum logic[2:0] {R1I,PCI,ECL,ERE,NAD} ALUopADR_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef struct packed {
+		word_t		im;
+		in1_t		in1;
+		in2_t		in2;
+		logic enJcod;
+
+		ALUopCal_t 	cal;
+		ALUopBfu_t	bfu;
+		ALUopADR_t	adr;
+		ALUopCsr_t	csr;
+		ALUopCho_t	cho;
+	} opALU_t;
+	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;//NM插在中间，必要时可以去掉
+	typedef struct packed {
+		logic enS,enL,enJfun;
+		LSUop_t op;
+	} opLSU_t;
+	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
+	typedef struct packed {
+		logic [11:0] addr;
+		CSRop_t op;
+	} opCSR_t;
+	
+	typedef struct packed {
+		opALU_t ALU;//ALU
+		opLSU_t LSU;//LSU
+		opCSR_t CSR;//CSR
+	} op_t;
+
+	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
+	input code_t code;
+	input logic reset;
+	// output logic enJfun;
+	// output word_t im;
+	output reg_t cRd,cR1,cR2;
+	output op_t op;
+	output logic stop,eb;
+	imCode_t imm;
+	// logic error;
+	
+	always_comb begin : ID
+		imm=N;
+		op.ALU.in1=IR1;op.ALU.in2=IR2;
+		op.ALU.adr=NAD;op.ALU.cal=NCAL;op.ALU.bfu=NBFU;
+		op.ALU.csr=NCCSR;op.ALU.cho=NCHO;
+		op.LSU.op=NM;op.LSU.enS=0;op.LSU.enL=0;
+		op.CSR.op=NCSR_;op.CSR.addr='0;
+		{cR1,cR2,cRd,op.ALU.enJcod,stop,eb,op.ALU.im}='0;
+
+		if(~reset) begin
+			unique case(code.op)
+				OP_U_I:begin op.ALU.cho=IMM_;imm=U; end//lui
+				OP_U_P:begin op.ALU.cal=ADD_;op.ALU.in1=PC_;op.ALU.in2=IMM;imm=U; op.ALU.cho=CAL_; end//auipc
+				OP_J__:begin op.ALU.adr=PCI;imm=J; op.ALU.cho=SNPC;op.ALU.enJcod=1; end//jal
+				OP_I_J:begin op.ALU.adr=R1I;imm=I; op.ALU.cho=SNPC;op.ALU.enJcod=1;cR1=code.r1; end//jalr
+				OP_B__:begin op.ALU.adr=PCI;imm=B; op.ALU.bfu=ALUopBfu_t'(code.fun3);cR1=code.r1;cR2=code.r2; end//B系列判断指令
+				OP_I_L:begin op.ALU.adr=R1I;imm=I; op.ALU.cho=DATA;cR1=code.r1; op.LSU.enL=1;op.LSU.op=LSUop_t'(code.fun3); end//l读取系列
+				OP_S__:begin op.ALU.adr=R1I;imm=S;cR1=code.r1;cR2=code.r2; op.LSU.enS=1;op.LSU.op=LSUop_t'(code.fun3); end//s写入系列
+				OP_I_A:begin op.ALU.cho=CAL_;imm=I;op.ALU.in1=IR1;op.ALU.in2=IMM;cR1=code.r1; //立即数计算
+					unique case(code.fun3)
+						3'b001:begin unique case(code.fun7)
+								7'b0000000:op.ALU.cal=SLL_;
+								default:begin stop=1'b1;eb=1'b0;end
+							endcase end
+						3'b101:begin unique case(code.fun7)
+								7'b0000000:op.ALU.cal=SRL_;
+								7'b0100000:op.ALU.cal=SRA_;
+								default:begin stop=1'b1;eb=1'b0;end
+							endcase end
+						default:op.ALU.cal=ALUopCal_t'(code.fun3);
+					endcase
+					end
+				OP_R__:begin op.ALU.cho=CAL_;op.ALU.in1=IR1;op.ALU.in2=IR2;cR1=code.r1;cR2=code.r2;//寄存器计算
+					unique case(code.fun7)
+						7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
+						7'b0100000:begin unique case(code.fun3)
+								3'b000:op.ALU.cal=SUB_;
+								3'b101:op.ALU.cal=SRA_;
+								default:begin stop=1'b1;eb=1'b0;end
+							endcase end
+						default:begin stop=1'b1;eb=1'b0;end
+					endcase
+					end
+				OP_SCR_:begin//CSR指令
+					unique case(code.fun3)
+						3'b000:begin unique case(code)
+								OP_SCR_MRET__:begin op.CSR.op=MRET_;op.ALU.adr=ECL;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MEPC;	end
+								OP_SCR_ECALL_:begin op.CSR.op=ECALL;op.ALU.adr=ECL;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MTVEC;	end
+								OP_SCR_EBREAK:begin stop=1'b1;eb=1'b1; end
+								default:begin stop=1'b1;eb=1'b0;end
+							endcase end
+						3'b001:begin op.CSR.addr={code[31:20]};cR1=code.r1;op.CSR.op=WCCSR;
+							op.ALU.cho=CCSR;op.ALU.csr=WACSR; end
+						3'b010:begin op.CSR.addr={code[31:20]};cR1=code.r1;op.ALU.cho=CCSR;
+							op.ALU.csr=(code.r1=='0)?NCCSR:RACSR;
+							op.CSR.op =(code.r1=='0)?NCSR_:WCCSR;
+							end
+						default:begin stop=1'b1;eb=1'b0;end
+					endcase
+				end
+				default:begin stop=1'b1;eb=1'b0;end
 			endcase
-		end else begin
-			imm='0;
-			opCode.Bfun	='0;
-			opCode.Mfun	='0;
-			opImmr		='0;
-			opIner		='0;
+			unique case(imm)
+				N:op.ALU.im='0;
+				I:op.ALU.im={{20{code[31]}},code[31:20] };
+				S:op.ALU.im={{20{code[31]}},code[31:25], code[11:7] };
+				B:op.ALU.im={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
+				J:op.ALU.im={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
+				U:op.ALU.im={code[31:12],12'b0 };
+				default:begin op.ALU.im='0;stop=1'b1;eb=1'b0;end
+			endcase
+			cRd=(op.ALU.cho	==NCHO)	?'0:code.rd;
 		end
 	end
-
-	assign enJfun	=(opCode.Jal)|(opCode.Jalr);
-	// assign cR1	=(opIner.Ebreak)?0:r1;
-	// assign cR2	=(opIner.Ebreak)?0:r2;
-	// assign cRd	=(opIner.Ebreak|opIner.opB|opIner.opS)?'0:rd;
-	always_comb begin
-		if(Ebreak)begin
-			cR1='0;
-			cR2='0;
-			cRd='0;
-		end else begin
-			cR1=r1;
-			cR2=r2;
-			cRd=(opIner.opB|opIner.opS)?'0:rd;
-		end
-		
-	end
-
-	always_comb begin : check_ebreak_or_stop
-		if(~reset)begin
-			if(Ebreak)begin
-				stop=1;
-				eb	=1;
-			end else if(~((|opIner)))begin
-				stop=1;
-				eb	=0;
-			end else begin
-				stop=0;
-				eb	=0;
-			end
-		end else begin
-			stop=0;
-			eb	=0;
-		end
-	end
-	// always_ff@(posedge clk) begin : check_ebreak_or_stop
-	// 	if(~reset)begin
-	// 		if(Ebreak)begin
-	// 			stop<=1;
-	// 			eb	<=1;
-	// 		end else if(~((|opIner)))begin
-	// 			stop<=1;
-	// 			eb	<=0;
-	// 		end else begin
-	// 			stop<=0;
-	// 			eb	<=0;
-	// 		end
-	// 	end
-	// end
-
 endmodule
-module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addrJ,addrM,iRd,enBfun,opIcod,opRcod,opCode,opBfun,opLfun);
-	// import rv32iBasis::*;
-	input word_t oR1,oR2,pc,imm,data;
-	input opIcod_t opIcod;
-	input opRcod_t opRcod;
-	input opCode_t opCode;
-	input opBfun_t opBfun;
-	input opLfun_t opLfun;
-	output word_t addrJ,addrM,iRd;
-	output logic enBfun;
+module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
+	parameter REG_NUMBER= 5;
+	parameter DATA_WIDTH= 32;
+	parameter PC_RESET	= 32'h80000000;
+	parameter OP_I_J	= 7'b1100111;//jalr	  +
+	parameter OP_I_A	= 7'b0010011;//i运算	 运算器
+	parameter OP_I_L	= 7'b0000011;//l系列	 +
+	parameter OP_U_I	= 7'b0110111;//lui	   无
+	parameter OP_U_P	= 7'b0010111;//auipc	 +
+	parameter OP_S__	= 7'b0100011;//s系列	 +
+	parameter OP_B__	= 7'b1100011;//b比较系列 比较
+	parameter OP_J__	= 7'b1101111;//jal	   +
+	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
 
-	word_t result;
-	logic choRes,choDat,choNpc,choImm,choCsr;
-	assign choRes=(|opRcod)|(|opIcod)|(opCode.Auipc);
-	assign choDat=(|opLfun);
-	assign choImm=(opCode.Lui);
-	assign choNpc=(opCode.Jal)|(opCode.Jalr);
+	parameter OP_SCR_ECALL_	= 32'h00000073;
+	parameter OP_SCR_EBREAK	= 32'h00100073;
+	parameter OP_SCR_MRET__	= 32'h30200073;
 
-	always_comb begin : calculate
-		unique case('1)
-			// opCode.Lui	:result=imm;
-			opCode.Auipc:result=imm+pc;
-			// opCode.Jal	:result=imm+pc;
-			// opCode.Jalr	:result=imm+oR1;
-			// opCode.Bfun	:result=imm+pc;
-			// opCode.Mfun	:result=imm+oR1;
-			opIcod.Addi	:result=imm+oR1;
-			opIcod.Slti	:result=  $signed(oR1) <  $signed(imm)?1:0;
-			opIcod.Sltiu:result=$unsigned(oR1) <$unsigned(imm)?1:0;
-			opIcod.Xori	:result=oR1^imm;
-			opIcod.Ori	:result=oR1|imm;
-			opIcod.Andi	:result=oR1&imm;
-			opIcod.Slli	:result=oR1<<imm[4:0];
-			opIcod.Srli	:result=$unsigned(oR1)>> imm[4:0];
-			opIcod.Srai	:result=  $signed(oR1)>>>imm[4:0];
-			opRcod.Add	:result=oR1+oR2;
-			opRcod.Sub	:result=oR1-oR2;
-			opRcod.Sll	:result=oR1<<oR2[4:0];
-			opRcod.Slt	:result=  $signed(oR1) <  $signed(oR2)?1:0;
-			opRcod.Sltu	:result=$unsigned(oR1) <$unsigned(oR2)?1:0;
-			opRcod.Xor	:result=oR1^oR2;
-			opRcod.Srl	:result=$unsigned(oR1)>> oR2[4:0];
-			opRcod.Sra	:result=  $signed(oR1)>>>oR2[4:0];
-			opRcod.Or	:result=oR1|oR2;
-			opRcod.And	:result=oR1&oR2;
-			default		:result='0;
+	parameter OP_SCR_	= 7'b1110011;//CSR系列
+	parameter CSR_ADDR_MSTAUS	= 12'h300;
+	parameter CSR_ADDR_MTVEC	= 12'h305;
+	parameter CSR_ADDR_MEPC		= 12'h341;
+	parameter CSR_ADDR_MCAUSE	= 12'h342;
+	parameter CSR_ADDR_MCYCLE	= 12'hb00;
+	parameter CSR_ADDR_MCYCLEH	= 12'hb80;
+	parameter CSR_ADDR_MVENDORID= 12'hf11;
+	parameter CSR_ADDR_MARCHID	= 12'hf12;
+	
+
+	parameter MSTATUS_RESET = 32'h1800;
+
+	// parameter OP_FUN7_M		= 7'b0000001;
+
+	typedef logic [DATA_WIDTH-1:0] word_t;
+	typedef logic [REG_NUMBER-1:0] reg_t;
+	typedef struct packed {
+		logic [6:0] fun7;
+		logic [4:0] r2;
+		logic [4:0] r1;
+		logic [2:0] fun3;
+		logic [4:0] rd;
+		logic [6:0] op;		
+	} code_t;
+	typedef enum logic[3:0] {ADD_,SLL_,SLT_,SLTU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
+	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
+	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
+	typedef enum logic[2:0] {R1I,PCI,ECL,ERE,NAD} ALUopADR_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef struct packed {
+		word_t		im;
+		in1_t		in1;
+		in2_t		in2;
+		logic enJcod;
+
+		ALUopCal_t 	cal;
+		ALUopBfu_t	bfu;
+		ALUopADR_t	adr;
+		ALUopCsr_t	csr;
+		ALUopCho_t	cho;
+	} opALU_t;
+	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;//NM插在中间，必要时可以去掉
+	typedef struct packed {
+		logic enS,enL,enJfun;
+		LSUop_t op;
+	} opLSU_t;
+	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
+	typedef struct packed {
+		logic [11:0] addr;
+		CSRop_t op;
+	} opCSR_t;
+	
+	typedef struct packed {
+		opALU_t ALU;//ALU
+		opLSU_t LSU;//LSU
+		opCSR_t CSR;//CSR
+	} op_t;
+
+	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
+	input word_t oR1,oR2,pc,data;
+/* verilator lint_off UNUSEDSIGNAL */
+	input op_t op;
+/* verilator lint_on UNUSEDSIGNAL */
+
+	input word_t oCsr;
+	output word_t addr,iRd,iCsr;
+	output logic enJfun;
+	logic enBfun;
+
+	word_t result,in1,in2;
+
+	always_comb begin : cal
+		unique case(op.ALU.in1)
+			IR1:in1=oR1;
+			PC_:in1=pc;
+			default:begin in1='0;end
+		endcase
+		unique case(op.ALU.in2)
+			IR2:in2=oR2;
+			IMM:in2=op.ALU.im;
+			default:begin in2='0;end
+		endcase
+
+		unique case(op.ALU.cal)
+			ADD_:result=in1+in2;
+			SLL_:result=in1<<in2[4:0];
+			SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
+			SLTU:result=$unsigned(in1) <$unsigned(in2)?1:0;
+			XOR_:result=in1^in2;
+			SRL_:result=$unsigned(in1)>> in2[4:0];
+			OR__:result=in1|in2;
+			AND_:result=in1&in2;
+			SUB_:result=in1-in2;
+			SRA_:result=  $signed(in1)>>>in2[4:0];
+			NCAL:result='0;
+			default:begin result='0;end
 		endcase
 	end
-
-	always_comb begin : bFun
-		unique case('1)
-			opBfun.Beq	:enBfun=(oR1==oR2);
-			opBfun.Bne	:enBfun=(oR1!=oR2);
-			opBfun.Blt	:enBfun=(  $signed(oR1) <  $signed(oR2));
-			opBfun.Bge	:enBfun=(  $signed(oR1)>=  $signed(oR2));
-			opBfun.Bltu	:enBfun=($unsigned(oR1) <$unsigned(oR2));
-			opBfun.Bgeu	:enBfun=($unsigned(oR1)>=$unsigned(oR2));
-			default		:enBfun='0;
+	always_comb begin : bfu
+		unique case(op.ALU.bfu)
+			BEQ_:enBfun=(oR1==oR2);
+			BNE_:enBfun=(oR1!=oR2);
+			BLT_:enBfun=(  $signed(oR1) <  $signed(oR2));
+			BGE_:enBfun=(  $signed(oR1)>=  $signed(oR2));
+			BLTU:enBfun=($unsigned(oR1) <$unsigned(oR2));
+			BGEU:enBfun=($unsigned(oR1)>=$unsigned(oR2));
+			NBFU:enBfun='0;
+			default:begin enBfun='0;end
+			endcase
+	end
+	always_comb begin : adr
+		unique case(op.ALU.adr)
+			R1I:addr=oR1+op.ALU.im;
+			PCI:addr=pc+op.ALU.im;
+			ECL:addr=oCsr;
+			ERE:addr=oCsr+4;
+			NAD:addr='0;
+			default:begin addr='0;end
 		endcase
+		enJfun=op.ALU.enJcod|enBfun;
 	end
 
-	// assign addr=(opCode.Mfun|opCode.Jal|opCode.Jalr|opCode.Bfun)?result:0;
-	assign addrM=imm+oR1;
-	always_comb begin : J_addr
-		unique case('1)
-			opCode.Jal	:addrJ=imm+pc;
-			opCode.Jalr	:addrJ=addrM;
-			opCode.Bfun	:addrJ=imm+pc;
-			// opCode.Mfun	:addrJ=imm+oR1;
-			default		:addrJ='0;
+	always_comb begin : cho
+		unique case(op.ALU.cho)
+			CAL_:iRd=result;
+			IMM_:iRd=op.ALU.im;
+			DATA:iRd=data;
+			CCSR:iRd=oCsr;
+			SNPC:iRd=pc+4;
+			NCHO:iRd='0;
+			default:begin iRd='0;end
 		endcase
 	end
-	always_comb begin :choose
-		unique case('1)
-			choRes	:iRd=result;
-			choDat	:iRd=data;
-			choImm	:iRd=imm;
-			choNpc	:iRd=pc+4;
-			default	:iRd='0;
+	always_comb begin : csr
+		unique case(op.ALU.csr)
+			WACSR:iCsr=oR1;
+			RACSR:iCsr=oR1|oCsr;
+			JUMP_:iCsr=pc;
+			NCSR_:iCsr='0;
+			default:begin iCsr='0;end
 		endcase
 	end
-
 endmodule
-module ysyx_26020046_rv32iLSU(clk,reset,addrJ,oR2,enBfun,enJfun,opLfun,opSfun,data,pc,pmem_read,pmem_write,mask);
-	input word_t addrJ,oR2;
-	input logic clk,reset,enBfun,enJfun;
-	input opLfun_t opLfun;
-	input opSfun_t opSfun;
+module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc,mask,pmem_read);
+	parameter REG_NUMBER= 5;
+	parameter DATA_WIDTH= 32;
+	parameter PC_RESET	= 32'h80000000;
+	parameter OP_I_J	= 7'b1100111;//jalr	  +
+	parameter OP_I_A	= 7'b0010011;//i运算	 运算器
+	parameter OP_I_L	= 7'b0000011;//l系列	 +
+	parameter OP_U_I	= 7'b0110111;//lui	   无
+	parameter OP_U_P	= 7'b0010111;//auipc	 +
+	parameter OP_S__	= 7'b0100011;//s系列	 +
+	parameter OP_B__	= 7'b1100011;//b比较系列 比较
+	parameter OP_J__	= 7'b1101111;//jal	   +
+	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
+
+	parameter OP_SCR_ECALL_	= 32'h00000073;
+	parameter OP_SCR_EBREAK	= 32'h00100073;
+	parameter OP_SCR_MRET__	= 32'h30200073;
+
+	parameter OP_SCR_	= 7'b1110011;//CSR系列
+	parameter CSR_ADDR_MSTAUS	= 12'h300;
+	parameter CSR_ADDR_MTVEC	= 12'h305;
+	parameter CSR_ADDR_MEPC		= 12'h341;
+	parameter CSR_ADDR_MCAUSE	= 12'h342;
+	parameter CSR_ADDR_MCYCLE	= 12'hb00;
+	parameter CSR_ADDR_MCYCLEH	= 12'hb80;
+	parameter CSR_ADDR_MVENDORID= 12'hf11;
+	parameter CSR_ADDR_MARCHID	= 12'hf12;
+	
+
+	parameter MSTATUS_RESET = 32'h1800;
+
+	// parameter OP_FUN7_M		= 7'b0000001;
+
+	typedef logic [DATA_WIDTH-1:0] word_t;
+	typedef logic [REG_NUMBER-1:0] reg_t;
+	typedef struct packed {
+		logic [6:0] fun7;
+		logic [4:0] r2;
+		logic [4:0] r1;
+		logic [2:0] fun3;
+		logic [4:0] rd;
+		logic [6:0] op;		
+	} code_t;
+	typedef enum logic[3:0] {ADD_,SLL_,SLT_,SLTU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
+	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
+	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
+	typedef enum logic[2:0] {R1I,PCI,ECL,ERE,NAD} ALUopADR_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef struct packed {
+		word_t		im;
+		in1_t		in1;
+		in2_t		in2;
+		logic enJcod;
+
+		ALUopCal_t 	cal;
+		ALUopBfu_t	bfu;
+		ALUopADR_t	adr;
+		ALUopCsr_t	csr;
+		ALUopCho_t	cho;
+	} opALU_t;
+	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;//NM插在中间，必要时可以去掉
+	typedef struct packed {
+		logic enS,enL,enJfun;
+		LSUop_t op;
+	} opLSU_t;
+	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
+	typedef struct packed {
+		logic [11:0] addr;
+		CSRop_t op;
+	} opCSR_t;
+	
+	typedef struct packed {
+		opALU_t ALU;//ALU
+		opLSU_t LSU;//LSU
+		opCSR_t CSR;//CSR
+	} op_t;
+
+	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
+	input word_t addr,oR2,pmem_read;
+	input logic clk,reset,enJfun;
+
+/* verilator lint_off UNUSEDSIGNAL */
+	input op_t op;
+/* verilator lint_on UNUSEDSIGNAL */
+
+
 	output word_t data,pc;
-	input word_t pmem_read;
-	output logic[3:0] mask;
-	output word_t pmem_write;
 	// output logic LSUsuccess;
 
-	// logic[3:0] mask;
+	output logic[3:0] mask;
 	word_t iRAM;
 //s处理
 	always_comb begin : choose_mask
-		unique case('1)
-			opSfun.Sb	:mask=4'b0001;
-			opSfun.Sh	:mask=4'b0011;
-			opSfun.Sw	:mask=4'b1111;
-			default		:mask=4'b0000;
-		endcase
+		if (op.LSU.enS) begin unique case(op.LSU.op)
+			B_:mask=4'b0001;
+			H_:mask=4'b0011;
+			W_:mask=4'b1111;
+			NM:mask=4'b0000;
+			default:begin mask=4'b0000;end
+		endcase end else mask=4'b0000;
 	end
 
 //l处理
 
 	always_comb begin : choose_date_input
-		if(opLfun.Lw)begin
-			data=iRAM;
-		end else begin
-			unique case('1)
-				opLfun.Lb	:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
-				opLfun.Lh	:data={{16{iRAM[15]}},iRAM[15: 0]};
-				// opLfun.Lw	:data=iRAM;
-				opLfun.Lbu	:data={{24{1'b0}},iRAM[ 7: 0]};
-				opLfun.Lhu	:data={{16{1'b0}},iRAM[15: 0]};
-				default		:data=0;
-			endcase			
-		end
+		if(op.LSU.enL) begin unique case(op.LSU.op)
+			B_:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
+			H_:data={{16{iRAM[15]}},iRAM[15: 0]};
+			W_:data=iRAM;
+			BU:data={{24{1'b0}},iRAM[ 7: 0]};
+			HU:data={{16{1'b0}},iRAM[15: 0]};
+			default:begin data=0;end
+		endcase end else data='0;
 	end
 
 	always_ff @(posedge clk) begin : pc_write
-		if(reset) pc<=`PC_RESET;
-		else if(enJfun|enBfun) pc<=addrJ;
+		if(reset) pc<=PC_RESET;
+		else if(enJfun) pc<=addr;
 		else pc<=pc+4;
 	end
 
-	assign iRAM = (|opLfun)&clk?pmem_read:0;
-	assign pmem_write=oR2;
+	// import "DPI-C" function int pmem_read(input int addr);
+	// import "DPI-C" function void pmem_write(input int addr, input int data, input byte mask);
+	assign iRAM = (op.LSU.enL)&clk?pmem_read:0;
+	// always_ff@(posedge clk) begin:control_write
+	// 	if (op.LSU.enS) begin // 有写请求时
+	// 		pmem_write(addr, oR2, {4'b0,mask});
+	// 	end
+	// end
 
 endmodule
-module ysyx_26020046_rv32iGPR(iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
-	input word_t iRd;
+module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
+	parameter REG_NUMBER= 5;
+	parameter DATA_WIDTH= 32;
+	parameter PC_RESET	= 32'h80000000;
+	parameter OP_I_J	= 7'b1100111;//jalr	  +
+	parameter OP_I_A	= 7'b0010011;//i运算	 运算器
+	parameter OP_I_L	= 7'b0000011;//l系列	 +
+	parameter OP_U_I	= 7'b0110111;//lui	   无
+	parameter OP_U_P	= 7'b0010111;//auipc	 +
+	parameter OP_S__	= 7'b0100011;//s系列	 +
+	parameter OP_B__	= 7'b1100011;//b比较系列 比较
+	parameter OP_J__	= 7'b1101111;//jal	   +
+	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
+
+	parameter OP_SCR_ECALL_	= 32'h00000073;
+	parameter OP_SCR_EBREAK	= 32'h00100073;
+	parameter OP_SCR_MRET__	= 32'h30200073;
+
+	parameter OP_SCR_	= 7'b1110011;//CSR系列
+	parameter CSR_ADDR_MSTAUS	= 12'h300;
+	parameter CSR_ADDR_MTVEC	= 12'h305;
+	parameter CSR_ADDR_MEPC		= 12'h341;
+	parameter CSR_ADDR_MCAUSE	= 12'h342;
+	parameter CSR_ADDR_MCYCLE	= 12'hb00;
+	parameter CSR_ADDR_MCYCLEH	= 12'hb80;
+	parameter CSR_ADDR_MVENDORID= 12'hf11;
+	parameter CSR_ADDR_MARCHID	= 12'hf12;
+	
+
+	parameter MSTATUS_RESET = 32'h1800;
+
+	// parameter OP_FUN7_M		= 7'b0000001;
+
+	typedef logic [DATA_WIDTH-1:0] word_t;
+	typedef logic [REG_NUMBER-1:0] reg_t;
+	typedef struct packed {
+		logic [6:0] fun7;
+		logic [4:0] r2;
+		logic [4:0] r1;
+		logic [2:0] fun3;
+		logic [4:0] rd;
+		logic [6:0] op;		
+	} code_t;
+	typedef enum logic[3:0] {ADD_,SLL_,SLT_,SLTU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
+	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
+	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
+	typedef enum logic[2:0] {R1I,PCI,ECL,ERE,NAD} ALUopADR_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef struct packed {
+		word_t		im;
+		in1_t		in1;
+		in2_t		in2;
+		logic enJcod;
+
+		ALUopCal_t 	cal;
+		ALUopBfu_t	bfu;
+		ALUopADR_t	adr;
+		ALUopCsr_t	csr;
+		ALUopCho_t	cho;
+	} opALU_t;
+	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;//NM插在中间，必要时可以去掉
+	typedef struct packed {
+		logic enS,enL,enJfun;
+		LSUop_t op;
+	} opLSU_t;
+	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
+	typedef struct packed {
+		logic [11:0] addr;
+		CSRop_t op;
+	} opCSR_t;
+	
+	typedef struct packed {
+		opALU_t ALU;//ALU
+		opLSU_t LSU;//LSU
+		opCSR_t CSR;//CSR
+	} op_t;
+
+	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
+	input word_t pc,iRd;
 	input logic clk,reset;
 	input reg_t cRd,cR1,cR2;
 	output word_t oR1,oR2;
 
-	word_t gpr [2**`REG_NUMBER -1:1];
+	word_t gpr [2**REG_NUMBER -1:1];
 
 	always_ff@(posedge clk) begin:reg_write
 		if(reset)begin
@@ -396,6 +744,149 @@ module ysyx_26020046_rv32iGPR(iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
 			if (cRd!=0) gpr[cRd] <= iRd;
     	end
 	end
+
 	assign oR1=(cR1==0)?'0:gpr[cR1];
 	assign oR2=(cR2==0)?'0:gpr[cR2];
+
+endmodule
+
+module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
+	parameter REG_NUMBER= 5;
+	parameter DATA_WIDTH= 32;
+	parameter PC_RESET	= 32'h80000000;
+	parameter OP_I_J	= 7'b1100111;//jalr	  +
+	parameter OP_I_A	= 7'b0010011;//i运算	 运算器
+	parameter OP_I_L	= 7'b0000011;//l系列	 +
+	parameter OP_U_I	= 7'b0110111;//lui	   无
+	parameter OP_U_P	= 7'b0010111;//auipc	 +
+	parameter OP_S__	= 7'b0100011;//s系列	 +
+	parameter OP_B__	= 7'b1100011;//b比较系列 比较
+	parameter OP_J__	= 7'b1101111;//jal	   +
+	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
+
+	parameter OP_SCR_ECALL_	= 32'h00000073;
+	parameter OP_SCR_EBREAK	= 32'h00100073;
+	parameter OP_SCR_MRET__	= 32'h30200073;
+
+	parameter OP_SCR_	= 7'b1110011;//CSR系列
+	parameter CSR_ADDR_MSTAUS	= 12'h300;
+	parameter CSR_ADDR_MTVEC	= 12'h305;
+	parameter CSR_ADDR_MEPC		= 12'h341;
+	parameter CSR_ADDR_MCAUSE	= 12'h342;
+	parameter CSR_ADDR_MCYCLE	= 12'hb00;
+	parameter CSR_ADDR_MCYCLEH	= 12'hb80;
+	parameter CSR_ADDR_MVENDORID= 12'hf11;
+	parameter CSR_ADDR_MARCHID	= 12'hf12;
+	
+
+	parameter MSTATUS_RESET = 32'h1800;
+
+	// parameter OP_FUN7_M		= 7'b0000001;
+
+	typedef logic [DATA_WIDTH-1:0] word_t;
+	typedef logic [REG_NUMBER-1:0] reg_t;
+	typedef struct packed {
+		logic [6:0] fun7;
+		logic [4:0] r2;
+		logic [4:0] r1;
+		logic [2:0] fun3;
+		logic [4:0] rd;
+		logic [6:0] op;		
+	} code_t;
+	typedef enum logic[3:0] {ADD_,SLL_,SLT_,SLTU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
+	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
+	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
+	typedef enum logic[2:0] {R1I,PCI,ECL,ERE,NAD} ALUopADR_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef struct packed {
+		word_t		im;
+		in1_t		in1;
+		in2_t		in2;
+		logic enJcod;
+
+		ALUopCal_t 	cal;
+		ALUopBfu_t	bfu;
+		ALUopADR_t	adr;
+		ALUopCsr_t	csr;
+		ALUopCho_t	cho;
+	} opALU_t;
+	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;//NM插在中间，必要时可以去掉
+	typedef struct packed {
+		logic enS,enL,enJfun;
+		LSUop_t op;
+	} opLSU_t;
+	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
+	typedef struct packed {
+		logic [11:0] addr;
+		CSRop_t op;
+	} opCSR_t;
+	
+	typedef struct packed {
+		opALU_t ALU;//ALU
+		opLSU_t LSU;//LSU
+		opCSR_t CSR;//CSR
+	} op_t;
+
+	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
+
+/* verilator lint_off UNUSEDSIGNAL */
+	input op_t op;
+/* verilator lint_on UNUSEDSIGNAL */
+
+	// input word_t pc;
+	// input opCsrr_t opCsrr;opCsrr,pc,
+	input word_t iCsr;
+	input logic clk,reset;
+	output word_t oCsr;
+
+	word_t mepc,mstatus,mtvec,mcause,mcycle,mcycleh,marchid,mvendorid;
+
+	always_ff@(posedge clk) begin:csr_write
+		if(reset)begin
+			mepc		<=PC_RESET;
+			mstatus		<=MSTATUS_RESET;
+			mtvec		<=PC_RESET;
+			mcause		<='0;
+			mcycle		<='0;
+			mcycleh		<='0;
+			marchid		<=32'h018D08CE;
+			mvendorid	<=32'h79737978;
+			// $display("reset");
+		end else begin
+			unique case(op.CSR.op)
+				ECALL:begin mepc<=iCsr;mcause<=11;end
+				MRET_:begin mstatus<=MSTATUS_RESET;mcause<='0;end
+				WCCSR:begin unique case(op.CSR.addr)
+					CSR_ADDR_MEPC		:mepc	<=iCsr;
+					CSR_ADDR_MSTAUS		:mstatus<=iCsr;
+					CSR_ADDR_MTVEC		:mtvec	<=iCsr;
+					CSR_ADDR_MCAUSE		:mcause	<=iCsr;
+					CSR_ADDR_MCYCLE		:mcycle	<=iCsr;
+					CSR_ADDR_MCYCLEH	:mcycleh<=iCsr;
+					CSR_ADDR_MARCHID	:marchid<=iCsr;
+					CSR_ADDR_MVENDORID	:mvendorid<=iCsr;
+					default:;
+					endcase end
+				NCSR_:;
+				default:;
+				endcase
+			end
+		end
+
+	always_comb begin:choose_csr
+		unique case(op.CSR.addr)
+			CSR_ADDR_MEPC		:oCsr=mepc;
+			CSR_ADDR_MSTAUS		:oCsr=mstatus;
+			CSR_ADDR_MTVEC		:oCsr=mtvec;
+			CSR_ADDR_MCAUSE		:oCsr=mcause;
+			CSR_ADDR_MCYCLE		:oCsr=mcycle;
+			CSR_ADDR_MCYCLEH	:oCsr=mcycleh;
+			CSR_ADDR_MARCHID	:oCsr=marchid;
+			CSR_ADDR_MVENDORID	:oCsr=mvendorid;
+			default				:oCsr=0;
+		endcase
+	end
+				
 endmodule

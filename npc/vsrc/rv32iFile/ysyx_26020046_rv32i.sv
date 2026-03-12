@@ -66,7 +66,7 @@ package rv32iBasis;
 		logic enS,enL,enJfun;
 		LSUop_t op;
 	} opLSU_t;
-	typedef enum logic [1:0] {MRET_,ECALL,WCSR_,NCSR_} CSRop_t;
+	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
 	typedef struct packed {
 		logic [11:0] addr;
 		CSRop_t op;
@@ -141,7 +141,7 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 		op.ALU.csr=NCCSR;op.ALU.cho=NCHO;
 		op.LSU.op=NM;op.LSU.enS=0;op.LSU.enL=0;
 		op.CSR.op=NCSR_;op.CSR.addr='0;
-		{cR1,cR2,op.ALU.enJcod}='0;
+		{cR1,cR2,cRd,op.ALU.enJcod,op.ALU.im}='0;
 
 
 	`ifdef RV32I_DEBUG
@@ -190,11 +190,11 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 								OP_SCR_EBREAK:stop(1);
 								default:begin $fatal("ECL unknown op==0x%x",code);stop(0);end
 							endcase end
-						3'b001:begin op.CSR.addr={code[31:20]};cR1=code.r1;op.CSR.op=WCSR_;
+						3'b001:begin op.CSR.addr={code[31:20]};cR1=code.r1;op.CSR.op=WCCSR;
 							op.ALU.cho=CCSR;op.ALU.csr=WACSR; end
 						3'b010:begin op.CSR.addr={code[31:20]};cR1=code.r1;op.ALU.cho=CCSR;
 							op.ALU.csr=(code.r1=='0)?NCCSR:RACSR;
-							op.CSR.op =(code.r1=='0)?NCSR_:WCSR_;
+							op.CSR.op =(code.r1=='0)?NCSR_:WCCSR;
 							end
 						default:begin $fatal("ECL unknown fun3==0x%x",code.fun3);stop(0);end
 					endcase
@@ -418,6 +418,7 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 		if(reset)begin
 			mepc		<=PC_RESET;
 			mstatus		<=MSTATUS_RESET;
+			mtvec		<=PC_RESET;
 			mcause		<='0;
 			mcycle		<='0;
 			mcycleh		<='0;
@@ -428,7 +429,7 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 			unique case(op.CSR.op)
 				ECALL:begin mepc<=iCsr;mcause<=11;end
 				MRET_:begin mstatus<=MSTATUS_RESET;mcause<='0;end
-				WCSR_:begin unique case(op.CSR.addr)
+				WCCSR:begin unique case(op.CSR.addr)
 					CSR_ADDR_MEPC		:mepc	<=iCsr;
 					CSR_ADDR_MSTAUS		:mstatus<=iCsr;
 					CSR_ADDR_MTVEC		:mtvec	<=iCsr;
