@@ -276,6 +276,7 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 	output op_t op;
 	output logic stop,eb;
 	imCode_t imm;
+	ALUopCal_t opIcal,opRcal;
 	// logic error;
 	
 	always_comb begin : ID
@@ -286,8 +287,36 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 		op.LSU.op=NM;op.LSU.enS=0;op.LSU.enL=0;
 		op.CSR.op=NCSR_;op.CSR.addr='0;
 		{cR1,cR2,cRd,op.ALU.enJcod,stop,eb,op.ALU.im}='0;
+		opIcal=NCAL;opRcal=NCAL;
 
 		if(~reset) begin
+			unique case(code.fun3)
+				3'b001:begin unique case(code.fun7)
+					7'b0000000:opIcal=SLL_;
+					// default:begin stop=1'b1;eb=1'b0;end
+					default:;
+					endcase end
+				3'b101:begin unique case(code.fun7)
+					7'b0000000:opIcal=SRL_;
+					7'b0100000:opIcal=SRA_;
+					// default:begin stop=1'b1;eb=1'b0;end
+					default:;
+					endcase end
+				default:opIcal=ALUopCal_t'(code.fun3);
+			endcase
+			unique case(code.fun7)
+				7'b0000000:opRcal=ALUopCal_t'(code.fun3);
+				7'b0100000:begin unique case(code.fun3)
+						3'b000:opRcal=SUB_;
+						3'b101:opRcal=SRA_;
+						// default:begin stop=1'b1;eb=1'b0;end
+					default:;
+					endcase end
+				// default:begin stop=1'b1;eb=1'b0;end
+				default:;
+			endcase
+
+
 			unique case(code.op)
 				OP_U_I:begin op.ALU.cho=IMM_;imm=U; end//lui
 				OP_U_P:begin op.ALU.cal=ADD_;op.ALU.in1=PC_;op.ALU.in2=IMM;imm=U; op.ALU.cho=CAL_; end//auipc
@@ -296,36 +325,37 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 				OP_B__:begin op.ALU.adr=PCI;imm=B; op.ALU.bfu=ALUopBfu_t'(code.fun3);cR1=code.r1;cR2=code.r2; end//B系列判断指令
 				OP_I_L:begin op.ALU.adr=R1I;imm=I; op.ALU.cho=DATA;cR1=code.r1; op.LSU.enL=1;op.LSU.op=LSUop_t'(code.fun3); end//l读取系列
 				OP_S__:begin op.ALU.adr=R1I;imm=S;cR1=code.r1;cR2=code.r2; op.LSU.enS=1;op.LSU.op=LSUop_t'(code.fun3); end//s写入系列
-				OP_I_A:begin op.ALU.cho=CAL_;imm=I;op.ALU.in1=IR1;op.ALU.in2=IMM;cR1=code.r1; //立即数计算
-					unique case(code.fun3)
-						3'b001:begin unique case(code.fun7)
-								7'b0000000:op.ALU.cal=SLL_;
-								default:begin stop=1'b1;eb=1'b0;end
-							endcase end
-						3'b101:begin unique case(code.fun7)
-								7'b0000000:op.ALU.cal=SRL_;
-								7'b0100000:op.ALU.cal=SRA_;
-								default:begin stop=1'b1;eb=1'b0;end
-							endcase end
-						default:op.ALU.cal=ALUopCal_t'(code.fun3);
-					endcase
+				OP_I_A:begin op.ALU.cho=CAL_;imm=I;op.ALU.in1=IR1;op.ALU.in2=IMM;cR1=code.r1;op.ALU.cal=opIcal; //立即数计算
+					// unique case(code.fun3)
+					// 	3'b001:begin unique case(code.fun7)
+					// 			7'b0000000:op.ALU.cal=SLL_;
+					// 			default:begin stop=1'b1;eb=1'b0;end
+					// 		endcase end
+					// 	3'b101:begin unique case(code.fun7)
+					// 			7'b0000000:op.ALU.cal=SRL_;
+					// 			7'b0100000:op.ALU.cal=SRA_;
+					// 			default:begin stop=1'b1;eb=1'b0;end
+					// 		endcase end
+					// 	default:op.ALU.cal=ALUopCal_t'(code.fun3);
+					// endcase
 					end
-				OP_R__:begin op.ALU.cho=CAL_;op.ALU.in1=IR1;op.ALU.in2=IR2;cR1=code.r1;cR2=code.r2;//寄存器计算
-					unique case(code.fun7)
-						7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
-						7'b0100000:begin unique case(code.fun3)
-								3'b000:op.ALU.cal=SUB_;
-								3'b101:op.ALU.cal=SRA_;
-								default:begin stop=1'b1;eb=1'b0;end
-							endcase end
-						default:begin stop=1'b1;eb=1'b0;end
-					endcase
+				OP_R__:begin op.ALU.cho=CAL_;op.ALU.in1=IR1;op.ALU.in2=IR2;cR1=code.r1;cR2=code.r2;op.ALU.cal=opRcal; //寄存器计算
+					// unique case(code.fun7)
+					// 	7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
+					// 	7'b0100000:begin unique case(code.fun3)
+					// 			3'b000:op.ALU.cal=SUB_;
+					// 			3'b101:op.ALU.cal=SRA_;
+					// 			default:begin stop=1'b1;eb=1'b0;end
+					// 		endcase end
+					// 	default:begin stop=1'b1;eb=1'b0;end
+					// endcase
 					end
 				OP_SCR_:begin//CSR指令
 					unique case(code.fun3)
-						3'b000:begin unique case(code)
-								OP_SCR_MRET__:begin op.CSR.op=MRET_;op.ALU.adr=ECL;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MEPC;	end
-								OP_SCR_ECALL_:begin op.CSR.op=ECALL;op.ALU.adr=ECL;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MTVEC;	end
+						3'b000:begin op.ALU.adr=ECL;op.ALU.enJcod=1;
+							unique case(code)
+								OP_SCR_MRET__:begin op.CSR.op=MRET_;op.CSR.addr=CSR_ADDR_MEPC;	end
+								OP_SCR_ECALL_:begin op.CSR.op=ECALL;op.CSR.addr=CSR_ADDR_MTVEC;	end
 								OP_SCR_EBREAK:begin stop=1'b1;eb=1'b1; end
 								default:begin stop=1'b1;eb=1'b0;end
 							endcase end
