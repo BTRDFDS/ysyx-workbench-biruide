@@ -139,14 +139,14 @@ tree:
 	exa --grid --color=always --sort=name *
 
 chk:
-# 	@echo "t=$(t)"
-# 	@echo "tV=$(tV)"
-# 	@echo "tCd=$(tCd)"
-# 	@echo "tF=$(tF)"
-# 	@echo "tVd=$(tVd)"
+	@echo "t=$(t)"
+	@echo "tV=$(tV)"
+	@echo "tCd=$(tCd)"
+	@echo "tF=$(tF)"
+	@echo "tVd=$(tVd)"
 	verilator --lint-only -Wall $(tVd) -top-module $(tF)
-syn:$(tV) chk
-	make -C $(YOSYS_STA_HOME) syn DESIGN=$(tF) RTL_FILES="$(tVd)
+syn:$(tV)
+	make -C $(YOSYS_STA_HOME) syn DESIGN=$(tF) RTL_FILES="$(tVd)"
 	cp -r $(YOSYS_STA_HOME)/result/$(tF)*-500MHz ./result
 # 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 sta:$(tV)
