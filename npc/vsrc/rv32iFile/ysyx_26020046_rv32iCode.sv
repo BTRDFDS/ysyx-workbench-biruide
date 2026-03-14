@@ -203,18 +203,30 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 			if(code.op==OP_B__)begin//b系列
 				op.ALU.bfu=ALUopBfu_t'(code.fun3);
 			end else op.ALU.bfu=NBFU;
-			unique case(code.op)//选ALU cho和adr
-				OP_U_I	:{op.ALU.cho,op.ALU.adr}={IMM_,NAD};
-				OP_U_P	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
-				OP_J__	:{op.ALU.cho,op.ALU.adr}={SNPC,PCI};
-				OP_I_J	:{op.ALU.cho,op.ALU.adr}={SNPC,R1I};
-				OP_I_L	:{op.ALU.cho,op.ALU.adr}={DATA,R1I};
-				OP_I_A	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
-				OP_R__	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
-				OP_S__	:{op.ALU.cho,op.ALU.adr}={NCHO,R1I};
-				OP_B__	:{op.ALU.cho,op.ALU.adr}={NCHO,PCI};
-				OP_CSR	:{op.ALU.cho,op.ALU.adr}={CCSR,ECJ};
-				default	:{op.ALU.cho,op.ALU.adr}={NCHO,NAD};
+			unique case(code.op)//选ALU adr
+				OP_J__	:op.ALU.adr=PCI;
+				OP_I_J	:op.ALU.adr=R1I;
+				OP_B__	:op.ALU.adr=PCI;
+				OP_I_L	:op.ALU.adr=R1I;
+				OP_S__	:op.ALU.adr=R1I;
+				OP_CSR	:op.ALU.adr=ECJ;
+				default	:op.ALU.adr=NAD;
+			endcase
+			if(code.op==OP_CSR)begin unique case(code.fun3)
+					3'b001	:op.ALU.csr=WACSR;
+					3'b010	:op.ALU.csr=(code.r1=='0)?NACSR:RACSR;
+					default	:op.ALU.csr=NACSR;
+			endcase end else op.ALU.csr=NACSR;
+			unique case(code.op)//选ALU cho
+				OP_U_I	:op.ALU.cho=IMM_;
+				OP_U_P	:op.ALU.cho=CAL_;
+				OP_J__	:op.ALU.cho=SNPC;
+				OP_I_J	:op.ALU.cho=SNPC;
+				OP_I_L	:op.ALU.cho=DATA;
+				OP_I_A	:op.ALU.cho=CAL_;
+				OP_R__	:op.ALU.cho=CAL_;
+				OP_CSR	:op.ALU.cho=CCSR;
+				default	:op.ALU.cho=NCHO;
 			endcase
 
 			unique case(code.op)//选LSU op
@@ -227,17 +239,35 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 
 			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
 				3'b000	:begin unique case(code)
-						OP_SCR_MRET__	:begin op.CSR.op=MRET_;op.CSR.addr=CSR_ADDR_MEPC;end
-						OP_SCR_ECALL_	:begin op.CSR.op=ECALL;op.CSR.addr=CSR_ADDR_MTVEC;end
-						OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop(1);end
-						default			:begin op.CSR.op=NCSR_;op.CSR.addr='0;$fatal("CSR unknown op==0x%x",code);stop(0);end
+						OP_SCR_MRET__	:op.CSR.addr=CSR_ADDR_MEPC;
+						OP_SCR_ECALL_	:op.CSR.addr=CSR_ADDR_MTVEC;
+						OP_SCR_EBREAK	:op.CSR.addr='0;
+						default			:begin op.CSR.addr='0;$fatal("CSR unknown op==0x%x",code);stop(0);end
 					endcase end
-				3'b001	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;op.ALU.csr=WACSR;end
-				3'b010	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(code.r1=='0)?NACSR:RACSR;end
-				default	:begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;$fatal("CSR unknown op==0x%x",code);stop(0);end
-			endcase end else begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;end
+				3'b001	:op.CSR.addr={code[31:20]};
+				3'b010	:op.CSR.addr={code[31:20]};
+				default	:op.CSR.addr='0;
+				endcase end else op.CSR.addr='0;
+			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
+				3'b000	:begin unique case(code)
+						OP_SCR_MRET__	:op.CSR.op=MRET_;
+						OP_SCR_ECALL_	:op.CSR.op=ECALL;
+						OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;stop(1);end
+						default			:begin op.CSR.op=NCSR_;$fatal("CSR unknown op==0x%x",code);stop(0);end
+					endcase end
+				3'b001	:op.CSR.op=WCCSR;
+				3'b010	:op.CSR.op =(code.r1=='0)?NCSR_:WCCSR;
+				default	:op.CSR.op=NCSR_;
+			endcase end else op.CSR.op=NCSR_;
 
 			unique case(code.op)//选cR1 这里7/10就反选
+				// OP_I_J	:cR1=code.r1;
+				// OP_I_L	:cR1=code.r1;
+				// OP_S__	:cR1=code.r1;
+				// OP_I_A	:cR1=code.r1;
+				// OP_R__	:cR1=code.r1;
+				// OP_B__	:cR1=code.r1;
+				// OP_CSR	:cR1=code.r1;
 				OP_U_I	:cR1='0;
 				OP_U_P	:cR1='0;
 				OP_J__	:cR1='0;
@@ -255,6 +285,78 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 				OP_CSR	:cRd=(code.fun3==3'b000)?'0:code.rd;
 				default	:cRd=code.rd;
 			endcase
+
+			// unique case(imm)
+			// 	N:op.ALU.im='0;
+			// 	I:op.ALU.im={{20{code[31]}},code[31:20] };
+			// 	S:op.ALU.im={{20{code[31]}},code[31:25], code[11:7] };
+			// 	B:op.ALU.im={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
+			// 	J:op.ALU.im={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
+			// 	U:op.ALU.im={code[31:12],12'b0 };
+			// 	default:begin op.ALU.im='0;$fatal("unknown imm==0x%x",imm);stop(0);end
+			// endcase
+			// unique case(code.op)
+			// 	OP_U_I:begin op.ALU.cho=IMM_;imm=U; end//lui
+			// 	OP_U_P:begin op.ALU.cal=ADD_;op.ALU.in1=PC_;op.ALU.in2=IMM;imm=U; op.ALU.cho=CAL_; end//auipc
+			// 	OP_J__:begin op.ALU.adr=PCI;imm=J; op.ALU.cho=SNPC;op.ALU.enJcod=1; end//jal
+			// 	OP_I_J:begin op.ALU.adr=R1I;imm=I; op.ALU.cho=SNPC;op.ALU.enJcod=1;cR1=code.r1; end//jalr
+			// 	OP_B__:begin op.ALU.adr=PCI;imm=B; op.ALU.bfu=ALUopBfu_t'(code.fun3);cR1=code.r1;cR2=code.r2; end//B系列判断指令
+			// 	OP_I_L:begin op.ALU.adr=R1I;imm=I; op.ALU.cho=DATA;cR1=code.r1; op.LSU.enL=1;op.LSU.op=LSUop_t'(code.fun3); end//l读取系列
+			// 	OP_S__:begin op.ALU.adr=R1I;imm=S;cR1=code.r1;cR2=code.r2; op.LSU.enS=1;op.LSU.op=LSUop_t'(code.fun3); end//s写入系列
+			// 	OP_I_A:begin op.ALU.cho=CAL_;imm=I;op.ALU.in1=IR1;op.ALU.in2=IMM;cR1=code.r1; //立即数计算
+			// 		unique case(code.fun3)
+			// 			3'b001:begin unique case(code.fun7)
+			// 					7'b0000000:op.ALU.cal=SLL_;
+			// 					default:begin $fatal("slli fun7(%x)!=0",code.fun7);stop(0);end
+			// 				endcase end
+			// 			3'b101:begin unique case(code.fun7)
+			// 					7'b0000000:op.ALU.cal=SRL_;
+			// 					7'b0100000:op.ALU.cal=SRA_;
+			// 					default:begin $fatal("srai/srli fun7(%x)!=0/20",code.fun7);stop(0);end
+			// 				endcase end
+			// 			default:op.ALU.cal=ALUopCal_t'(code.fun3);
+			// 		endcase
+			// 		end
+			// 	OP_R__:begin op.ALU.cho=CAL_;op.ALU.in1=IR1;op.ALU.in2=IR2;cR1=code.r1;cR2=code.r2;//寄存器计算
+			// 		unique case(code.fun7)
+			// 			7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
+			// 			7'b0100000:begin unique case(code.fun3)
+			// 					3'b000:op.ALU.cal=SUB_;
+			// 					3'b101:op.ALU.cal=SRA_;
+			// 					default:begin $fatal("R fun7==20 fun3(%x)!=1/5",code.fun3);stop(0);end
+			// 				endcase end
+			// 			default:begin $fatal("R fun7(%x)!=0/20",code.fun7);stop(0);end
+			// 		endcase
+			// 		end
+			// 	OP_CSR:begin//CSR指令
+			// 		unique case(code.fun3)
+			// 			3'b000:begin unique case(code)
+			// 					OP_SCR_MRET__:begin op.CSR.op=MRET_;op.ALU.adr=ECJ;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MEPC;	end
+			// 					OP_SCR_ECALL_:begin op.CSR.op=ECALL;op.ALU.adr=ECJ;op.ALU.enJcod=1;op.CSR.addr=CSR_ADDR_MTVEC;	end
+			// 					OP_SCR_EBREAK:stop(1);
+			// 					default:begin $fatal("CSR unknown op==0x%x",code);stop(0);end
+			// 				endcase end
+			// 			3'b001:begin op.CSR.addr={code[31:20]};cR1=code.r1;op.CSR.op=WCCSR;
+			// 				op.ALU.cho=CCSR;op.ALU.csr=WACSR; end
+			// 			3'b010:begin op.CSR.addr={code[31:20]};cR1=code.r1;op.ALU.cho=CCSR;
+			// 				op.ALU.csr=(code.r1=='0)?NACSR:RACSR;
+			// 				op.CSR.op =(code.r1=='0)?NCSR_:WCCSR;
+			// 				end
+			// 			default:begin $fatal("CSR unknown fun3==0x%x",code.fun3);stop(0);end
+			// 		endcase
+			// 	end
+			// 	default:begin $fatal("unknown op==0x%x",code.op);stop(0);end
+			// endcase
+			// unique case(imm)
+			// 	N:op.ALU.im='0;
+			// 	I:op.ALU.im={{20{code[31]}},code[31:20] };
+			// 	S:op.ALU.im={{20{code[31]}},code[31:25], code[11:7] };
+			// 	B:op.ALU.im={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
+			// 	J:op.ALU.im={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
+			// 	U:op.ALU.im={code[31:12],12'b0 };
+			// 	default:begin op.ALU.im='0;$fatal("unknown imm==0x%x",imm);stop(0);end
+			// endcase
+			// cRd=(op.ALU.cho	==NCHO)	?'0:code.rd;
 		end
 	end
 endmodule
@@ -484,7 +586,7 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 					CSR_ADDR_MVENDORID	:mvendorid<=iCsr;
 					default:begin $display("unknown csrAddr==0x%x",op.CSR.addr); end
 					endcase end
-				NCSR_:{mcycleh,mcycle}<={mcycleh,mcycle}+1;
+				NCSR_:;
 				default:begin $display("unknown op.CSR.op==0x%x",op.CSR.op); end
 				endcase
 			end

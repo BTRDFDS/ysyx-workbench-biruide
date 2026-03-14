@@ -132,12 +132,12 @@ extern "C" void stop(unsigned char eb){
 	// minirvClose();
 	if(eb){
 		if(getReg(10)==0){
-			printf("\033[1;32mHIT GOOD TRAP\033[0m\n");
+			printf("\033[1;32mHIT GOOD TRAP\033[0mat 0x%x %d\n",pc,runStep);
 			hasEbreak=true;
 			result=0;
 			return;
 		}else{
-			printf("\033[1;31mHIT BAD TRAP\033[0m\n");
+			printf("\033[1;31mHIT BAD TRAP\033[0mat 0x%x %d\n",pc,runStep);
 			hasEbreak=true;
 			result=-1;
 			return;
