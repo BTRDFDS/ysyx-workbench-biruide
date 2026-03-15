@@ -1,3 +1,4 @@
+/* verilator lint_off DECLFILENAME */
 package rv32iBasis;
 // `define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
@@ -84,51 +85,38 @@ package rv32iBasis;
 	// 	imCode_t m;
 	// 	word_t mr;
 	// }opImmr_t;
-	
-	import "DPI-C" function int pmem_read(input int addr,input bit enR);
-	import "DPI-C" function void pmem_write(input int addr, input int data, input byte mask);
 endpackage
+/* verilator lint_on DECLFILENAME */
 
-/* verilator lint_off UNUSEDSIGNAL */
-interface IF_ID_Bus_t(input logic clk,reset);
-	import rv32iBasis::*;
-	code_t code;
-	logic valid,ready;
-	modport IF(
-	input ready,
-	output valid,code,reset
-	);
-	modport ID(
-	input valid,code,
-	output ready,reset
-	);
-endinterface;
-/* verilator lint_on UNUSEDSIGNAL */
+// interface SimpleBus_t();
+// 	import rv32iBasis::*;
+// 	op_t op;
+// 	logic valid,ready;
+// endinterface;
 
 
 
 
-// module ysyx_26020046_rv32i(clk,reset,code,pc);
-module ysyx_26020046_rv32i(clk,reset,pc);
+module ysyx_26020046_rv32iTwoRAM(clk,reset);
 	import rv32iBasis::*;
 	input logic clk,reset;
-	// input code_t code;
-	// code_t code;
-	output word_t pc;
+	// input word_t code;
+	code_t code;
+	word_t pc;
 
-	word_t oR1,oR2,data,addr,iRd,iCsr,oCsr;
+	word_t oR1,oR2,data,addr,iRd,iCsr,oCsr,pmem_read,pmem_write,pmem_addr;
 	reg_t cRd,cR1,cR2;
 	op_t op;
-	logic enJfun;
+	logic enJfun,enW,enR;
+	logic [3:0] mask;
 
-	IF_ID_Bus_t IF_ID_Bus(.*);
-
-	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
 	ysyx_26020046_rv32iALU ALU(.*);
 	ysyx_26020046_rv32iLSU LSU(.*);
 	ysyx_26020046_rv32iGPR GPR(.*);
 	ysyx_26020046_rv32iCSR CSR(.*);
+	ysyx_26020046_rv32iRAM ROM(.clk(clk),.reset('0),.pmem_addr(pc),.enW('0),.enR('1),.pmem_read(code),.pmem_write('0),.mask('0));
+	ysyx_26020046_rv32iRAM RAM(.*);
 
 `ifdef RV32I_DEBUG
 	always @(posedge clk) begin
@@ -153,23 +141,11 @@ module ysyx_26020046_rv32i(clk,reset,pc);
 
 endmodule
 
-module ysyx_26020046_rv32iIFU(pc,IF_ID_Bus_t.IF IF_ID_Bus);
-	import rv32iBasis::*;
-	input word_t pc;
-	// input logic reset;
-	// output code_t code;
-	// always_ff @(posedge clk) begin
-	always_comb begin
-		IF_ID_Bus.code=pmem_read(pc,IF_ID_Bus.ready);
-		IF_ID_Bus.valid=1'b1;
-	end
-endmodule
-
-module ysyx_26020046_rv32iIDU(cRd,cR1,cR2,op,IF_ID_Bus_t.ID IF_ID_Bus);
+module ysyx_26020046_rv32iIDU(code,reset,cRd,cR1,cR2,op);
 	import rv32iBasis::*;
 	import "DPI-C" function void stop(input bit eb);
-	// input code_t code;
-	// input logic reset;
+	input code_t code;
+	input logic reset;
 	// output logic enJfun;
 	// output word_t im;
 	output reg_t cRd,cR1,cR2;
@@ -177,8 +153,6 @@ module ysyx_26020046_rv32iIDU(cRd,cR1,cR2,op,IF_ID_Bus_t.ID IF_ID_Bus);
 	// imCode_t imm;
 	// logic error;
 	
-	assign IF_ID_Bus.ready=1'b1;
-
 	always_comb begin : ID
 		// imm=N;
 		op.ALU.in1=IR1;op.ALU.in2=IR2;
@@ -192,63 +166,63 @@ module ysyx_26020046_rv32iIDU(cRd,cR1,cR2,op,IF_ID_Bus_t.ID IF_ID_Bus);
 		$display("#ID:code=%x code.fun7=%x code.r2=%x code.r1=%x code.fun3=%x code.rd=%x code.op=%x",code,code.fun7,code.r2,code.r1,code.fun3,code.rd,code.op);
 	`endif
 
-		if((~IF_ID_Bus.reset)&IF_ID_Bus.valid) begin
-			unique case(IF_ID_Bus.code.op)//选ALU imm
-				OP_U_I	:op.ALU.im={IF_ID_Bus.code[31:12],12'b0 };
-				OP_U_P	:op.ALU.im={IF_ID_Bus.code[31:12],12'b0 };
-				OP_S__	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[31:25], IF_ID_Bus.code[11:7] };
-				OP_I_A	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[31:20] };
-				OP_I_J	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[31:20] };
-				OP_I_L	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[31:20] };
-				OP_B__	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[7], IF_ID_Bus.code[30:25], IF_ID_Bus.code[11:8], 1'b0 };
-				OP_J__	:op.ALU.im={{12{IF_ID_Bus.code[31]}},IF_ID_Bus.code[19:12], IF_ID_Bus.code[20], IF_ID_Bus.code[30:21], 1'b0 };
+		if(~reset) begin
+			unique case(code.op)//选ALU imm
+				OP_U_I	:op.ALU.im={code[31:12],12'b0 };
+				OP_U_P	:op.ALU.im={code[31:12],12'b0 };
+				OP_S__	:op.ALU.im={{20{code[31]}},code[31:25], code[11:7] };
+				OP_I_A	:op.ALU.im={{20{code[31]}},code[31:20] };
+				OP_I_J	:op.ALU.im={{20{code[31]}},code[31:20] };
+				OP_I_L	:op.ALU.im={{20{code[31]}},code[31:20] };
+				OP_B__	:op.ALU.im={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
+				OP_J__	:op.ALU.im={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
 				default	:op.ALU.im='0;
 			endcase
-			unique case(IF_ID_Bus.code.op)//选ALU in1 只有auipc会用到它
+			unique case(code.op)//选ALU in1 只有auipc会用到它
 				OP_U_P	:op.ALU.in1=PC_;
 				default	:op.ALU.in1=IR1;
 			endcase
-			unique case(IF_ID_Bus.code.op)//选ALU in2 只有auipc和立即数计算系列
+			unique case(code.op)//选ALU in2 只有auipc和立即数计算系列
 				OP_U_P	:op.ALU.in2=IMM;
 				OP_I_A	:op.ALU.in2=IMM;
 				default	:op.ALU.in2=IR2;
 			endcase
-			unique case(IF_ID_Bus.code.op)
+			unique case(code.op)
 				OP_J__	:op.ALU.enJcod=1;
 				OP_I_J	:op.ALU.enJcod=1;
-				OP_CSR	:op.ALU.enJcod=(IF_ID_Bus.code.fun3==3'b000);
+				OP_CSR	:op.ALU.enJcod=(code.fun3==3'b000);
 				default	:op.ALU.enJcod=0;
 			endcase
 
-			unique case(IF_ID_Bus.code.op)//选ALU cal
+			unique case(code.op)//选ALU cal
 				OP_U_P	:op.ALU.cal=ADD_;
-				OP_I_A	:begin unique case(IF_ID_Bus.code.fun3)
-						3'b001:begin unique case(IF_ID_Bus.code.fun7)
+				OP_I_A	:begin unique case(code.fun3)
+						3'b001:begin unique case(code.fun7)
 								7'b0000000:op.ALU.cal=SLL_;
-								default:begin $fatal("slli fun7(%x)!=0",IF_ID_Bus.code.fun7);stop(0);end
+								default:begin $fatal("slli fun7(%x)!=0",code.fun7);stop(0);end
 							endcase end
-						3'b101:begin unique case(IF_ID_Bus.code.fun7)
+						3'b101:begin unique case(code.fun7)
 								7'b0000000:op.ALU.cal=SRL_;
 								7'b0100000:op.ALU.cal=SRA_;
-								default:begin $fatal("srai/srli fun7(%x)!=0/20",IF_ID_Bus.code.fun7);stop(0);end
+								default:begin $fatal("srai/srli fun7(%x)!=0/20",code.fun7);stop(0);end
 							endcase end
-						default:op.ALU.cal=ALUopCal_t'(IF_ID_Bus.code.fun3);
+						default:op.ALU.cal=ALUopCal_t'(code.fun3);
 					endcase end
-				OP_R__	:begin unique case(IF_ID_Bus.code.fun7)
-						7'b0000000:op.ALU.cal=ALUopCal_t'(IF_ID_Bus.code.fun3);
-						7'b0100000:begin unique case(IF_ID_Bus.code.fun3)
+				OP_R__	:begin unique case(code.fun7)
+						7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
+						7'b0100000:begin unique case(code.fun3)
 								3'b000:op.ALU.cal=SUB_;
 								3'b101:op.ALU.cal=SRA_;
-								default:begin $fatal("R fun7==20 fun3(%x)!=1/5",IF_ID_Bus.code.fun3);stop(0);end
+								default:begin $fatal("R fun7==20 fun3(%x)!=1/5",code.fun3);stop(0);end
 							endcase end
-						default:begin $fatal("R fun7(%x)!=0/20",IF_ID_Bus.code.fun7);stop(0);end
+						default:begin $fatal("R fun7(%x)!=0/20",code.fun7);stop(0);end
 					endcase end
 				default	:op.ALU.cal=NCAL;
 			endcase
-			if(IF_ID_Bus.code.op==OP_B__)begin//b系列
-				op.ALU.bfu=ALUopBfu_t'(IF_ID_Bus.code.fun3);
+			if(code.op==OP_B__)begin//b系列
+				op.ALU.bfu=ALUopBfu_t'(code.fun3);
 			end else op.ALU.bfu=NBFU;
-			unique case(IF_ID_Bus.code.op)//选ALU cho和adr
+			unique case(code.op)//选ALU cho和adr
 				OP_U_I	:{op.ALU.cho,op.ALU.adr}={IMM_,NAD};
 				OP_U_P	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
 				OP_J__	:{op.ALU.cho,op.ALU.adr}={SNPC,PCI};
@@ -262,43 +236,43 @@ module ysyx_26020046_rv32iIDU(cRd,cR1,cR2,op,IF_ID_Bus_t.ID IF_ID_Bus);
 				default	:{op.ALU.cho,op.ALU.adr}={NCHO,NAD};
 			endcase
 
-			unique case(IF_ID_Bus.code.op)//选LSU op
-				OP_I_L	:op.LSU.op=LSUop_t'(IF_ID_Bus.code.fun3);
-				OP_S__	:op.LSU.op=LSUop_t'(IF_ID_Bus.code.fun3);
+			unique case(code.op)//选LSU op
+				OP_I_L	:op.LSU.op=LSUop_t'(code.fun3);
+				OP_S__	:op.LSU.op=LSUop_t'(code.fun3);
 				default	:op.LSU.op=NM;
 			endcase
-			op.LSU.enL=(IF_ID_Bus.code.op==OP_I_L);
-			op.LSU.enS=(IF_ID_Bus.code.op==OP_S__);
+			op.LSU.enL=(code.op==OP_I_L);
+			op.LSU.enS=(code.op==OP_S__);
 
-			if(IF_ID_Bus.code.op==OP_CSR)begin unique case(IF_ID_Bus.code.fun3)//选CSR op
-				3'b000	:begin unique case(IF_ID_Bus.code)
+			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
+				3'b000	:begin unique case(code)
 						OP_SCR_MRET__	:begin op.CSR.op=MRET_;op.CSR.addr=CSR_ADDR_MEPC;end
 						OP_SCR_ECALL_	:begin op.CSR.op=ECALL;op.CSR.addr=CSR_ADDR_MTVEC;end
 						OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop(1);end
-						default			:begin op.CSR.op=NCSR_;op.CSR.addr='0;$fatal("CSR unknown op==0x%x",IF_ID_Bus.code);stop(0);end
+						default			:begin op.CSR.op=NCSR_;op.CSR.addr='0;$fatal("CSR unknown op==0x%x",code);stop(0);end
 					endcase end
-				3'b001	:begin op.CSR.addr={IF_ID_Bus.code[31:20]};	op.CSR.op=WCCSR;op.ALU.csr=WACSR;end
-				3'b010	:begin op.CSR.addr={IF_ID_Bus.code[31:20]};	op.CSR.op=(IF_ID_Bus.code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(IF_ID_Bus.code.r1=='0)?NACSR:RACSR;end
-				default	:begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;$fatal("CSR unknown op==0x%x",IF_ID_Bus.code);stop(0);end
+				3'b001	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;op.ALU.csr=WACSR;end
+				3'b010	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(code.r1=='0)?NACSR:RACSR;end
+				default	:begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;$fatal("CSR unknown op==0x%x",code);stop(0);end
 			endcase end else begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;end
 
-			unique case(IF_ID_Bus.code.op)//选cR1 这里7/10就反选
+			unique case(code.op)//选cR1 这里7/10就反选
 				OP_U_I	:cR1='0;
 				OP_U_P	:cR1='0;
 				OP_J__	:cR1='0;
-				default	:cR1=IF_ID_Bus.code.r1;
+				default	:cR1=code.r1;
 			endcase
-			unique case(IF_ID_Bus.code.op)//选cR2
-				OP_S__	:cR2=IF_ID_Bus.code.r2;
-				OP_R__	:cR2=IF_ID_Bus.code.r2;
-				OP_B__	:cR2=IF_ID_Bus.code.r2;
+			unique case(code.op)//选cR2
+				OP_S__	:cR2=code.r2;
+				OP_R__	:cR2=code.r2;
+				OP_B__	:cR2=code.r2;
 				default	:cR2='0;
 			endcase
-			unique case(IF_ID_Bus.code.op)//选cRd 也是反选
+			unique case(code.op)//选cRd 也是反选
 				OP_B__	:cRd='0;
 				OP_S__	:cRd='0;
-				OP_CSR	:cRd=(IF_ID_Bus.code.fun3==3'b000)?'0:IF_ID_Bus.code.rd;
-				default	:cRd=IF_ID_Bus.code.rd;
+				OP_CSR	:cRd=(code.fun3==3'b000)?'0:code.rd;
+				default	:cRd=code.rd;
 			endcase
 		end
 	end
@@ -390,21 +364,22 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 		endcase
 	end
 endmodule
-module ysyx_26020046_rv32iLSU(clk,addr,oR2,op,data);
+module ysyx_26020046_rv32iLSU(addr,oR2,op,data,pmem_addr,pmem_read,pmem_write,enW,enR,mask);
 
 	import rv32iBasis::*;
-	input word_t addr,oR2;
-	input logic clk;
+	input word_t addr,oR2,pmem_read;
+	// input logic clk;
 
 /* verilator lint_off UNUSEDSIGNAL */
 	input op_t op;
 /* verilator lint_on UNUSEDSIGNAL */
 
 
-	output word_t data;
+	output word_t data,pmem_write,pmem_addr;
+	output logic enW,enR;
 	// output logic LSUsuccess;
 
-	logic[3:0] mask;
+	output logic[3:0] mask;
 	word_t iRAM;
 //s处理
 	always_comb begin : choose_mask
@@ -430,12 +405,19 @@ module ysyx_26020046_rv32iLSU(clk,addr,oR2,op,data);
 		endcase end else data='0;
 	end
 
-	assign iRAM = (op.LSU.enL)&clk?pmem_read(addr,op.LSU.enL):0;
-	always_ff@(posedge clk) begin:control_write
-		if (op.LSU.enS) begin // 有写请求时
-			pmem_write(addr, oR2, {4'b0,mask});
-		end
-	end
+	// import "DPI-C" function int pmem_read(input int addr);
+	// import "DPI-C" function void pmem_write(input int addr, input int data, input byte mask);
+	// assign iRAM = (op.LSU.enL)&clk?pmem_read(addr):0;
+	// always_ff@(posedge clk) begin:control_write
+	// 	if (op.LSU.enS) begin // 有写请求时
+	// 		pmem_write(addr, oR2, {4'b0,mask});
+	// 	end
+	// end
+	assign enW=op.LSU.enS;
+	assign enR=op.LSU.enL;
+	assign pmem_write=oR2;
+	assign iRAM=pmem_read;
+	assign pmem_addr=addr;
 
 endmodule
 module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
@@ -537,9 +519,43 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 			default				:oCsr=0;
 		endcase
 
-	// `ifdef RV32I_DEBUG
-	// 	$monitor("mepc=%x mstatus=%x mtvec=%x mcause=%x mcycle=%x mcycleh=%x marchid=%x mvendorid=%x",mepc,mstatus,mtvec,mcause,mcycle,mcycleh,marchid,mvendorid);
-	// `endif
+	`ifdef RV32I_DEBUG
+		$monitor("mepc=%x mstatus=%x mtvec=%x mcause=%x mcycle=%x mcycleh=%x marchid=%x mvendorid=%x",mepc,mstatus,mtvec,mcause,mcycle,mcycleh,marchid,mvendorid);
+	`endif
 	end
 				
+endmodule
+
+module ysyx_26020046_rv32iRAM(clk,reset,pmem_addr,enW,enR,pmem_read,pmem_write,mask);
+	import rv32iBasis::*;
+	parameter RAM_SIZE = 256;
+	parameter WORD_BIT = DATA_WIDTH/4;
+	parameter RAM_BITS = RAM_SIZE*WORD_BIT;
+	typedef logic [7:0] bit_t;
+	bit_t inRAM[RAM_BITS-1:0];
+
+	input logic clk,reset,enW,enR;
+	input logic [3:0] mask;
+	input word_t pmem_addr,pmem_write;
+	output word_t pmem_read;
+
+	word_t useAddr;
+	assign useAddr=pmem_addr-PC_RESET;
+
+	always_ff@(posedge clk) begin:ram_write
+		if(reset)begin
+			inRAM<='0;
+		end else begin
+			if(enW)begin
+				case(1'b1)
+					mask[0]:inRAM[useAddr+0]<=pmem_write[7:0];
+					mask[1]:inRAM[useAddr+1]<=pmem_write[15:8];
+					mask[2]:inRAM[useAddr+2]<=pmem_write[23:16];
+					mask[3]:inRAM[useAddr+3]<=pmem_write[31:24];
+				endcase
+			end
+		end
+	end
+	assign pmem_read=enR?{inRAM[useAddr+3],inRAM[useAddr+2],inRAM[useAddr+1],inRAM[useAddr+0]}:'0;
+
 endmodule

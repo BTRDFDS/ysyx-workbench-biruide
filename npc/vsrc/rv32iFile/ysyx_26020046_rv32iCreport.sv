@@ -89,21 +89,11 @@ package rv32iBasis;
 	import "DPI-C" function void pmem_write(input int addr, input int data, input byte mask);
 endpackage
 
-/* verilator lint_off UNUSEDSIGNAL */
-interface IF_ID_Bus_t(input logic clk,reset);
-	import rv32iBasis::*;
-	code_t code;
-	logic valid,ready;
-	modport IF(
-	input ready,
-	output valid,code,reset
-	);
-	modport ID(
-	input valid,code,
-	output ready,reset
-	);
-endinterface;
-/* verilator lint_on UNUSEDSIGNAL */
+// interface SimpleBus_t();
+// 	import rv32iBasis::*;
+// 	op_t op;
+// 	logic valid,ready;
+// endinterface;
 
 
 
@@ -113,15 +103,13 @@ module ysyx_26020046_rv32i(clk,reset,pc);
 	import rv32iBasis::*;
 	input logic clk,reset;
 	// input code_t code;
-	// code_t code;
+	code_t code;
 	output word_t pc;
 
 	word_t oR1,oR2,data,addr,iRd,iCsr,oCsr;
 	reg_t cRd,cR1,cR2;
 	op_t op;
 	logic enJfun;
-
-	IF_ID_Bus_t IF_ID_Bus(.*);
 
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
@@ -153,23 +141,22 @@ module ysyx_26020046_rv32i(clk,reset,pc);
 
 endmodule
 
-module ysyx_26020046_rv32iIFU(pc,IF_ID_Bus_t.IF IF_ID_Bus);
+module ysyx_26020046_rv32iIFU(pc,code);
 	import rv32iBasis::*;
 	input word_t pc;
 	// input logic reset;
-	// output code_t code;
+	output code_t code;
 	// always_ff @(posedge clk) begin
 	always_comb begin
-		IF_ID_Bus.code=pmem_read(pc,IF_ID_Bus.ready);
-		IF_ID_Bus.valid=1'b1;
+		code=pmem_read(pc,1'b1);
 	end
 endmodule
 
-module ysyx_26020046_rv32iIDU(cRd,cR1,cR2,op,IF_ID_Bus_t.ID IF_ID_Bus);
+module ysyx_26020046_rv32iIDU(code,reset,cRd,cR1,cR2,op);
 	import rv32iBasis::*;
 	import "DPI-C" function void stop(input bit eb);
-	// input code_t code;
-	// input logic reset;
+	input code_t code;
+	input logic reset;
 	// output logic enJfun;
 	// output word_t im;
 	output reg_t cRd,cR1,cR2;
@@ -177,8 +164,6 @@ module ysyx_26020046_rv32iIDU(cRd,cR1,cR2,op,IF_ID_Bus_t.ID IF_ID_Bus);
 	// imCode_t imm;
 	// logic error;
 	
-	assign IF_ID_Bus.ready=1'b1;
-
 	always_comb begin : ID
 		// imm=N;
 		op.ALU.in1=IR1;op.ALU.in2=IR2;
@@ -192,63 +177,63 @@ module ysyx_26020046_rv32iIDU(cRd,cR1,cR2,op,IF_ID_Bus_t.ID IF_ID_Bus);
 		$display("#ID:code=%x code.fun7=%x code.r2=%x code.r1=%x code.fun3=%x code.rd=%x code.op=%x",code,code.fun7,code.r2,code.r1,code.fun3,code.rd,code.op);
 	`endif
 
-		if((~IF_ID_Bus.reset)&IF_ID_Bus.valid) begin
-			unique case(IF_ID_Bus.code.op)//选ALU imm
-				OP_U_I	:op.ALU.im={IF_ID_Bus.code[31:12],12'b0 };
-				OP_U_P	:op.ALU.im={IF_ID_Bus.code[31:12],12'b0 };
-				OP_S__	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[31:25], IF_ID_Bus.code[11:7] };
-				OP_I_A	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[31:20] };
-				OP_I_J	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[31:20] };
-				OP_I_L	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[31:20] };
-				OP_B__	:op.ALU.im={{20{IF_ID_Bus.code[31]}},IF_ID_Bus.code[7], IF_ID_Bus.code[30:25], IF_ID_Bus.code[11:8], 1'b0 };
-				OP_J__	:op.ALU.im={{12{IF_ID_Bus.code[31]}},IF_ID_Bus.code[19:12], IF_ID_Bus.code[20], IF_ID_Bus.code[30:21], 1'b0 };
+		if(~reset) begin
+			unique case(code.op)//选ALU imm
+				OP_U_I	:op.ALU.im={code[31:12],12'b0 };
+				OP_U_P	:op.ALU.im={code[31:12],12'b0 };
+				OP_S__	:op.ALU.im={{20{code[31]}},code[31:25], code[11:7] };
+				OP_I_A	:op.ALU.im={{20{code[31]}},code[31:20] };
+				OP_I_J	:op.ALU.im={{20{code[31]}},code[31:20] };
+				OP_I_L	:op.ALU.im={{20{code[31]}},code[31:20] };
+				OP_B__	:op.ALU.im={{20{code[31]}},code[7], code[30:25], code[11:8], 1'b0 };
+				OP_J__	:op.ALU.im={{12{code[31]}},code[19:12], code[20], code[30:21], 1'b0 };
 				default	:op.ALU.im='0;
 			endcase
-			unique case(IF_ID_Bus.code.op)//选ALU in1 只有auipc会用到它
+			unique case(code.op)//选ALU in1 只有auipc会用到它
 				OP_U_P	:op.ALU.in1=PC_;
 				default	:op.ALU.in1=IR1;
 			endcase
-			unique case(IF_ID_Bus.code.op)//选ALU in2 只有auipc和立即数计算系列
+			unique case(code.op)//选ALU in2 只有auipc和立即数计算系列
 				OP_U_P	:op.ALU.in2=IMM;
 				OP_I_A	:op.ALU.in2=IMM;
 				default	:op.ALU.in2=IR2;
 			endcase
-			unique case(IF_ID_Bus.code.op)
+			unique case(code.op)
 				OP_J__	:op.ALU.enJcod=1;
 				OP_I_J	:op.ALU.enJcod=1;
-				OP_CSR	:op.ALU.enJcod=(IF_ID_Bus.code.fun3==3'b000);
+				OP_CSR	:op.ALU.enJcod=(code.fun3==3'b000);
 				default	:op.ALU.enJcod=0;
 			endcase
 
-			unique case(IF_ID_Bus.code.op)//选ALU cal
+			unique case(code.op)//选ALU cal
 				OP_U_P	:op.ALU.cal=ADD_;
-				OP_I_A	:begin unique case(IF_ID_Bus.code.fun3)
-						3'b001:begin unique case(IF_ID_Bus.code.fun7)
+				OP_I_A	:begin unique case(code.fun3)
+						3'b001:begin unique case(code.fun7)
 								7'b0000000:op.ALU.cal=SLL_;
-								default:begin $fatal("slli fun7(%x)!=0",IF_ID_Bus.code.fun7);stop(0);end
+								default:begin $fatal("slli fun7(%x)!=0",code.fun7);stop(0);end
 							endcase end
-						3'b101:begin unique case(IF_ID_Bus.code.fun7)
+						3'b101:begin unique case(code.fun7)
 								7'b0000000:op.ALU.cal=SRL_;
 								7'b0100000:op.ALU.cal=SRA_;
-								default:begin $fatal("srai/srli fun7(%x)!=0/20",IF_ID_Bus.code.fun7);stop(0);end
+								default:begin $fatal("srai/srli fun7(%x)!=0/20",code.fun7);stop(0);end
 							endcase end
-						default:op.ALU.cal=ALUopCal_t'(IF_ID_Bus.code.fun3);
+						default:op.ALU.cal=ALUopCal_t'(code.fun3);
 					endcase end
-				OP_R__	:begin unique case(IF_ID_Bus.code.fun7)
-						7'b0000000:op.ALU.cal=ALUopCal_t'(IF_ID_Bus.code.fun3);
-						7'b0100000:begin unique case(IF_ID_Bus.code.fun3)
+				OP_R__	:begin unique case(code.fun7)
+						7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
+						7'b0100000:begin unique case(code.fun3)
 								3'b000:op.ALU.cal=SUB_;
 								3'b101:op.ALU.cal=SRA_;
-								default:begin $fatal("R fun7==20 fun3(%x)!=1/5",IF_ID_Bus.code.fun3);stop(0);end
+								default:begin $fatal("R fun7==20 fun3(%x)!=1/5",code.fun3);stop(0);end
 							endcase end
-						default:begin $fatal("R fun7(%x)!=0/20",IF_ID_Bus.code.fun7);stop(0);end
+						default:begin $fatal("R fun7(%x)!=0/20",code.fun7);stop(0);end
 					endcase end
 				default	:op.ALU.cal=NCAL;
 			endcase
-			if(IF_ID_Bus.code.op==OP_B__)begin//b系列
-				op.ALU.bfu=ALUopBfu_t'(IF_ID_Bus.code.fun3);
+			if(code.op==OP_B__)begin//b系列
+				op.ALU.bfu=ALUopBfu_t'(code.fun3);
 			end else op.ALU.bfu=NBFU;
-			unique case(IF_ID_Bus.code.op)//选ALU cho和adr
+			unique case(code.op)//选ALU cho和adr
 				OP_U_I	:{op.ALU.cho,op.ALU.adr}={IMM_,NAD};
 				OP_U_P	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
 				OP_J__	:{op.ALU.cho,op.ALU.adr}={SNPC,PCI};
@@ -262,43 +247,43 @@ module ysyx_26020046_rv32iIDU(cRd,cR1,cR2,op,IF_ID_Bus_t.ID IF_ID_Bus);
 				default	:{op.ALU.cho,op.ALU.adr}={NCHO,NAD};
 			endcase
 
-			unique case(IF_ID_Bus.code.op)//选LSU op
-				OP_I_L	:op.LSU.op=LSUop_t'(IF_ID_Bus.code.fun3);
-				OP_S__	:op.LSU.op=LSUop_t'(IF_ID_Bus.code.fun3);
+			unique case(code.op)//选LSU op
+				OP_I_L	:op.LSU.op=LSUop_t'(code.fun3);
+				OP_S__	:op.LSU.op=LSUop_t'(code.fun3);
 				default	:op.LSU.op=NM;
 			endcase
-			op.LSU.enL=(IF_ID_Bus.code.op==OP_I_L);
-			op.LSU.enS=(IF_ID_Bus.code.op==OP_S__);
+			op.LSU.enL=(code.op==OP_I_L);
+			op.LSU.enS=(code.op==OP_S__);
 
-			if(IF_ID_Bus.code.op==OP_CSR)begin unique case(IF_ID_Bus.code.fun3)//选CSR op
-				3'b000	:begin unique case(IF_ID_Bus.code)
+			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
+				3'b000	:begin unique case(code)
 						OP_SCR_MRET__	:begin op.CSR.op=MRET_;op.CSR.addr=CSR_ADDR_MEPC;end
 						OP_SCR_ECALL_	:begin op.CSR.op=ECALL;op.CSR.addr=CSR_ADDR_MTVEC;end
 						OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop(1);end
-						default			:begin op.CSR.op=NCSR_;op.CSR.addr='0;$fatal("CSR unknown op==0x%x",IF_ID_Bus.code);stop(0);end
+						default			:begin op.CSR.op=NCSR_;op.CSR.addr='0;$fatal("CSR unknown op==0x%x",code);stop(0);end
 					endcase end
-				3'b001	:begin op.CSR.addr={IF_ID_Bus.code[31:20]};	op.CSR.op=WCCSR;op.ALU.csr=WACSR;end
-				3'b010	:begin op.CSR.addr={IF_ID_Bus.code[31:20]};	op.CSR.op=(IF_ID_Bus.code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(IF_ID_Bus.code.r1=='0)?NACSR:RACSR;end
-				default	:begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;$fatal("CSR unknown op==0x%x",IF_ID_Bus.code);stop(0);end
+				3'b001	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;op.ALU.csr=WACSR;end
+				3'b010	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(code.r1=='0)?NACSR:RACSR;end
+				default	:begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;$fatal("CSR unknown op==0x%x",code);stop(0);end
 			endcase end else begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;end
 
-			unique case(IF_ID_Bus.code.op)//选cR1 这里7/10就反选
+			unique case(code.op)//选cR1 这里7/10就反选
 				OP_U_I	:cR1='0;
 				OP_U_P	:cR1='0;
 				OP_J__	:cR1='0;
-				default	:cR1=IF_ID_Bus.code.r1;
+				default	:cR1=code.r1;
 			endcase
-			unique case(IF_ID_Bus.code.op)//选cR2
-				OP_S__	:cR2=IF_ID_Bus.code.r2;
-				OP_R__	:cR2=IF_ID_Bus.code.r2;
-				OP_B__	:cR2=IF_ID_Bus.code.r2;
+			unique case(code.op)//选cR2
+				OP_S__	:cR2=code.r2;
+				OP_R__	:cR2=code.r2;
+				OP_B__	:cR2=code.r2;
 				default	:cR2='0;
 			endcase
-			unique case(IF_ID_Bus.code.op)//选cRd 也是反选
+			unique case(code.op)//选cRd 也是反选
 				OP_B__	:cRd='0;
 				OP_S__	:cRd='0;
-				OP_CSR	:cRd=(IF_ID_Bus.code.fun3==3'b000)?'0:IF_ID_Bus.code.rd;
-				default	:cRd=IF_ID_Bus.code.rd;
+				OP_CSR	:cRd=(code.fun3==3'b000)?'0:code.rd;
+				default	:cRd=code.rd;
 			endcase
 		end
 	end
