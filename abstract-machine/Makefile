@@ -138,7 +138,7 @@ LINKAGE += $$(AM_HOME)/$(1)/build/$(1)-$$(ARCH).a
 endef
 
 ### Rule (recursive make): build a dependent library (am, klib, ...)
-$(foreach lib, $(LIBS), $(eval $(call LIB_TEMPLATE,$(lib))))
+$(foreach lib, $(LIBS), $(eval $(call LIB_TEMPLATE,$(lib))))#执行循环编译
 endif
 
 ### Rule (link): objects (`*.o`) and libraries (`*.a`) -> `IMAGE.elf`, the final ELF binary to be packed into image (ld)

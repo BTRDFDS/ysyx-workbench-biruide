@@ -71,10 +71,12 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 	gpr[0]=0;
 }
 
-extern "C" int pmem_read(int raddr) {
+extern "C" int pmem_read(int raddr,unsigned char enR,unsigned char* finR) {
+	if(enR==false){return 0;}
 	IfDebug(printf("pmem_read : "););
 	uint32_t raddrX=(uint32_t)raddr;
 	// if(raddrX==0){return 0;}
+	*finR=1;
 	if(raddrX==timeADDR){//返回毫秒数
 		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddrX);
 		uint32_t time=0;
@@ -191,7 +193,7 @@ void minirvReset(){
 
 	pc=top->pc;
 	code=MemRead(pc,memReadRESET);
-	top->code=code;//IFU
+	// top->code=code;
 	top->clk=0;top->reset=0;top->eval();
 
 	// printf("pc=%x\n",pc);
@@ -204,7 +206,7 @@ void minirvStep(){
 	pc=top->pc;
 	// printf("pc=%x\n",pc);
 	code=MemRead(pc,memReadSTEP);
-	top->code=code;//IFU
+	// top->code=code;//IFU
 	uint32_t nPc=pc;
 	uint32_t nCode=code;
 
@@ -216,7 +218,7 @@ void minirvStep(){
 	// printf("step begin 3\n");
 	// printf("pc=%x\n",pc);
 	code=MemRead(pc,memReadSTEP);
-	top->code=code;//IFU
+	// top->code=code;//IFU
 	// printf("step begin 2\n");
 	top->clk=0;top->eval();
 	// printf("step begin\n");
