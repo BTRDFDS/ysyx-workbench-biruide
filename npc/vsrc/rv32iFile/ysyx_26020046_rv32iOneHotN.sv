@@ -84,7 +84,7 @@ package rv32iBasis;
 
 endpackage
 
-module ysyx_26020046_rv32iOneHot(clk,reset,code,pc);
+module ysyx_26020046_rv32iOneHotN(clk,reset,code,pc);
 	import rv32iBasis::*;
 	input logic clk,reset;
 	// input word_t code;
@@ -285,12 +285,12 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,op,oCsr,iCsr);
 
 	always_comb begin : calculate
 		unique case('1)
-			op.Code.Lui		:result=imm;
+			// op.Code.Lui		:result=imm;
 			op.Code.Auipc	:result=imm+pc;
-			op.Code.Jal		:result=imm+pc;
-			op.Code.Jalr	:result=imm+oR1;
-			op.Code.Bfun	:result=imm+pc;
-			op.Code.Mfun	:result=imm+oR1;
+			// op.Code.Jal		:result=imm+pc;
+			// op.Code.Jalr	:result=imm+oR1;
+			// op.Code.Bfun	:result=imm+pc;
+			// op.Code.Mfun	:result=imm+oR1;
 			op.Icod.Addi	:result=imm+oR1;
 			op.Icod.Slti	:result=  $signed(oR1) <  $signed(imm)?1:0;
 			op.Icod.Sltiu	:result=$unsigned(oR1) <$unsigned(imm)?1:0;
@@ -305,16 +305,14 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,op,oCsr,iCsr);
 			op.Rcod.Sll		:result=oR1<<oR2[4:0];
 			op.Rcod.Slt		:result=  $signed(oR1) <  $signed(oR2)?1:0;
 			op.Rcod.Sltu	:result=$unsigned(oR1) <$unsigned(oR2)?1:0;
-			op.Rcod.Xor	:result=oR1^oR2;
-			op.Rcod.Srl	:result=$unsigned(oR1)>> oR2[4:0];
-			op.Rcod.Sra	:result=  $signed(oR1)>>>oR2[4:0];
-			op.Rcod.Or	:result=oR1|oR2;
-			op.Rcod.And	:result=oR1&oR2;
-			op.Csrr.Csrrs:result=oCsr|oR1;
-			// op.Csrr.Csrrw:result=oR1;
-			op.Csrr.Mret	:result=oCsr+4;
-			op.Csrr.Ecall:result=oCsr;
-			default		:result='0;
+			op.Rcod.Xor		:result=oR1^oR2;
+			op.Rcod.Srl		:result=$unsigned(oR1)>> oR2[4:0];
+			op.Rcod.Sra		:result=  $signed(oR1)>>>oR2[4:0];
+			op.Rcod.Or		:result=oR1|oR2;
+			op.Rcod.And		:result=oR1&oR2;
+			// op.Csrr.Mret	:result=oCsr+4;
+			// op.Csrr.Ecall	:result=oCsr;
+			default			:result='0;
 		endcase
 	
 	`ifdef RV32I_DEBUG
@@ -341,12 +339,25 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,imm,data,addr,iRd,enBfun,op,oCsr,iCsr);
 			op.Csrr.Ecall	:iCsr=pc;
 			op.Csrr.Mret	:iCsr=pc;
 			op.Csrr.Csrrw	:iCsr=oR1;
-			op.Csrr.Csrrs	:iCsr=result;
+			op.Csrr.Csrrs	:iCsr=oCsr|oR1;
 			default			:iCsr='0;
 		endcase
 	end
 
-	assign addr=(op.Code.Mfun|op.Code.Jal|op.Code.Jalr|op.Code.Bfun|op.Csrr.Mret|op.Csrr.Ecall)?result:0;
+	// assign addr=(op.Code.Jal|op.Code.Jalr|op.Code.Bfun|op.Code.Mfun|op.Csrr.Mret|op.Csrr.Ecall)?result:0;
+
+	always_comb begin
+		unique case('1)
+			op.Code.Jal		:addr=imm+pc;
+			op.Code.Jalr	:addr=imm+oR1;
+			op.Code.Bfun	:addr=imm+pc;
+			op.Code.Mfun	:addr=imm+oR1;
+			op.Csrr.Mret	:addr=oCsr+4;
+			op.Csrr.Ecall	:addr=oCsr;
+			default			:addr='0;
+		endcase
+	end
+
 	always_comb begin :choose
 		unique case('1)
 			choRes	:iRd=result;

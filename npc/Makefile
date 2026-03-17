@@ -72,6 +72,7 @@ ifeq ($(t),minirv)
 endif
 ifeq ($(t),rv32i)
 	tF=ysyx_26020046_rv32i
+# 	tF=ysyx_26020046_rv32iOneHotN
 	tCd += $(NPC_HOME)/csrc/npcSdb/*
 	tCd += $(NPC_HOME)/csrc/npcTrace/*
 	tCd += $(NPC_HOME)/csrc/npcDifftest/*
