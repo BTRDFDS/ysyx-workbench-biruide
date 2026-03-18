@@ -431,125 +431,125 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 
 	word_t result,in1,in2;
 
-	ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin1 (.out(in1),.key(op.ALU.in1),.default_out('0),.lut({
-		{IR1,oR1},
-		{PC_,pc}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin2 (.out(in2),.key(op.ALU.in2),.default_out('0),.lut({
-		{IR2,oR2},
-		{IMM,op.ALU.im}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(10,4,DATA_WIDTH) MuxCal (.out(result),.key(op.ALU.cal),.default_out('0),.lut({
-		{ADD_,in1+in2},
-		{SLL_,in1<<in2[4:0]},
-		{SLT_,  $signed(in1) <  $signed(in2)?32'b1:32'b0},
-		{SLTU,$unsigned(in1) <$unsigned(in2)?32'b1:32'b0},
-		{XOR_,in1^in2},
-		{SRL_,$unsigned(in1)>> in2[4:0]},
-		{OR__,in1|in2},
-		{AND_,in1&in2},
-		{SUB_,in1-in2},
-		{SRA_,  $signed(in1)>>>in2[4:0]}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(6,3,1) MuxBfun(.out(enBfun),.key(op.ALU.bfu),.default_out('0),.lut({
-		{BEQ_,(oR1==oR2)},
-		{BNE_,(oR1!=oR2)},
-		{BLT_,(  $signed(oR1) <  $signed(oR2))},
-		{BGE_,(  $signed(oR1)>=  $signed(oR2))},
-		{BLTU,($unsigned(oR1) <$unsigned(oR2))},
-		{BGEU,($unsigned(oR1)>=$unsigned(oR2))}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(4,3,DATA_WIDTH) MuxAdr(.out(addr),.key(op.ALU.adr),.default_out('0),.lut({
-	    {R1I,oR1+op.ALU.im},
-	    {PCI,pc+op.ALU.im},
-	    {ECJ,oCsr},
-	    {ERE,oCsr+4}
-	}));
-	assign enJfun=op.ALU.enJcod|enBfun;
-	ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) MuxCho(.out(iRd),.key(op.ALU.cho),.default_out('0),.lut({
-		{CAL_,result},
-		{IMM_,op.ALU.im},
-		{DATA,data},
-		{CCSR,oCsr},
-		{SNPC,pc+4}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(3,2,DATA_WIDTH) MuxCsr(.out(iCsr),.key(op.ALU.csr),.default_out('0),.lut({
-		{WACSR,oR1},
-		{RACSR,oR1|oCsr},
-		{JUMP_,pc}
-	}));
+	// ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin1 (.out(in1),.key(op.ALU.in1),.default_out('0),.lut({
+	// 	{IR1,oR1},
+	// 	{PC_,pc}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin2 (.out(in2),.key(op.ALU.in2),.default_out('0),.lut({
+	// 	{IR2,oR2},
+	// 	{IMM,op.ALU.im}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(10,4,DATA_WIDTH) MuxCal (.out(result),.key(op.ALU.cal),.default_out('0),.lut({
+	// 	{ADD_,in1+in2},
+	// 	{SLL_,in1<<in2[4:0]},
+	// 	{SLT_,  $signed(in1) <  $signed(in2)?32'b1:32'b0},
+	// 	{SLTU,$unsigned(in1) <$unsigned(in2)?32'b1:32'b0},
+	// 	{XOR_,in1^in2},
+	// 	{SRL_,$unsigned(in1)>> in2[4:0]},
+	// 	{OR__,in1|in2},
+	// 	{AND_,in1&in2},
+	// 	{SUB_,in1-in2},
+	// 	{SRA_,  $signed(in1)>>>in2[4:0]}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(6,3,1) MuxBfun(.out(enBfun),.key(op.ALU.bfu),.default_out('0),.lut({
+	// 	{BEQ_,(oR1==oR2)},
+	// 	{BNE_,(oR1!=oR2)},
+	// 	{BLT_,(  $signed(oR1) <  $signed(oR2))},
+	// 	{BGE_,(  $signed(oR1)>=  $signed(oR2))},
+	// 	{BLTU,($unsigned(oR1) <$unsigned(oR2))},
+	// 	{BGEU,($unsigned(oR1)>=$unsigned(oR2))}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(4,3,DATA_WIDTH) MuxAdr(.out(addr),.key(op.ALU.adr),.default_out('0),.lut({
+	//     {R1I,oR1+op.ALU.im},
+	//     {PCI,pc+op.ALU.im},
+	//     {ECJ,oCsr},
+	//     {ERE,oCsr+4}
+	// }));
+	// assign enJfun=op.ALU.enJcod|enBfun;
+	// ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) MuxCho(.out(iRd),.key(op.ALU.cho),.default_out('0),.lut({
+	// 	{CAL_,result},
+	// 	{IMM_,op.ALU.im},
+	// 	{DATA,data},
+	// 	{CCSR,oCsr},
+	// 	{SNPC,pc+4}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(3,2,DATA_WIDTH) MuxCsr(.out(iCsr),.key(op.ALU.csr),.default_out('0),.lut({
+	// 	{WACSR,oR1},
+	// 	{RACSR,oR1|oCsr},
+	// 	{JUMP_,pc}
+	// }));
 	
-	// always_comb begin : cal
-	// 	unique case(op.ALU.in1)
-	// 		IR1:in1=oR1;
-	// 		PC_:in1=pc;
-	// 		default:begin in1='0;end
-	// 	endcase
-	// 	unique case(op.ALU.in2)
-	// 		IR2:in2=oR2;
-	// 		IMM:in2=op.ALU.im;
-	// 		default:begin in2='0;end
-	// 	endcase
+	always_comb begin : cal
+		unique case(op.ALU.in1)
+			IR1:in1=oR1;
+			PC_:in1=pc;
+			default:begin in1='0;end
+		endcase
+		unique case(op.ALU.in2)
+			IR2:in2=oR2;
+			IMM:in2=op.ALU.im;
+			default:begin in2='0;end
+		endcase
 
-	// 	unique case(op.ALU.cal)
-	// 		ADD_:result=in1+in2;
-	// 		SLL_:result=in1<<in2[4:0];
-	// 		SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
-	// 		SLTU:result=$unsigned(in1) <$unsigned(in2)?1:0;
-	// 		XOR_:result=in1^in2;
-	// 		SRL_:result=$unsigned(in1)>> in2[4:0];
-	// 		OR__:result=in1|in2;
-	// 		AND_:result=in1&in2;
-	// 		SUB_:result=in1-in2;
-	// 		SRA_:result=  $signed(in1)>>>in2[4:0];
-	// 		NCAL:result='0;
-	// 		default:begin result='0;end
-	// 	endcase
-	// end
-	// always_comb begin : bfu
-	// 	unique case(op.ALU.bfu)
-	// 		BEQ_:enBfun=(oR1==oR2);
-	// 		BNE_:enBfun=(oR1!=oR2);
-	// 		BLT_:enBfun=(  $signed(oR1) <  $signed(oR2));
-	// 		BGE_:enBfun=(  $signed(oR1)>=  $signed(oR2));
-	// 		BLTU:enBfun=($unsigned(oR1) <$unsigned(oR2));
-	// 		BGEU:enBfun=($unsigned(oR1)>=$unsigned(oR2));
-	// 		NBFU:enBfun='0;
-	// 		default:begin enBfun='0;end
-	// 		endcase
-	// end
-	// always_comb begin : adr
-	// 	unique case(op.ALU.adr)
-	// 		R1I:addr=oR1+op.ALU.im;
-	// 		PCI:addr=pc+op.ALU.im;
-	// 		ECJ:addr=oCsr;
-	// 		ERE:addr=oCsr+4;
-	// 		NAD:addr='0;
-	// 		default:begin addr='0;end
-	// 	endcase
-	// 	enJfun=op.ALU.enJcod|enBfun;
-	// end
+		unique case(op.ALU.cal)
+			ADD_:result=in1+in2;
+			SLL_:result=in1<<in2[4:0];
+			SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
+			SLTU:result=$unsigned(in1) <$unsigned(in2)?1:0;
+			XOR_:result=in1^in2;
+			SRL_:result=$unsigned(in1)>> in2[4:0];
+			OR__:result=in1|in2;
+			AND_:result=in1&in2;
+			SUB_:result=in1-in2;
+			SRA_:result=  $signed(in1)>>>in2[4:0];
+			NCAL:result='0;
+			default:begin result='0;end
+		endcase
+	end
+	always_comb begin : bfu
+		unique case(op.ALU.bfu)
+			BEQ_:enBfun=(oR1==oR2);
+			BNE_:enBfun=(oR1!=oR2);
+			BLT_:enBfun=(  $signed(oR1) <  $signed(oR2));
+			BGE_:enBfun=(  $signed(oR1)>=  $signed(oR2));
+			BLTU:enBfun=($unsigned(oR1) <$unsigned(oR2));
+			BGEU:enBfun=($unsigned(oR1)>=$unsigned(oR2));
+			NBFU:enBfun='0;
+			default:begin enBfun='0;end
+			endcase
+	end
+	always_comb begin : adr
+		unique case(op.ALU.adr)
+			R1I:addr=oR1+op.ALU.im;
+			PCI:addr=pc+op.ALU.im;
+			ECJ:addr=oCsr;
+			ERE:addr=oCsr+4;
+			NAD:addr='0;
+			default:begin addr='0;end
+		endcase
+		enJfun=op.ALU.enJcod|enBfun;
+	end
 
-	// always_comb begin : cho
-	// 	unique case(op.ALU.cho)
-	// 		CAL_:iRd=result;
-	// 		IMM_:iRd=op.ALU.im;
-	// 		DATA:iRd=data;
-	// 		CCSR:iRd=oCsr;
-	// 		SNPC:iRd=pc+4;
-	// 		NCHO:iRd='0;
-	// 		default:begin iRd='0;end
-	// 	endcase
-	// end
-	// always_comb begin : csr
-	// 	unique case(op.ALU.csr)
-	// 		WACSR:iCsr=oR1;
-	// 		RACSR:iCsr=oR1|oCsr;
-	// 		JUMP_:iCsr=pc;
-	// 		NCSR_:iCsr='0;
-	// 		default:begin iCsr='0;end
-	// 	endcase
-	// end
+	always_comb begin : cho
+		unique case(op.ALU.cho)
+			CAL_:iRd=result;
+			IMM_:iRd=op.ALU.im;
+			DATA:iRd=data;
+			CCSR:iRd=oCsr;
+			SNPC:iRd=pc+4;
+			NCHO:iRd='0;
+			default:begin iRd='0;end
+		endcase
+	end
+	always_comb begin : csr
+		unique case(op.ALU.csr)
+			WACSR:iCsr=oR1;
+			RACSR:iCsr=oR1|oCsr;
+			JUMP_:iCsr=pc;
+			NCSR_:iCsr='0;
+			default:begin iCsr='0;end
+		endcase
+	end
 
 endmodule
 module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc,mask,pmem_read);

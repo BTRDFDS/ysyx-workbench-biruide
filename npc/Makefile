@@ -73,11 +73,16 @@ endif
 ifeq ($(t),rv32i)
 	tF=ysyx_26020046_rv32i
 # 	tF=ysyx_26020046_rv32iOneHotN
-	tF+=ysyx_26020046_Mux.v
+	tVd+= $(NPC_HOME)/vsrc/module/ysyx_26020046_Mux.sv
 	tCd += $(NPC_HOME)/csrc/npcSdb/*
 	tCd += $(NPC_HOME)/csrc/npcTrace/*
 	tCd += $(NPC_HOME)/csrc/npcDifftest/*
 endif
+ifeq ($(t),rv32iSta)
+	tF=ysyx_26020046_rv32iSta
+	tVd+= $(NPC_HOME)/vsrc/module/ysyx_26020046_Mux.sv
+endif
+# tVd+= $(NPC_HOME)/vsrc/module/ysyx_26020046_Mux.sv
 
 bin/%: $(tVd) $(tCd) | build/$(tF) bin
 

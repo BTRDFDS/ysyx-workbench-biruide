@@ -1,4 +1,4 @@
-module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,addr,mask,enW);
+module ysyx_26020046_rv32iStaMux(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,addr,mask,enW);
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;

@@ -1,7 +1,7 @@
 
 25. Printing statistics.
 
-=== ysyx_26020046_rv32iSta ===
+=== ysyx_26020046_rv32iStaCase ===
 
         +----------Local Count, excluding submodules.
         |        +-Local Area, excluding submodules.
@@ -243,6 +243,6 @@
         6     16.8   XOR2X1P4H7L
         1     3.36   XOR2X3H7L
 
-   Chip area for module '\ysyx_26020046_rv32iSta': 19427.800000
+   Chip area for module '\ysyx_26020046_rv32iStaCase': 19427.800000
      of which used for sequential elements: 8081.920000 (41.60%)
 
