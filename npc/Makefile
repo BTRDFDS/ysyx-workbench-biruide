@@ -73,6 +73,7 @@ endif
 ifeq ($(t),rv32i)
 	tF=ysyx_26020046_rv32i
 # 	tF=ysyx_26020046_rv32iOneHotN
+	tF+=ysyx_26020046_Mux.v
 	tCd += $(NPC_HOME)/csrc/npcSdb/*
 	tCd += $(NPC_HOME)/csrc/npcTrace/*
 	tCd += $(NPC_HOME)/csrc/npcDifftest/*

@@ -260,7 +260,7 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 			// 		3'b010	:op.ALU.csr=(code.r1=='0)?NACSR:RACSR;
 			// 		default	:op.ALU.csr=NACSR;
 			// endcase end else op.ALU.csr=NACSR;
-			unique case(code.op)//选ALU cho
+			unique case(code.op)//选ALU cho addr
 				OP_U_I	:{op.ALU.cho,op.ALU.adr}={IMM_,NAD};
 				OP_U_P	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
 				OP_J__	:{op.ALU.cho,op.ALU.adr}={SNPC,PCI};
@@ -280,7 +280,7 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 			op.LSU.enL=(code.op==OP_I_L);
 			op.LSU.enS=(code.op==OP_S__);
 
-			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
+			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op addr
 				3'b000	:begin unique case(code)
 						OP_SCR_MRET__	:begin op.CSR.op=MRET_;op.CSR.addr=CSR_ADDR_MEPC;end
 						OP_SCR_ECALL_	:begin op.CSR.op=ECALL;op.CSR.addr=CSR_ADDR_MTVEC;end
