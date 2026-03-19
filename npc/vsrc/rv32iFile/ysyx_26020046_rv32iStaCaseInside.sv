@@ -227,43 +227,43 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 				default	:op.ALU.enJcod=0;
 			endcase
 
-			// unique case(code.op)//选ALU cal
-			// 	OP_U_P	:op.ALU.cal=ADD_;
-			// 	OP_I_A	:begin unique case(code.fun3)
-			// 			3'b001:begin unique case(code.fun7)
-			// 					7'b0000000:op.ALU.cal=SLL_;
-			// 					default:begin op.ALU.cal=NCAL;stop=1'b1;eb=1'b0;end
-			// 				endcase end
-			// 			3'b101:begin unique case(code.fun7)
-			// 					7'b0000000:op.ALU.cal=SRL_;
-			// 					7'b0100000:op.ALU.cal=SRA_;
-			// 					default:begin op.ALU.cal=NCAL;stop=1'b1;eb=1'b0;end
-			// 				endcase end
-			// 			default:op.ALU.cal=ALUopCal_t'(code.fun3);
-			// 		endcase end
-			// 	OP_R__	:begin unique case(code.fun7)
-			// 			7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
-			// 			7'b0100000:begin unique case(code.fun3)
-			// 					3'b000:op.ALU.cal=SUB_;
-			// 					3'b101:op.ALU.cal=SRA_;
-			// 					default:begin op.ALU.cal=NCAL;stop=1'b1;eb=1'b0;end
-			// 				endcase end
-			// 			default:begin op.ALU.cal=NCAL;stop=1'b1;eb=1'b0;end
-			// 		endcase end
-			// 	default	:op.ALU.cal=NCAL;
-			// endcase
-			unique case({code.fun7,code.fun3,code.op}) inside
-				{7'b???????,3'b???,OP_U_P}	:op.ALU.cal=ADD_;
-				{7'b0000000,3'b???,OP_R__}	:op.ALU.cal=ALUopCal_t'(code.fun3);
-				{7'b0100000,3'b000,OP_R__}	:op.ALU.cal=SUB_;
-				{7'b0100000,3'b101,OP_R__}	:op.ALU.cal=SRA_;
-				{7'b0000000,3'b001,OP_I_A}	:op.ALU.cal=SLL_;
-				{7'b0000000,3'b101,OP_I_A}	:op.ALU.cal=SRL_;
-				{7'b0100000,3'b101,OP_I_A}	:op.ALU.cal=SRA_;
-				{7'b???????,3'b??0,OP_I_A}	:op.ALU.cal=ALUopCal_t'(code.fun3);
-				{7'b???????,3'b?11,OP_I_A}	:op.ALU.cal=ALUopCal_t'(code.fun3);
-				default						:op.ALU.cal=NCAL;
+			unique case(code.op)//选ALU cal
+				OP_U_P	:op.ALU.cal=ADD_;
+				OP_I_A	:begin unique case(code.fun3)
+						3'b001:begin unique case(code.fun7)
+								7'b0000000:op.ALU.cal=SLL_;
+								default:begin op.ALU.cal=NCAL;stop=1'b1;eb=1'b0;end
+							endcase end
+						3'b101:begin unique case(code.fun7)
+								7'b0000000:op.ALU.cal=SRL_;
+								7'b0100000:op.ALU.cal=SRA_;
+								default:begin op.ALU.cal=NCAL;stop=1'b1;eb=1'b0;end
+							endcase end
+						default:op.ALU.cal=ALUopCal_t'(code.fun3);
+					endcase end
+				OP_R__	:begin unique case(code.fun7)
+						7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
+						7'b0100000:begin unique case(code.fun3)
+								3'b000:op.ALU.cal=SUB_;
+								3'b101:op.ALU.cal=SRA_;
+								default:begin op.ALU.cal=NCAL;stop=1'b1;eb=1'b0;end
+							endcase end
+						default:begin op.ALU.cal=NCAL;stop=1'b1;eb=1'b0;end
+					endcase end
+				default	:op.ALU.cal=NCAL;
 			endcase
+			// unique case({code.fun7,code.fun3,code.op}) inside
+			// 	{7'b???????,3'b???,OP_U_P}	:op.ALU.cal=ADD_;
+			// 	{7'b0000000,3'b???,OP_R__}	:op.ALU.cal=ALUopCal_t'(code.fun3);
+			// 	{7'b0100000,3'b000,OP_R__}	:op.ALU.cal=SUB_;
+			// 	{7'b0100000,3'b101,OP_R__}	:op.ALU.cal=SRA_;
+			// 	{7'b0000000,3'b001,OP_I_A}	:op.ALU.cal=SLL_;
+			// 	{7'b0000000,3'b101,OP_I_A}	:op.ALU.cal=SRL_;
+			// 	{7'b0100000,3'b101,OP_I_A}	:op.ALU.cal=SRA_;
+			// 	{7'b???????,3'b??0,OP_I_A}	:op.ALU.cal=ALUopCal_t'(code.fun3);
+			// 	{7'b???????,3'b?11,OP_I_A}	:op.ALU.cal=ALUopCal_t'(code.fun3);
+			// 	default						:op.ALU.cal=NCAL;
+			// endcase
 
 			if(code.op==OP_B__)begin//b系列
 				op.ALU.bfu=ALUopBfu_t'(code.fun3);
@@ -293,17 +293,25 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 			op.LSU.enL=(code.op==OP_I_L);
 			op.LSU.enS=(code.op==OP_S__);
 
-			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op addr
-				3'b000	:begin unique case(code)
-						OP_SCR_MRET__	:begin op.CSR.op=MRET_;op.CSR.addr=CSR_ADDR_MEPC;end
-						OP_SCR_ECALL_	:begin op.CSR.op=ECALL;op.CSR.addr=CSR_ADDR_MTVEC;end
-						OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop=1'b1;eb=1'b1;end
-						default			:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop=1'b1;eb=1'b0;end
-					endcase end
-				3'b001	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;op.ALU.csr=WACSR;end
-				3'b010	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(code.r1=='0)?NACSR:RACSR;end
-				default	:begin op.CSR.addr='0;				op.CSR.op=NCSR_;op.ALU.csr=NACSR;end
-			endcase end else begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;end
+			// if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op addr
+			// 	3'b000	:begin unique case(code)
+			// 			OP_SCR_MRET__	:begin op.CSR.op=MRET_;op.CSR.addr=CSR_ADDR_MEPC;end
+			// 			OP_SCR_ECALL_	:begin op.CSR.op=ECALL;op.CSR.addr=CSR_ADDR_MTVEC;end
+			// 			OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop=1'b1;eb=1'b1;end
+			// 			default			:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop=1'b1;eb=1'b0;end
+			// 		endcase end
+			// 	3'b001	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;op.ALU.csr=WACSR;end
+			// 	3'b010	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(code.r1=='0)?NACSR:RACSR;end
+			// 	default	:begin op.CSR.addr='0;				op.CSR.op=NCSR_;op.ALU.csr=NACSR;end
+			// endcase end else begin op.CSR.addr='0;op.CSR.op=NCSR_;op.ALU.csr=NACSR;end
+			if(code.op==OP_CSR)begin unique case({code.fun7,code.r2,code.r1,code.fun3,code.rd}) inside
+				25'b0011000_00010_00000_000_00000	:begin op.CSR.addr=CSR_ADDR_MEPC;	op.CSR.op=MRET_;end
+				25'b0000000_00000_00000_000_00000	:begin op.CSR.addr=CSR_ADDR_MTVEC;	op.CSR.op=ECALL;end
+				25'b0000000_00001_00000_000_00000	:begin op.CSR.addr='0;				op.CSR.op=NCSR_;stop=1'b1;eb=1'b1;end
+				25'b???????_?????_?????_001_?????	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;end
+				25'b???????_?????_?????_010_?????	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;end
+				default								:begin op.CSR.addr='0;				op.CSR.op=NCSR_;stop=1'b1;eb=1'b0;end
+			endcase end else						 begin op.CSR.addr='0;				op.CSR.op=NCSR_;end
 
 			unique case(code.op)//选cR1 这里7/10就反选
 				OP_U_I	:cR1='0;

@@ -295,7 +295,7 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 			// 	{25'b???????_?????_?????_001_?????}	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;end
 			// 	{25'b???????_?????_?????_010_?????}	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;end
 			// 	default								:begin op.CSR.addr='0;				op.CSR.op=NCSR_;stop(1);end
-			// endcase end else						 begin end
+			// endcase end else						 begin op.CSR.addr='0;				op.CSR.op=NCSR_;end
 
 			unique case(code.op)//选cR1 这里7/10就反选
 				// OP_I_J	:cR1=code.r1;

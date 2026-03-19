@@ -45,9 +45,9 @@ module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,add
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[1:0] {IR1,PC_} in1_t;
-	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[0:0] {IR1,PC_} in1_t;
+	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -147,9 +147,9 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NACSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[1:0] {IR1,PC_} in1_t;
-	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[0:0] {IR1,PC_} in1_t;
+	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -386,9 +386,9 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[1:0] {IR1,PC_} in1_t;
-	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[0:0] {IR1,PC_} in1_t;
+	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -478,79 +478,6 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 		{RACSR,oR1|oCsr},
 		{JUMP_,pc}
 	}));
-	
-	// always_comb begin : cal
-	// 	unique case(op.ALU.in1)
-	// 		IR1:in1=oR1;
-	// 		PC_:in1=pc;
-	// 		default:begin in1='0;end
-	// 	endcase
-	// 	unique case(op.ALU.in2)
-	// 		IR2:in2=oR2;
-	// 		IMM:in2=op.ALU.im;
-	// 		default:begin in2='0;end
-	// 	endcase
-
-	// 	unique case(op.ALU.cal)
-	// 		ADD_:result=in1+in2;
-	// 		SLL_:result=in1<<in2[4:0];
-	// 		SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
-	// 		SLTU:result=$unsigned(in1) <$unsigned(in2)?1:0;
-	// 		XOR_:result=in1^in2;
-	// 		SRL_:result=$unsigned(in1)>> in2[4:0];
-	// 		OR__:result=in1|in2;
-	// 		AND_:result=in1&in2;
-	// 		SUB_:result=in1-in2;
-	// 		SRA_:result=  $signed(in1)>>>in2[4:0];
-	// 		NCAL:result='0;
-	// 		default:begin result='0;end
-	// 	endcase
-	// end
-	// always_comb begin : bfu
-	// 	unique case(op.ALU.bfu)
-	// 		BEQ_:enBfun=(oR1==oR2);
-	// 		BNE_:enBfun=(oR1!=oR2);
-	// 		BLT_:enBfun=(  $signed(oR1) <  $signed(oR2));
-	// 		BGE_:enBfun=(  $signed(oR1)>=  $signed(oR2));
-	// 		BLTU:enBfun=($unsigned(oR1) <$unsigned(oR2));
-	// 		BGEU:enBfun=($unsigned(oR1)>=$unsigned(oR2));
-	// 		NBFU:enBfun='0;
-	// 		default:begin enBfun='0;end
-	// 		endcase
-	// end
-	// always_comb begin : adr
-	// 	unique case(op.ALU.adr)
-	// 		R1I:addr=oR1+op.ALU.im;
-	// 		PCI:addr=pc+op.ALU.im;
-	// 		ECJ:addr=oCsr;
-	// 		ERE:addr=oCsr+4;
-	// 		NAD:addr='0;
-	// 		default:begin addr='0;end
-	// 	endcase
-	// 	enJfun=op.ALU.enJcod|enBfun;
-	// end
-
-	// always_comb begin : cho
-	// 	unique case(op.ALU.cho)
-	// 		CAL_:iRd=result;
-	// 		IMM_:iRd=op.ALU.im;
-	// 		DATA:iRd=data;
-	// 		CCSR:iRd=oCsr;
-	// 		SNPC:iRd=pc+4;
-	// 		NCHO:iRd='0;
-	// 		default:begin iRd='0;end
-	// 	endcase
-	// end
-	// always_comb begin : csr
-	// 	unique case(op.ALU.csr)
-	// 		WACSR:iCsr=oR1;
-	// 		RACSR:iCsr=oR1|oCsr;
-	// 		JUMP_:iCsr=pc;
-	// 		NCSR_:iCsr='0;
-	// 		default:begin iCsr='0;end
-	// 	endcase
-	// end
-
 endmodule
 module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc,mask,pmem_read);
 	parameter REG_NUMBER= 5;
@@ -599,9 +526,9 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc,mask,pmem_rea
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[1:0] {IR1,PC_} in1_t;
-	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[0:0] {IR1,PC_} in1_t;
+	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -647,15 +574,6 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc,mask,pmem_rea
 	word_t iRAM;
 //s处理
 	
-	// always_comb begin : choose_mask
-	// 	if (op.LSU.enS) begin unique case(op.LSU.op)
-	// 		B_:mask=4'b0001;
-	// 		H_:mask=4'b0011;
-	// 		W_:mask=4'b1111;
-	// 		NM:mask=4'b0000;
-	// 		default:begin mask=4'b0000;end
-	// 	endcase end else mask=4'b0000;
-	// end
 	ysyx_26020046_MuxKeyWithDefault #(3,3,4) Muxmask(.out(mask),.key(op.LSU.op),.default_out('0),.lut({
 	{B_,4'b0001},
 	{H_,4'b0011},
@@ -664,16 +582,6 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc,mask,pmem_rea
 
 //l处理
 	
-	// always_comb begin : choose_date_input
-	// 	if(op.LSU.enL) begin unique case(op.LSU.op)
-	// 		B_:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
-	// 		H_:data={{16{iRAM[15]}},iRAM[15: 0]};
-	// 		W_:data=iRAM;
-	// 		BU:data={{24{1'b0}},iRAM[ 7: 0]};
-	// 		HU:data={{16{1'b0}},iRAM[15: 0]};
-	// 		default:begin data=0;end
-	// 	endcase end else data='0;
-	// end
 	ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) Muxdata(.out(data),.key(op.LSU.op),.default_out('0),.lut({
 		{B_,{24{iRAM[ 7]}},iRAM[ 7: 0]},
 		{H_,{16{iRAM[15]}},iRAM[15: 0]},
@@ -745,9 +653,9 @@ module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[1:0] {IR1,PC_} in1_t;
-	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[0:0] {IR1,PC_} in1_t;
+	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -845,9 +753,9 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[1:0] {IR1,PC_} in1_t;
-	typedef enum logic[1:0] {IR2,IMM} in2_t;
+	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[0:0] {IR1,PC_} in1_t;
+	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -934,18 +842,5 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 		{CSR_ADDR_MARCHID	,marchid},
 		{CSR_ADDR_MVENDORID	,mvendorid}
 	}));
-	// always_comb begin:choose_csr
-	// 	unique case(op.CSR.addr)
-	// 		CSR_ADDR_MEPC		:oCsr=mepc;
-	// 		CSR_ADDR_MSTAUS		:oCsr=mstatus;
-	// 		CSR_ADDR_MTVEC		:oCsr=mtvec;
-	// 		CSR_ADDR_MCAUSE		:oCsr=mcause;
-	// 		CSR_ADDR_MCYCLE		:oCsr=mcycle;
-	// 		CSR_ADDR_MCYCLEH	:oCsr=mcycleh;
-	// 		CSR_ADDR_MARCHID	:oCsr=marchid;
-	// 		CSR_ADDR_MVENDORID	:oCsr=mvendorid;
-	// 		default				:oCsr=0;
-	// 	endcase
-	// end
 				
 endmodule
