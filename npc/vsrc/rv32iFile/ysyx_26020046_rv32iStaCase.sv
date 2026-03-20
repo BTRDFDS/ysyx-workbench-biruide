@@ -271,6 +271,17 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 				OP_CSR	:{op.ALU.cho,op.ALU.adr}={CCSR,ECJ};
 				default	:{op.ALU.cho,op.ALU.adr}={NCHO,NAD};
 			endcase
+			// unique case(code.op)//选ALU cho addr
+			// 	OP_U_I	:begin op.ALU.cho=IMM_;op.ALU.adr=NAD;end
+			// 	OP_U_P	:begin op.ALU.cho=CAL_;op.ALU.adr=NAD;end
+			// 	OP_J__	:begin op.ALU.cho=SNPC;op.ALU.adr=PCI; end
+			// 	OP_I_J	:begin op.ALU.cho=SNPC;op.ALU.adr=R1I; end
+			// 	OP_I_L	:begin op.ALU.cho=DATA;op.ALU.adr=R1I; end
+			// 	OP_I_A	:begin op.ALU.cho=CAL_;op.ALU.adr=NAD;end
+			// 	OP_R__	:begin op.ALU.cho=CAL_;op.ALU.adr=NAD;end
+			// 	OP_CSR	:begin op.ALU.cho=CCSR;op.ALU.adr=ECJ;end
+			// 	default	:begin op.ALU.cho=NCHO;op.ALU.adr=NAD;end
+			// endcase
 
 			unique case(code.op)//选LSU op
 				OP_I_L	:op.LSU.op=LSUop_t'(code.fun3);

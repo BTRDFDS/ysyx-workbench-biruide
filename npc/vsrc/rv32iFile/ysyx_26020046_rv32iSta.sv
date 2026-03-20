@@ -45,9 +45,9 @@ module ysyx_26020046_rv32iSta(clk,reset,code,pc,stop,eb,pmem_read,pmem_write,add
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[0:0] {IR1,PC_} in1_t;
-	typedef enum logic[0:0] {IR2,IMM} in2_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -147,9 +147,9 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NACSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[0:0] {IR1,PC_} in1_t;
-	typedef enum logic[0:0] {IR2,IMM} in2_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -386,9 +386,9 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[0:0] {IR1,PC_} in1_t;
-	typedef enum logic[0:0] {IR2,IMM} in2_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -431,11 +431,11 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 
 	word_t result,in1,in2;
 
-	ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin1 (.out(in1),.key(op.ALU.in1),.default_out('0),.lut({
+	ysyx_26020046_MuxKeyWithDefault #(2,2,DATA_WIDTH) Muxin1 (.out(in1),.key(op.ALU.in1),.default_out('0),.lut({
 		{IR1,oR1},
 		{PC_,pc}
 	}));
-	ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin2 (.out(in2),.key(op.ALU.in2),.default_out('0),.lut({
+	ysyx_26020046_MuxKeyWithDefault #(2,2,DATA_WIDTH) Muxin2 (.out(in2),.key(op.ALU.in2),.default_out('0),.lut({
 		{IR2,oR2},
 		{IMM,op.ALU.im}
 	}));
@@ -466,7 +466,7 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 	    {ERE,oCsr+4}
 	}));
 	assign enJfun=op.ALU.enJcod|enBfun;
-	ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) MuxCho(.out(iRd),.key(op.ALU.cho),.default_out('0),.lut({
+	ysyx_26020046_MuxKeyWithDefault #(5,4,DATA_WIDTH) MuxCho(.out(iRd),.key(op.ALU.cho),.default_out('0),.lut({
 		{CAL_,result},
 		{IMM_,op.ALU.im},
 		{DATA,data},
@@ -526,9 +526,9 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc,mask,pmem_rea
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[0:0] {IR1,PC_} in1_t;
-	typedef enum logic[0:0] {IR2,IMM} in2_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -653,9 +653,9 @@ module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[0:0] {IR1,PC_} in1_t;
-	typedef enum logic[0:0] {IR2,IMM} in2_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;
@@ -753,9 +753,9 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NCCSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
-	typedef enum logic[0:0] {IR1,PC_} in1_t;
-	typedef enum logic[0:0] {IR2,IMM} in2_t;
+	typedef enum logic[3:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[1:0] {IR1,PC_} in1_t;
+	typedef enum logic[1:0] {IR2,IMM} in2_t;
 	typedef struct packed {
 		word_t		im;
 		in1_t		in1;

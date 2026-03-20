@@ -154,11 +154,11 @@ chk:
 	verilator --lint-only -Wall $(tVd) -top-module $(tF)
 syn:$(tV)
 	make -C $(YOSYS_STA_HOME) syn DESIGN=$(tF) RTL_FILES="$(tVd)"
-	cp -r $(YOSYS_STA_HOME)/result/$(tF)*-500MHz ./result
+	cp -r $(YOSYS_STA_HOME)/result/$(tF)-500MHz ./result
 # 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 sta:$(tV)
 	make -C $(YOSYS_STA_HOME) sta DESIGN=$(tF) RTL_FILES="$(tVd)"
-	cp -r $(YOSYS_STA_HOME)/result/$(tF)*-500MHz ./result
+	cp -r $(YOSYS_STA_HOME)/result/$(tF)-500MHz ./result
 # 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
 symy:
 	yosys yosys.tcl
