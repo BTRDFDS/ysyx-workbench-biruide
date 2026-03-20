@@ -521,7 +521,7 @@ module ysyx_26020046_rv32iCSR(csrAddr,iCsr,oCsr,clk,reset,enCsr,enMret,enEcall);
 			// $display("%x %x <= %x @%x %x",mcycleh,mcycle,{mcycleh,mcycle}+1,pc,enCsr);
 			// $strobe("%x %x <= %x @%x %x",mcycleh,mcycle,{mcycleh,mcycle}+1,pc,enCsr);
 			mcycle<=mcycle+1;
-			mcycleh<=mcycleh+&{mcycle};
+			mcycleh<=mcycleh+{31'b0,&{mcycle}};
 		end
 	end
 

@@ -14,9 +14,9 @@ package rv32iBasis;
 	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
 	parameter OP_CSR	= 7'b1110011;//CSR系列
 
-	// parameter OP_SCR_ECALL_	= 32'h00000073;
-	// parameter OP_SCR_EBREAK	= 32'h00100073;
-	// parameter OP_SCR_MRET__	= 32'h30200073;
+	parameter OP_SCR_ECALL_	= 32'h00000073;
+	parameter OP_SCR_EBREAK	= 32'h00100073;
+	parameter OP_SCR_MRET__	= 32'h30200073;
 
 	parameter CSR_ADDR_MSTAUS	= 12'h300;
 	parameter CSR_ADDR_MTVEC	= 12'h305;
@@ -29,8 +29,6 @@ package rv32iBasis;
 	
 
 	parameter MSTATUS_RESET = 32'h1800;
-
-	// parameter OP_FUN7_M		= 7'b0000001;
 
 	typedef logic [DATA_WIDTH-1:0] word_t;
 	typedef logic [REG_NUMBER-1:0] reg_t;
@@ -175,42 +173,30 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 				default	:op.ALU.enJcod=0;
 			endcase
 
-			// unique case(code.op)//选ALU cal
-			// 	OP_U_P	:op.ALU.cal=ADD_;
-			// 	OP_I_A	:begin unique case(code.fun3)
-			// 			3'b001:begin unique case(code.fun7)
-			// 					7'b0000000:op.ALU.cal=SLL_;
-			// 					default:begin $fatal("slli fun7(%x)!=0",code.fun7);stop(0);end
-			// 				endcase end
-			// 			3'b101:begin unique case(code.fun7)
-			// 					7'b0000000:op.ALU.cal=SRL_;
-			// 					7'b0100000:op.ALU.cal=SRA_;
-			// 					default:begin $fatal("srai/srli fun7(%x)!=0/20",code.fun7);stop(0);end
-			// 				endcase end
-			// 			default:op.ALU.cal=ALUopCal_t'(code.fun3);
-			// 		endcase end
-			// 	OP_R__	:begin unique case(code.fun7)
-			// 			7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
-			// 			7'b0100000:begin unique case(code.fun3)
-			// 					3'b000:op.ALU.cal=SUB_;
-			// 					3'b101:op.ALU.cal=SRA_;
-			// 					default:begin $fatal("R fun7==20 fun3(%x)!=1/5",code.fun3);stop(0);end
-			// 				endcase end
-			// 			default:begin $fatal("R fun7(%x)!=0/20",code.fun7);stop(0);end
-			// 		endcase end
-			// 	default	:op.ALU.cal=NCAL;
-			// endcase
-			unique case({code.fun7,code.fun3,code.op}) inside
-				{7'b???????,3'b???,OP_U_P}	:op.ALU.cal=ADD_;
-				{7'b0000000,3'b???,OP_R__}	:op.ALU.cal=ALUopCal_t'(code.fun3);
-				{7'b0100000,3'b000,OP_R__}	:op.ALU.cal=SUB_;
-				{7'b0100000,3'b101,OP_R__}	:op.ALU.cal=SRA_;
-				{7'b0000000,3'b001,OP_I_A}	:op.ALU.cal=SLL_;
-				{7'b0000000,3'b101,OP_I_A}	:op.ALU.cal=SRL_;
-				{7'b0100000,3'b101,OP_I_A}	:op.ALU.cal=SRA_;
-				{7'b???????,3'b??0,OP_I_A}	:op.ALU.cal=ALUopCal_t'(code.fun3);
-				{7'b???????,3'b?11,OP_I_A}	:op.ALU.cal=ALUopCal_t'(code.fun3);
-				default						:op.ALU.cal=NCAL;
+			unique case(code.op)//选ALU cal
+				OP_U_P	:op.ALU.cal=ADD_;
+				OP_I_A	:begin unique case(code.fun3)
+						3'b001:begin unique case(code.fun7)
+								7'b0000000:op.ALU.cal=SLL_;
+								default:begin $fatal("slli fun7(%x)!=0",code.fun7);stop(0);end
+							endcase end
+						3'b101:begin unique case(code.fun7)
+								7'b0000000:op.ALU.cal=SRL_;
+								7'b0100000:op.ALU.cal=SRA_;
+								default:begin $fatal("srai/srli fun7(%x)!=0/20",code.fun7);stop(0);end
+							endcase end
+						default:op.ALU.cal=ALUopCal_t'(code.fun3);
+					endcase end
+				OP_R__	:begin unique case(code.fun7)
+						7'b0000000:op.ALU.cal=ALUopCal_t'(code.fun3);
+						7'b0100000:begin unique case(code.fun3)
+								3'b000:op.ALU.cal=SUB_;
+								3'b101:op.ALU.cal=SRA_;
+								default:begin $fatal("R fun7==20 fun3(%x)!=1/5",code.fun3);stop(0);end
+							endcase end
+						default:begin $fatal("R fun7(%x)!=0/20",code.fun7);stop(0);end
+					endcase end
+				default	:op.ALU.cal=NCAL;
 			endcase
 
 			if(code.op==OP_B__)begin//b系列
@@ -250,52 +236,28 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 			op.LSU.enL=(code.op==OP_I_L);
 			op.LSU.enS=(code.op==OP_S__);
 
-			// if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
-			// 	3'b000	:begin unique case(code)
-			// 			OP_SCR_MRET__	:op.CSR.addr=CSR_ADDR_MEPC;
-			// 			OP_SCR_ECALL_	:op.CSR.addr=CSR_ADDR_MTVEC;
-			// 			OP_SCR_EBREAK	:op.CSR.addr='0;
-			// 			default			:begin op.CSR.addr='0;$fatal("CSR unknown op==0x%x",code);stop(0);end
-			// 		endcase end
-			// 	3'b001	:op.CSR.addr={code[31:20]};
-			// 	3'b010	:op.CSR.addr={code[31:20]};
-			// 	default	:op.CSR.addr='0;
-			// 	endcase end else op.CSR.addr='0;
-			// if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
-			// 	3'b000	:begin unique case(code)
-			// 			OP_SCR_MRET__	:op.CSR.op=MRET_;
-			// 			OP_SCR_ECALL_	:op.CSR.op=ECALL;
-			// 			OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;stop(1);end
-			// 			default			:begin op.CSR.op=NCSR_;$fatal("CSR unknown op==0x%x",code);stop(0);end
-			// 		endcase end
-			// 	3'b001	:op.CSR.op=WCCSR;
-			// 	3'b010	:op.CSR.op =(code.r1=='0)?NCSR_:WCCSR;
-			// 	default	:op.CSR.op=NCSR_;
-			// endcase end else op.CSR.op=NCSR_;
-			if(code.op==OP_CSR)begin unique case({code.fun7,code.r2,code.r1,code.fun3,code.rd}) inside
-				{25'b0011000_00010_00000_000_00000}	:op.CSR.addr=CSR_ADDR_MEPC;
-				{25'b0000000_00000_00000_000_00000}	:op.CSR.addr=CSR_ADDR_MTVEC;
-				{25'b0000000_00001_00000_000_00000}	:op.CSR.addr='0;
-				{25'b???????_?????_?????_001_?????}	:op.CSR.addr={code[31:20]};
-				{25'b???????_?????_?????_010_?????}	:op.CSR.addr={code[31:20]};
-				default								:op.CSR.addr='0;
-			endcase end else op.CSR.addr='0;
-			if(code.op==OP_CSR)begin unique case({code.fun7,code.r2,code.r1,code.fun3,code.rd}) inside
-				{25'b0011000_00010_00000_000_00000}	:op.CSR.op=MRET_;
-				{25'b0000000_00000_00000_000_00000}	:op.CSR.op=ECALL;
-				{25'b0000000_00001_00000_000_00000}	:begin op.CSR.op=NCSR_;stop(1);end
-				{25'b???????_?????_?????_001_?????}	:op.CSR.op=WCCSR;
-				{25'b???????_?????_?????_010_?????}	:op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;
-				default								:begin op.CSR.op=NCSR_;stop(1);end
+			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
+				3'b000	:begin unique case(code)
+						OP_SCR_MRET__	:op.CSR.addr=CSR_ADDR_MEPC;
+						OP_SCR_ECALL_	:op.CSR.addr=CSR_ADDR_MTVEC;
+						OP_SCR_EBREAK	:op.CSR.addr='0;
+						default			:begin op.CSR.addr='0;$fatal("CSR unknown op==0x%x",code);stop(0);end
+					endcase end
+				3'b001	:op.CSR.addr={code[31:20]};
+				3'b010	:op.CSR.addr={code[31:20]};
+				default	:op.CSR.addr='0;
+				endcase end else op.CSR.addr='0;
+			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
+				3'b000	:begin unique case(code)
+						OP_SCR_MRET__	:op.CSR.op=MRET_;
+						OP_SCR_ECALL_	:op.CSR.op=ECALL;
+						OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;stop(1);end
+						default			:begin op.CSR.op=NCSR_;$fatal("CSR unknown op==0x%x",code);stop(0);end
+					endcase end
+				3'b001	:op.CSR.op=WCCSR;
+				3'b010	:op.CSR.op =(code.r1=='0)?NCSR_:WCCSR;
+				default	:op.CSR.op=NCSR_;
 			endcase end else op.CSR.op=NCSR_;
-			// if(code.op==OP_CSR)begin unique case({code.fun7,code.r2,code.r1,code.fun3,code.rd}) inside
-			// 	{25'b0011000_00010_00000_000_00000}	:begin op.CSR.addr=CSR_ADDR_MEPC;	op.CSR.op=MRET_;end
-			// 	{25'b0000000_00000_00000_000_00000}	:begin op.CSR.addr=CSR_ADDR_MTVEC;	op.CSR.op=ECALL;end
-			// 	{25'b0000000_00001_00000_000_00000}	:begin op.CSR.addr='0;				op.CSR.op=NCSR_;stop(1);end
-			// 	{25'b???????_?????_?????_001_?????}	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;end
-			// 	{25'b???????_?????_?????_010_?????}	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;end
-			// 	default								:begin op.CSR.addr='0;				op.CSR.op=NCSR_;stop(1);end
-			// endcase end else						 begin op.CSR.addr='0;				op.CSR.op=NCSR_;end
 
 			unique case(code.op)//选cR1 这里7/10就反选
 				// OP_I_J	:cR1=code.r1;
@@ -412,124 +374,124 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 
 	word_t result,in1,in2;
 
-	// always_comb begin : cal
-	// 	unique case(op.ALU.in1)
-	// 		IR1:in1=oR1;
-	// 		PC_:in1=pc;
-	// 		default:begin in1='0;$fatal("unknown in1==0x%x",op.ALU.in1);end
-	// 	endcase
-	// 	unique case(op.ALU.in2)
-	// 		IR2:in2=oR2;
-	// 		IMM:in2=op.ALU.im;
-	// 		default:begin in2='0;$fatal("unknown in2==0x%x",op.ALU.in2);end
-	// 	endcase
+	always_comb begin : cal
+		unique case(op.ALU.in1)
+			IR1:in1=oR1;
+			PC_:in1=pc;
+			default:begin in1='0;$fatal("unknown in1==0x%x",op.ALU.in1);end
+		endcase
+		unique case(op.ALU.in2)
+			IR2:in2=oR2;
+			IMM:in2=op.ALU.im;
+			default:begin in2='0;$fatal("unknown in2==0x%x",op.ALU.in2);end
+		endcase
 
-	// 	unique case(op.ALU.cal)
-	// 		ADD_:result=in1+in2;
-	// 		SLL_:result=in1<<in2[4:0];
-	// 		SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
-	// 		SLTU:result=$unsigned(in1) <$unsigned(in2)?1:0;
-	// 		XOR_:result=in1^in2;
-	// 		SRL_:result=$unsigned(in1)>> in2[4:0];
-	// 		OR__:result=in1|in2;
-	// 		AND_:result=in1&in2;
-	// 		SUB_:result=in1-in2;
-	// 		SRA_:result=  $signed(in1)>>>in2[4:0];
-	// 		NCAL:result='0;
-	// 		default:begin result='0;$fatal("unknown cal==0x%x",op.ALU.cal);end
-	// 	endcase
-	// end
-	// always_comb begin : bfu
-	// 	unique case(op.ALU.bfu)
-	// 		BEQ_:enBfun=(oR1==oR2);
-	// 		BNE_:enBfun=(oR1!=oR2);
-	// 		BLT_:enBfun=(  $signed(oR1) <  $signed(oR2));
-	// 		BGE_:enBfun=(  $signed(oR1)>=  $signed(oR2));
-	// 		BLTU:enBfun=($unsigned(oR1) <$unsigned(oR2));
-	// 		BGEU:enBfun=($unsigned(oR1)>=$unsigned(oR2));
-	// 		NBFU:enBfun='0;
-	// 		default:begin enBfun='0;$fatal("unknown bfu==0x%x",op.ALU.bfu);end
-	// 		endcase
-	// end
-	// always_comb begin : adr
-	// 	unique case(op.ALU.adr)
-	// 		R1I:addr=oR1+op.ALU.im;
-	// 		PCI:addr=pc+op.ALU.im;
-	// 		ECJ:addr=oCsr;
-	// 		ERE:addr=oCsr+4;
-	// 		NAD:addr='0;
-	// 		default:begin addr='0;$fatal("unknown adr==0x%x",op.ALU.adr);end
-	// 	endcase
-	// 	enJfun=op.ALU.enJcod|enBfun;
-	// end
+		unique case(op.ALU.cal)
+			ADD_:result=in1+in2;
+			SLL_:result=in1<<in2[4:0];
+			SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
+			SLTU:result=$unsigned(in1) <$unsigned(in2)?1:0;
+			XOR_:result=in1^in2;
+			SRL_:result=$unsigned(in1)>> in2[4:0];
+			OR__:result=in1|in2;
+			AND_:result=in1&in2;
+			SUB_:result=in1-in2;
+			SRA_:result=  $signed(in1)>>>in2[4:0];
+			NCAL:result='0;
+			default:begin result='0;$fatal("unknown cal==0x%x",op.ALU.cal);end
+		endcase
+	end
+	always_comb begin : bfu
+		unique case(op.ALU.bfu)
+			BEQ_:enBfun=(oR1==oR2);
+			BNE_:enBfun=(oR1!=oR2);
+			BLT_:enBfun=(  $signed(oR1) <  $signed(oR2));
+			BGE_:enBfun=(  $signed(oR1)>=  $signed(oR2));
+			BLTU:enBfun=($unsigned(oR1) <$unsigned(oR2));
+			BGEU:enBfun=($unsigned(oR1)>=$unsigned(oR2));
+			NBFU:enBfun='0;
+			default:begin enBfun='0;$fatal("unknown bfu==0x%x",op.ALU.bfu);end
+			endcase
+	end
+	always_comb begin : adr
+		unique case(op.ALU.adr)
+			R1I:addr=oR1+op.ALU.im;
+			PCI:addr=pc+op.ALU.im;
+			ECJ:addr=oCsr;
+			ERE:addr=oCsr+4;
+			NAD:addr='0;
+			default:begin addr='0;$fatal("unknown adr==0x%x",op.ALU.adr);end
+		endcase
+		enJfun=op.ALU.enJcod|enBfun;
+	end
 
-	// always_comb begin : cho
-	// 	unique case(op.ALU.cho)
-	// 		CAL_:iRd=result;
-	// 		IMM_:iRd=op.ALU.im;
-	// 		DATA:iRd=data;
-	// 		CCSR:iRd=oCsr;
-	// 		SNPC:iRd=pc+4;
-	// 		NCHO:iRd='0;
-	// 		default:begin iRd='0;$fatal("unknown cho==0x%x",op.ALU.cho);end
-	// 	endcase
-	// end
-	// always_comb begin : csr
-	// 	unique case(op.ALU.csr)
-	// 		WACSR:iCsr=oR1;
-	// 		RACSR:iCsr=oR1|oCsr;
-	// 		JUMP_:iCsr=pc;
-	// 		NCSR_:iCsr='0;
-	// 		default:begin iCsr='0;$fatal("unknown csr==0x%x",op.ALU.csr);end
-	// 	endcase
-	// end
-	ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin1 (.out(in1),.key(op.ALU.in1),.default_out('0),.lut({
-		{IR1,oR1},
-		{PC_,pc}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin2 (.out(in2),.key(op.ALU.in2),.default_out('0),.lut({
-		{IR2,oR2},
-		{IMM,op.ALU.im}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(10,4,DATA_WIDTH) MuxCal (.out(result),.key(op.ALU.cal),.default_out('0),.lut({
-		{ADD_,in1+in2},
-		{SLL_,in1<<in2[4:0]},
-		{SLT_,  $signed(in1) <  $signed(in2)?32'b1:32'b0},
-		{SLTU,$unsigned(in1) <$unsigned(in2)?32'b1:32'b0},
-		{XOR_,in1^in2},
-		{SRL_,$unsigned(in1)>> in2[4:0]},
-		{OR__,in1|in2},
-		{AND_,in1&in2},
-		{SUB_,in1-in2},
-		{SRA_,  $signed(in1)>>>in2[4:0]}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(6,3,1) MuxBfun(.out(enBfun),.key(op.ALU.bfu),.default_out('0),.lut({
-		{BEQ_,(oR1==oR2)},
-		{BNE_,(oR1!=oR2)},
-		{BLT_,(  $signed(oR1) <  $signed(oR2))},
-		{BGE_,(  $signed(oR1)>=  $signed(oR2))},
-		{BLTU,($unsigned(oR1) <$unsigned(oR2))},
-		{BGEU,($unsigned(oR1)>=$unsigned(oR2))}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(4,3,DATA_WIDTH) MuxAdr(.out(addr),.key(op.ALU.adr),.default_out('0),.lut({
-	    {R1I,oR1+op.ALU.im},
-	    {PCI,pc+op.ALU.im},
-	    {ECJ,oCsr},
-	    {ERE,oCsr+4}
-	}));
-	assign enJfun=op.ALU.enJcod|enBfun;
-	ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) MuxCho(.out(iRd),.key(op.ALU.cho),.default_out('0),.lut({
-		{CAL_,result},
-		{IMM_,op.ALU.im},
-		{DATA,data},
-		{CCSR,oCsr},
-		{SNPC,pc+4}
-	}));
-	ysyx_26020046_MuxKeyWithDefault #(3,2,DATA_WIDTH) MuxCsr(.out(iCsr),.key(op.ALU.csr),.default_out('0),.lut({
-		{WACSR,oR1},
-		{RACSR,oR1|oCsr},
-		{JUMP_,pc}
-	}));
+	always_comb begin : cho
+		unique case(op.ALU.cho)
+			CAL_:iRd=result;
+			IMM_:iRd=op.ALU.im;
+			DATA:iRd=data;
+			CCSR:iRd=oCsr;
+			SNPC:iRd=pc+4;
+			NCHO:iRd='0;
+			default:begin iRd='0;$fatal("unknown cho==0x%x",op.ALU.cho);end
+		endcase
+	end
+	always_comb begin : csr
+		unique case(op.ALU.csr)
+			WACSR:iCsr=oR1;
+			RACSR:iCsr=oR1|oCsr;
+			JUMP_:iCsr=pc;
+			NCSR_:iCsr='0;
+			default:begin iCsr='0;$fatal("unknown csr==0x%x",op.ALU.csr);end
+		endcase
+	end
+	// ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin1 (.out(in1),.key(op.ALU.in1),.default_out('0),.lut({
+	// 	{IR1,oR1},
+	// 	{PC_,pc}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin2 (.out(in2),.key(op.ALU.in2),.default_out('0),.lut({
+	// 	{IR2,oR2},
+	// 	{IMM,op.ALU.im}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(10,4,DATA_WIDTH) MuxCal (.out(result),.key(op.ALU.cal),.default_out('0),.lut({
+	// 	{ADD_,in1+in2},
+	// 	{SLL_,in1<<in2[4:0]},
+	// 	{SLT_,  $signed(in1) <  $signed(in2)?32'b1:32'b0},
+	// 	{SLTU,$unsigned(in1) <$unsigned(in2)?32'b1:32'b0},
+	// 	{XOR_,in1^in2},
+	// 	{SRL_,$unsigned(in1)>> in2[4:0]},
+	// 	{OR__,in1|in2},
+	// 	{AND_,in1&in2},
+	// 	{SUB_,in1-in2},
+	// 	{SRA_,  $signed(in1)>>>in2[4:0]}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(6,3,1) MuxBfun(.out(enBfun),.key(op.ALU.bfu),.default_out('0),.lut({
+	// 	{BEQ_,(oR1==oR2)},
+	// 	{BNE_,(oR1!=oR2)},
+	// 	{BLT_,(  $signed(oR1) <  $signed(oR2))},
+	// 	{BGE_,(  $signed(oR1)>=  $signed(oR2))},
+	// 	{BLTU,($unsigned(oR1) <$unsigned(oR2))},
+	// 	{BGEU,($unsigned(oR1)>=$unsigned(oR2))}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(4,3,DATA_WIDTH) MuxAdr(.out(addr),.key(op.ALU.adr),.default_out('0),.lut({
+	//     {R1I,oR1+op.ALU.im},
+	//     {PCI,pc+op.ALU.im},
+	//     {ECJ,oCsr},
+	//     {ERE,oCsr+4}
+	// }));
+	// assign enJfun=op.ALU.enJcod|enBfun;
+	// ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) MuxCho(.out(iRd),.key(op.ALU.cho),.default_out('0),.lut({
+	// 	{CAL_,result},
+	// 	{IMM_,op.ALU.im},
+	// 	{DATA,data},
+	// 	{CCSR,oCsr},
+	// 	{SNPC,pc+4}
+	// }));
+	// ysyx_26020046_MuxKeyWithDefault #(3,2,DATA_WIDTH) MuxCsr(.out(iCsr),.key(op.ALU.csr),.default_out('0),.lut({
+	// 	{WACSR,oR1},
+	// 	{RACSR,oR1|oCsr},
+	// 	{JUMP_,pc}
+	// }));
 endmodule
 module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc);
 
@@ -548,40 +510,40 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc);
 	logic[3:0] mask;
 	word_t iRAM;
 //s处理
-	// always_comb begin : choose_mask
-	// 	// if (op.LSU.enS) begin unique case(op.LSU.op)
-	// 	// 	B_:mask=4'b0001;
-	// 	// 	H_:mask=4'b0011;
-	// 	// 	W_:mask=4'b1111;
-	// 	// 	NM:mask=4'b0000;
-	// 	// 	default:begin mask=4'b0000;$fatal("unknown mask==0x%x",op.LSU.op);end
-	// 	// endcase end else mask=4'b0000;
-	// end
-	ysyx_26020046_MuxKeyWithDefault #(3,3,4) Muxmask(.out(mask),.key(op.LSU.op),.default_out('0),.lut({
-	{B_,4'b0001},
-	{H_,4'b0011},
-	{W_,4'b1111}
-	}));
+	always_comb begin : choose_mask
+		if (op.LSU.enS) begin unique case(op.LSU.op)
+			B_:mask=4'b0001;
+			H_:mask=4'b0011;
+			W_:mask=4'b1111;
+			NM:mask=4'b0000;
+			default:begin mask=4'b0000;$fatal("unknown mask==0x%x",op.LSU.op);end
+		endcase end else mask=4'b0000;
+	end
+	// ysyx_26020046_MuxKeyWithDefault #(3,3,4) Muxmask(.out(mask),.key(op.LSU.op),.default_out('0),.lut({
+	// {B_,4'b0001},
+	// {H_,4'b0011},
+	// {W_,4'b1111}
+	// }));
 
 //l处理
 
-	// always_comb begin : choose_date_input
-	// 	if(op.LSU.enL) begin unique case(op.LSU.op)
-	// 		B_:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
-	// 		H_:data={{16{iRAM[15]}},iRAM[15: 0]};
-	// 		W_:data=iRAM;
-	// 		BU:data={{24{1'b0}},iRAM[ 7: 0]};
-	// 		HU:data={{16{1'b0}},iRAM[15: 0]};
-	// 		default:begin data=0;$fatal("unknown date==0x%x",op.LSU.op);end
-	// 	endcase end else data='0;
-	// end
-	ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) Muxdata(.out(data),.key(op.LSU.op),.default_out('0),.lut({
-		{B_,{24{iRAM[ 7]}},iRAM[ 7: 0]},
-		{H_,{16{iRAM[15]}},iRAM[15: 0]},
-		{W_,iRAM},
-		{BU,{24{1'b0}},iRAM[ 7: 0]},
-		{HU,{16{1'b0}},iRAM[15: 0]}
-	}));
+	always_comb begin : choose_date_input
+		if(op.LSU.enL) begin unique case(op.LSU.op)
+			B_:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
+			H_:data={{16{iRAM[15]}},iRAM[15: 0]};
+			W_:data=iRAM;
+			BU:data={{24{1'b0}},iRAM[ 7: 0]};
+			HU:data={{16{1'b0}},iRAM[15: 0]};
+			default:begin data=0;$fatal("unknown date==0x%x",op.LSU.op);end
+		endcase end else data='0;
+	end
+	// ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) Muxdata(.out(data),.key(op.LSU.op),.default_out('0),.lut({
+	// 	{B_,{24{iRAM[ 7]}},iRAM[ 7: 0]},
+	// 	{H_,{16{iRAM[15]}},iRAM[15: 0]},
+	// 	{W_,iRAM},
+	// 	{BU,{24{1'b0}},iRAM[ 7: 0]},
+	// 	{HU,{16{1'b0}},iRAM[15: 0]}
+	// }));
 
 
 	always_ff @(posedge clk) begin : pc_write
@@ -683,43 +645,37 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 					CSR_ADDR_MVENDORID	:mvendorid<=iCsr;
 					default:begin $display("unknown csrAddr==0x%x",op.CSR.addr); end
 					endcase end
-				NCSR_:;
+				NCSR_:{mcycleh,mcycle}<={mcycleh,mcycle}+1;
 				default:begin $display("unknown op.CSR.op==0x%x",op.CSR.op); end
 				endcase
 			end
 		end
 
-	// always_comb begin:choose_csr
-	// 	unique case(op.CSR.addr)
-	// 		CSR_ADDR_MEPC		:oCsr=mepc;
-	// 		CSR_ADDR_MSTAUS		:oCsr=mstatus;
-	// 		CSR_ADDR_MTVEC		:oCsr=mtvec;
-	// 		CSR_ADDR_MCAUSE		:oCsr=mcause;
-	// 		CSR_ADDR_MCYCLE		:oCsr=mcycle;
-	// 		CSR_ADDR_MCYCLEH	:oCsr=mcycleh;
-	// 		CSR_ADDR_MARCHID	:oCsr=marchid;
-	// 		CSR_ADDR_MVENDORID	:oCsr=mvendorid;
-	// 		default				:oCsr=0;
-	// 	endcase
+	always_comb begin:choose_csr
+		unique case(op.CSR.addr)
+			CSR_ADDR_MEPC		:oCsr=mepc;
+			CSR_ADDR_MSTAUS		:oCsr=mstatus;
+			CSR_ADDR_MTVEC		:oCsr=mtvec;
+			CSR_ADDR_MCAUSE		:oCsr=mcause;
+			CSR_ADDR_MCYCLE		:oCsr=mcycle;
+			CSR_ADDR_MCYCLEH	:oCsr=mcycleh;
+			CSR_ADDR_MARCHID	:oCsr=marchid;
+			CSR_ADDR_MVENDORID	:oCsr=mvendorid;
+			default				:oCsr=0;
+		endcase
 
-	// `ifdef RV32I_DEBUG
-	// 	$monitor("mepc=%x mstatus=%x mtvec=%x mcause=%x mcycle=%x mcycleh=%x marchid=%x mvendorid=%x",mepc,mstatus,mtvec,mcause,mcycle,mcycleh,marchid,mvendorid);
-	// `endif
-	// end
-	ysyx_26020046_MuxKeyWithDefault #(8,12,DATA_WIDTH) MuxOcsr(.out(oCsr),.key(op.CSR.addr),.default_out('0),.lut({
-		{CSR_ADDR_MEPC		,mepc},
-		{CSR_ADDR_MSTAUS	,mstatus},
-		{CSR_ADDR_MTVEC		,mtvec},
-		{CSR_ADDR_MCAUSE	,mcause},
-		{CSR_ADDR_MCYCLE	,mcycle},
-		{CSR_ADDR_MCYCLEH	,mcycleh},
-		{CSR_ADDR_MARCHID	,marchid},
-		{CSR_ADDR_MVENDORID	,mvendorid}
-	}));
-
-	always_comb begin
 	`ifdef RV32I_DEBUG
 		$monitor("mepc=%x mstatus=%x mtvec=%x mcause=%x mcycle=%x mcycleh=%x marchid=%x mvendorid=%x",mepc,mstatus,mtvec,mcause,mcycle,mcycleh,marchid,mvendorid);
 	`endif
 	end
+	// ysyx_26020046_MuxKeyWithDefault #(8,12,DATA_WIDTH) MuxOcsr(.out(oCsr),.key(op.CSR.addr),.default_out('0),.lut({
+	// 	{CSR_ADDR_MEPC		,mepc},
+	// 	{CSR_ADDR_MSTAUS	,mstatus},
+	// 	{CSR_ADDR_MTVEC		,mtvec},
+	// 	{CSR_ADDR_MCAUSE	,mcause},
+	// 	{CSR_ADDR_MCYCLE	,mcycle},
+	// 	{CSR_ADDR_MCYCLEH	,mcycleh},
+	// 	{CSR_ADDR_MARCHID	,marchid},
+	// 	{CSR_ADDR_MVENDORID	,mvendorid}
+	// }));
 endmodule

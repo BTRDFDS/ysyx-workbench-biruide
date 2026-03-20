@@ -9,7 +9,7 @@ endif
 
 MAKEFLAGS += -k
 # FLAGS=  --debug --cc --trace -MMD -O0
-FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert
+FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic
 VERILATOR_CFLAGS += $(FLAGS)
 
 vFile = $(shell find vsrc -type f -name "*.v")
@@ -71,8 +71,8 @@ ifeq ($(t),minirv)
 	tCd += $(NPC_HOME)/csrc/npcDifftest/*
 endif
 ifeq ($(t),rv32i)
-	tF=ysyx_26020046_rv32i
-# 	tF=ysyx_26020046_rv32iOneHotN
+# 	tF=ysyx_26020046_rv32i
+	tF=ysyx_26020046_rv32iOneHotN
 	tVd+= $(NPC_HOME)/vsrc/module/ysyx_26020046_Mux.sv
 	tCd += $(NPC_HOME)/csrc/npcSdb/*
 	tCd += $(NPC_HOME)/csrc/npcTrace/*

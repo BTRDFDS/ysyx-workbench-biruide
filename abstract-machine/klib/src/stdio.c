@@ -16,10 +16,13 @@ int printf(const char *fmt, ...) {//TODO
   bool isLong=false;
   while(*fmt!='\0'){
     // *out=*fmt;
-    if(*fmt=='%'||getPrintfNumber==true){
+    if(*fmt=='%'||getPrintfNumber==true||isLong==true){
       fmt++;
       switch(*fmt){
-        case 'l':isLong=true;break;
+        case 'l':
+          isLong=true;
+          // putch('*');
+          break;
         case 'c':
           putch(va_arg(argp, int));
           count++;
@@ -38,34 +41,61 @@ int printf(const char *fmt, ...) {//TODO
           #define MAXprintfD 22
           // int num=va_arg(argp, int);
           int num=0;
-          if(isLong){
-            num=va_arg(argp, long);
-            isLong=false;
-          }else{num=va_arg(argp, int);}
+          long lnum=0;
           char number[MAXprintfD]={0};
           int point=MAXprintfD-1;
           bool minus=false;
           bool zero=false;
-          if(num==0){
-            zero=true;
-            // putch('0');
-            // count++;
-          }
-          else if(num<0){
-            minus=true;
-            printfNumber--;
-            // putch('-');
-            // count++;
-            while(num<0&&point>= 0){
-              number[point]=-(num % 10)+'0';
-              num/= 10;
-              point--;
+          if(isLong){
+            // putch('*');
+            lnum=va_arg(argp, long);
+            isLong=false;
+            if(lnum==0){
+              zero=true;
+              // putch('0');
+              // count++;
             }
+            else if(lnum<0L){
+              minus=true;
+              printfNumber--;
+              while(lnum<0L&&point>= 0){
+                number[point]=-(lnum % 10L)+'0';
+                lnum/= 10L;
+                point--;
+              }
+            }else{
+              while(lnum>0L&&point>= 0){
+                number[point]=(lnum % 10L)+'0';
+                lnum/= 10L;
+                point--;
+              }
+            }
+            // for (int i = 0; i < MAXprintfD; i++){putch(number[i]);}halt(-1);
+            
           }else{
-            while(num>0&&point>= 0){
-              number[point]=(num % 10)+'0';
-              num/= 10;
-              point--;
+            // putch('*');
+            num=va_arg(argp, int);
+            if(num==0){
+              zero=true;
+              // putch('0');
+              // count++;
+            }
+            else if(num<0){
+              minus=true;
+              printfNumber--;
+              // putch('-');
+              // count++;
+              while(num<0&&point>= 0){
+                number[point]=-(num % 10)+'0';
+                num/= 10;
+                point--;
+              }
+            }else{
+              while(num>0&&point>= 0){
+                number[point]=(num % 10)+'0';
+                num/= 10;
+                point--;
+              }
             }
           }
           int iNow=point+1;

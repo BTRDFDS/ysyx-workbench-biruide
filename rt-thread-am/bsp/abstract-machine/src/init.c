@@ -53,6 +53,7 @@ void rt_hw_board_init() {
 }
 
 int main() {
+  // printf("begin main\n");
   ioe_init();
 #ifdef __ISA_NATIVE__
   // trigger the real initialization of IOE to
