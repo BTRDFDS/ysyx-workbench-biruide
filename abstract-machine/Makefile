@@ -88,7 +88,7 @@ CFLAGS   += -MMD -Wall -Werror $(INCFLAGS) \
             -DARCH_H=\"$(ARCH_H)\" \
             -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector \
             -Wno-main -U_FORTIFY_SOURCE -fvisibility=hidden \
-			-O2
+			-g -O0
 # 			-g -O0
 # 			-O2
 

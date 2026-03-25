@@ -6,10 +6,12 @@ csh handle;
 FILE *npctraceIringsFp=NULL;
 FILE *npctraceMtraceFp=NULL;
 FILE *npctraceFtraceFp=NULL;
+FILE *npctraceEtraceFp=NULL;
 
 const char *npctraceIringsFile={"log/irings.log"};
 const char *npctraceMtraceFile={"log/mtrace.log"};
 const char *npctraceFtraceFile={"log/ftrace.log"};
+const char *npctraceEtraceFile={"log/etrace.log"};
 
 void NpcTraceInitFile(){
 #ifdef NPC_I_TRACE
@@ -27,6 +29,11 @@ void NpcTraceInitFile(){
 	if(npctraceFtraceFp == NULL){printf("err:open %s",npctraceFtraceFile);exit(-1);}
 	printf("\033[1;34m FTRACE\t\033[0m");
 #endif
+#ifdef NPC_E_TRACE
+	npctraceEtraceFp = fopen(npctraceEtraceFile, "w");
+	if(npctraceEtraceFp == NULL){printf("err:open %s",npctraceEtraceFile);exit(-1);}
+	printf("\033[1;34m ETRACE\t\033[0m");
+#endif
 }
 
 void NpcTraceCloseFile(){
@@ -41,6 +48,10 @@ void NpcTraceCloseFile(){
 	if(npctraceFtraceFp != NULL){
 		printf("ftrace:%s\n",npctraceFtraceFile);
 		fclose(npctraceFtraceFp);
+	}
+	if(npctraceEtraceFp != NULL){
+		printf("ftrace:%s\n",npctraceEtraceFile);
+		fclose(npctraceEtraceFp);
 	}
 }
 
@@ -147,6 +158,33 @@ void NpcTraceFtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
 		// printf(">\n");
 	}
 }
+void NpcTraceEtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
+	#define ETRACE_COUNT_MAX 10
+	#define ETRACE_COUNT_ULM true
+	// printf("pc=%x incode=%x dnpc=%x incode&0x7FU=%x incode&0xF80U=%x ret=%x call1=%x call2=%x call=%x\n",pc,incode,dnpc,incode&0x7FU,incode&0xF80U,incode==0x00008067,((incode&0x7FU)==0x67U),((incode&0xF80U)==0x80U),((incode&0x7F)==0x67)&&((incode&0xF80)==0x80));
+	static uint32_t EtraceCount=0;
+	if(incode==0x30200073){
+		// printf("ret");
+		fprintf(npctraceEtraceFp,"0x%8x: ",pc);
+		for(int i=1;(i<EtraceCount)&&(EtraceCount>=0)&&((i<ETRACE_COUNT_MAX)||ETRACE_COUNT_ULM);i++){
+			fprintf(npctraceEtraceFp,"\t");
+		}
+		EtraceCount--;
+		fprintf(npctraceEtraceFp,"mret [%sto%x]\n",getFuncName(dnpc),dnpc);
+		fflush(npctraceEtraceFp);
+		// printf(">\n");
+	}else if(incode==0x00000073){
+		// printf("call");
+		fprintf(npctraceEtraceFp,"0x%8x: ",pc);
+		for(int i=0;(i<EtraceCount)&&(EtraceCount>=0)&&((i<ETRACE_COUNT_MAX)||ETRACE_COUNT_ULM);i++){
+			fprintf(npctraceEtraceFp,"\t");
+		}
+		EtraceCount++;
+		fprintf(npctraceEtraceFp,"ecall[%s@0x%8x]\n",getFuncName(pc),dnpc);
+		fflush(npctraceEtraceFp);
+		// printf(">\n");
+	}
+}
 void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc){
 #ifdef NPC_I_TRACE
 	char mnemonic[32]={0};
@@ -160,5 +198,8 @@ void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc){
 
 #ifdef NPC_F_TRACE
 	NpcTraceFtrace(pc,incode,dnpc);
+#endif
+#ifdef NPC_E_TRACE
+	NpcTraceEtrace(pc,incode,dnpc);
 #endif
 }

@@ -152,6 +152,8 @@ FCEUD_Update(uint8 *XBuf,
 {
 	int ocount = Count;
 	int blitDone = 0;
+	// printf("Count=%d\n",Count);
+	// assert(Count==0);
 	if(Count) {
 		int32 can=GetWriteSound();
 		static int uflow=0;

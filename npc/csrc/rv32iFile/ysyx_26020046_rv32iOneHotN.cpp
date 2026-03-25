@@ -260,7 +260,7 @@ void minirvBegin(){
 int main(int argc, char** argv) {
 	initMem(argc, argv);
 	initDevice(argc, argv);
-	printf("\033[1;32m Init Finish \033[0m\n");
+	printf("\033[1;32m Init and Reset Finish Welcome to NPC \033[0m\n");
 	minirvReset();
 
 	minirvBegin();

@@ -11,7 +11,8 @@
 
 // #define NPC_I_TRACE
 // #define NPC_M_TRACE
-// #define NPC_F_TRACE
+#define NPC_F_TRACE
+#define NPC_E_TRACE
 
 #define npcTraceIringSize 256
 #define npcTraceIringMax 16
@@ -19,6 +20,7 @@
 extern FILE *npctraceIringsFp;
 extern FILE *npctraceMtraceFp;
 extern FILE *npctraceFtraceFp;
+extern FILE *npctraceEtraceFp;
 
 extern void NpcTraceInit(char *argv);
 extern void NpcTraceClose();

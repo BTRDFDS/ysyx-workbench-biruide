@@ -14,6 +14,7 @@
 
 #if defined(__ARCH_NATIVE) || defined(__PLATFORM_QEMU)
 # define PERF_CONFIG PERF_HIGH
+// # define PERF_CONFIG PERF_LOW
 #elif defined(__PLATFORM_NEMU)
 # define PERF_CONFIG PERF_MIDDLE
 #else
@@ -22,8 +23,11 @@
 
 #if PERF_CONFIG == PERF_HIGH
 # define NR_FRAMESKIP 0
-# define SOUND_CONFIG SOUND_HQ
+// # define SOUND_CONFIG SOUND_HQ
+// # define SOUND_CONFIG SOUND_LQ
+# define SOUND_CONFIG SOUND_NONE
 # define FUNC_IDX_MAX256
+// # define FUNC_IDX_MAX16
 #elif PERF_CONFIG == PERF_MIDDLE
 # define NR_FRAMESKIP 1
 # define SOUND_CONFIG SOUND_LQ
