@@ -31,7 +31,8 @@ int npcFinishCode=-1;
 enum memReadMode{memReadRESET,memReadSTEP,memReadREAD,memReadWRITE,memReadSDB};
 
 void NpcError();
-void NpcExit(int returnCode);
+void NpcEbreak(int returnCode);
+void NpcReturn(int returnCode);
 void NpcRun(uint32_t times);
 uint32_t NpcMemRead(uint32_t addr,memReadMode mode);
 
@@ -47,7 +48,7 @@ extern "C" int pmem_read(uint32_t raddr) {
 		NpcTraceMtrace("%d\n",time);
 		return time;
 	}else if(raddr<addrReset|((raddr-addrReset+3)>=memSize)){//超出mem
-		// printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddr,raddr,pc,runStep);NpcExit();exit(-1);
+		// printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddr,raddr,pc,runStep);NpcError();
 		return 0;
 	}else{
 		NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddr);
@@ -81,14 +82,14 @@ extern "C" void stop(unsigned char eb){
 	if(eb){
 		if(getReg(10)==0){
 			printf("\033[1;32m HIT GOOD TRAP \033[0m at 0x %x %d\n",pc,runStep);
-			NpcExit(0);
+			NpcEbreak(0);
 		}else{
 			printf("\033[1;31m HIT BAD TRAP \033[0m at 0x %x %d\n",pc,runStep);
-			NpcExit(-1);
+			NpcEbreak(-1);
 		}
 	}else{
 		printf("\033[1;31m error!! \033[0m at 0x %x\n",pc);
-		NpcExit(-1);
+		NpcEbreak(-1);
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -196,26 +197,32 @@ void NpcRun(uint32_t times){
 	}
 }
 void NpcError(){
-	NpcTraceClose();
-	delete top;
-	delete contextp;
-	exit(-1);
+	NpcReturn(-1);
 }
-void NpcExit(int returnCode){
-	NpcTraceClose();
-	delete top;
-	delete contextp;
+void NpcEbreak(int returnCode){
 #ifdef NPC_SDB
 	npcFinishCode=returnCode;
 	npcFinishHad=1;
 #else
-	exit(returnCode);
+	NpcReturn(returnCode);
 #endif
 }
+void NpcReturn(int returnCode){
+	NpcTraceClose();
+	delete top;
+	delete contextp;
+	exit(returnCode);
+}
 void NpcBegin(){
-	printf("\033[1;32m Welcome to NPC[%s %s] \033[0m\n",__DATE__,__TIME__);
+	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
 #ifdef NPC_SDB
 	NpcSdbMainloop();
+	if(npcFinishHad==false){
+		printf("\033[1;33m NPC hasn't ebreak,return 0 \033[0m\n");
+		NpcReturn(0);
+	}else{
+		NpcReturn(npcFinishCode);
+	}
 #else
 	NpcRun(0);
 #endif
@@ -226,6 +233,6 @@ int main(int argc, char** argv) {
 	NpcInitDevice(argc, argv);
 	NpcReset();
 	NpcBegin();
-	NpcExit(npcFinishCode);
+	NpcReturn(-1);
 	return -1;
 }

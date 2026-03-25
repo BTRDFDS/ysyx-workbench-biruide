@@ -97,6 +97,7 @@ void NpcDifftestInit8(uint32_t memSize,uint8_t *mem){
     difftest_enabled = true;
     // printf("[NPC_DIFFTEST] NEMU初始化完成\n");
     if(M!=NULL){free(M);}
+	printf("\033[1;34m DIFFTEST8\t\033[0m");
 #endif
 }
 
@@ -135,5 +136,6 @@ void NpcDifftestInit32(uint32_t memSize,uint32_t *M){
     dftDebug(printf("寄存器同步完成\n"););
     difftest_enabled = true;
     // printf("[NPC_DIFFTEST] NEMU初始化完成\n");
+	printf("\033[1;34m DIFFTEST32\t\033[0m");
 #endif
 }

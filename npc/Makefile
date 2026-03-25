@@ -25,22 +25,14 @@ CXXFLAGS += $(INCFLAGS)
 LDFLAGS += -lreadline
 LDFLAGS += -L$(NPC_HOME)/lib
 LDFLAGS += -lcapstone
-LDFLAGS += -mcmodel=large
+
+LDFLAGS += -ldl
+CXXFLAGS += -I/$(NEMU_HOME)/include
+
 ifeq ($(MAKECMDGOALS),gdb)
 VERILATOR_CFLAGS += -DDEBUG
 CXXFLAGS += -DDEBUG
 endif
-
-ifeq ($(MAKECMDGOALS),sdb)
-CXXFLAGS += -DNPC_SDB
-endif
-
-ifeq ($(MAKECMDGOALS),dft)
-CXXFLAGS += -DNPC_DIFFTEST
-LDFLAGS += -ldl
-CXXFLAGS += -I/$(NEMU_HOME)/include
-endif
-
 
 t?=water#工程名称
 tF?=$(t)#工程文件查找名

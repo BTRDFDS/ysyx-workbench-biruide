@@ -21,7 +21,7 @@ static char* rl_gets() {
 		line_read = NULL;
 	}
 
-	line_read = readline("(npcSdb) ");
+	line_read = readline("(\033[1;35m npcSdb) \033[0m");
 
 	if (line_read && *line_read) {
 		add_history(line_read);
