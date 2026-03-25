@@ -5,7 +5,7 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-int printf(const char *fmt, ...) {//TODO
+int printf(const char *fmt, ...) {
   // panic("Not implemented");
   if(fmt==NULL){panic("fmt is NULL");}
   va_list argp;
