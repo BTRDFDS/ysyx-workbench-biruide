@@ -9,7 +9,7 @@ endif
 
 MAKEFLAGS += -k
 # FLAGS=  --debug --cc --trace -MMD -O0
-FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic
+FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic -MMD
 VERILATOR_CFLAGS += $(FLAGS)
 
 vFile = $(shell find vsrc -type f -name "*.v")
@@ -25,17 +25,18 @@ CXXFLAGS += $(INCFLAGS)
 LDFLAGS += -lreadline
 LDFLAGS += -L$(NPC_HOME)/lib
 LDFLAGS += -lcapstone
+LDFLAGS += -mcmodel=large
 ifeq ($(MAKECMDGOALS),gdb)
 VERILATOR_CFLAGS += -DDEBUG
 CXXFLAGS += -DDEBUG
 endif
 
 ifeq ($(MAKECMDGOALS),sdb)
-CXXFLAGS += -DDEBUG_SDB
+CXXFLAGS += -DNPC_SDB
 endif
 
 ifeq ($(MAKECMDGOALS),dft)
-CXXFLAGS += -DDIFFTEST
+CXXFLAGS += -DNPC_DIFFTEST
 LDFLAGS += -ldl
 CXXFLAGS += -I/$(NEMU_HOME)/include
 endif

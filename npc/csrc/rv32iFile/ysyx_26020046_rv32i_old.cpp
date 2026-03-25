@@ -240,7 +240,7 @@ void minirvClose(){
 }
 
 void minirvBegin(){
-#ifdef DEBUG_SDB
+#ifdef NPC_SDB
 	NpcSdbMainloop();
 #else
 	minirvRun(0);

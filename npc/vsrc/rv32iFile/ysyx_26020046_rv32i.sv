@@ -555,8 +555,8 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc);
 		else pc<=pc+4;
 	end
 
-	import "DPI-C" function int pmem_read(input int addr);
-	import "DPI-C" function void pmem_write(input int addr, input int data, input byte mask);
+	import "DPI-C" function int pmem_read(input int unsigned addr);
+	import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
 	assign iRAM = (op.LSU.enL)&clk?pmem_read(addr):0;
 	always_ff@(posedge clk) begin:control_write
 		if (op.LSU.enS) begin // 有写请求时

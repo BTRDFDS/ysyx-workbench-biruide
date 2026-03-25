@@ -2,9 +2,9 @@
 #define _NPC_DIFFTESS_
 
 #include <stdint.h>
-
-// #define DIFFTEST //仅限给vscode找语法错误用
-#ifdef DIFFTEST
+#include <npcConfig.h>
+// #define NPC_DIFFTEST //仅限给vscode找语法错误用
+#ifdef NPC_DIFFTEST
 #include <dlfcn.h>
 #include <cpu/difftest.h>
 #include <common.h>//需要NEMU_HOME

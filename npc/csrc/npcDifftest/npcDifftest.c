@@ -1,6 +1,6 @@
 #include <npcDifftest.h>
 
-#ifdef DIFFTEST
+#ifdef NPC_DIFFTEST
 static bool difftest_enabled = false;
 static void *difftestHandle = NULL;
 
@@ -23,7 +23,7 @@ const char *npcDifftestRegs[32] = {//注意：0号寄存器替代为pc
 #endif
 
 void NpcDifftestCheck(uint32_t pc){
-#ifdef DIFFTEST
+#ifdef NPC_DIFFTEST
     dftDebug(printf("NpcDifftestCheck\n"););
 
     if (difftest_enabled==false||ref_difftest_exec==NULL) return;
@@ -42,13 +42,13 @@ void NpcDifftestCheck(uint32_t pc){
 
     bool match = true;
     if (npc_state.pc != ref_state.pc) {
-        printf("[DIFFTEST] dutPc=0x%08x refPc=0x%08x\n",npc_state.pc, ref_state.pc);
+        printf("[NPC_DIFFTEST] dutPc=0x%08x refPc=0x%08x\n",npc_state.pc, ref_state.pc);
         difftest_enabled = false;
     }
 
     for (int i = 1; i < 32; i++) {
         if (npc_state.gpr[i] != ref_state.gpr[i]) {
-            printf("[DIFFTEST] pc=0x%08x reg[%s] dut=0x%08x, ref=0x%08x\n",pc,npcDifftestRegs[i], npc_state.gpr[i], ref_state.gpr[i]);
+            printf("[NPC_DIFFTEST] pc=0x%08x reg[%s] dut=0x%08x, ref=0x%08x\n",pc,npcDifftestRegs[i], npc_state.gpr[i], ref_state.gpr[i]);
             difftest_enabled = false;
         }
     }
@@ -57,7 +57,7 @@ void NpcDifftestCheck(uint32_t pc){
 }
 
 void NpcDifftestInit8(uint32_t memSize,uint8_t *mem){
-#ifdef DIFFTEST
+#ifdef NPC_DIFFTEST
     if(mem==NULL){printf("mem==NULL\n");exit(-1);}
     uint32_t *M=NULL;
     M=(uint32_t*)malloc((memSize/4)*sizeof(uint32_t));
@@ -67,7 +67,7 @@ void NpcDifftestInit8(uint32_t memSize,uint8_t *mem){
     const char *nemuLib = "/home/biruide/ysyx-workbench/npc/lib/riscv32-nemu-interpreter-so";
     difftestHandle = dlopen(nemuLib, RTLD_LAZY);
     if (!difftestHandle) {
-        printf("[DIFFTEST] NEMU err: %s\n", dlerror());
+        printf("[NPC_DIFFTEST] NEMU err: %s\n", dlerror());
         return;
     }
     dftDebug(printf("文件读取完成\n"););
@@ -78,7 +78,7 @@ void NpcDifftestInit8(uint32_t memSize,uint8_t *mem){
     void (*ref_difftest_init)(int) = (void (*)(int))dlsym(difftestHandle, "difftest_init");
 
     if (ref_difftest_memcpy==NULL||ref_difftest_regcpy==NULL||ref_difftest_exec==NULL||ref_difftest_raise_intr==NULL||ref_difftest_init==NULL) {
-        printf("[DIFFTEST] *fun err\n");
+        printf("[NPC_DIFFTEST] *fun err\n");
         dlclose(difftestHandle);
         return;
     }
@@ -95,18 +95,18 @@ void NpcDifftestInit8(uint32_t memSize,uint8_t *mem){
     ref_difftest_regcpy(&init_state, DIFFTEST_TO_REF);
     dftDebug(printf("寄存器同步完成\n"););
     difftest_enabled = true;
-    // printf("[DIFFTEST] NEMU初始化完成\n");
+    // printf("[NPC_DIFFTEST] NEMU初始化完成\n");
     if(M!=NULL){free(M);}
 #endif
 }
 
 void NpcDifftestInit32(uint32_t memSize,uint32_t *M){
-#ifdef DIFFTEST
+#ifdef NPC_DIFFTEST
     if(M==NULL){printf("M==NULL\n");}
     const char *nemuLib = "/home/biruide/ysyx-workbench/npc/lib/riscv32-nemu-interpreter-so";
     difftestHandle = dlopen(nemuLib, RTLD_LAZY);
     if (!difftestHandle) {
-        printf("[DIFFTEST] NEMU err: %s\n", dlerror());
+        printf("[NPC_DIFFTEST] NEMU err: %s\n", dlerror());
         return;
     }
     dftDebug(printf("文件读取完成\n"););
@@ -117,7 +117,7 @@ void NpcDifftestInit32(uint32_t memSize,uint32_t *M){
     void (*ref_difftest_init)(int) = (void (*)(int))dlsym(difftestHandle, "difftest_init");
 
     if (ref_difftest_memcpy==NULL||ref_difftest_regcpy==NULL||ref_difftest_exec==NULL||ref_difftest_raise_intr==NULL||ref_difftest_init==NULL) {
-        printf("[DIFFTEST] *fun err\n");
+        printf("[NPC_DIFFTEST] *fun err\n");
         dlclose(difftestHandle);
         return;
     }
@@ -134,6 +134,6 @@ void NpcDifftestInit32(uint32_t memSize,uint32_t *M){
     ref_difftest_regcpy(&init_state, DIFFTEST_TO_REF);
     dftDebug(printf("寄存器同步完成\n"););
     difftest_enabled = true;
-    // printf("[DIFFTEST] NEMU初始化完成\n");
+    // printf("[NPC_DIFFTEST] NEMU初始化完成\n");
 #endif
 }

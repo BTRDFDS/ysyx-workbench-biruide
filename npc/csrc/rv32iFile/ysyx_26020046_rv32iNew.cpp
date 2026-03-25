@@ -18,19 +18,13 @@ VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_rv32i* top;//顶层模块
 svScope scope;//作用域
 
-#define ADDR_RESET 0x80000000
-#define timeADDR   0x0200BFF8
-#define serialADDR 0x10000000
+const uint32_t addrReset	=0x80000000;
+const uint32_t addrTime		=0x0200BFF8;
+const uint32_t addrSerial	=0x10000000;
 
-// #define DEBUG
+const uint32_t memSize		=0x80000000;
 
-#ifdef DEBUG
-    #define IfDebug(...) do { __VA_ARGS__; } while(0)
-#else
-    #define IfDebug(...) ((void)0)
-#endif
 
-#define memSize 0x8000000
 uint8_t mem[memSize];
 uint32_t runStep,pc,code;//运行步数
 timespec startTime;//开始时间
@@ -39,11 +33,11 @@ int result=-1;//返回值
 enum memReadMode{memReadRESET,memReadSTEP,memReadREAD,memReadWRITE,memReadSDB};
 
 uint32_t MemRead(uint32_t addr,memReadMode mode){//读取4个字节
-	if(addr<ADDR_RESET|((addr-ADDR_RESET+3)>=memSize)){printf("err addr=%x@%x %x at %x\n",addr,pc,(addr-ADDR_RESET),mode);exit(-1);}
-	uint32_t temp=	((uint32_t)mem[addr-ADDR_RESET])|
-					(((uint32_t)mem[addr-ADDR_RESET+1])<<8)|
-					(((uint32_t)mem[addr-ADDR_RESET+2])<<16)|
-					(((uint32_t)mem[addr-ADDR_RESET+3])<<24);
+	if(addr<addrReset|((addr-addrReset+3)>=memSize)){printf("err addr=%x@%x %x at %x\n",addr,pc,(addr-addrReset),mode);exit(-1);}
+	uint32_t temp=	( (uint32_t)mem[addr-addrReset+0]		)|
+					(((uint32_t)mem[addr-addrReset+1])<<8	)|
+					(((uint32_t)mem[addr-addrReset+2])<<16	)|
+					(((uint32_t)mem[addr-addrReset+3])<<24	);
 	return temp;
 }
 
@@ -71,13 +65,9 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 	gpr[0]=0;
 }
 
-extern "C" int pmem_read(int raddr,unsigned char enR,unsigned char* finR) {
-	if(enR==false){return 0;}
-	IfDebug(printf("pmem_read : "););
+extern "C" int pmem_read(int raddr) {
 	uint32_t raddrX=(uint32_t)raddr;
-	// if(raddrX==0){return 0;}
-	*finR=1;
-	if(raddrX==timeADDR){//返回毫秒数
+	if(raddrX==addrTime){//返回毫秒数
 		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddrX);
 		uint32_t time=0;
 		timespec t;
@@ -85,47 +75,36 @@ extern "C" int pmem_read(int raddr,unsigned char enR,unsigned char* finR) {
 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
 		NpcTraceMtrace("%d\n",time);
 		return time;
+	}else if(raddrX<addrReset|((raddrX-addrReset+3)>=memSize)){return 0;
+	}else{
+		NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddrX);
+		NpcTraceMtrace("%x\n",MemRead(raddrX,memReadREAD));
+		return MemRead(raddrX,memReadREAD);
 	}
-	if(raddrX<ADDR_RESET|((raddrX-ADDR_RESET+3)>=memSize)){//超出mem
-		IfDebug(printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddrX,raddr,pc,runStep););
-		return 0;
-	}
-
-	NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddrX);
-	NpcTraceMtrace("%x\n",MemRead(raddrX,memReadREAD));//TODO
-	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddrX-ADDR_RESET),(raddrX-ADDR_RESET)>>2,mem[(raddrX-ADDR_RESET)>>2]););
-	return MemRead(raddrX,memReadREAD);//TODO
 }
 
-extern "C" void pmem_write(int waddr, int wdata, char wmask) {
-	IfDebug(printf("pmem_write : "););
+extern "C" void pmem_write(int waddr, int wData, char wMask) {
 	uint32_t waddrX=(uint32_t)waddr;
 	if(waddrX==0x10000000){
-		printf("%c",wdata);
+		printf("%c",wData);
 		fflush(stdout);
-		// printf("1");exit(-1);
-		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,waddrX,wdata);
+		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,waddrX,wData);
 		return;
 	}
-	if(waddrX<ADDR_RESET|((waddrX-ADDR_RESET+3)>=memSize)){
-		IfDebug(printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,ADDR_RESET,memSize+ADDR_RESET););
-		printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,ADDR_RESET,memSize+ADDR_RESET);exit(-1);
-		return;
+	if(waddrX<addrReset||((waddrX-addrReset+3)>=memSize)){
+		printf("\033[1;31m pmem_write:err x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,addrReset,memSize+addrReset);
+		exit(-1);
 	}
-	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,mem[(waddr-ADDR_RESET)>>2],wdata,wmask););//TODO
 
-	NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,waddrX,MemRead(waddrX,memReadWRITE),wmask);
+	NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,waddrX,MemRead(waddrX,memReadWRITE),wMask);
 	for(int i=0;i<4;i++){
-		if((wmask&0x1)==1){
-			uint32_t addr=(waddrX-ADDR_RESET+i);
-			if(addr>=memSize){printf("err addr waddrX=%x addr=%x @%x %d\n",waddrX,addr,pc,runStep);exit(-1);}
-			mem[addr]=wdata&0xff;
-			wdata=wdata>>8;
-			wmask=wmask>>1;
+		if((wMask&0x1)==1){
+			mem[(waddrX-addrReset+i)]=wData&0xff;
+			wData=wData>>8;
+			wMask=wMask>>1;
 		}
 	}
 	NpcTraceMtrace(" become 0x%x\n",MemRead(waddrX,memReadWRITE));
-	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,mem[(waddr-ADDR_RESET)>>2]););
 }
 extern "C" void stop(unsigned char eb){
 	printf("ebreak:");
@@ -169,7 +148,6 @@ void initMem(int argc, char** argv){
 }
 
 void initDevice(int argc, char** argv){
-	// IfDebug(printf("initDevice begin\n"););
 
 	if(clock_gettime(CLOCK_MONOTONIC,&startTime)!=0){printf("time err\n");exit(-1);}
 
@@ -193,36 +171,33 @@ void minirvReset(){
 
 	pc=top->pc;
 	code=MemRead(pc,memReadRESET);
-	// top->code=code;
+	top->code=code;//IFU
 	top->clk=0;top->reset=0;top->eval();
 
 	// printf("pc=%x\n",pc);
 	// printf("初始化完成\n");
 	// printf("code=%x\n",top->code);
-	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",pc,MemRead(pc,memReadRESET)););
 }
 
 void minirvStep(){
 	pc=top->pc;
 	// printf("pc=%x\n",pc);
 	code=MemRead(pc,memReadSTEP);
-	// top->code=code;//IFU
+	top->code=code;//IFU
 	uint32_t nPc=pc;
 	uint32_t nCode=code;
 
 	// printf("%x\n",code);
 	top->clk=1;top->eval();
-	IfDebug(printf("clk up finish,npc=0x%x\n",(top->pc-ADDR_RESET)>>2););
 
 	pc=top->pc;
 	// printf("step begin 3\n");
 	// printf("pc=%x\n",pc);
 	code=MemRead(pc,memReadSTEP);
-	// top->code=code;//IFU
+	top->code=code;//IFU
 	// printf("step begin 2\n");
 	top->clk=0;top->eval();
 	// printf("step begin\n");
-	IfDebug(printf("clk down finish\n");printf("runStep=%d pc=%x(%x)\n\n",runStep,pc,(pc-ADDR_RESET)>>2););
 	runStep++;
 
 	// printf("step finish\n");
@@ -262,8 +237,8 @@ void minirvBegin(){
 int main(int argc, char** argv) {
 	initMem(argc, argv);
 	initDevice(argc, argv);
-	printf("\033[1;32m Init and Reset Finish Welcome to NPC \033[0m\n");
 	minirvReset();
+	printf("\033[1;32m Init and Reset Finish Welcome to NPC \033[0m\n");
 
 	minirvBegin();
 

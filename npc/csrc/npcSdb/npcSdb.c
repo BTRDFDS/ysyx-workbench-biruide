@@ -257,7 +257,7 @@ void NpcSdbMainloop() {
 }
 
 void NpcSdbInit() {
-#ifdef DEBUG_SDB
+#ifdef NPC_SDB
 	init_regex();
 	init_wp_pool();
 	printf("\033[1;34m SDB\t\033[0m");
