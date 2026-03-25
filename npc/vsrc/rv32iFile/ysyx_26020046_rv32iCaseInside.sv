@@ -86,7 +86,7 @@ package rv32iBasis;
 	// }opImmr_t;
 endpackage
 
-module ysyx_26020046_rv32i(clk,reset,code,pc);
+module ysyx_26020046_rv32iCaseInside(clk,reset,code,pc);
 	import rv32iBasis::*;
 	input logic clk,reset;
 	// input word_t code;

@@ -15,14 +15,17 @@ void NpcTraceInitFile(){
 #ifdef NPC_I_TRACE
 	npctraceIringsFp = fopen(npctraceIringsFile, "w");
 	if(npctraceIringsFp == NULL){printf("err:open %s",npctraceIringsFile);exit(-1);}
+	printf("\033[1;34m ITRACE\t\033[0m");
 #endif
 #ifdef NPC_M_TRACE
 	npctraceMtraceFp = fopen(npctraceMtraceFile, "w");
 	if(npctraceMtraceFp == NULL){printf("err:open %s",npctraceMtraceFile);exit(-1);}
+	printf("\033[1;34m MTRACE\t\033[0m");
 #endif
 #ifdef NPC_F_TRACE
 	npctraceFtraceFp = fopen(npctraceFtraceFile, "w");
 	if(npctraceFtraceFp == NULL){printf("err:open %s",npctraceFtraceFile);exit(-1);}
+	printf("\033[1;34m FTRACE\t\033[0m");
 #endif
 }
 

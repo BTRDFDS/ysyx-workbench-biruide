@@ -1,12 +1,12 @@
-//ysyx_26020046_rv32i_old
-#include "Vysyx_26020046_rv32i_old.h"
+//ysyx_26020046_rv32iCaseInside
+#include "Vysyx_26020046_rv32iCaseInside.h"
 #include "verilated.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h>
 #include "svdpi.h"
-#include "Vysyx_26020046_rv32i_old__Dpi.h"
+#include "Vysyx_26020046_rv32iCaseInside__Dpi.h"
 #include <time.h>
 
 #include <npcSdb.h>
@@ -15,7 +15,7 @@
 
 
 VerilatedContext* contextp;//verilator上下文
-Vysyx_26020046_rv32i_old* top;//顶层模块
+Vysyx_26020046_rv32iCaseInside* top;//顶层模块
 svScope scope;//作用域
 
 #define ADDR_RESET 0x80000000
@@ -30,12 +30,22 @@ svScope scope;//作用域
     #define IfDebug(...) ((void)0)
 #endif
 
-#define memSize 2048000
-uint32_t M[memSize];
-uint32_t runStep,pc;//运行步数
+#define memSize 0x8000000
+uint8_t mem[memSize];
+uint32_t runStep,pc,code;//运行步数
 timespec startTime;//开始时间
 bool hasEbreak=false;//是否遇到ebreak
 int result=-1;//返回值
+enum memReadMode{memReadRESET,memReadSTEP,memReadREAD,memReadWRITE,memReadSDB};
+
+uint32_t MemRead(uint32_t addr,memReadMode mode){//读取4个字节
+	if(addr<ADDR_RESET|((addr-ADDR_RESET+3)>=memSize)){printf("err addr=%x@%x %x at %x\n",addr,pc,(addr-ADDR_RESET),mode);exit(-1);}
+	uint32_t temp=	((uint32_t)mem[addr-ADDR_RESET])|
+					(((uint32_t)mem[addr-ADDR_RESET+1])<<8)|
+					(((uint32_t)mem[addr-ADDR_RESET+2])<<16)|
+					(((uint32_t)mem[addr-ADDR_RESET+3])<<24);
+	return temp;
+}
 
 extern "C" int getReg(int addr);//注意：0号寄存器替代为pc
 void minirvClose();
@@ -50,7 +60,7 @@ uint32_t NpcsdbGetReg(uint32_t addr){
     return getReg(addr);
 }
 uint32_t NpcsdbReadMem(uint32_t addr){
-    return M[(addr-ADDR_RESET)>>2];
+	return MemRead(addr,memReadSDB);
 }
 void NpcsdbRun(uint32_t times){
 	minirvRun(times);
@@ -74,15 +84,15 @@ extern "C" int pmem_read(int raddr) {
 		NpcTraceMtrace("%d\n",time);
 		return time;
 	}
-	if(((((raddrX-ADDR_RESET)>>2)>=memSize)|raddrX<ADDR_RESET)|(raddrX==0)){//超出mem
+	if(raddrX<ADDR_RESET|((raddrX-ADDR_RESET+3)>=memSize)){//超出mem
 		IfDebug(printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddrX,raddr,pc,runStep););
 		return 0;
 	}
 
 	NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddrX);
-	NpcTraceMtrace("%x\n",M[(raddrX-ADDR_RESET)>>2]);
-	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddrX-ADDR_RESET),(raddrX-ADDR_RESET)>>2,M[(raddrX-ADDR_RESET)>>2]););
-	return M[(raddrX-ADDR_RESET) >> 2];
+	NpcTraceMtrace("%x\n",MemRead(raddrX,memReadREAD));//TODO
+	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x\n",raddr,raddr>>2,(raddrX-ADDR_RESET),(raddrX-ADDR_RESET)>>2,mem[(raddrX-ADDR_RESET)>>2]););
+	return MemRead(raddrX,memReadREAD);//TODO
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
@@ -90,34 +100,30 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	uint32_t waddrX=(uint32_t)waddr;
 	if(waddrX==0x10000000){
 		printf("%c",wdata);
+		fflush(stdout);
+		// printf("1");exit(-1);
 		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,waddrX,wdata);
 		return;
 	}
-	if((((waddrX-ADDR_RESET)>>2)>memSize|waddrX<=ADDR_RESET)|(waddrX==0)){
+	if(waddrX<ADDR_RESET|((waddrX-ADDR_RESET+3)>=memSize)){
 		IfDebug(printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,ADDR_RESET,memSize+ADDR_RESET););
+		printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",waddrX,waddr,pc,runStep,ADDR_RESET,memSize+ADDR_RESET);exit(-1);
 		return;
 	}
-	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2],wdata,wmask););
+	IfDebug(printf("0x%x(0x%x) >> 0x%x(0x%x):%x<=%x with 0x%x ",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,mem[(waddr-ADDR_RESET)>>2],wdata,wmask););//TODO
 
-	NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,waddrX,wdata,wmask);
-	uint32_t mask1=0xffffffff;
-	uint32_t data=wdata;
-	switch(wmask&0x0f){
-		case 0b0001:mask1=0xffffff00;data=data&0x00ff;data=data    ;break;
-		case 0b0010:mask1=0xffff00ff;data=data&0x00ff;data=data<< 8;break;
-		case 0b0100:mask1=0xff00ffff;data=data&0x00ff;data=data<<16;break;
-		case 0b1000:mask1=0x00ffffff;data=data&0x00ff;data=data<<24;break;
-		case 0b0011:mask1=0xffff0000;data=data&0xffff;data=data    ;break;
-		case 0b1100:mask1=0x0000ffff;data=data&0xffff;data=data<<16;break;
-		case 0b1111:mask1=0x00000000;data=data       ;data=data    ;break;
-		default    :mask1=0xffffffff;data=data&0x0000;data=       0;break;
+	NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,waddrX,MemRead(waddrX,memReadWRITE),wmask);
+	for(int i=0;i<4;i++){
+		if((wmask&0x1)==1){
+			uint32_t addr=(waddrX-ADDR_RESET+i);
+			if(addr>=memSize){printf("err addr waddrX=%x addr=%x @%x %d\n",waddrX,addr,pc,runStep);exit(-1);}
+			mem[addr]=wdata&0xff;
+			wdata=wdata>>8;
+			wmask=wmask>>1;
+		}
 	}
-	uint32_t temp=M[(waddr-ADDR_RESET)>>2];
-	temp&=mask1;
-	temp|=data;
-	M[(waddr-ADDR_RESET)>>2]=temp;
-	NpcTraceMtrace(" become 0x%x\n",M[(waddr-ADDR_RESET)>>2]);
-	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,M[(waddr-ADDR_RESET)>>2]););
+	NpcTraceMtrace(" become 0x%x\n",MemRead(waddrX,memReadWRITE));
+	IfDebug(printf("become 0x%x(0x%x) >> 0x%x(0x%x):%x\n",waddr,waddr>>2,(waddr-ADDR_RESET),(waddr-ADDR_RESET)>>2,mem[(waddr-ADDR_RESET)>>2]););
 }
 extern "C" void stop(unsigned char eb){
 	printf("ebreak:");
@@ -126,13 +132,18 @@ extern "C" void stop(unsigned char eb){
 	// minirvClose();
 	if(eb){
 		if(getReg(10)==0){
-		printf("\033[1;32mHIT GOOD TRAP\033[0m\n");
-		hasEbreak=true;
-		result=0;
-		return;
+			printf("\033[1;32mHIT GOOD TRAP\033[0mat 0x%x %d\n",pc,runStep);
+			hasEbreak=true;
+			result=0;
+			return;
+		}else{
+			printf("\033[1;31mHIT BAD TRAP\033[0mat 0x%x %d\n",pc,runStep);
+			hasEbreak=true;
+			result=-1;
+			return;
 		}
 	}
-	printf("\033[1;31merror!!\033[0m\n");
+	printf("\033[1;31merror!!\033[0m@0x%x==%x\n",pc,code);
 	hasEbreak=true;
 	result=-1;
 }
@@ -143,16 +154,13 @@ void initMem(int argc, char** argv){
 	if(argc>1&&argv[1]!=NULL){
 		printf("!!bin:%s ",argv[1]);
 		file = fopen(argv[1],"rb");
-	}else{
-		printf("!!shuould input bin\n");
-		exit(-1);
-	}
-	if(file==NULL){printf("can't open file\n");}
+	}else{printf("!!shuould input bin\n");exit(-1);}
+	if(file==NULL){printf("can't open file\n");exit(-1);}
     fseek(file, 0, SEEK_END);
     long fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);
-    size_t wordsRead = fread(M, sizeof(uint32_t), fileSize/sizeof(uint32_t), file);
-	if(wordsRead!=fileSize/sizeof(uint32_t)){printf("can't read file\n");}
+    size_t wordsRead = fread(mem, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
 	// for(int i=0;i<16;i++){printf("M[%d]=0x%x\n",i,M[i]);}
 	printf("has open file\n");
@@ -165,15 +173,13 @@ void initDevice(int argc, char** argv){
 
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
-	top = new Vysyx_26020046_rv32i_old
-{contextp};
-	scope=svGetScopeFromName("TOP.ysyx_26020046_rv32i_old
-	.GPR");
+	top = new Vysyx_26020046_rv32iCaseInside{contextp};
+	scope=svGetScopeFromName("TOP.ysyx_26020046_rv32iCaseInside.GPR");
 	svSetScope(scope);
 
 	NpcSdbInit();
 	NpcTraceInit(argv[1]);
-	NpcDifftestInit32(memSize,M);
+	NpcDifftestInit8(memSize,mem);//TODO
 
 }
 
@@ -184,20 +190,23 @@ void minirvReset(){
 	top->clk=1;top->reset=1;top->eval();
 
 	pc=top->pc;
-	top->code=M[(pc-ADDR_RESET)>>2];
+	code=MemRead(pc,memReadRESET);
+	top->code=code;//IFU
 	top->clk=0;top->reset=0;top->eval();
 
 	// printf("pc=%x\n",pc);
 	// printf("初始化完成\n");
 	// printf("code=%x\n",top->code);
-	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",(pc-ADDR_RESET)>>2,M[(pc-ADDR_RESET)>>2]););
+	IfDebug(printf("\n!! reset finish ");printf("pc=%d M[0]=0x%x\n\n",pc,MemRead(pc,memReadRESET)););
 }
 
 void minirvStep(){
 	pc=top->pc;
-	top->code=M[(pc-ADDR_RESET)>>2];
+	// printf("pc=%x\n",pc);
+	code=MemRead(pc,memReadSTEP);
+	top->code=code;//IFU
 	uint32_t nPc=pc;
-	uint32_t code=top->code;
+	uint32_t nCode=code;
 
 	// printf("%x\n",code);
 	top->clk=1;top->eval();
@@ -206,7 +215,8 @@ void minirvStep(){
 	pc=top->pc;
 	// printf("step begin 3\n");
 	// printf("pc=%x\n",pc);
-	top->code=M[(pc-ADDR_RESET)>>2];
+	code=MemRead(pc,memReadSTEP);
+	top->code=code;//IFU
 	// printf("step begin 2\n");
 	top->clk=0;top->eval();
 	// printf("step begin\n");
@@ -214,7 +224,7 @@ void minirvStep(){
 	runStep++;
 
 	// printf("step finish\n");
-	NpcTraceWrite(nPc,code,pc);
+	NpcTraceWrite(nPc,nCode,pc);
 	NpcDifftestCheck(pc);
 }
 void minirvRun(uint32_t times){
