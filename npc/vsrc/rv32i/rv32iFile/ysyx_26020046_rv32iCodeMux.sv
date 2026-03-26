@@ -189,19 +189,31 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 			if(code.op==OP_B__)begin//b系列
 				op.ALU.bfu=ALUopBfu_t'(code.fun3);
 			end else op.ALU.bfu=NBFU;
-
-			unique case(code.op)//选ALU cho addr
-				OP_U_I	:{op.ALU.cho,op.ALU.adr}={IMM_,NAD};
-				OP_U_P	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
-				OP_J__	:{op.ALU.cho,op.ALU.adr}={SNPC,PCI};
-				OP_I_J	:{op.ALU.cho,op.ALU.adr}={SNPC,R1I};
-				OP_I_L	:{op.ALU.cho,op.ALU.adr}={DATA,R1I};
-				OP_I_A	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
-				OP_R__	:{op.ALU.cho,op.ALU.adr}={CAL_,NAD};
-				OP_CSR	:{op.ALU.cho,op.ALU.adr}={CCSR,ECJ};
-				OP_B__	:{op.ALU.cho,op.ALU.adr}={NCHO,PCI};
-				OP_S__	:{op.ALU.cho,op.ALU.adr}={NCHO,R1I};
-				default	:{op.ALU.cho,op.ALU.adr}={NCHO,NAD};
+			unique case(code.op)//选ALU adr
+				OP_J__	:op.ALU.adr=PCI;
+				OP_I_J	:op.ALU.adr=R1I;
+				OP_B__	:op.ALU.adr=PCI;
+				OP_I_L	:op.ALU.adr=R1I;
+				OP_S__	:op.ALU.adr=R1I;
+				OP_CSR	:op.ALU.adr=ECJ;
+				default	:op.ALU.adr=NAD;
+			endcase
+			if(code.op==OP_CSR)begin unique case(code.fun3)
+					3'b000	:op.ALU.csr=JUMP_;
+					3'b001	:op.ALU.csr=WACSR;
+					3'b010	:op.ALU.csr=(code.r1=='0)?NACSR:RACSR;
+					default	:op.ALU.csr=NACSR;
+			endcase end else op.ALU.csr=NACSR;
+			unique case(code.op)//选ALU cho
+				OP_U_I	:op.ALU.cho=IMM_;
+				OP_U_P	:op.ALU.cho=CAL_;
+				OP_J__	:op.ALU.cho=SNPC;
+				OP_I_J	:op.ALU.cho=SNPC;
+				OP_I_L	:op.ALU.cho=DATA;
+				OP_I_A	:op.ALU.cho=CAL_;
+				OP_R__	:op.ALU.cho=CAL_;
+				OP_CSR	:op.ALU.cho=CCSR;
+				default	:op.ALU.cho=NCHO;
 			endcase
 
 			unique case(code.op)//选LSU op
@@ -212,19 +224,28 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 			op.LSU.enL=(code.op==OP_I_L);
 			op.LSU.enS=(code.op==OP_S__);
 
-			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op addr
-				3'b000	:begin
-					op.ALU.csr=JUMP_;
-					unique case(code)
-						OP_SCR_MRET__	:begin op.CSR.op=MRET_;op.CSR.addr=CSR_ADDR_MEPC;end
-						OP_SCR_ECALL_	:begin op.CSR.op=ECALL;op.CSR.addr=CSR_ADDR_MTVEC;end
-						OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop(1);end
-						default			:begin op.CSR.op=NCSR_;op.CSR.addr='0;stop(0);end
+			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
+				3'b000	:begin unique case(code)
+						OP_SCR_MRET__	:op.CSR.addr=CSR_ADDR_MEPC;
+						OP_SCR_ECALL_	:op.CSR.addr=CSR_ADDR_MTVEC;
+						OP_SCR_EBREAK	:op.CSR.addr='0;
+						default			:begin op.CSR.addr='0;$fatal("CSR unknown op==0x%x",code);stop(0);end
 					endcase end
-				3'b001	:begin op.CSR.addr={code[31:20]};	op.CSR.op=WCCSR;					op.ALU.csr=WACSR;end
-				3'b010	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(code.r1=='0)?NACSR:RACSR;end
-				default	:begin op.CSR.addr='0;				op.CSR.op=NCSR_;					op.ALU.csr=NACSR;end
-			endcase end else begin op.CSR.addr='0;			op.CSR.op=NCSR_;					op.ALU.csr=NACSR;end
+				3'b001	:op.CSR.addr={code[31:20]};
+				3'b010	:op.CSR.addr={code[31:20]};
+				default	:op.CSR.addr='0;
+				endcase end else op.CSR.addr='0;
+			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op
+				3'b000	:begin unique case(code)
+						OP_SCR_MRET__	:op.CSR.op=MRET_;
+						OP_SCR_ECALL_	:op.CSR.op=ECALL;
+						OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;stop(1);end
+						default			:begin op.CSR.op=NCSR_;$fatal("CSR unknown op==0x%x",code);stop(0);end
+					endcase end
+				3'b001	:op.CSR.op=WCCSR;
+				3'b010	:op.CSR.op =(code.r1=='0)?NCSR_:WCCSR;
+				default	:op.CSR.op=NCSR_;
+			endcase end else op.CSR.op=NCSR_;
 
 			unique case(code.op)//选cR1 这里7/10就反选
 				OP_U_I	:cR1='0;
@@ -262,77 +283,126 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 
 	word_t result,in1,in2;
 
-	always_comb begin : cal
-		unique case(op.ALU.in1)
-			IR1:in1=oR1;
-			PC_:in1=pc;
-			default:begin in1='0;$fatal("unknown in1==0x%x",op.ALU.in1);end
-		endcase
-		unique case(op.ALU.in2)
-			IR2:in2=oR2;
-			IMM:in2=op.ALU.im;
-			default:begin in2='0;$fatal("unknown in2==0x%x",op.ALU.in2);end
-		endcase
+	ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin1 (.out(in1),.key(op.ALU.in1),.default_out('0),.lut({
+		{IR1,oR1},
+		{PC_,pc}
+	}));
+	ysyx_26020046_MuxKeyWithDefault #(2,1,DATA_WIDTH) Muxin2 (.out(in2),.key(op.ALU.in2),.default_out('0),.lut({
+		{IR2,oR2},
+		{IMM,op.ALU.im}
+	}));
+	ysyx_26020046_MuxKeyWithDefault #(10,4,DATA_WIDTH) MuxCal (.out(result),.key(op.ALU.cal),.default_out('0),.lut({
+		{ADD_,in1+in2},
+		{SLL_,in1<<in2[4:0]},
+		{SLT_,  $signed(in1) <  $signed(in2)?32'b1:32'b0},
+		{SLTU,$unsigned(in1) <$unsigned(in2)?32'b1:32'b0},
+		{XOR_,in1^in2},
+		{SRL_,$unsigned(in1)>> in2[4:0]},
+		{OR__,in1|in2},
+		{AND_,in1&in2},
+		{SUB_,in1-in2},
+		{SRA_,  $signed(in1)>>>in2[4:0]}
+	}));
+	ysyx_26020046_MuxKeyWithDefault #(6,3,1) MuxBfun(.out(enBfun),.key(op.ALU.bfu),.default_out('0),.lut({
+		{BEQ_,(oR1==oR2)},
+		{BNE_,(oR1!=oR2)},
+		{BLT_,(  $signed(oR1) <  $signed(oR2))},
+		{BGE_,(  $signed(oR1)>=  $signed(oR2))},
+		{BLTU,($unsigned(oR1) <$unsigned(oR2))},
+		{BGEU,($unsigned(oR1)>=$unsigned(oR2))}
+	}));
+	ysyx_26020046_MuxKeyWithDefault #(4,3,DATA_WIDTH) MuxAdr(.out(addr),.key(op.ALU.adr),.default_out('0),.lut({
+	    {R1I,oR1+op.ALU.im},
+	    {PCI,pc+op.ALU.im},
+	    {ECJ,oCsr},
+	    {ERE,oCsr+4}
+	}));
+	assign enJfun=op.ALU.enJcod|enBfun;
+	ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) MuxCho(.out(iRd),.key(op.ALU.cho),.default_out('0),.lut({
+		{CAL_,result},
+		{IMM_,op.ALU.im},
+		{DATA,data},
+		{CCSR,oCsr},
+		{SNPC,pc+4}
+	}));
+	ysyx_26020046_MuxKeyWithDefault #(3,2,DATA_WIDTH) MuxCsr(.out(iCsr),.key(op.ALU.csr),.default_out('0),.lut({
+		{WACSR,oR1},
+		{RACSR,oR1|oCsr},
+		{JUMP_,pc}
+	}));
+	
+	// always_comb begin : cal
+	// 	unique case(op.ALU.in1)
+	// 		IR1:in1=oR1;
+	// 		PC_:in1=pc;
+	// 		default:begin in1='0;end
+	// 	endcase
+	// 	unique case(op.ALU.in2)
+	// 		IR2:in2=oR2;
+	// 		IMM:in2=op.ALU.im;
+	// 		default:begin in2='0;end
+	// 	endcase
 
-		unique case(op.ALU.cal)
-			ADD_:result=in1+in2;
-			SLL_:result=in1<<in2[4:0];
-			SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
-			SLTU:result=$unsigned(in1) <$unsigned(in2)?1:0;
-			XOR_:result=in1^in2;
-			SRL_:result=$unsigned(in1)>> in2[4:0];
-			OR__:result=in1|in2;
-			AND_:result=in1&in2;
-			SUB_:result=in1-in2;
-			SRA_:result=  $signed(in1)>>>in2[4:0];
-			NCAL:result='0;
-			default:begin result='0;$fatal("unknown cal==0x%x",op.ALU.cal);end
-		endcase
-	end
-	always_comb begin : bfu
-		unique case(op.ALU.bfu)
-			BEQ_:enBfun=(oR1==oR2);
-			BNE_:enBfun=(oR1!=oR2);
-			BLT_:enBfun=(  $signed(oR1) <  $signed(oR2));
-			BGE_:enBfun=(  $signed(oR1)>=  $signed(oR2));
-			BLTU:enBfun=($unsigned(oR1) <$unsigned(oR2));
-			BGEU:enBfun=($unsigned(oR1)>=$unsigned(oR2));
-			NBFU:enBfun='0;
-			default:begin enBfun='0;$fatal("unknown bfu==0x%x",op.ALU.bfu);end
-			endcase
-	end
-	always_comb begin : adr
-		unique case(op.ALU.adr)
-			R1I:addr=oR1+op.ALU.im;
-			PCI:addr=pc+op.ALU.im;
-			ECJ:addr=oCsr;
-			ERE:addr=oCsr+4;
-			NAD:addr='0;
-			default:begin addr='0;$fatal("unknown adr==0x%x",op.ALU.adr);end
-		endcase
-		enJfun=op.ALU.enJcod|enBfun;
-	end
+	// 	unique case(op.ALU.cal)
+	// 		ADD_:result=in1+in2;
+	// 		SLL_:result=in1<<in2[4:0];
+	// 		SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
+	// 		SLTU:result=$unsigned(in1) <$unsigned(in2)?1:0;
+	// 		XOR_:result=in1^in2;
+	// 		SRL_:result=$unsigned(in1)>> in2[4:0];
+	// 		OR__:result=in1|in2;
+	// 		AND_:result=in1&in2;
+	// 		SUB_:result=in1-in2;
+	// 		SRA_:result=  $signed(in1)>>>in2[4:0];
+	// 		NCAL:result='0;
+	// 		default:begin result='0;end
+	// 	endcase
+	// end
+	// always_comb begin : bfu
+	// 	unique case(op.ALU.bfu)
+	// 		BEQ_:enBfun=(oR1==oR2);
+	// 		BNE_:enBfun=(oR1!=oR2);
+	// 		BLT_:enBfun=(  $signed(oR1) <  $signed(oR2));
+	// 		BGE_:enBfun=(  $signed(oR1)>=  $signed(oR2));
+	// 		BLTU:enBfun=($unsigned(oR1) <$unsigned(oR2));
+	// 		BGEU:enBfun=($unsigned(oR1)>=$unsigned(oR2));
+	// 		NBFU:enBfun='0;
+	// 		default:begin enBfun='0;end
+	// 		endcase
+	// end
+	// always_comb begin : adr
+	// 	unique case(op.ALU.adr)
+	// 		R1I:addr=oR1+op.ALU.im;
+	// 		PCI:addr=pc+op.ALU.im;
+	// 		ECJ:addr=oCsr;
+	// 		ERE:addr=oCsr+4;
+	// 		NAD:addr='0;
+	// 		default:begin addr='0;end
+	// 	endcase
+	// 	enJfun=op.ALU.enJcod|enBfun;
+	// end
 
-	always_comb begin : cho
-		unique case(op.ALU.cho)
-			CAL_:iRd=result;
-			IMM_:iRd=op.ALU.im;
-			DATA:iRd=data;
-			CCSR:iRd=oCsr;
-			SNPC:iRd=pc+4;
-			NCHO:iRd='0;
-			default:begin iRd='0;$fatal("unknown cho==0x%x",op.ALU.cho);end
-		endcase
-	end
-	always_comb begin : csr
-		unique case(op.ALU.csr)
-			WACSR:iCsr=oR1;
-			RACSR:iCsr=oR1|oCsr;
-			JUMP_:iCsr=pc;
-			NCSR_:iCsr='0;
-			default:begin iCsr='0;$fatal("unknown csr==0x%x",op.ALU.csr);end
-		endcase
-	end
+	// always_comb begin : cho
+	// 	unique case(op.ALU.cho)
+	// 		CAL_:iRd=result;
+	// 		IMM_:iRd=op.ALU.im;
+	// 		DATA:iRd=data;
+	// 		CCSR:iRd=oCsr;
+	// 		SNPC:iRd=pc+4;
+	// 		NCHO:iRd='0;
+	// 		default:begin iRd='0;end
+	// 	endcase
+	// end
+	// always_comb begin : csr
+	// 	unique case(op.ALU.csr)
+	// 		WACSR:iCsr=oR1;
+	// 		RACSR:iCsr=oR1|oCsr;
+	// 		JUMP_:iCsr=pc;
+	// 		NCSR_:iCsr='0;
+	// 		default:begin iCsr='0;end
+	// 	endcase
+	// end
+
 endmodule
 module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc);
 	import rv32iBasis::*;
@@ -346,26 +416,42 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc);
 
 	logic[3:0] mask;
 	word_t iRAM;
+//s处理
+	
+	// always_comb begin : choose_mask
+	// 	if (op.LSU.enS) begin unique case(op.LSU.op)
+	// 		B_:mask=4'b0001;
+	// 		H_:mask=4'b0011;
+	// 		W_:mask=4'b1111;
+	// 		NM:mask=4'b0000;
+	// 		default:begin mask=4'b0000;end
+	// 	endcase end else mask=4'b0000;
+	// end
+	ysyx_26020046_MuxKeyWithDefault #(3,3,4) Muxmask(.out(mask),.key(op.LSU.op),.default_out('0),.lut({
+	{B_,4'b0001},
+	{H_,4'b0011},
+	{W_,4'b1111}
+	}));
 
-	always_comb begin : choose_mask
-		if (op.LSU.enS) begin unique case(op.LSU.op)
-			B_:mask=4'b0001;
-			H_:mask=4'b0011;
-			W_:mask=4'b1111;
-			NM:mask=4'b0000;
-			default:begin mask=4'b0000;$fatal("unknown mask==0x%x",op.LSU.op);end
-		endcase end else mask=4'b0000;
-	end
-	always_comb begin : choose_date_input
-		if(op.LSU.enL) begin unique case(op.LSU.op)
-			B_:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
-			H_:data={{16{iRAM[15]}},iRAM[15: 0]};
-			W_:data=iRAM;
-			BU:data={{24{1'b0}},iRAM[ 7: 0]};
-			HU:data={{16{1'b0}},iRAM[15: 0]};
-			default:begin data=0;$fatal("unknown date==0x%x",op.LSU.op);end
-		endcase end else data='0;
-	end
+//l处理
+	
+	// always_comb begin : choose_date_input
+	// 	if(op.LSU.enL) begin unique case(op.LSU.op)
+	// 		B_:data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
+	// 		H_:data={{16{iRAM[15]}},iRAM[15: 0]};
+	// 		W_:data=iRAM;
+	// 		BU:data={{24{1'b0}},iRAM[ 7: 0]};
+	// 		HU:data={{16{1'b0}},iRAM[15: 0]};
+	// 		default:begin data=0;end
+	// 	endcase end else data='0;
+	// end
+	ysyx_26020046_MuxKeyWithDefault #(5,3,DATA_WIDTH) Muxdata(.out(data),.key(op.LSU.op),.default_out('0),.lut({
+		{B_,{24{iRAM[ 7]}},iRAM[ 7: 0]},
+		{H_,{16{iRAM[15]}},iRAM[15: 0]},
+		{W_,iRAM},
+		{BU,{24{1'b0}},iRAM[ 7: 0]},
+		{HU,{16{1'b0}},iRAM[15: 0]}
+	}));
 
 	always_ff @(posedge clk) begin : pc_write
 	`ifdef RV32I_DEBUG
@@ -492,17 +578,29 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 			end
 		end
 
-	always_comb begin:choose_csr
-		unique case(op.CSR.addr)
-			CSR_ADDR_MEPC		:oCsr=mepc;
-			CSR_ADDR_MSTAUS		:oCsr=mstatus;
-			CSR_ADDR_MTVEC		:oCsr=mtvec;
-			CSR_ADDR_MCAUSE		:oCsr=mcause;
-			CSR_ADDR_MCYCLE		:oCsr=mcycle;
-			CSR_ADDR_MCYCLEH	:oCsr=mcycleh;
-			CSR_ADDR_MARCHID	:oCsr=marchid;
-			CSR_ADDR_MVENDORID	:oCsr=mvendorid;
-			default				:oCsr=0;
-		endcase
-	end
+
+	ysyx_26020046_MuxKeyWithDefault #(8,12,DATA_WIDTH) MuxOcsr(.out(oCsr),.key(op.CSR.addr),.default_out('0),.lut({
+		{CSR_ADDR_MEPC		,mepc},
+		{CSR_ADDR_MSTAUS	,mstatus},
+		{CSR_ADDR_MTVEC		,mtvec},
+		{CSR_ADDR_MCAUSE	,mcause},
+		{CSR_ADDR_MCYCLE	,mcycle},
+		{CSR_ADDR_MCYCLEH	,mcycleh},
+		{CSR_ADDR_MARCHID	,marchid},
+		{CSR_ADDR_MVENDORID	,mvendorid}
+	}));
+	// always_comb begin:choose_csr
+	// 	unique case(op.CSR.addr)
+	// 		CSR_ADDR_MEPC		:oCsr=mepc;
+	// 		CSR_ADDR_MSTAUS		:oCsr=mstatus;
+	// 		CSR_ADDR_MTVEC		:oCsr=mtvec;
+	// 		CSR_ADDR_MCAUSE		:oCsr=mcause;
+	// 		CSR_ADDR_MCYCLE		:oCsr=mcycle;
+	// 		CSR_ADDR_MCYCLEH	:oCsr=mcycleh;
+	// 		CSR_ADDR_MARCHID	:oCsr=marchid;
+	// 		CSR_ADDR_MVENDORID	:oCsr=mvendorid;
+	// 		default				:oCsr=0;
+	// 	endcase
+	// end
+				
 endmodule

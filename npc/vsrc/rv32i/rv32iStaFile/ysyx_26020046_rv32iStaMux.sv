@@ -917,7 +917,7 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 					CSR_ADDR_MVENDORID	:mvendorid<=iCsr;
 					default:;
 					endcase end
-				NCSR_:;
+				NCSR_:{mcycleh,mcycle}<={mcycleh,mcycle}+1;
 				default:;
 				endcase
 			end
