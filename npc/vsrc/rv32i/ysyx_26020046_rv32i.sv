@@ -1,5 +1,5 @@
 package rv32iBasis;
-// `define RV32I_DEBUG
+	// `define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -78,9 +78,9 @@ package rv32iBasis;
 
 	typedef enum logic[2:0] {N,I,U,S,B,J} imCode_t;
 	
-`ifdef RV32I_DEBUG
-	integer logFile;
-`endif
+	`ifdef RV32I_DEBUG
+		integer logFile;
+	`endif
 endpackage
 module ysyx_26020046_rv32i(clk,reset,code,pc);
 	import rv32iBasis::*;
@@ -100,23 +100,22 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 	ysyx_26020046_rv32iGPR GPR(.*);
 	ysyx_26020046_rv32iCSR CSR(.*);
 
-`ifdef RV32I_DEBUG
-	initial begin
-		logFile = $fopen("rv32iDebugLog.txt");
-		$write("\033[1;35m SV_DEBUG \033[0m");
-	end
-	always @(posedge clk) begin
-		$fdisplay(logFile,"IF:pc=%x code=%x reset=%x cR1=%x cR2=%x cRd=%x",pc,code,reset,cR1,cR2,cRd);
-		// $fdisplay(logFile,"ID:fun7=%x r2=%x r1=%x fun3=%x rd=%x op=%x",code.fun7,code.r2,code.r1,code.fun3,code.rd,code.op);
-		$fdisplay(logFile,"ID:oR1=%x in1=%x oR2=%x in2=%x im=%x oCsr=%x",oR1,op.ALU.in1,oR2,op.ALU.in2,op.ALU.im,oCsr);
-		$fdisplay(logFile,"AL:cal=%x bfu=%x adr=%x cho=%x csr=%x",op.ALU.cal,op.ALU.bfu,op.ALU.adr,op.ALU.cho,op.ALU.csr);
-		$fdisplay(logFile,"AL:data=%x addr=%x iRd=%x iCsr=%x enJ=%x",data,addr,iRd,iCsr,enJfun);
-		$fdisplay(logFile,"LS:op=%x enS=%x enL=%x",op.LSU.op,op.LSU.enS,op.LSU.enL);
-		$fdisplay(logFile,"SR:op=%x addr=%x",op.CSR.op,op.CSR.addr);
-	end
-`endif
+	`ifdef RV32I_DEBUG
+		initial begin
+			logFile = $fopen("rv32iDebugLog.txt");
+			$write("\033[1;35m SV_DEBUG \033[0m");
+		end
+		always @(posedge clk) begin
+			$fdisplay(logFile,"IF:pc=%x code=%x reset=%x cR1=%x cR2=%x cRd=%x",pc,code,reset,cR1,cR2,cRd);
+			// $fdisplay(logFile,"ID:fun7=%x r2=%x r1=%x fun3=%x rd=%x op=%x",code.fun7,code.r2,code.r1,code.fun3,code.rd,code.op);
+			$fdisplay(logFile,"ID:oR1=%x in1=%x oR2=%x in2=%x im=%x oCsr=%x",oR1,op.ALU.in1,oR2,op.ALU.in2,op.ALU.im,oCsr);
+			$fdisplay(logFile,"AL:cal=%x bfu=%x adr=%x cho=%x csr=%x",op.ALU.cal,op.ALU.bfu,op.ALU.adr,op.ALU.cho,op.ALU.csr);
+			$fdisplay(logFile,"AL:data=%x addr=%x iRd=%x iCsr=%x enJ=%x",data,addr,iRd,iCsr,enJfun);
+			$fdisplay(logFile,"LS:op=%x enS=%x enL=%x",op.LSU.op,op.LSU.enS,op.LSU.enL);
+			$fdisplay(logFile,"SR:op=%x addr=%x",op.CSR.op,op.CSR.addr);
+		end
+	`endif
 endmodule
-
 module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 	import rv32iBasis::*;
 	import "DPI-C" function void stop(input bit eb);
@@ -273,9 +272,9 @@ module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr);
 	import rv32iBasis::*;
 	//
 	input word_t oR1,oR2,pc,data;
-/* verilator lint_off UNUSEDSIGNAL */
+	/* verilator lint_off UNUSEDSIGNAL */
 	input op_t op;
-/* verilator lint_on UNUSEDSIGNAL */
+	/* verilator lint_on UNUSEDSIGNAL */
 
 	input word_t oCsr;
 	output word_t addr,iRd,iCsr;
@@ -360,12 +359,11 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc);
 	import rv32iBasis::*;
 	input word_t addr,oR2;
 	input logic clk,reset,enJfun;
-/* verilator lint_off UNUSEDSIGNAL */
+	/* verilator lint_off UNUSEDSIGNAL */
 	input op_t op;
-/* verilator lint_on UNUSEDSIGNAL */
+	/* verilator lint_on UNUSEDSIGNAL */
 
 	output word_t data,pc;
-	// output logic LSUsuccess;
 
 	logic[3:0] mask;
 	word_t iRAM;
@@ -391,9 +389,9 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc);
 	end
 
 	always_ff @(posedge clk) begin : pc_write
-`ifdef RV32I_DEBUG
+	`ifdef RV32I_DEBUG
 		if(enJfun) $fdisplay(logFile,"PC:%x => %x",pc,addr);
-`endif
+	`endif
 		if(reset) pc<=PC_RESET;
 		else if(enJfun) pc<=addr;
 		else pc<=pc+4;
@@ -404,20 +402,19 @@ module ysyx_26020046_rv32iLSU(clk,reset,addr,oR2,enJfun,op,data,pc);
 	always_comb begin
 		if((op.LSU.enL)&clk)begin
 			iRAM=pmem_read(addr);
-`ifdef RV32I_DEBUG
+	`ifdef RV32I_DEBUG
 			$fdisplay(logFile,"LS:RESD  [%x] => %x",addr,iRAM);
-`endif
+	`endif
 		end else iRAM = '0;
 	end
 	always_ff@(posedge clk) begin:control_write
 		if (op.LSU.enS) begin // 有写请求时
-`ifdef RV32I_DEBUG
+	`ifdef RV32I_DEBUG
 			$fdisplay(logFile,"LS:write [%x] <(%b)= %x",addr,mask,oR2);
-`endif
+	`endif
 			pmem_write(addr, oR2, {4'b0,mask});
 		end
 	end
-
 endmodule
 module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
 	import rv32iBasis::*;
@@ -436,7 +433,7 @@ module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
     	end
 	end
 
-`ifdef RV32I_DEBUG
+	`ifdef RV32I_DEBUG
 	always@(posedge clk)begin
 		if(cRd!=0)begin
 		$fstrobe(logFile,"RG:[%d]%x <= %x",cRd,gpr[cRd],iRd);
@@ -447,7 +444,7 @@ module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
 		end
 		$fstrobe(logFile,"### posedge clk off ###\n");
 	end
-`endif
+	`endif
 
 	assign oR1=(cR1==0)?'0:gpr[cR1];
 	assign oR2=(cR2==0)?'0:gpr[cR2];
@@ -456,18 +453,12 @@ module ysyx_26020046_rv32iGPR(pc,iRd,clk,reset,cRd,cR1,cR2,oR1,oR2);
 	function int getReg(input int addr);
 		return (addr == 0) ? pc : gpr[addr];
 	endfunction
-
 endmodule
-
 module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 	import rv32iBasis::*;
-
-/* verilator lint_off UNUSEDSIGNAL */
+	/* verilator lint_off UNUSEDSIGNAL */
 	input op_t op;
-/* verilator lint_on UNUSEDSIGNAL */
-
-	// input word_t pc;
-	// input opCsrr_t opCsrr;opCsrr,pc,
+	/* verilator lint_on UNUSEDSIGNAL */
 	input word_t iCsr;
 	input logic clk,reset;
 	output word_t oCsr;
@@ -485,7 +476,7 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 			marchid		<=32'h018D08CE;
 			mvendorid	<=32'h79737978;
 		end else begin
-`ifdef RV32I_DEBUG
+	`ifdef RV32I_DEBUG
 			if(~reset)begin
 				if(op.CSR.op==ECALL)$fdisplay(logFile,"SR:ecall mepc %x<=%x mcause %x<=%x",mepc,iCsr,mcause,11);
 				else if(op.CSR.op==MRET_)$fdisplay(logFile,"SR:mret mstatus %x<=%x mcause %x<=%x",mstatus,iCsr,mcause,0);
@@ -501,7 +492,7 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 					default:begin $fatal("unknown csrAddr==0x%x",op.CSR.addr); end
 				endcase end
 			end
-`endif
+	`endif
 			unique case(op.CSR.op)
 				ECALL:begin mepc<=iCsr;mcause<=11;end
 				MRET_:begin mstatus<=MSTATUS_RESET;mcause<='0;end
