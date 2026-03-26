@@ -115,7 +115,7 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 ////////////////////////////////////////////////////////////////////////////////////////
 uint32_t NpcMemRead(uint32_t addr,memReadMode mode){//读取4个字节
 	if(addr<addrReset|((addr-addrReset+3)>=memSize)){
-		printf("err addr=%x@%x %x at %x\n",addr,pc,(addr-addrReset),mode);
+		printf("err addr=%x@%x %x at %x T=%d\n",addr,pc,(addr-addrReset),mode,runStep);
 		NpcError();
 		return 0;
 	}else{
