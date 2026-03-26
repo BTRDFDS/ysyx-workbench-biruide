@@ -1,5 +1,5 @@
 package rv32iBasis;
-`define RV32I_DEBUG
+// `define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -200,6 +200,7 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op);
 				default	:op.ALU.adr=NAD;
 			endcase
 			if(code.op==OP_CSR)begin unique case(code.fun3)
+					3'b000	:op.ALU.csr=JUMP_;
 					3'b001	:op.ALU.csr=WACSR;
 					3'b010	:op.ALU.csr=(code.r1=='0)?NACSR:RACSR;
 					default	:op.ALU.csr=NACSR;
@@ -488,7 +489,7 @@ module ysyx_26020046_rv32iCSR(op,iCsr,oCsr,clk,reset);
 			if(~reset)begin
 				if(op.CSR.op==ECALL)$fdisplay(logFile,"SR:ecall mepc %x<=%x mcause %x<=%x",mepc,iCsr,mcause,11);
 				else if(op.CSR.op==MRET_)$fdisplay(logFile,"SR:mret mstatus %x<=%x mcause %x<=%x",mstatus,iCsr,mcause,0);
-				else begin unique case(op.CSR.addr)
+				else if(op.CSR.op==WCCSR)begin unique case(op.CSR.addr)
 					CSR_ADDR_MEPC		:$fdisplay(logFile,"SR:mepc %x<=%x", mepc,iCsr);
 					CSR_ADDR_MSTAUS		:$fdisplay(logFile,"SR:mstatus %x<=%x", mstatus	,iCsr);
 					CSR_ADDR_MTVEC		:$fdisplay(logFile,"SR:mtvec %x<=%x", mtvec,iCsr);

@@ -18,7 +18,7 @@ Vysyx_26020046_rv32i* top;//顶层模块
 svScope scope;//作用域
 
 const uint32_t addrReset	=0x80000000;
-const uint32_t addrtimer	=0x10000000;
+const uint32_t addrtimer	=0x0200BFF8;
 const uint32_t addrSerial	=0x10000000;
 
 const uint32_t memSize=0x8000000;
@@ -46,6 +46,7 @@ extern "C" int pmem_read(uint32_t raddr) {
 		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");NpcError();}
 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
 		NpcTraceMtrace("%d\n",time);
+		NpcTraceDtrace("%x timer %d\n",pc,time);
 		return time;
 	}else if(raddr<addrReset|((raddr-addrReset+3)>=memSize)){//超出mem
 		// printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddr,raddr,pc,runStep);NpcError();
@@ -61,6 +62,7 @@ extern "C" void pmem_write(uint32_t wAddr, uint32_t wData, char wMask) {
 		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,wAddr,wData);
 		printf("%c",wData);
 		fflush(stdout);
+		NpcTraceDtrace("%x serial %c\n",pc,wData);
 		return;
 	}else if(wAddr<addrReset|((wAddr-addrReset+3)>=memSize)){
 		printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",wAddr,wAddr,pc,runStep,addrReset,memSize+addrReset);
