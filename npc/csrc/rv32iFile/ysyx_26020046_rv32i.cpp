@@ -18,7 +18,7 @@ Vysyx_26020046_rv32i* top;//顶层模块
 svScope scope;//作用域
 
 const uint32_t addrReset	=0x80000000;
-const uint32_t addrtimer	=0x0200BFF8;
+const uint32_t addrTimer	=0x0200BFF8;
 const uint32_t addrSerial	=0x10000000;
 
 const uint32_t memSize=0x8000000;
@@ -39,7 +39,7 @@ uint32_t NpcMemRead(uint32_t addr,memReadMode mode);
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int getReg(int addr);//注意：0号寄存器替代为pc
 extern "C" int pmem_read(uint32_t raddr) {
-	if(raddr==addrtimer){//返回毫秒数
+	if(raddr==addrTimer){//返回毫秒数
 		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddr);
 		uint32_t time=0;
 		timespec t;

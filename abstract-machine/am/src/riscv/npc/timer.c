@@ -8,17 +8,13 @@ void __am_timer_init() {
   beginTime=((uint64_t)timeU << 32) | (uint64_t)timeD;
 }
 
-void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {//DONE
-  // uptime->us = 0;
-  // asm volatile("lw %0, 0(%1)" : "=r"(uptime->us) : "r"(0x0200BFF8));
-  // uptime->us = ((uint64_t)timeU << 32) | timeD;
+void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   uint64_t nowTime;
   uint32_t timeU,timeD;
   asm volatile("lw %0, 0(%1)" : "=r"(timeD) : "r"(0x0200BFF8));
   asm volatile("lw %0, 0(%1)" : "=r"(timeU) : "r"(0x0200BFF8 + 4));
   nowTime=((uint64_t)timeU << 32) | (uint64_t)timeD;
   uptime->us=nowTime-beginTime;
-
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
