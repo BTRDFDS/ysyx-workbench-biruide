@@ -306,35 +306,7 @@ module ysyx_26020046_rv32iIDC(code,reset,cRd,cR1,cR2,op,stop,eb);
 				3'b010	:begin op.CSR.addr={code[31:20]};	op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;op.ALU.csr=(code.r1=='0)?NACSR:RACSR;	end
 				default	:begin op.CSR.addr='0;				op.CSR.op=NCSR_;					op.ALU.csr=NACSR;						end
 			endcase end else begin op.CSR.addr='0;			op.CSR.op=NCSR_;					op.ALU.csr=NACSR;						end
-			// if(code.op==OP_CSR)begin unique case(code.fun3)
-			// 	3'b000	:begin 		op.ALU.csr=JUMP_;end
-			// 	3'b001	:begin 		op.ALU.csr=WACSR;						end
-			// 	3'b010	:begin 		op.ALU.csr=(code.r1=='0)?NACSR:RACSR;	end
-			// 	default	:begin 		op.ALU.csr=NACSR;						end
-			// endcase end else begin 	op.ALU.csr=NACSR;						end
-			// if(code.op==OP_CSR)begin unique case(code.fun3)
-			// 	3'b000	:begin unique case(code)
-			// 			OP_SCR_MRET__	:begin op.CSR.op=MRET_;end
-			// 			OP_SCR_ECALL_	:begin op.CSR.op=ECALL;end
-			// 			OP_SCR_EBREAK	:begin op.CSR.op=NCSR_;end
-			// 			default			:begin op.CSR.op=NCSR_;end
-			// 		endcase end
-			// 	3'b001	:begin 		op.CSR.op=WCCSR;						end
-			// 	3'b010	:begin 		op.CSR.op=(code.r1=='0)?NCSR_:WCCSR;	end
-			// 	default	:begin 		op.CSR.op=NCSR_;						end
-			// endcase end else begin 	op.CSR.op=NCSR_;						end
-			// if(code.op==OP_CSR)begin unique case(code.fun3)
-			// 	3'b000	:begin unique case(code)
-			// 			OP_SCR_MRET__	:begin 	op.CSR.addr=CSR_ADDR_MEPC;		end
-			// 			OP_SCR_ECALL_	:begin 	op.CSR.addr=CSR_ADDR_MTVEC;		end
-			// 			OP_SCR_EBREAK	:begin 	op.CSR.addr='0;stop=1'b1;eb=1'b1;end
-			// 			default			:begin 	op.CSR.addr='0;stop=1'b1;eb=1'b0;end
-			// 		endcase end
-			// 	3'b001	:begin op.CSR.addr={code[31:20]};	end
-			// 	3'b010	:begin op.CSR.addr={code[31:20]};	end
-			// 	default	:begin op.CSR.addr='0;				end
-			// endcase end else begin op.CSR.addr='0;			end
-
+		
 			unique case(code.op)//选cR1 这里7/10就反选
 				OP_U_I	:cR1='0;
 				OP_U_P	:cR1='0;
