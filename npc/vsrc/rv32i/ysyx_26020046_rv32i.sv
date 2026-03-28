@@ -133,7 +133,7 @@ module ysyx_26020046_rv32iIDC(
 		op.CSR.op=NCSR_;op.CSR.addr='0;
 		{cR1,cR2,cRd,op.ALU.enJcod,imm}='0;
 
-		// if(~reset) begin
+		if(~reset) begin
 			unique case(code.op)
 				OP_U_I	:imm={code[31:12],12'b0 };
 				OP_U_P	:imm={code[31:12],12'b0 };
@@ -221,9 +221,7 @@ module ysyx_26020046_rv32iIDC(
 			op.LSU.enS=(code.op==OP_S__);
 
 			if(code.op==OP_CSR)begin unique case(code.fun3)//选CSR op addr
-				3'b000	:begin
-					
-					unique case(code)
+				3'b000	:begin unique case(code)
 						OP_SCR_MRET__	:begin 								op.CSR.addr=CSR_ADDR_MEPC;	op.CSR.op=MRET_;					end
 						OP_SCR_ECALL_	:begin 								op.CSR.addr=CSR_ADDR_MTVEC;	op.CSR.op=ECALL;					end
 						OP_SCR_EBREAK	:begin 								op.CSR.addr='0;stop(1);		op.CSR.op=NCSR_;					end
@@ -253,7 +251,7 @@ module ysyx_26020046_rv32iIDC(
 				default	:cRd=code.rd;
 			endcase
 		end
-	// end
+	end
 endmodule
 module ysyx_26020046_rv32iALU(oR1,oR2,pc,data,addr,iRd,enJfun,op,oCsr,iCsr,imm);
 	import rv32iBasis::*;
