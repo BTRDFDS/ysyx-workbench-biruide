@@ -18,7 +18,7 @@ bin/*
 !vsrc/*
 !syn/*
 result/*-500MHz/*
-!result/*-500MHz/*synth_stat.txt
-!result/*-500MHz/*.rpt
-!result/*-500MHz/*.pwr
-result/*-500MHz/*_instance.pwr
+!result/*-500MHz*/*synth_stat.txt
+!result/*-500MHz*/*.rpt
+!result/*-500MHz*/*.pwr
+result/*-500MHz*/*_instance.pwr
