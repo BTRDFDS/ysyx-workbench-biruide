@@ -73,79 +73,39 @@ package rv32iBasis;
 		reg_t cRd,cR1,cR2;
 	} opGPR_t;
 	
-	// typedef struct packed {
-	// 	opALU_t ALU;
-	// 	opLSU_t LSU;
-	// 	opCSR_t CSR;
-	// 	opGPR_t GPR;
-	// } op_t;
+	typedef struct packed {
+		opALU_t ALU;
+		opLSU_t LSU;
+		opCSR_t CSR;
+		opGPR_t GPR;
+	} op_t;
 
 
-	// typedef struct packed {
-	// 	word_t addr,iRd,iCsr,data;
-	// 	logic enJfun;
-	// } res_t;
-	// typedef struct packed {
-	// 	word_t oR1,oR2,data,oCsr,imm,pc;
-	// } val_t;
+	typedef struct packed {
+		word_t addr,iRd,iCsr,data;
+		logic enJfun;
+	} res_t;
+	typedef struct packed {
+		word_t oR1,oR2,data,oCsr,imm,pc;
+	} val_t;
 
 	`ifdef RV32I_DEBUG
 		integer logFile;
 	`endif
 endpackage
-
-interface op_t(input logic clk,reset,input code_t Code);
-	import rv32iBasis::*;
-	opALU_t alu;
-	opLSU_t lsu;
-	opCSR_t csr;
-	opGPR_t gpr;
-	code_t code;
-
-	modport IFU(input clk,reset,Code,output code);
-	modport IDU(input reset,code,output alu,lsu,csr,gpr);
-	modport ALU(input alu);
-	modport LSU(input lsu);
-	modport CSR(input csr);
-	modport GPR(input gpr);
-endinterface
-
-interface val_t();
-	import rv32iBasis::*;
-	word_t oR1,oR2,data,oCsr,imm,pc;
-	modport ALU(input oR1,oR2,data,imm,pc);
-	modport GPR(output oR1,oR2);
-	modport CSR(output oCsr);
-	modport IFU(output pc);
-	modport LSU(output data,input oR2);
-	modport IDU(output imm);
-endinterface;
-interface res_t();
-	import rv32iBasis::*;
-	word_t addr,iRd,iCsr,data;
-	logic enJfun;
-	modport ALU(output addr,iRd,iCsr,data);
-	modport GPR(input iRd);
-	modport CSR(input iCsr);
-	modport IFU(input addr,enJfun);
-	modport LSU(input addr,data);
-endinterface;
-
 module ysyx_26020046_rv32i(clk,reset,code,pc);
 	import rv32iBasis::*;
 	input logic clk,reset;
 	input code_t code;
 	output word_t pc;
 
-	op_t op(.Code(code),.*);
-	res_t res();
-	val_t val();
-	code_t insideCode;
+	op_t op;
+	res_t res;
+	val_t val;
 
-	assign pc =val.pc;
+	assign pc =val.pc; 
 
-	ysyx_26020046_rv32iIFU IFU(.*);
-	ysyx_26020046_rv32iIDU IDU(.*);
+	ysyx_26020046_rv32iIDC IDC(.*);
 	ysyx_26020046_rv32iALU ALU(.*);
 	ysyx_26020046_rv32iLSU LSU(.*);
 	ysyx_26020046_rv32iGPR GPR(.*);
@@ -169,25 +129,8 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 		end
 	`endif
 endmodule
-module ysyx_26020046_rv32iIFU(
-	val_t.IFU val,
-	res_t.IFU res,
-	op_t.IFU op
-);
-	import rv32iBasis::*;
-	assign op.code=op.Code;
-	always_ff @(posedge op.clk) begin : pc_write
-	`ifdef RV32I_DEBUG
-		if(res.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,res.addr);
-	`endif
-		if(op.reset) val.pc<=PC_RESET;
-		else if(res.enJfun) val.pc<=(res.addr&32'hFFFFFFFC);
-		else val.pc<=val.pc+4;
-	end
-	
-endmodule
-module ysyx_26020046_rv32iIDU(
-	input code_t insideCode,
+module ysyx_26020046_rv32iIDC(
+	input code_t code,
 	input logic reset,
 	output op_t op,
 	/* verilator lint_off UNDRIVEN */
@@ -196,7 +139,7 @@ module ysyx_26020046_rv32iIDU(
 	);
 	import rv32iBasis::*;
 	import "DPI-C" function void stop(input bit eb);
-	code_t code=insideCode;
+	
 	always_comb begin : ID
 		op.ALU.in1=IR1;op.ALU.in2=IR2;
 		op.ALU.adr=NAD;op.ALU.cal=NCAL;op.ALU.bfu=NBFU;
@@ -412,6 +355,7 @@ module ysyx_26020046_rv32iALU(
 endmodule
 module ysyx_26020046_rv32iLSU(
 	input logic clk,
+	input logic reset,
 	/* verilator lint_off UNUSEDSIGNAL */
 	input res_t res,
 	input op_t op,
@@ -426,6 +370,7 @@ module ysyx_26020046_rv32iLSU(
 	/* verilator lint_off UNOPTFLAT */
 	word_t iRAM;
 	/* verilator lint_on UNOPTFLAT */
+	word_t pc;
 
 	always_comb begin : choose_mask
 		if (op.LSU.enS) begin unique case(op.LSU.op)
@@ -445,6 +390,15 @@ module ysyx_26020046_rv32iLSU(
 			HU:				val.data={{16{1'b0}},iRAM[15: 0]};
 			default:begin 	val.data=0;$fatal("unknown date==0x%x",op.LSU.op);end
 		endcase end else 	val.data='0;
+	end
+	assign val.pc=pc;
+	always_ff @(posedge clk) begin : pc_write
+	`ifdef RV32I_DEBUG
+		if(res.enJfun) $fdisplay(logFile,"PC:%x => %x",pc,res.addr);
+	`endif
+		if(reset) pc<=PC_RESET;
+		else if(res.enJfun) pc<=(res.addr&32'hFFFFFFFC);
+		else pc<=pc+4;
 	end
 
 	import "DPI-C" function int pmem_read(input int unsigned addr);
