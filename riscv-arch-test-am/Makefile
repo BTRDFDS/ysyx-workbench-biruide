@@ -2,8 +2,12 @@
 TEST_ISA ?= I M
 EXCLUDE_TEST ?=
 
-SUPPORTED_AM_ISA = riscv64 riscv32 riscv64e riscv32e minirv
+SUPPORTED_AM_ISA = riscv64 riscv32 riscv64e riscv32e minirv riscv32i
 AM_ISA = $(word 1, $(subst -, ,$(ARCH)))
+
+ifeq ($(AM_ISA),riscv32i)
+TEST_ISA= I
+endif
 
 ifeq ($(findstring $(MAKECMDGOALS),clean),)  # ignore the commands if the target is clean
 ifeq ($(filter $(SUPPORTED_AM_ISA), $(AM_ISA)), )
