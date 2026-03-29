@@ -1,17 +1,17 @@
 package rv32iBasis;
-	`define RV32I_DEBUG
+	// `define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
-	parameter OP_I_J	= 7'b1100111;//jalr	  +
-	parameter OP_I_A	= 7'b0010011;//i运算	 运算器
-	parameter OP_I_L	= 7'b0000011;//l系列	 +
-	parameter OP_U_I	= 7'b0110111;//lui	   无
-	parameter OP_U_P	= 7'b0010111;//auipc	 +
-	parameter OP_S__	= 7'b0100011;//s系列	 +
-	parameter OP_B__	= 7'b1100011;//b比较系列 比较
-	parameter OP_J__	= 7'b1101111;//jal	   +
-	parameter OP_R__ 	= 7'b0110011;//r运算	 运算器
+	parameter OP_I_J	= 7'b1100111;//jalr
+	parameter OP_I_A	= 7'b0010011;//i运算
+	parameter OP_I_L	= 7'b0000011;//l系列
+	parameter OP_U_I	= 7'b0110111;//lui
+	parameter OP_U_P	= 7'b0010111;//auipc
+	parameter OP_S__	= 7'b0100011;//s系列
+	parameter OP_B__	= 7'b1100011;//b比较系列
+	parameter OP_J__	= 7'b1101111;//jal
+	parameter OP_R__ 	= 7'b0110011;//r运算
 	parameter OP_CSR	= 7'b1110011;//CSR系列
 
 	parameter OP_SCR_ECALL_	= 32'h00000073;
@@ -118,20 +118,12 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 		end
 		always @(posedge clk) begin
 			if(reset)$fdisplay(logFile,"!!!reset!!!");
-			else begin 
-				// $fdisplay(logFile,"IF:pc=%x code=%x cR1=%x cR2=%x cRd=%x",pc,code,op.GPR.cR1,op.GPR.cR2,op.GPR.cRd);
-				// // $fdisplay(logFile,"ID:fun7=%b r2=%x r1=%x fun3=%b rd=%x op=%b",code.fun7,code.r2,code.r1,code.fun3,code.rd,code.op);
-				// $fdisplay(logFile,"ID:oR1=%x in1=%x oR2=%x in2=%x imm=%x oCsr=%x",val.oR1,op.ALU.in1,val.oR2,op.ALU.in2,val.imm,val.oCsr);
-				// $fdisplay(logFile,"AL:cal=%s bfu=%s adr=%s cho=%s csr=%s",op.ALU.cal.name(),op.ALU.bfu.name(),op.ALU.adr.name(),op.ALU.cho.name(),op.ALU.csr.name());
-				// $fdisplay(logFile,"AL:data=%x addr=%x iRd=%x iCsr=%x enJ=%x",res.data,res.addr,res.iRd,res.iCsr,res.enJfun);
-				// $fdisplay(logFile,"LS:op=%s enS=%x enL=%x",op.LSU.op.name(),op.LSU.enS,op.LSU.enL);
-				// $fdisplay(logFile,"SR:op=%s addr=%x",op.CSR.op.name(),op.CSR.addr);
-				// $fdisplay(logFile,"ID:fun7=%b r2=%x r1=%x fun3=%b rd=%x op=%b",code.fun7,code.r2,code.r1,code.fun3,code.rd,code.op);
+			else begin
 				$fdisplay(logFile,"\npc=%x code=%x",pc,code);
 				$fdisplay(logFile,"opAL:{[%s %s %s] b:%s adr:%s}[r:%s sr:%s]",op.ALU.in1.name(),op.ALU.in2.name(),op.ALU.cal.name(),op.ALU.bfu.name(),op.ALU.adr.name(),op.ALU.cho.name(),op.ALU.csr.name());
 				$fdisplay(logFile,"op:LS[%s S%bL%b] SR[%s %x] R12d[%x %x %x]",op.LSU.op.name(),op.LSU.enS,op.LSU.enL,op.CSR.op.name(),op.CSR.addr,op.GPR.cR1,op.GPR.cR2,op.GPR.cRd);
 				$fdisplay(logFile,"val:oR1=%x oR2=%x imm=%x oCsr=%x data=%x",val.oR1,val.oR2,val.imm,val.oCsr,val.data);
-				$fdisplay(logFile,"res:data=%x addr=%x iRd=%x iCsr=%x enJ=%b",res.data,res.addr,res.iRd,res.iCsr,res.enJfun);
+				$fdisplay(logFile,"res:addr=%x data=%x iRd=%x iCsr=%x enJ=%b",res.addr,res.data,res.iRd,res.iCsr,res.enJfun);
 				
 			end
 		end
@@ -454,14 +446,7 @@ module ysyx_26020046_rv32iGPR(
 
 	`ifdef RV32I_DEBUG
 	always@(posedge clk)begin
-		if(op.GPR.cRd!=0)begin
-		$fstrobe(logFile,"RG:[%d]%x <= %x",op.GPR.cRd,gpr[op.GPR.cRd],res.iRd);
-		// $fstrobe(logFile,"RG:$0:%8x ra:%8x  sp:%8x  gp:%8x tp:%8x t0:%8x t1:%8x t2:%8x",      0,gpr[ 1],gpr[ 2],gpr[ 3],gpr[ 4],gpr[ 5],gpr[ 6],gpr[ 7]);
-		// $fstrobe(logFile,"RG:s0:%8x s1:%8x  a0:%8x  a1:%8x a2:%8x a3:%8x a4:%8x a5:%8x",gpr[ 8],gpr[ 9],gpr[10],gpr[11],gpr[12],gpr[13],gpr[14],gpr[15]);
-		// $fstrobe(logFile,"RG:a6:%8x a7:%8x  s2:%8x  s3:%8x s4:%8x s5:%8x s6:%8x s7:%8x",gpr[16],gpr[17],gpr[18],gpr[19],gpr[20],gpr[21],gpr[22],gpr[23]);
-		// $fstrobe(logFile,"RG:s8:%8x s9:%8x s10:%8x s11:%8x t3:%8x t4:%8x t5:%8x t6:%8x",gpr[24],gpr[25],gpr[26],gpr[27],gpr[28],gpr[29],gpr[30],gpr[31]);
-		end
-		// $fstrobe(logFile,"### posedge clk off ###\n");
+		if(op.GPR.cRd!=0)$fstrobe(logFile,"RG:[%d]%x <= %x",op.GPR.cRd,gpr[op.GPR.cRd],res.iRd);
 	end
 	`endif
 
