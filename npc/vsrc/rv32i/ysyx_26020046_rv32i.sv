@@ -119,13 +119,20 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 		always @(posedge clk) begin
 			if(reset)$fdisplay(logFile,"!!!reset!!!");
 			else begin 
-				$fdisplay(logFile,"IF:pc=%x code=%x cR1=%x cR2=%x cRd=%x",pc,code,op.GPR.cR1,op.GPR.cR2,op.GPR.cRd);
+				// $fdisplay(logFile,"IF:pc=%x code=%x cR1=%x cR2=%x cRd=%x",pc,code,op.GPR.cR1,op.GPR.cR2,op.GPR.cRd);
+				// // $fdisplay(logFile,"ID:fun7=%b r2=%x r1=%x fun3=%b rd=%x op=%b",code.fun7,code.r2,code.r1,code.fun3,code.rd,code.op);
+				// $fdisplay(logFile,"ID:oR1=%x in1=%x oR2=%x in2=%x imm=%x oCsr=%x",val.oR1,op.ALU.in1,val.oR2,op.ALU.in2,val.imm,val.oCsr);
+				// $fdisplay(logFile,"AL:cal=%s bfu=%s adr=%s cho=%s csr=%s",op.ALU.cal.name(),op.ALU.bfu.name(),op.ALU.adr.name(),op.ALU.cho.name(),op.ALU.csr.name());
+				// $fdisplay(logFile,"AL:data=%x addr=%x iRd=%x iCsr=%x enJ=%x",res.data,res.addr,res.iRd,res.iCsr,res.enJfun);
+				// $fdisplay(logFile,"LS:op=%s enS=%x enL=%x",op.LSU.op.name(),op.LSU.enS,op.LSU.enL);
+				// $fdisplay(logFile,"SR:op=%s addr=%x",op.CSR.op.name(),op.CSR.addr);
 				// $fdisplay(logFile,"ID:fun7=%b r2=%x r1=%x fun3=%b rd=%x op=%b",code.fun7,code.r2,code.r1,code.fun3,code.rd,code.op);
-				$fdisplay(logFile,"ID:oR1=%x in1=%x oR2=%x in2=%x imm=%x oCsr=%x",val.oR1,op.ALU.in1,val.oR2,op.ALU.in2,val.imm,val.oCsr);
-				$fdisplay(logFile,"AL:cal=%s bfu=%s adr=%s cho=%s csr=%s",op.ALU.cal.name(),op.ALU.bfu.name(),op.ALU.adr.name(),op.ALU.cho.name(),op.ALU.csr.name());
-				$fdisplay(logFile,"AL:data=%x addr=%x iRd=%x iCsr=%x enJ=%x",res.data,res.addr,res.iRd,res.iCsr,res.enJfun);
-				$fdisplay(logFile,"LS:op=%s enS=%x enL=%x",op.LSU.op.name(),op.LSU.enS,op.LSU.enL);
-				$fdisplay(logFile,"SR:op=%s addr=%x",op.CSR.op.name(),op.CSR.addr);
+				$fdisplay(logFile,"\npc=%x code=%x",pc,code);
+				$fdisplay(logFile,"opAL:{[%s %s %s] b:%s adr:%s}[r:%s sr:%s]",op.ALU.in1.name(),op.ALU.in2.name(),op.ALU.cal.name(),op.ALU.bfu.name(),op.ALU.adr.name(),op.ALU.cho.name(),op.ALU.csr.name());
+				$fdisplay(logFile,"op:LS[%s S%bL%b] SR[%s %x] R12d[%x %x %x]",op.LSU.op.name(),op.LSU.enS,op.LSU.enL,op.CSR.op.name(),op.CSR.addr,op.GPR.cR1,op.GPR.cR2,op.GPR.cRd);
+				$fdisplay(logFile,"val:oR1=%x oR2=%x imm=%x oCsr=%x data=%x",val.oR1,val.oR2,val.imm,val.oCsr,val.data);
+				$fdisplay(logFile,"res:data=%x addr=%x iRd=%x iCsr=%x enJ=%b",res.data,res.addr,res.iRd,res.iCsr,res.enJfun);
+				
 			end
 		end
 	`endif
@@ -454,7 +461,7 @@ module ysyx_26020046_rv32iGPR(
 		// $fstrobe(logFile,"RG:a6:%8x a7:%8x  s2:%8x  s3:%8x s4:%8x s5:%8x s6:%8x s7:%8x",gpr[16],gpr[17],gpr[18],gpr[19],gpr[20],gpr[21],gpr[22],gpr[23]);
 		// $fstrobe(logFile,"RG:s8:%8x s9:%8x s10:%8x s11:%8x t3:%8x t4:%8x t5:%8x t6:%8x",gpr[24],gpr[25],gpr[26],gpr[27],gpr[28],gpr[29],gpr[30],gpr[31]);
 		end
-		$fstrobe(logFile,"### posedge clk off ###\n");
+		// $fstrobe(logFile,"### posedge clk off ###\n");
 	end
 	`endif
 
