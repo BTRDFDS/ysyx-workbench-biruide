@@ -21,7 +21,7 @@ const uint32_t addrReset	=0x80000000;
 const uint32_t addrTimer	=0x0200BFF8;
 const uint32_t addrSerial	=0x10000000;
 
-const uint32_t memSize=0x8000000;
+const uint32_t memSize=0xa000000;
 
 uint8_t mem[memSize];
 uint32_t runStep,pc;
@@ -65,7 +65,7 @@ extern "C" void pmem_write(uint32_t wAddr, uint32_t wData, char wMask) {
 		NpcTraceDtrace("%x serial %c\n",pc,wData);
 		return;
 	}else if(wAddr<addrReset|((wAddr-addrReset+3)>=memSize)){
-		printf("\033[1;31merr x%x %d when x%x %d (x%x,x%x)\033[0m\n",wAddr,wAddr,pc,runStep,addrReset,memSize+addrReset);
+		printf("\033[1;31mwrite %x when %x %d (x%x,x%x)\033[0m\n",wAddr,pc,runStep,addrReset,memSize+addrReset);
 		NpcError();
 	}else{
 		NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,wAddr,NpcMemRead(wAddr,memReadWRITE),wMask);
@@ -117,7 +117,7 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 ////////////////////////////////////////////////////////////////////////////////////////
 uint32_t NpcMemRead(uint32_t addr,memReadMode mode){//读取4个字节
 	if(addr<addrReset|((addr-addrReset+3)>=memSize)){
-		printf("err addr=%x@%x %x at %x T=%d\n",addr,pc,(addr-addrReset),mode,runStep);
+		printf("nRead addr=%x@%x %x at %x T=%d\n",addr,pc,(addr-addrReset),mode,runStep);
 		NpcError();
 		return 0;
 	}else{
