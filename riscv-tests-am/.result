@@ -26,3 +26,4 @@
 [          slli] [1;32mPASS[0m
 [           slt] [1;32mPASS[0m
 [          slti] [1;32mPASS[0m
+[         sltiu] [1;32mPASS[0m
