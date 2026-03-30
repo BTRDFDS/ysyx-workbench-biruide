@@ -160,3 +160,10 @@ try:
 	cp -r $(YOSYS_STA_HOME)/result/$(tF)* ./result
 git:
 	git add -f Makefile vsrc/* csrc/* bin/* syn/* result/*
+
+ARCH?=riscv32i-npc
+test:
+	make -C $(AM_KERNELS_HOME)/tests/cpu-tests run ARCH=$(ARCH)
+	make -C $(RISCV_TESTS_AM_HOME) run ARCH=$(ARCH)
+	make -C $(RISCV_ARCH_TEST_AM_HOME) run ARCH=$(ARCH)
+	make -C $(RT_THREAD_AM_HOME)/bsp/abstract-machine run ARCH=$(ARCH)
