@@ -1,4 +1,4 @@
-NAME = remu
-SRCS = isa/rv32um/remu.S
+NAME = div
+SRCS = isa/rv32um/div.S
 INC_PATH += /home/biruide/ysyx-workbench/riscv-tests-am/env/p 	/home/biruide/ysyx-workbench/riscv-tests-am/isa/macros/scalar
 include /home/biruide/ysyx-workbench/abstract-machine/Makefile

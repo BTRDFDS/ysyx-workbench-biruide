@@ -39,7 +39,7 @@ enum {
 
 int32_t riscv32mDiv(int32_t rs1,int32_t rs2){
   if(rs2==0){
-    printf("div 0\n");
+    // printf("div 0\n");
     // exit(-1);
     return -1;
   }
@@ -48,7 +48,7 @@ int32_t riscv32mDiv(int32_t rs1,int32_t rs2){
 }
 uint32_t riscv32mDivU(uint32_t rs1,uint32_t rs2){
   if(rs2==0){
-    printf("divU 0\n");
+    // printf("divU 0\n");
     // exit(-1);
     return -1;
   }
@@ -57,7 +57,7 @@ uint32_t riscv32mDivU(uint32_t rs1,uint32_t rs2){
 }
 int32_t riscv32mRem(int32_t rs1,int32_t rs2){
   if(rs2==0){
-    printf("rem 0\n");
+    // printf("rem 0\n");
     // exit(-1);
     return rs1;
   }
@@ -66,7 +66,7 @@ int32_t riscv32mRem(int32_t rs1,int32_t rs2){
 }
 uint32_t riscv32mRemU(uint32_t rs1,uint32_t rs2){
   if(rs2==0){
-    printf("remU 0\n");
+    // printf("remU 0\n");
     // exit(-1);
     return rs1;
   }
