@@ -165,24 +165,18 @@ void NpcInitDevice(int argc, char** argv){
 void NpcReset(){
 	top->clk=0;top->reset=1;top->eval();
 	top->clk=1;top->reset=1;top->eval();
-
-	pc=top->pc;
-	top->code=NpcMemRead(pc,memReadRESET);
 	top->clk=0;top->reset=0;top->eval();
 	runStep=0;
 }
 void NpcStep(){
-	// pc=top->pc;
 	pc=getReg(0);
-	top->code=NpcMemRead(pc,memReadSTEP);
-	uint32_t nPc=top->pc;
-	uint32_t nCode=top->code;
+	uint32_t nPc=pc;
+	uint32_t nCode=NpcMemRead(pc,memReadSTEP);
 	top->clk=1;top->eval();
 
-	// pc=top->pc;
 	pc=getReg(0);
-	top->code=NpcMemRead(pc,memReadSTEP);
 	top->clk=0;top->eval();
+
 	runStep++;
 
 	NpcTraceWrite(nPc,nCode,pc);

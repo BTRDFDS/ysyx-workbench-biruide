@@ -76,8 +76,12 @@ package rv32iBasis;
 	`ifdef RV32I_DEBUG
 		integer logFile;
 	`endif
+	
+	import "DPI-C" function void stop(input bit eb);
+	import "DPI-C" function int pmem_read(input int unsigned addr);
+	import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
 endpackage
-interface op_t(input logic clk,reset,input code_t Code);
+interface op_t(input logic clk,reset);
 	import rv32iBasis::*;
 	code_t code;
 
@@ -98,7 +102,7 @@ interface op_t(input logic clk,reset,input code_t Code);
 	logic [11:0] SRaddr;
 	CSRop_t SRop;
 
-	modport IFU(input clk,reset,Code,output code);
+	modport IFU(input clk,reset,output code);
 	modport IDU(input reset,code,output in1,in2,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd,cR1,cR2);
 	modport ALU(input in1,in2,enJcod,cal,bfu,adr,cCsr,cIrd);
 	modport LSU(input clk,enL,enS,LSop);
@@ -125,17 +129,15 @@ interface res_t();
 	modport IFU(input addr,enJfun);
 	modport LSU(input addr);
 endinterface;
-module ysyx_26020046_rv32i(clk,reset,code,pc);
+module ysyx_26020046_rv32i(
+	input logic clk,
+	input logic reset
+	);
 	import rv32iBasis::*;
-	input logic clk,reset;
-	input code_t code;
-	output word_t pc;
 
-	op_t op(.Code(code),.*);
+	op_t op(.*);
 	res_t res();
 	val_t val();
-
-	assign pc =val.pc;
 
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
@@ -152,7 +154,7 @@ module ysyx_26020046_rv32i(clk,reset,code,pc);
 		always @(posedge clk) begin
 			if(reset)$fdisplay(logFile,"!!!reset!!!");
 			else begin
-				$fdisplay(logFile,"\npc=%x code=%x",pc,code);
+				$fdisplay(logFile,"\nIF:pc=%x code=%x",val.pc,op.code);
 				$fdisplay(logFile,"opAL:{[%s %s %s] b:%s adr:%s}[r:%s sr:%s]",op.in1.name(),op.in2.name(),op.cal.name(),op.bfu.name(),op.adr.name(),op.cIrd.name(),op.cCsr.name());
 				$fdisplay(logFile,"op:LS[%s S%bL%b] SR[%s %x] R12d[%x %x %x]",op.LSop.name(),op.enS,op.enL,op.SRop.name(),op.SRaddr,op.cR1,op.cR2,op.cRd);
 				$fdisplay(logFile,"val:oR1=%x oR2=%x imm=%x oCsr=%x data=%x",val.oR1,val.oR2,val.imm,val.oCsr,val.data);
@@ -168,7 +170,7 @@ module ysyx_26020046_rv32iIFU(
 	op_t.IFU op
 	);
 	import rv32iBasis::*;
-	assign op.code=op.Code;
+	assign op.code=pmem_read(val.pc);
 	always_ff @(posedge op.clk) begin : pc_write
 	`ifdef RV32I_DEBUG
 		if(res.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,res.addr);
@@ -183,7 +185,6 @@ module ysyx_26020046_rv32iIDU(
 	val_t.IDU val
 	);
 	import rv32iBasis::*;
-	import "DPI-C" function void stop(input bit eb);
 	always_comb begin : ID
 		op.in1=IR1;op.in2=IR2;
 		op.adr=NAD;op.cal=NCAL;op.bfu=NBFU;
@@ -332,7 +333,6 @@ module ysyx_26020046_rv32iALU(
 			IMM:in2=val.imm;
 			default:begin in2='0;$fatal("unknown in2==0x%x",op.in2);end
 		endcase
-
 		unique case(op.cal)
 			ADD_:result=in1+in2;
 			SLL_:result=in1<<in2[4:0];
@@ -346,6 +346,23 @@ module ysyx_26020046_rv32iALU(
 			SRA_:result=  $signed(in1)>>>in2[4:0];
 			NCAL:result='0;
 			default:begin result='0;$fatal("unknown cal==0x%x",op.cal);end
+		endcase
+		
+		unique case(op.cIrd)
+			CAL_:res.iRd=result;
+			IMM_:res.iRd=val.imm;
+			DATA:res.iRd=val.data;
+			CCSR:res.iRd=val.oCsr;
+			SNPC:res.iRd=val.pc+4;
+			NCHO:res.iRd='0;
+			default:begin res.iRd='0;$fatal("unknown cho==0x%x",op.cIrd);end
+		endcase
+		unique case(op.cCsr)
+			WACSR:res.iCsr=val.oR1;
+			RACSR:res.iCsr=val.oR1|val.oCsr;
+			JUMP_:res.iCsr=val.pc;
+			NCSR_:res.iCsr='0;
+			default:begin res.iCsr='0;$fatal("unknown csr==0x%x",op.cCsr);end
 		endcase
 	end
 	always_comb begin : bfu
@@ -370,27 +387,6 @@ module ysyx_26020046_rv32iALU(
 			default:begin res.addr='0;$fatal("unknown adr==0x%x",op.adr);end
 		endcase
 		res.enJfun=op.enJcod|enBfun;
-	end
-
-	always_comb begin : cho
-		unique case(op.cIrd)
-			CAL_:res.iRd=result;
-			IMM_:res.iRd=val.imm;
-			DATA:res.iRd=val.data;
-			CCSR:res.iRd=val.oCsr;
-			SNPC:res.iRd=val.pc+4;
-			NCHO:res.iRd='0;
-			default:begin res.iRd='0;$fatal("unknown cho==0x%x",op.cIrd);end
-		endcase
-	end
-	always_comb begin : csr
-		unique case(op.cCsr)
-			WACSR:res.iCsr=val.oR1;
-			RACSR:res.iCsr=val.oR1|val.oCsr;
-			JUMP_:res.iCsr=val.pc;
-			NCSR_:res.iCsr='0;
-			default:begin res.iCsr='0;$fatal("unknown csr==0x%x",op.cCsr);end
-		endcase
 	end
 endmodule
 module ysyx_26020046_rv32iLSU(
@@ -422,22 +418,15 @@ module ysyx_26020046_rv32iLSU(
 			default:begin 	val.data=0;$fatal("unknown date==0x%x",op.LSop);end
 		endcase end else 	val.data='0;
 	end
-
-	import "DPI-C" function int pmem_read(input int unsigned addr);
-	import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
-	always_comb begin
+	always_comb begin :write
 		if((op.enL)&op.clk)begin
 			iRAM=pmem_read(res.addr);
-	`ifdef RV32I_DEBUG
-			$fdisplay(logFile,"LS:RESD  [%x] => %x",res.addr,iRAM);
-	`endif
+			`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:RESD  [%x] => %x",res.addr,iRAM);`endif
 		end else iRAM = '0;
 	end
 	always_ff@(posedge op.clk) begin:control_write
 		if (op.enS) begin // 有写请求时
-	`ifdef RV32I_DEBUG
-			$fdisplay(logFile,"LS:write [%x] <(%b)= %x",res.addr,mask,val.oR2);
-	`endif
+			`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:write [%x] <(%b)= %x",res.addr,mask,val.oR2);`endif
 			pmem_write(res.addr,val.oR2, {4'b0,mask});
 		end
 	end
@@ -455,16 +444,10 @@ module ysyx_26020046_rv32iGPR(
 		if(op.reset)begin
 			for (int i = 1; i < 32; i++) gpr[i]<='0;
 		end else begin
+			`ifdef RV32I_DEBUG if(op.cRd!=0)$fdisplay(logFile,"RG:[%d]%x <= %x",op.cRd,gpr[op.cRd],res.iRd);`endif
 			if (op.cRd!=0) gpr[op.cRd] <= res.iRd;
     	end
 	end
-
-	`ifdef RV32I_DEBUG
-	always@(posedge op.clk)begin
-		if(op.cRd!=0)$fstrobe(logFile,"RG:[%d]%x <= %x",op.cRd,gpr[op.cRd],res.iRd);
-	end
-	`endif
-
 	assign val.oR1=(op.cR1==0)?'0:gpr[op.cR1];
 	assign val.oR2=(op.cR2==0)?'0:gpr[op.cR2];
 
