@@ -172,13 +172,15 @@ void NpcReset(){
 	runStep=0;
 }
 void NpcStep(){
-	pc=top->pc;
+	// pc=top->pc;
+	pc=getReg(0);
 	top->code=NpcMemRead(pc,memReadSTEP);
 	uint32_t nPc=top->pc;
 	uint32_t nCode=top->code;
 	top->clk=1;top->eval();
 
-	pc=top->pc;
+	// pc=top->pc;
+	pc=getReg(0);
 	top->code=NpcMemRead(pc,memReadSTEP);
 	top->clk=0;top->eval();
 	runStep++;
