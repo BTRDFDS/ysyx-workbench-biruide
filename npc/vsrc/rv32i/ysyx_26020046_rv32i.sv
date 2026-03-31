@@ -1,5 +1,5 @@
 package rv32iBasis;
-	// `define RV32I_DEBUG
+	`define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -139,7 +139,7 @@ module ysyx_26020046_rv32i(
 		always @(posedge clk) begin
 			if(reset)$fdisplay(logFile,"!!!reset!!!");
 			else begin
-				$fdisplay(logFile,"\nIF:pc=%x code=%x",val.pc,code);
+				$fdisplay(logFile,"\nIF:pc=%x code=%x",val.pc,ifdu.code);
 				$fdisplay(logFile,"opAL:{[%s %s %s] b:%s adr:%s}[r:%s sr:%s]",op.in1.name(),op.in2.name(),op.cal.name(),op.bfu.name(),op.adr.name(),op.cIrd.name(),op.cCsr.name());
 				$fdisplay(logFile,"op:LS[%s S%bL%b] SR[%s %x] R12d[%x %x %x]",op.LSop.name(),op.enS,op.enL,op.SRop.name(),op.SRaddr,op.cR1,op.cR2,op.cRd);
 				$fdisplay(logFile,"val:oR1=%x oR2=%x imm=%x oCsr=%x data=%x",val.oR1,val.oR2,val.imm,val.oCsr,val.data);

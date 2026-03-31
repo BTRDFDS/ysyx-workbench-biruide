@@ -15,6 +15,7 @@
 !*.png
 build/
 bin/*
+log/*
 !vsrc/*
 !syn/*
 result/*-500MHz/*
