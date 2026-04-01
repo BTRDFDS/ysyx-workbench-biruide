@@ -1,5 +1,5 @@
 package rv32iBasis;
-	`define RV32I_DEBUG
+	// `define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
