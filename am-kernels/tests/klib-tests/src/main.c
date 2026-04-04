@@ -270,15 +270,12 @@ void test_printf(){
 	printf("%17X==         FFFFFFFF\n",UINT_MAX);
 	printf("%c==P\n",'P');
 	printf("%s==well down\n","well down");
-	// printf("%ld==\n",123892111232);
-	printf("ld:%ld==123892111232\n",123892111232L);
-	printf("d:%d==-661940352\n",123892111232L);
 
     printf(" printf test maybe \033[1;32mPASS\033[0m,please check output\n");
 }
 
 void test_csrr(){
-	// #define CSR
+	#define CSR
 #ifdef CSR
 	uint32_t temp;
 	asm volatile("csrr %0, mcycle"    : "=r"(temp));printf("mcycle:   %x\n", temp);

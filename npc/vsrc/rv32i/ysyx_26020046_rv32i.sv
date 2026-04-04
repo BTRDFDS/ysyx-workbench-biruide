@@ -267,17 +267,30 @@ module ysyx_26020046_rv32iIDU(
 			op.enL=(ifdu.code.op==OP_I_L);
 			op.enS=(ifdu.code.op==OP_S__);
 
-			if(ifdu.code.op==OP_CSR)begin unique case(ifdu.code.fun3)//选CSR op addr
+			if(ifdu.code.op==OP_CSR)begin unique case(ifdu.code.fun3)
+				3'b000	:op.cCsr=JUMP_;
+				3'b001	:op.cCsr=WACSR;						
+				3'b010	:op.cCsr=(ifdu.code.r1=='0)?NACSR:RACSR;
+				default	:op.cCsr=NACSR;						
+			endcase  unique case(ifdu.code.fun3)
 				3'b000	:begin unique case(ifdu.code)
-						OP_SCR_MRET__	:begin 								op.SRaddr=CSR_ADDR_MEPC;		op.SRop=MRET_;							end
-						OP_SCR_ECALL_	:begin 								op.SRaddr=CSR_ADDR_MTVEC;		op.SRop=ECALL;							end
-						OP_SCR_EBREAK	:begin 								op.SRaddr='0;stop(1);			op.SRop=NCSR_;							end
-						default			:begin 								op.SRaddr='0;stop(0);			op.SRop=NCSR_;							end
-					endcase 		op.cCsr=JUMP_;																									end
-				3'b001	:begin 		op.cCsr=WACSR;							op.SRaddr={ifdu.code[31:20]};	op.SRop=WCCSR;							end
-				3'b010	:begin 		op.cCsr=(ifdu.code.r1=='0)?NACSR:RACSR;	op.SRaddr={ifdu.code[31:20]};	op.SRop=(ifdu.code.r1=='0)?NCSR_:WCCSR;	end
-				default	:begin 		op.cCsr=NACSR;							op.SRaddr='0;					op.SRop=NCSR_;							end
-			endcase end else begin 	op.cCsr=NACSR;							op.SRaddr='0;					op.SRop=NCSR_;							end
+						OP_SCR_MRET__	:begin op.SRaddr=CSR_ADDR_MEPC;		end
+						OP_SCR_ECALL_	:begin op.SRaddr=CSR_ADDR_MTVEC;	end
+						OP_SCR_EBREAK	:begin op.SRaddr='0;stop(1);		end
+						default			:begin op.SRaddr='0;stop(0);		end endcase end
+				3'b001					:begin op.SRaddr={ifdu.code[31:20]};end
+				3'b010					:begin op.SRaddr={ifdu.code[31:20]};end
+				default					:begin op.SRaddr='0;				end
+			endcase  unique case(ifdu.code.fun3)
+				3'b000	:begin unique case(ifdu.code)
+						OP_SCR_MRET__	:op.SRop=MRET_;
+						OP_SCR_ECALL_	:op.SRop=ECALL;
+						OP_SCR_EBREAK	:op.SRop=NCSR_;
+						default			:op.SRop=NCSR_;endcase end
+				3'b001					:op.SRop=WCCSR;
+				3'b010					:op.SRop=(ifdu.code.r1=='0)?NCSR_:WCCSR;
+				default					:op.SRop=NCSR_;
+			endcase end else begin op.cCsr=NACSR;op.SRaddr='0;op.SRop=NCSR_;end
 
 			unique case(ifdu.code.op)//选cR1 这里7/10就反选
 				OP_U_I	:op.cR1='0;
@@ -480,9 +493,10 @@ module ysyx_26020046_rv32iCSR(
 				endcase end
 			end
 	`endif
+			{mcycleh,mcycle}<={mcycleh,mcycle}+1;
 			unique case(op.SRop)
-				ECALL:begin mepc<=res.iCsr;mcause<=11;{mcycleh,mcycle}<={mcycleh,mcycle}+1;end
-				MRET_:begin mstatus<=MSTATUS_RESET;mcause<='0;{mcycleh,mcycle}<={mcycleh,mcycle}+1;end
+				ECALL:begin mepc<=res.iCsr;mcause<=11;end
+				MRET_:begin mstatus<=MSTATUS_RESET;mcause<='0;end
 				WCCSR:begin unique case(op.SRaddr)
 					CSR_ADDR_MEPC		:mepc		<=res.iCsr;
 					CSR_ADDR_MSTAUS		:mstatus	<=res.iCsr;
@@ -494,7 +508,7 @@ module ysyx_26020046_rv32iCSR(
 					CSR_ADDR_MVENDORID	:mvendorid	<=res.iCsr;
 					default:begin $fatal("unknown csrAddr==0x%x",op.SRaddr); end
 					endcase end
-				NCSR_:{mcycleh,mcycle}<={mcycleh,mcycle}+1;
+				NCSR_:;
 				default:begin $fatal("unknown op.SRop==0x%x",op.SRop); end
 				endcase
 			end
