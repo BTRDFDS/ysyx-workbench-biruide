@@ -4,3 +4,4 @@
 [          andi] [1;32mPASS[0m
 [         auipc] [1;32mPASS[0m
 [           beq] [1;32mPASS[0m
+[           bge] [1;32mPASS[0m
