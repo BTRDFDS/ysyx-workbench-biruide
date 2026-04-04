@@ -58,6 +58,7 @@ void game_logic_update(int frame) {
         c->y += c->v;
         if (c->y < 0) {//飞回去了
           c->ch = '\0';
+          halt(0);
         }
         if (c->y + CHAR_H >= screen_h) {
           miss++;
@@ -156,8 +157,8 @@ int main() {
 
   int current = 0, rendered = 0;
   uint64_t t0 = io_read(AM_TIMER_UPTIME).us;
-  for(int i=0;i<10;i++){
-  // while (1) {
+  // for(int i=0;i<10;i++){
+  while (1) {
     int frames = (io_read(AM_TIMER_UPTIME).us - t0) / (1000000 / FPS);
 
     for (; current < frames; current++) {//实际<理论
