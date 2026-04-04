@@ -156,7 +156,8 @@ int main() {
 
   int current = 0, rendered = 0;
   uint64_t t0 = io_read(AM_TIMER_UPTIME).us;
-  while (1) {
+  for(int i=0;i<3;i++){
+  // while (1) {
     int frames = (io_read(AM_TIMER_UPTIME).us - t0) / (1000000 / FPS);
 
     for (; current < frames; current++) {//实际<理论
