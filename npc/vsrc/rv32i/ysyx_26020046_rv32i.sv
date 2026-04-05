@@ -14,9 +14,9 @@ package rv32iBasis;
 	parameter OP_R__ 	= 7'b0110011;//r运算
 	parameter OP_CSR	= 7'b1110011;//CSR系列
 
-	parameter OP_SCR_ECALL_	= 32'h00000073;
-	parameter OP_SCR_EBREAK	= 32'h00100073;
-	parameter OP_SCR_MRET__	= 32'h30200073;
+	parameter OP_CSR_ECALL_	= 32'h00000073;
+	parameter OP_CSR_EBREAK	= 32'h00100073;
+	parameter OP_CSR_MRET__	= 32'h30200073;
 
 	parameter CSR_ADDR_MSTAUS	= 12'h300;
 	parameter CSR_ADDR_MTVEC	= 12'h305;
@@ -274,18 +274,18 @@ module ysyx_26020046_rv32iIDU(
 				default	:op.cCsr=NACSR;						
 			endcase  unique case(ifdu.code.fun3)
 				3'b000	:begin unique case(ifdu.code)
-						OP_SCR_MRET__	:begin op.SRaddr=CSR_ADDR_MEPC;		end
-						OP_SCR_ECALL_	:begin op.SRaddr=CSR_ADDR_MTVEC;	end
-						OP_SCR_EBREAK	:begin op.SRaddr='0;stop(1);		end
+						OP_CSR_MRET__	:begin op.SRaddr=CSR_ADDR_MEPC;		end
+						OP_CSR_ECALL_	:begin op.SRaddr=CSR_ADDR_MTVEC;	end
+						OP_CSR_EBREAK	:begin op.SRaddr='0;stop(1);		end
 						default			:begin op.SRaddr='0;stop(0);		end endcase end
 				3'b001					:begin op.SRaddr={ifdu.code[31:20]};end
 				3'b010					:begin op.SRaddr={ifdu.code[31:20]};end
 				default					:begin op.SRaddr='0;				end
 			endcase  unique case(ifdu.code.fun3)
 				3'b000	:begin unique case(ifdu.code)
-						OP_SCR_MRET__	:op.SRop=MRET_;
-						OP_SCR_ECALL_	:op.SRop=ECALL;
-						OP_SCR_EBREAK	:op.SRop=NCSR_;
+						OP_CSR_MRET__	:op.SRop=MRET_;
+						OP_CSR_ECALL_	:op.SRop=ECALL;
+						OP_CSR_EBREAK	:op.SRop=NCSR_;
 						default			:op.SRop=NCSR_;endcase end
 				3'b001					:op.SRop=WCCSR;
 				3'b010					:op.SRop=(ifdu.code.r1=='0)?NCSR_:WCCSR;
