@@ -169,7 +169,7 @@ word_t riscv32mret(){
   fprintf(log_etrace_fp,"mret to 0x%x\n",mepc+4);
   fflush(log_etrace_fp);
 #endif
-  return mepc+4;
+  return mepc;
 }
 word_t riscv32ecall(word_t pc){
   mepc=pc;

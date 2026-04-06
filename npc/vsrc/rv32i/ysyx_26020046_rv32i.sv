@@ -382,7 +382,7 @@ module ysyx_26020046_rv32iALU(
 			R1I:res.addr=val.oR1+val.imm;
 			PCI:res.addr=val.pc +val.imm;
 			ECJ:res.addr=val.oCsr;
-			ERE:res.addr=val.oCsr+4;
+			ERE:res.addr=val.oCsr;
 			NAD:res.addr='0;
 			default:begin res.addr='0;$fatal("unknown adr==0x%x",op.adr);end
 		endcase
