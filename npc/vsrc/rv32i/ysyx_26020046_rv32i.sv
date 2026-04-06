@@ -1,5 +1,5 @@
 package rv32iBasis;
-	// `define RV32I_DEBUG
+	`define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -41,6 +41,8 @@ package rv32iBasis;
 	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;
 	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
+
+	typedef enum logic [1:0] {IDLE,WAIT} ifuStatus_t;
 
 
 	typedef struct packed {
@@ -92,6 +94,7 @@ interface op_t(input logic clk,reset);
 	modport LSU(input  clk,enL,enS,LSop);
 	modport CSR(input  clk,reset,SRaddr,SRop);
 	modport GPR(input  clk,reset,cR1,cR2,cRd);
+	modport MEM(input  clk);
 endinterface
 interface val_t();
 	import rv32iBasis::*;
@@ -113,6 +116,12 @@ interface res_t();
 	modport IFU(input addr,enJfun);
 	modport LSU(input addr);
 endinterface;
+interface SimpleBus_t();
+	import rv32iBasis::*;
+	word_t addr,rdata;
+	modport IFU(input rdata,output addr);
+	modport MEM(output rdata,input addr);
+endinterface
 module ysyx_26020046_rv32i(
 	input logic clk,
 	input logic reset
@@ -123,7 +132,9 @@ module ysyx_26020046_rv32i(
 	op_t op(.*);
 	res_t res();
 	val_t val();
+	SimpleBus_t sbIf();
 
+	ysyx_26020046_rv32iMEM MEM(.*);
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
 	ysyx_26020046_rv32iALU ALU(.*);
@@ -149,15 +160,41 @@ module ysyx_26020046_rv32i(
 		end
 	`endif
 endmodule
+module ysyx_26020046_rv32iMEM(
+	SimpleBus_t.MEM sbIf,
+	op_t.LSU op
+	);
+	import rv32iBasis::*;
+	always_ff@(posedge op.clk) begin
+		sbIf.rdata<=pmem_read(sbIf.addr);
+	end
+endmodule
 module ysyx_26020046_rv32iIFU(
+	SimpleBus_t.IFU sbIf,
 	ifdu_t.IFU ifdu,
 	val_t.IFU val,
 	res_t.IFU res,
 	op_t.IFU op
 	);
 	import rv32iBasis::*;
-	assign ifdu.code=pmem_read(val.pc);
-	always_ff @(posedge op.clk) begin : pc_write
+
+	ifuStatus_t status,nextStatus;
+	always_comb begin
+		case(status)
+			IDLE	:nextStatus=WAIT;
+			WAIT	:nextStatus=IDLE;
+			default	:nextStatus=IDLE;
+		endcase
+	end
+	always_ff @(posedge op.clk) begin
+		if(status==WATI)ifdu.code<=sbIf.rdata;
+	end
+	always_ff@(posedge op.clk) begin
+		if(op.reset) status<=IDLE;
+		else status<=nextStatus;
+	end
+
+	always_ff @(posedge op.clk) begin : pc
 	`ifdef RV32I_DEBUG
 		if(res.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,res.addr);
 	`endif
