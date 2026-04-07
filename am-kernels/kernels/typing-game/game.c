@@ -12,7 +12,7 @@
 #define COL_GREEN    0x00cc33
 #define COL_PURPLE   0x2a0a29
 
-#define speedDown 3
+#define speedDown 3//降速倍速
 
 enum { WHITE = 0, RED, GREEN, PURPLE };
 struct character {
@@ -58,6 +58,7 @@ void game_logic_update(int frame) {
         c->y += c->v;
         if (c->y < 0) {//飞回去了
           c->ch = '\0';
+          // halt(0);
         }
         if (c->y + CHAR_H >= screen_h) {
           miss++;
@@ -74,16 +75,16 @@ void render() {
   static int x[NCHAR], y[NCHAR], n = 0;
 
   for (int i = 0; i < n; i++) {//把字符的原本位置给擦除
-    io_write(AM_GPU_FBDRAW, x[i], y[i], blank, CHAR_W, CHAR_H, false);
+    io_write(AM_GPU_FBDRAW, x[i], y[i], blank, CHAR_W, CHAR_H, true);
   }
 
   n = 0;
   for (int i = 0; i < LENGTH(chars); i++) {
     struct character *c = &chars[i];
-    if (c->ch) {
+    if (c->ch) {//'\0'==0
       x[n] = c->x; y[n] = c->y; n++;
       int col = (c->v > 0) ? WHITE : (c->v < 0 ? GREEN : RED);
-      io_write(AM_GPU_FBDRAW, c->x, c->y, texture[col][c->ch - 'A'], CHAR_W, CHAR_H, false);
+      io_write(AM_GPU_FBDRAW, c->x, c->y, texture[col][c->ch - 'A'], CHAR_W, CHAR_H, true);
     }
   }
   io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
@@ -156,6 +157,7 @@ int main() {
 
   int current = 0, rendered = 0;
   uint64_t t0 = io_read(AM_TIMER_UPTIME).us;
+  // for(int i=0;i<10;i++){
   while (1) {
     int frames = (io_read(AM_TIMER_UPTIME).us - t0) / (1000000 / FPS);
 

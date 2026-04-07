@@ -1,11 +1,11 @@
 # include $(NVBOARD_HOME)/scripts/nvboard.mk
 include ../Makefile
-ifeq ($(NVB),1)
+# ifeq ($(NVB),1)
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 NVBOARD_FLAGS = $(NVBOARD_ARCHIVE)
-else
-NVBOARD_FLAGS =
-endif
+# else
+# NVBOARD_FLAGS =
+# endif
 
 MAKEFLAGS += -k
 # FLAGS=  --debug --cc --trace -MMD -O0

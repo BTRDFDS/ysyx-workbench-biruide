@@ -24,15 +24,12 @@ void __am_cte_init() {
 }
 
 void rt_hw_context_switch_to(rt_ubase_t to) {
-  // assert(0);
   contextFrom=0;
   contextTo=to;
   yield();
-  // assert(0);
 }
 
 void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to) {
-  // assert(0);
   contextFrom=from;
   contextTo=to;
   yield();
@@ -51,6 +48,7 @@ typedef struct {
 void contextUseFun(void *arg) {
   contextUseArg *args = (contextUseArg *)arg;
   args->tentry(args->parameter);
+  // assert(0);
   args->texit();
 }
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_addr, void *texit) {

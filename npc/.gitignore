@@ -23,3 +23,4 @@ result/*-500MHz/*
 !result/*-500MHz*/*.rpt
 !result/*-500MHz*/*.pwr
 result/*-500MHz*/*_instance.pwr
+log/rv32iDebugLog.txt

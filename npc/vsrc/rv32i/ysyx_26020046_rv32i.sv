@@ -14,9 +14,9 @@ package rv32iBasis;
 	parameter OP_R__ 	= 7'b0110011;//r运算
 	parameter OP_CSR	= 7'b1110011;//CSR系列
 
-	parameter OP_SCR_ECALL_	= 32'h00000073;
-	parameter OP_SCR_EBREAK	= 32'h00100073;
-	parameter OP_SCR_MRET__	= 32'h30200073;
+	parameter OP_CSR_ECALL_	= 32'h00000073;
+	parameter OP_CSR_EBREAK	= 32'h00100073;
+	parameter OP_CSR_MRET__	= 32'h30200073;
 
 	parameter CSR_ADDR_MSTAUS	= 12'h300;
 	parameter CSR_ADDR_MTVEC	= 12'h305;
@@ -41,6 +41,8 @@ package rv32iBasis;
 	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;
 	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
+
+	typedef enum logic [1:0] {IDLE,WAIT} ifuStatus_t;
 
 
 	typedef struct packed {
@@ -92,6 +94,7 @@ interface op_t(input logic clk,reset);
 	modport LSU(input  clk,enL,enS,LSop);
 	modport CSR(input  clk,reset,SRaddr,SRop);
 	modport GPR(input  clk,reset,cR1,cR2,cRd);
+	modport MEM(input  clk);
 endinterface
 interface val_t();
 	import rv32iBasis::*;
@@ -113,6 +116,12 @@ interface res_t();
 	modport IFU(input addr,enJfun);
 	modport LSU(input addr);
 endinterface;
+interface SimpleBus_t();
+	import rv32iBasis::*;
+	word_t addr,rdata;
+	modport IFU(input rdata,output addr);
+	modport MEM(output rdata,input addr);
+endinterface
 module ysyx_26020046_rv32i(
 	input logic clk,
 	input logic reset
@@ -123,7 +132,9 @@ module ysyx_26020046_rv32i(
 	op_t op(.*);
 	res_t res();
 	val_t val();
+	SimpleBus_t sbIf();
 
+	ysyx_26020046_rv32iMEM MEM(.*);
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
 	ysyx_26020046_rv32iALU ALU(.*);
@@ -149,15 +160,41 @@ module ysyx_26020046_rv32i(
 		end
 	`endif
 endmodule
+module ysyx_26020046_rv32iMEM(
+	SimpleBus_t.MEM sbIf,
+	op_t.LSU op
+	);
+	import rv32iBasis::*;
+	always_ff@(posedge op.clk) begin
+		sbIf.rdata<=pmem_read(sbIf.addr);
+	end
+endmodule
 module ysyx_26020046_rv32iIFU(
+	SimpleBus_t.IFU sbIf,
 	ifdu_t.IFU ifdu,
 	val_t.IFU val,
 	res_t.IFU res,
 	op_t.IFU op
 	);
 	import rv32iBasis::*;
-	assign ifdu.code=pmem_read(val.pc);
-	always_ff @(posedge op.clk) begin : pc_write
+
+	ifuStatus_t status,nextStatus;
+	always_comb begin
+		case(status)
+			IDLE	:nextStatus=WAIT;
+			WAIT	:nextStatus=IDLE;
+			default	:nextStatus=IDLE;
+		endcase
+	end
+	always_ff @(posedge op.clk) begin
+		if(status==WATI)ifdu.code<=sbIf.rdata;
+	end
+	always_ff@(posedge op.clk) begin
+		if(op.reset) status<=IDLE;
+		else status<=nextStatus;
+	end
+
+	always_ff @(posedge op.clk) begin : pc
 	`ifdef RV32I_DEBUG
 		if(res.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,res.addr);
 	`endif
@@ -267,17 +304,30 @@ module ysyx_26020046_rv32iIDU(
 			op.enL=(ifdu.code.op==OP_I_L);
 			op.enS=(ifdu.code.op==OP_S__);
 
-			if(ifdu.code.op==OP_CSR)begin unique case(ifdu.code.fun3)//选CSR op addr
+			if(ifdu.code.op==OP_CSR)begin unique case(ifdu.code.fun3)
+				3'b000	:op.cCsr=JUMP_;
+				3'b001	:op.cCsr=WACSR;						
+				3'b010	:op.cCsr=(ifdu.code.r1=='0)?NACSR:RACSR;
+				default	:op.cCsr=NACSR;						
+			endcase  unique case(ifdu.code.fun3)
 				3'b000	:begin unique case(ifdu.code)
-						OP_SCR_MRET__	:begin 								op.SRaddr=CSR_ADDR_MEPC;		op.SRop=MRET_;							end
-						OP_SCR_ECALL_	:begin 								op.SRaddr=CSR_ADDR_MTVEC;		op.SRop=ECALL;							end
-						OP_SCR_EBREAK	:begin 								op.SRaddr='0;stop(1);			op.SRop=NCSR_;							end
-						default			:begin 								op.SRaddr='0;stop(0);			op.SRop=NCSR_;							end
-					endcase 		op.cCsr=JUMP_;																									end
-				3'b001	:begin 		op.cCsr=WACSR;							op.SRaddr={ifdu.code[31:20]};	op.SRop=WCCSR;							end
-				3'b010	:begin 		op.cCsr=(ifdu.code.r1=='0)?NACSR:RACSR;	op.SRaddr={ifdu.code[31:20]};	op.SRop=(ifdu.code.r1=='0)?NCSR_:WCCSR;	end
-				default	:begin 		op.cCsr=NACSR;							op.SRaddr='0;					op.SRop=NCSR_;							end
-			endcase end else begin 	op.cCsr=NACSR;							op.SRaddr='0;					op.SRop=NCSR_;							end
+						OP_CSR_MRET__	:begin op.SRaddr=CSR_ADDR_MEPC;		end
+						OP_CSR_ECALL_	:begin op.SRaddr=CSR_ADDR_MTVEC;	end
+						OP_CSR_EBREAK	:begin op.SRaddr='0;stop(1);		end
+						default			:begin op.SRaddr='0;stop(0);		end endcase end
+				3'b001					:begin op.SRaddr={ifdu.code[31:20]};end
+				3'b010					:begin op.SRaddr={ifdu.code[31:20]};end
+				default					:begin op.SRaddr='0;				end
+			endcase  unique case(ifdu.code.fun3)
+				3'b000	:begin unique case(ifdu.code)
+						OP_CSR_MRET__	:op.SRop=MRET_;
+						OP_CSR_ECALL_	:op.SRop=ECALL;
+						OP_CSR_EBREAK	:op.SRop=NCSR_;
+						default			:op.SRop=NCSR_;endcase end
+				3'b001					:op.SRop=WCCSR;
+				3'b010					:op.SRop=(ifdu.code.r1=='0)?NCSR_:WCCSR;
+				default					:op.SRop=NCSR_;
+			endcase end else begin op.cCsr=NACSR;op.SRaddr='0;op.SRop=NCSR_;end
 
 			unique case(ifdu.code.op)//选cR1 这里7/10就反选
 				OP_U_I	:op.cR1='0;
@@ -369,7 +419,7 @@ module ysyx_26020046_rv32iALU(
 			R1I:res.addr=val.oR1+val.imm;
 			PCI:res.addr=val.pc +val.imm;
 			ECJ:res.addr=val.oCsr;
-			ERE:res.addr=val.oCsr+4;
+			ERE:res.addr=val.oCsr;
 			NAD:res.addr='0;
 			default:begin res.addr='0;$fatal("unknown adr==0x%x",op.adr);end
 		endcase
@@ -480,9 +530,10 @@ module ysyx_26020046_rv32iCSR(
 				endcase end
 			end
 	`endif
+			{mcycleh,mcycle}<={mcycleh,mcycle}+1;
 			unique case(op.SRop)
-				ECALL:begin mepc<=res.iCsr;mcause<=11;{mcycleh,mcycle}<={mcycleh,mcycle}+1;end
-				MRET_:begin mstatus<=MSTATUS_RESET;mcause<='0;{mcycleh,mcycle}<={mcycleh,mcycle}+1;end
+				ECALL:begin mepc<=res.iCsr;mcause<=11;end
+				MRET_:begin mstatus<=MSTATUS_RESET;mcause<='0;end
 				WCCSR:begin unique case(op.SRaddr)
 					CSR_ADDR_MEPC		:mepc		<=res.iCsr;
 					CSR_ADDR_MSTAUS		:mstatus	<=res.iCsr;
@@ -494,7 +545,7 @@ module ysyx_26020046_rv32iCSR(
 					CSR_ADDR_MVENDORID	:mvendorid	<=res.iCsr;
 					default:begin $fatal("unknown csrAddr==0x%x",op.SRaddr); end
 					endcase end
-				NCSR_:{mcycleh,mcycle}<={mcycleh,mcycle}+1;
+				NCSR_:;
 				default:begin $fatal("unknown op.SRop==0x%x",op.SRop); end
 				endcase
 			end

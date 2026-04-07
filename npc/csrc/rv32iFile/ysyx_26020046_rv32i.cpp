@@ -20,7 +20,7 @@ svScope scope;//作用域
 const uint32_t addrReset	=0x80000000;
 const uint32_t addrTimer	=0x0200BFF8;
 const uint32_t addrSerial	=0x10000000;
-
+const uint32_t addrInput 	=0x10011000;
 const uint32_t memSize=0xa000000;
 
 uint8_t mem[memSize];
@@ -48,6 +48,8 @@ extern "C" int pmem_read(uint32_t raddr) {
 		NpcTraceMtrace("%d\n",time);
 		NpcTraceDtrace("%x timer %d\n",pc,time);
 		return time;
+	}else if(raddr==addrInput){
+		return 0;
 	}else if(raddr<addrReset|((raddr-addrReset+3)>=memSize)){//超出mem
 		// printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddr,raddr,pc,runStep);NpcError();
 		return 0;
