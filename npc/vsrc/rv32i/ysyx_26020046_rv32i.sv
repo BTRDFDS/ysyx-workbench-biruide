@@ -36,7 +36,7 @@ package rv32iBasis;
 	typedef enum logic[2:0] {BEQ_,BNE_,NBFU,BLT_='b100,BGE_,BLTU='b110,BGEU} ALUopBfu_t;
 	typedef enum logic[1:0] {WACSR,RACSR,JUMP_,NACSR} ALUopCsr_t;
 	typedef enum logic[2:0] {R1I,PCI,ECJ,ERE,NAD} ALUopADR_t;
-	typedef enum logic[2:0] {NCHO,CAL_,DATA,IMM_,SNPC,CCSR} ALUopCho_t;
+	typedef enum logic[2:0] {NCHO,CAL_,IMM_,SNPC,CCSR} ALUopCho_t;
 	typedef enum logic[0:0] {IR1,PC_} in1_t;
 	typedef enum logic[0:0] {IR2,IMM} in2_t;
 	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;
@@ -91,24 +91,24 @@ interface IdAl_t();
 
 	word_t oR1,oR2,oCsr,imm,pc;
 
-	modport IDU(output in1,in2,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd);
-	modport ALU(input  in1,in2,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd);
-	modport IN_(input  in1,in2,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd);
-	modport OUT(output in1,in2,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd);
+	modport IDU(output in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd);
+	modport ALU(input  in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd);
+	modport IN_(input  in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd);
+	modport OUT(output in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd);
 	endinterface
 interface AlLs_t();
 	import rv32iBasis::*;
 	logic enS,enL;
 	LSUop_t LSop;
-	word_t addr,res,iRd,iCsr,oR2;
+	word_t addr,res,iCsr,oR2;
 	logic [11:0] SRaddr;
 	CSRop_t SRop;
 
 	reg_t cRd;
 	modport ALU(output addr,res,iCsr,oR2);
 	modport LSU(input  enS,enL,LSop,res,addr,oR2);
-	modport IN_(input  enS,enL,LSop,res,addr,oR2,cRd,iRd,iCsr,SRaddr,SRop);
-	modport OUT(output enS,enL,LSop,res,addr,oR2,cRd,iRd,iCsr,SRaddr,SRop);
+	modport IN_(input  enS,enL,LSop,res,addr,oR2,cRd,iCsr,SRaddr,SRop);
+	modport OUT(output enS,enL,LSop,res,addr,oR2,cRd,iCsr,SRaddr,SRop);
 	endinterface
 interface AlIf_t();
 	import rv32iBasis::*;
@@ -120,43 +120,15 @@ interface AlIf_t();
 	endinterface
 interface LsWb_t();
 	import rv32iBasis::*;
-	word_t cRd;
+	reg_t cRd;
 	logic [11:0] SRaddr;
 	CSRop_t SRop;
 	word_t iRd,iCsr;
 	modport LSU(output iRd);
 	modport GPR(input  iRd,cRd);
 	modport CSR(input  iCsr,SRaddr,SRop);
-	modport IN_(input  iRd);
+	modport IN_(input  iRd,cRd,iCsr,SRaddr,SRop);
 	modport OUT(output iRd,cRd,iCsr,SRaddr,SRop);
-	endinterface
-interface op_t(input logic clk,reset);
-	import rv32iBasis::*;
-
-	in1_t		in1;
-	in2_t		in2;
-	logic 		enJcod;
-	ALUopCal_t 	cal;
-	ALUopBfu_t	bfu;
-	ALUopADR_t	adr;
-	ALUopCsr_t	cCsr;
-	ALUopCho_t	cIrd;
-
-	logic enS,enL;
-	LSUop_t LSop;
-
-	reg_t cRd,cR1,cR2;
-	
-	logic [11:0] SRaddr;
-	CSRop_t SRop;
-
-	modport IFU(input  clk,reset);
-	modport IDU(output in1,in2,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd,cR1,cR2);
-	modport ALU(input  in1,in2,enJcod,cal,bfu,adr,cCsr,cIrd);
-	modport LSU(input  clk,enL,enS,LSop);
-	modport CSR(input  clk,reset,SRaddr,SRop);
-	modport GPR(input  clk,reset,cR1,cR2,cRd);
-	modport MEM(input  clk);
 	endinterface
 interface val_t();
 	import rv32iBasis::*;
@@ -209,16 +181,21 @@ module ysyx_26020046_rv32i(
 		always @(posedge clk) begin
 			if(reset)$fdisplay(logFile,"!!!reset!!!");
 			else begin
-				$fdisplay(logFile,"\nIF:pc=%x code=%x",val.pc,nIfId.code);
-				$fdisplay(logFile,"opAL:{[%s %s %s] b:%s adr:%s}[r:%s sr:%s]",op.in1.name(),op.in2.name(),op.cal.name(),op.bfu.name(),op.adr.name(),op.cIrd.name(),op.cCsr.name());
-				$fdisplay(logFile,"op:LS[%s S%bL%b] SR[%s %x] R12d[%x %x %x]",op.LSop.name(),op.enS,op.enL,op.SRop.name(),op.SRaddr,op.cR1,op.cR2,op.cRd);
-				$fdisplay(logFile,"val:oR1=%x oR2=%x imm=%x oCsr=%x data=%x",val.oR1,val.oR2,val.imm,val.oCsr,val.data);
-				$fdisplay(logFile,"res:addr=%x iRd=%x iCsr=%x enJ=%b",res.addr,res.iRd,res.iCsr,res.enJfun);
-				
+				$fdisplay(logFile,"nIfId code=%x",nIfId.code);
+				$fdisplay(logFile,"oIfId code=%x",oIfId.code);
+				$fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);
+				$fdisplay(logFile,"nIdAl in1=%s in2=%s oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b cal=%s adr=%s cCsr=%s cIrd=%s enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x",nIdAl.in1.name(),nIdAl.in2.name(),nIdAl.oR1,nIdAl.oR2,nIdAl.oCsr,nIdAl.imm,nIdAl.pc,nIdAl.enJcod,nIdAl.cal.name(),nIdAl.adr.name(),nIdAl.cCsr.name(),nIdAl.cIrd.name(),nIdAl.enL,nIdAl.enS,nIdAl.LSop.name(),nIdAl.SRaddr,nIdAl.SRop.name(),nIdAl.cRd);
+				$fdisplay(logFile,"oIdAl in1=%s in2=%s oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b cal=%s adr=%s cCsr=%s cIrd=%s enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x",oIdAl.in1.name(),oIdAl.in2.name(),oIdAl.oR1,oIdAl.oR2,oIdAl.oCsr,oIdAl.imm,oIdAl.pc,oIdAl.enJcod,oIdAl.cal.name(),oIdAl.adr.name(),oIdAl.cCsr.name(),oIdAl.cIrd.name(),oIdAl.enL,oIdAl.enS,oIdAl.LSop.name(),oIdAl.SRaddr,oIdAl.SRop.name(),oIdAl.cRd);
+				$fdisplay(logFile,"nAlLs enS=%b enL=%b LSop=%s res=%x addr=%x oR2=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nAlLs.enS,nAlLs.enL,nAlLs.LSop.name(),nAlLs.res,nAlLs.addr,nAlLs.oR2,nAlLs.cRd,nAlLs.iCsr,nAlLs.SRaddr,nAlLs.SRop.name());
+				$fdisplay(logFile,"oAlLs enS=%b enL=%b LSop=%s res=%x addr=%x oR2=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",oAlLs.enS,oAlLs.enL,oAlLs.LSop.name(),oAlLs.res,oAlLs.addr,oAlLs.oR2,oAlLs.cRd,oAlLs.iCsr,oAlLs.SRaddr,oAlLs.SRop.name());
+				$fdisplay(logFile,"iAlIf addr=%x enJfun=%b",iAlIf.addr,iAlIf.enJfun);
+				$fdisplay(logFile,"nLsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nLsWb.iRd,nLsWb.cRd,nLsWb.iCsr,nLsWb.SRaddr,nLsWb.SRop.name());
+				$fdisplay(logFile,"oLsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",oLsWb.iRd,oLsWb.cRd,oLsWb.iCsr,oLsWb.SRaddr,oLsWb.SRop.name());
 			end
+			$fstrobe(logFile,"");
 		end
 	`endif
-endmodule
+	endmodule
 module ysyx_26020046_rv32iMEM(
 	SimpleBus_t.MEM sbIf
 	);
@@ -227,7 +204,7 @@ module ysyx_26020046_rv32iMEM(
 	// 	sbIf.rdata<=pmem_read(sbIf.addr);
 	// end
 	assign sbIf.rdata = pmem_read(sbIf.addr);
-endmodule
+	endmodule
 module ysyx_26020046_rv32iWater(
 	IfId_t.IN_ nIfId,
 	IfId_t.OUT oIfId,
@@ -245,6 +222,12 @@ module ysyx_26020046_rv32iWater(
 	always_comb begin
 		oIdAl.in1	=nIdAl.in1;
 		oIdAl.in2	=nIdAl.in2;
+		oIdAl.oR1	=nIdAl.oR1;
+		oIdAl.oR2	=nIdAl.oR2;
+		oIdAl.oCsr	=nIdAl.oCsr;
+		oIdAl.imm	=nIdAl.imm;
+		oIdAl.pc	=nIdAl.pc;
+		oIdAl.enJcod=nIdAl.enJcod;
 		oIdAl.adr	=nIdAl.adr;
 		oIdAl.cal	=nIdAl.cal;
 		oIdAl.bfu	=nIdAl.bfu;
@@ -265,12 +248,18 @@ module ysyx_26020046_rv32iWater(
 		oAlLs.addr	=nAlLs.addr;
 		oAlLs.oR2	=nAlLs.oR2;
 		oAlLs.cRd	=oIdAl.cRd;
-		oAlLs.iRd	=oIdAl.iRd;
 		oAlLs.iCsr	=nAlLs.iCsr;
 		oAlLs.SRaddr=oIdAl.SRaddr;
 		oAlLs.SRop	=oIdAl.SRop;
 	end
-endmodule
+	always_comb begin
+		oLsWb.iRd	=nLsWb.iRd;
+		oLsWb.cRd	=oAlLs.cRd;
+		oLsWb.iCsr	=oAlLs.iCsr;
+		oLsWb.SRaddr=oAlLs.SRaddr;
+		oLsWb.SRop	=oAlLs.SRop;
+	end
+	endmodule
 module ysyx_26020046_rv32iIFU(
 	SimpleBus_t.IFU sbIf,
 	IfId_t.IFU nIfId,
@@ -291,13 +280,17 @@ module ysyx_26020046_rv32iIFU(
 		else if(iAlIf.enJfun) val.pc<=(iAlIf.addr&32'hFFFFFFFC);
 		else val.pc<=val.pc+4;
 	end	
-endmodule
+	endmodule
 module ysyx_26020046_rv32iIDU(
-	IfId_t.IDU nIfId,
+	IfId_t.IDU oIfId,
 	IdAl_t.IDU nIdAl,
 	val_t.IDU val
 	);
 	import rv32iBasis::*;
+	assign nIdAl.oR1	=val.oR1;
+	assign nIdAl.oR2	=val.oR2;
+	assign nIdAl.oCsr	=val.oCsr;
+	assign nIdAl.pc		=val.pc;
 	always_comb begin : ID
 		nIdAl.in1=IR1;nIdAl.in2=IR2;
 		nIdAl.adr=NAD;nIdAl.cal=NCAL;nIdAl.bfu=NBFU;
@@ -307,75 +300,74 @@ module ysyx_26020046_rv32iIDU(
 		{val.cR1,val.cR2,nIdAl.cRd,nIdAl.enJcod,nIdAl.imm}='0;
 
 		// if(~op.reset) begin
-			unique case(nIfId.code.op)
-				OP_U_I	:nIdAl.imm={nIfId.code[31:12],12'b0 };
-				OP_U_P	:nIdAl.imm={nIfId.code[31:12],12'b0 };
-				OP_S__	:nIdAl.imm={{20{nIfId.code[31]}},nIfId.code[31:25],nIfId.code[11:7] };
-				OP_I_A	:nIdAl.imm={{20{nIfId.code[31]}},nIfId.code[31:20]};
-				OP_I_J	:nIdAl.imm={{20{nIfId.code[31]}},nIfId.code[31:20]};
-				OP_I_L	:nIdAl.imm={{20{nIfId.code[31]}},nIfId.code[31:20]};
-				OP_B__	:nIdAl.imm={{20{nIfId.code[31]}},nIfId.code[7],nIfId.code[30:25],nIfId.code[11:8], 1'b0 };
-				OP_J__	:nIdAl.imm={{12{nIfId.code[31]}},nIfId.code[19:12],nIfId.code[20],nIfId.code[30:21], 1'b0 };
+			unique case(oIfId.code.op)
+				OP_U_I	:nIdAl.imm={oIfId.code[31:12],12'b0 };
+				OP_U_P	:nIdAl.imm={oIfId.code[31:12],12'b0 };
+				OP_S__	:nIdAl.imm={{20{oIfId.code[31]}},oIfId.code[31:25],oIfId.code[11:7] };
+				OP_I_A	:nIdAl.imm={{20{oIfId.code[31]}},oIfId.code[31:20]};
+				OP_I_J	:nIdAl.imm={{20{oIfId.code[31]}},oIfId.code[31:20]};
+				OP_I_L	:nIdAl.imm={{20{oIfId.code[31]}},oIfId.code[31:20]};
+				OP_B__	:nIdAl.imm={{20{oIfId.code[31]}},oIfId.code[7],oIfId.code[30:25],oIfId.code[11:8], 1'b0 };
+				OP_J__	:nIdAl.imm={{12{oIfId.code[31]}},oIfId.code[19:12],oIfId.code[20],oIfId.code[30:21], 1'b0 };
 				default	:nIdAl.imm='0;
 			endcase
-			unique case(nIfId.code.op)
+			unique case(oIfId.code.op)
 				OP_U_P	:nIdAl.in1=PC_;
 				default	:nIdAl.in1=IR1;
 			endcase
-			unique case(nIfId.code.op)
+			unique case(oIfId.code.op)
 				OP_U_P	:nIdAl.in2=IMM;
 				OP_I_A	:nIdAl.in2=IMM;
 				default	:nIdAl.in2=IR2;
 			endcase
-			unique case(nIfId.code.op)
+			unique case(oIfId.code.op)
 				OP_J__	:nIdAl.enJcod=1;
 				OP_I_J	:nIdAl.enJcod=1;
-				OP_CSR	:nIdAl.enJcod=(nIfId.code.fun3==3'b000);
+				OP_CSR	:nIdAl.enJcod=(oIfId.code.fun3==3'b000);
 				default	:nIdAl.enJcod=0;
 			endcase
 
-			unique case(nIfId.code.op)//选ALU cal
+			unique case(oIfId.code.op)//选ALU cal
 				OP_U_P	:nIdAl.cal=ADD_;
-				OP_I_A	:begin unique case(nIfId.code.fun3)
-						3'b001:begin unique case(nIfId.code.fun7)
+				OP_I_A	:begin unique case(oIfId.code.fun3)
+						3'b001:begin unique case(oIfId.code.fun7)
 								7'b0000000:nIdAl.cal=SLL_;
-								default:begin $fatal("slli fun7(%x)!=0",nIfId.code.fun7);stop(0);end
+								default:begin $fatal("slli fun7(%x)!=0",oIfId.code.fun7);stop(0);end
 							endcase end
-						3'b101:begin unique case(nIfId.code.fun7)
+						3'b101:begin unique case(oIfId.code.fun7)
 								7'b0000000:nIdAl.cal=SRL_;
 								7'b0100000:nIdAl.cal=SRA_;
-								default:begin $fatal("srai/srli fun7(%x)!=0/20",nIfId.code.fun7);stop(0);end
+								default:begin $fatal("srai/srli fun7(%x)!=0/20",oIfId.code.fun7);stop(0);end
 							endcase end
-						default:nIdAl.cal=ALUopCal_t'(nIfId.code.fun3);
+						default:nIdAl.cal=ALUopCal_t'(oIfId.code.fun3);
 					endcase end
-				OP_R__	:begin unique case(nIfId.code.fun7)
-						7'b0000000:nIdAl.cal=ALUopCal_t'(nIfId.code.fun3);
-						7'b0100000:begin unique case(nIfId.code.fun3)
+				OP_R__	:begin unique case(oIfId.code.fun7)
+						7'b0000000:nIdAl.cal=ALUopCal_t'(oIfId.code.fun3);
+						7'b0100000:begin unique case(oIfId.code.fun3)
 								3'b000:nIdAl.cal=SUB_;
 								3'b101:nIdAl.cal=SRA_;
-								default:begin $fatal("R fun7==20 fun3(%x)!=1/5",nIfId.code.fun3);stop(0);end
+								default:begin $fatal("R fun7==20 fun3(%x)!=1/5",oIfId.code.fun3);stop(0);end
 							endcase end
-						default:begin $fatal("R fun7(%x)!=0/20",nIfId.code.fun7);stop(0);end
+						default:begin $fatal("R fun7(%x)!=0/20",oIfId.code.fun7);stop(0);end
 					endcase end
 				default	:nIdAl.cal=NCAL;
 			endcase
 
-			if(nIfId.code.op==OP_B__)begin//b系列
-				nIdAl.bfu=ALUopBfu_t'(nIfId.code.fun3);
+			if(oIfId.code.op==OP_B__)begin//b系列
+				nIdAl.bfu=ALUopBfu_t'(oIfId.code.fun3);
 			end else nIdAl.bfu=NBFU;
 
-			unique case(nIfId.code.op)//选ALU cho
+			unique case(oIfId.code.op)//选ALU cho
 				OP_U_I	:nIdAl.cIrd=IMM_;
 				OP_U_P	:nIdAl.cIrd=CAL_;
 				OP_J__	:nIdAl.cIrd=SNPC;
 				OP_I_J	:nIdAl.cIrd=SNPC;
-				OP_I_L	:nIdAl.cIrd=DATA;
 				OP_I_A	:nIdAl.cIrd=CAL_;
 				OP_R__	:nIdAl.cIrd=CAL_;
 				OP_CSR	:nIdAl.cIrd=CCSR;
 				default	:nIdAl.cIrd=NCHO;
 			endcase
-			unique case(nIfId.code.op)//选ALU addr
+			unique case(oIfId.code.op)//选ALU addr
 				OP_J__	:nIdAl.adr=PCI;
 				OP_I_J	:nIdAl.adr=R1I;
 				OP_I_L	:nIdAl.adr=R1I;
@@ -385,56 +377,57 @@ module ysyx_26020046_rv32iIDU(
 				default	:nIdAl.adr=NAD;
 			endcase
 
-			unique case(nIfId.code.op)//选LSU op
-				OP_I_L	:nIdAl.LSop=LSUop_t'(nIfId.code.fun3);
-				OP_S__	:nIdAl.LSop=LSUop_t'(nIfId.code.fun3);
+			unique case(oIfId.code.op)//选LSU op
+				OP_I_L	:nIdAl.LSop=LSUop_t'(oIfId.code.fun3);
+				OP_S__	:nIdAl.LSop=LSUop_t'(oIfId.code.fun3);
 				default	:nIdAl.LSop=NM;
 			endcase
-			nIdAl.enL=(nIfId.code.op==OP_I_L);
-			nIdAl.enS=(nIfId.code.op==OP_S__);
+			nIdAl.enL=(oIfId.code.op==OP_I_L);
+			nIdAl.enS=(oIfId.code.op==OP_S__);
 
-			if(nIfId.code.op==OP_CSR)begin unique case(nIfId.code.fun3)
+			if(oIfId.code.op==OP_CSR)begin unique case(oIfId.code.fun3)
 				3'b000	:nIdAl.cCsr=JUMP_;
 				3'b001	:nIdAl.cCsr=WACSR;						
-				3'b010	:nIdAl.cCsr=(nIfId.code.r1=='0)?NACSR:RACSR;
+				3'b010	:nIdAl.cCsr=(oIfId.code.r1=='0)?NACSR:RACSR;
 				default	:nIdAl.cCsr=NACSR;						
-			endcase  unique case(nIfId.code.fun3)
-				3'b000	:begin unique case(nIfId.code)
+			endcase  unique case(oIfId.code.fun3)
+				3'b000	:begin unique case(oIfId.code)
 						OP_CSR_MRET__	:begin nIdAl.SRaddr=CSR_ADDR_MEPC;		end
 						OP_CSR_ECALL_	:begin nIdAl.SRaddr=CSR_ADDR_MTVEC;	end
 						OP_CSR_EBREAK	:begin nIdAl.SRaddr='0;stop(1);		end
 						default			:begin nIdAl.SRaddr='0;stop(0);		end endcase end
-				3'b001					:begin nIdAl.SRaddr={nIfId.code[31:20]};end
-				3'b010					:begin nIdAl.SRaddr={nIfId.code[31:20]};end
+				3'b001					:begin nIdAl.SRaddr={oIfId.code[31:20]};end
+				3'b010					:begin nIdAl.SRaddr={oIfId.code[31:20]};end
 				default					:begin nIdAl.SRaddr='0;				end
-			endcase  unique case(nIfId.code.fun3)
-				3'b000	:begin unique case(nIfId.code)
+			endcase  unique case(oIfId.code.fun3)
+				3'b000	:begin unique case(oIfId.code)
 						OP_CSR_MRET__	:nIdAl.SRop=MRET_;
 						OP_CSR_ECALL_	:nIdAl.SRop=ECALL;
 						OP_CSR_EBREAK	:nIdAl.SRop=NCSR_;
 						default			:nIdAl.SRop=NCSR_;endcase end
 				3'b001					:nIdAl.SRop=WCCSR;
-				3'b010					:nIdAl.SRop=(nIfId.code.r1=='0)?NCSR_:WCCSR;
+				3'b010					:nIdAl.SRop=(oIfId.code.r1=='0)?NCSR_:WCCSR;
 				default					:nIdAl.SRop=NCSR_;
 			endcase end else begin nIdAl.cCsr=NACSR;nIdAl.SRaddr='0;nIdAl.SRop=NCSR_;end
+			val.SRaddr=nIdAl.SRaddr;
 
-			unique case(nIfId.code.op)//选cR1 这里7/10就反选
+			unique case(oIfId.code.op)//选cR1 这里7/10就反选
 				OP_U_I	:val.cR1='0;
 				OP_U_P	:val.cR1='0;
 				OP_J__	:val.cR1='0;
-				default	:val.cR1=nIfId.code.r1;
+				default	:val.cR1=oIfId.code.r1;
 			endcase
-			unique case(nIfId.code.op)//选cR2
-				OP_S__	:val.cR2=nIfId.code.r2;
-				OP_R__	:val.cR2=nIfId.code.r2;
-				OP_B__	:val.cR2=nIfId.code.r2;
+			unique case(oIfId.code.op)//选cR2
+				OP_S__	:val.cR2=oIfId.code.r2;
+				OP_R__	:val.cR2=oIfId.code.r2;
+				OP_B__	:val.cR2=oIfId.code.r2;
 				default	:val.cR2='0;
 			endcase
-			unique case(nIfId.code.op)//选cRd 也是反选
+			unique case(oIfId.code.op)//选cRd 也是反选
 				OP_B__	:nIdAl.cRd='0;
 				OP_S__	:nIdAl.cRd='0;
-				OP_CSR	:nIdAl.cRd=(nIfId.code.fun3==3'b000)?'0:nIfId.code.rd;
-				default	:nIdAl.cRd=nIfId.code.rd;
+				OP_CSR	:nIdAl.cRd=(oIfId.code.fun3==3'b000)?'0:oIfId.code.rd;
+				default	:nIdAl.cRd=oIfId.code.rd;
 			endcase
 		end
 	// end
@@ -481,14 +474,14 @@ module ysyx_26020046_rv32iALU(
 			CCSR:nAlLs.res=oIdAl.oCsr;
 			SNPC:nAlLs.res=oIdAl.pc+4;
 			NCHO:nAlLs.res='0;
-			default:begin nAlLs.res='0;$fatal("unknown cho==0x%x",oIdAl.cIrd);end
+			default:begin nAlLs.res='0;$error("unknown cho==0x%x",oIdAl.cIrd);$stop;end
 		endcase
 		unique case(oIdAl.cCsr)
 			WACSR:nAlLs.iCsr=oIdAl.oR1;
 			RACSR:nAlLs.iCsr=oIdAl.oR1|oIdAl.oCsr;
 			JUMP_:nAlLs.iCsr=oIdAl.pc;
 			NCSR_:nAlLs.iCsr='0;
-			default:begin nAlLs.iCsr='0;$fatal("unknown csr==0x%x",oIdAl.cCsr);end
+			default:begin nAlLs.iCsr='0;$error("unknown csr==0x%x",oIdAl.cCsr);$stop;end
 		endcase
 	end
 	always_comb begin : bfu
@@ -606,9 +599,9 @@ module ysyx_26020046_rv32iCSR(
 		end else begin
 	`ifdef RV32I_DEBUG
 			if(~reset)begin
-				if(op.SRop==ECALL)$fdisplay(logFile,"SR:ecall mepc %x<=%x mcause %x<=%x",mepc,oLsWb.iCsr,mcause,11);
-				else if(op.SRop==MRET_)$fdisplay(logFile,"SR:mret mstatus %x<=%x mcause %x<=%x",mstatus,oLsWb.iCsr,mcause,0);
-				else if(op.SRop==WCCSR)begin unique case(op.SRaddr)
+				if(oLsWb.SRop==ECALL)$fdisplay(logFile,"SR:ecall mepc %x<=%x mcause %x<=%x",mepc,oLsWb.iCsr,mcause,11);
+				else if(oLsWb.SRop==MRET_)$fdisplay(logFile,"SR:mret mstatus %x<=%x mcause %x<=%x",mstatus,oLsWb.iCsr,mcause,0);
+				else if(oLsWb.SRop==WCCSR)begin unique case(oLsWb.SRaddr)
 					CSR_ADDR_MEPC		:$fdisplay(logFile,"SR:mepc %x<=%x", mepc,				oLsWb.iCsr);
 					CSR_ADDR_MSTAUS		:$fdisplay(logFile,"SR:mstatus %x<=%x", mstatus,		oLsWb.iCsr);
 					CSR_ADDR_MTVEC		:$fdisplay(logFile,"SR:mtvec %x<=%x", mtvec,			oLsWb.iCsr);
@@ -617,7 +610,7 @@ module ysyx_26020046_rv32iCSR(
 					CSR_ADDR_MCYCLEH	:$fdisplay(logFile,"SR:mcycleh %x<=%x", mcycleh,		oLsWb.iCsr);
 					CSR_ADDR_MARCHID	:$fdisplay(logFile,"SR:marchid %x<=%x", marchid,		oLsWb.iCsr);
 					CSR_ADDR_MVENDORID	:$fdisplay(logFile,"SR:mvendorid %x<=%x", mvendorid,	oLsWb.iCsr);
-					default:begin $fatal("unknown csrAddr==0x%x",op.SRaddr); end
+					default:begin $fatal("unknown csrAddr==0x%x",oLsWb.SRaddr); end
 				endcase end
 			end
 	`endif
@@ -643,7 +636,7 @@ module ysyx_26020046_rv32iCSR(
 		end
 
 	always_comb begin:choose_csr
-		unique case(oLsWb.SRaddr)
+		unique case(val.SRaddr)
 			CSR_ADDR_MEPC		:val.oCsr=mepc;
 			CSR_ADDR_MSTAUS		:val.oCsr=mstatus;
 			CSR_ADDR_MTVEC		:val.oCsr=mtvec;
@@ -655,4 +648,4 @@ module ysyx_26020046_rv32iCSR(
 			default				:val.oCsr='0;
 		endcase
 	end
-endmodule
+	endmodule
