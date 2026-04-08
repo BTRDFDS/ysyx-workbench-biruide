@@ -1,5 +1,5 @@
 package rv32iBasis;
-	// `define RV32I_DEBUG
+	`define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -42,9 +42,6 @@ package rv32iBasis;
 	typedef enum logic[2:0] {B_,H_,W_,NM,BU,HU} LSUop_t;
 	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
 
-	typedef enum logic [1:0] {IDLE,WAIT} ifuStatus_t;
-
-
 	typedef struct packed {
 		logic [6:0] fun7;
 		logic [4:0] r2;
@@ -53,6 +50,8 @@ package rv32iBasis;
 		logic [4:0] rd;
 		logic [6:0] op;
 	} code_t;
+
+	typedef enum logic [0:0]{IFUidle,IFUwait} IFUstatus_t;
 
 	`ifdef RV32I_DEBUG
 		integer logFile;
@@ -64,11 +63,12 @@ package rv32iBasis;
 	endpackage
 interface IfId_t();
 	import rv32iBasis::*;
+	logic valid,ready;
 	code_t code;
-	modport IFU(output code);
-	modport IDU(input  code);
-	modport IN_(input  code);
-	modport OUT(output code);
+	modport IFU(output code,valid,input  ready);
+	modport IDU(input  code,valid,output ready);
+	modport IN_(input  code,valid,output ready);
+	modport OUT(output code,valid,input  ready);
 	endinterface
 interface IdAl_t();
 	import rv32iBasis::*;
@@ -181,8 +181,8 @@ module ysyx_26020046_rv32i(
 		always @(posedge clk) begin
 			if(reset)$fdisplay(logFile,"!!!reset!!!");
 			else begin
-				$fdisplay(logFile,"nIfId code=%x",nIfId.code);
-				$fdisplay(logFile,"oIfId code=%x",oIfId.code);
+				$fdisplay(logFile,"nIfId code=%x valid=%b ready=%b",nIfId.code,nIfId.valid,nIfId.ready);
+				$fdisplay(logFile,"oIfId code=%x valid=%b ready=%b",oIfId.code,oIfId.valid,oIfId.ready);
 				$fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);
 				$fdisplay(logFile,"nIdAl in1=%s in2=%s oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b cal=%s adr=%s cCsr=%s cIrd=%s enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x",nIdAl.in1.name(),nIdAl.in2.name(),nIdAl.oR1,nIdAl.oR2,nIdAl.oCsr,nIdAl.imm,nIdAl.pc,nIdAl.enJcod,nIdAl.cal.name(),nIdAl.adr.name(),nIdAl.cCsr.name(),nIdAl.cIrd.name(),nIdAl.enL,nIdAl.enS,nIdAl.LSop.name(),nIdAl.SRaddr,nIdAl.SRop.name(),nIdAl.cRd);
 				$fdisplay(logFile,"oIdAl in1=%s in2=%s oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b cal=%s adr=%s cCsr=%s cIrd=%s enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x",oIdAl.in1.name(),oIdAl.in2.name(),oIdAl.oR1,oIdAl.oR2,oIdAl.oCsr,oIdAl.imm,oIdAl.pc,oIdAl.enJcod,oIdAl.cal.name(),oIdAl.adr.name(),oIdAl.cCsr.name(),oIdAl.cIrd.name(),oIdAl.enL,oIdAl.enS,oIdAl.LSop.name(),oIdAl.SRaddr,oIdAl.SRop.name(),oIdAl.cRd);
@@ -217,8 +217,9 @@ module ysyx_26020046_rv32iWater(
 	LsWb_t.OUT oLsWb
 	);
 	always_comb begin
-		oIfId.code=nIfId.code;
-	end
+		oIfId.valid	=nIfId.valid;
+		oIfId.code	=nIfId.code;
+	end assign nIfId.ready=oIfId.ready;
 	always_comb begin
 		oIdAl.in1	=nIdAl.in1;
 		oIdAl.in2	=nIdAl.in2;
@@ -269,6 +270,22 @@ module ysyx_26020046_rv32iIFU(
 	);
 	import rv32iBasis::*;
 
+	IFUstatus_t nStatus,oStatus;
+	always_comb begin
+		unique case(oStatus)
+			IFUidle:nStatus=IFUwait;//TODO 先默认是有数据要发送
+			IFUwait:nStatus=nIfId.ready?IFUidle:IFUwait;
+		endcase
+		nIfId.valid=(oStatus==IFUidle);
+	end
+	always_ff@(posedge clk)begin
+		if(reset) oStatus<=IFUidle;
+		else oStatus<=nStatus;
+	end
+
+
+
+
 	assign sbIf.addr=val.pc;
 	assign nIfId.code=sbIf.rdata;
 
@@ -287,6 +304,7 @@ module ysyx_26020046_rv32iIDU(
 	val_t.IDU val
 	);
 	import rv32iBasis::*;
+	assign oIfId.ready=1;
 	assign nIdAl.oR1	=val.oR1;
 	assign nIdAl.oR2	=val.oR2;
 	assign nIdAl.oCsr	=val.oCsr;
@@ -299,7 +317,7 @@ module ysyx_26020046_rv32iIDU(
 		nIdAl.SRop=NCSR_;nIdAl.SRaddr='0;
 		{val.cR1,val.cR2,nIdAl.cRd,nIdAl.enJcod,nIdAl.imm}='0;
 
-		// if(~op.reset) begin
+		if(oIfId.valid) begin
 			unique case(oIfId.code.op)
 				OP_U_I	:nIdAl.imm={oIfId.code[31:12],12'b0 };
 				OP_U_P	:nIdAl.imm={oIfId.code[31:12],12'b0 };
@@ -430,7 +448,7 @@ module ysyx_26020046_rv32iIDU(
 				default	:nIdAl.cRd=oIfId.code.rd;
 			endcase
 		end
-	// end
+	end
 	endmodule
 module ysyx_26020046_rv32iALU(
 	IdAl_t oIdAl,
