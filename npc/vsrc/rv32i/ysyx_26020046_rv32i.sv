@@ -277,25 +277,25 @@ module ysyx_26020046_rv32iIFU(
 			IFUwait:nStatus=nIfId.ready?IFUidle:IFUwait;
 		endcase
 		nIfId.valid=(oStatus==IFUidle);
+		// nIfId.valid=1;//TODO 完全单周期不启动状态机
+		sbIf.addr=val.pc;
+		nIfId.code=sbIf.rdata;
 	end
 	always_ff@(posedge clk)begin
 		if(reset) oStatus<=IFUidle;
 		else oStatus<=nStatus;
 	end
 
-
-
-
-	assign sbIf.addr=val.pc;
-	assign nIfId.code=sbIf.rdata;
+	// assign sbIf.addr=val.pc;
+	// assign nIfId.code=sbIf.rdata;
 
 	always_ff @(posedge clk) begin : pc
-	`ifdef RV32I_DEBUG
-		if(iAlIf.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,iAlIf.addr);
-	`endif
+		`ifdef RV32I_DEBUG if(iAlIf.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,iAlIf.addr);`endif
 		if(reset) val.pc<=PC_RESET;
-		else if(iAlIf.enJfun) val.pc<=(iAlIf.addr&32'hFFFFFFFC);
-		else val.pc<=val.pc+4;
+		else if(oStatus==IFUidle)begin
+			if(iAlIf.enJfun) val.pc<=(iAlIf.addr&32'hFFFFFFFC);
+			else val.pc<=val.pc+4;
+		end
 	end	
 	endmodule
 module ysyx_26020046_rv32iIDU(
