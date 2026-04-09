@@ -195,7 +195,9 @@ module ysyx_26020046_rv32iRAM(
 	import rv32iBasis::*;
 	always_ff@(posedge clk) begin
 		if(sbLs.ren)sbLs.rdata<=pmem_read(sbLs.addr);
+	// 		`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:RESD  [%x] => %x",nAlLs.addr,iRAM);`endif
 		if(sbLs.wen)pmem_write(sbLs.addr,sbLs.wdata,{4'b0,sbLs.wmask});
+	// 		`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:write [%x] <(%b)= %x",nAlLs.addr,mask,nAlLs.oR2);`endif
 	end
 	endmodule
 module ysyx_26020046_rv32iIFU(
@@ -518,12 +520,10 @@ module ysyx_26020046_rv32iLSU(
 	// always_comb begin :write
 	// 	if((nAlLs.enL)&clk)begin
 	// 		iRAM=pmem_read(nAlLs.addr);
-	// 		`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:RESD  [%x] => %x",nAlLs.addr,iRAM);`endif
 	// 	end else iRAM = '0;
 	// end
 	// always_ff@(posedge clk) begin:control_write
 	// 	if (nAlLs.enS) begin // 有写请求时
-	// 		`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:write [%x] <(%b)= %x",nAlLs.addr,mask,nAlLs.oR2);`endif
 	// 		pmem_write(nAlLs.addr,nAlLs.oR2, {4'b0,mask});
 	// 	end
 	// end
