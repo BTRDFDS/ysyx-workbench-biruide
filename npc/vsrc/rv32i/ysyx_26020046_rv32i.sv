@@ -131,9 +131,11 @@ interface val_t();
 	endinterface;
 interface SimpleBus_t();
 	import rv32iBasis::*;
-	word_t addr,rdata;
-	modport IFU(input rdata,output addr);
-	modport MEM(output rdata,input addr);
+	word_t addr,rdata,wdata;
+	logic ren,wen;
+	logic[3:0] wmask;
+	modport CPU(input  rdata,output addr,ren,wen,wdata,wmask);
+	modport MEM(output rdata,input  addr,ren,wen,wdata,wmask);
 	endinterface
 module ysyx_26020046_rv32i(
 	input logic clk,
@@ -147,8 +149,10 @@ module ysyx_26020046_rv32i(
 	LsWb_t nLsWb();
 	val_t val();
 	SimpleBus_t sbIf();
+	SimpleBus_t sbLs();
 
-	ysyx_26020046_rv32iMEM MEM(.*);
+	ysyx_26020046_rv32iROM ROM(.*);
+	ysyx_26020046_rv32iRAM RAM(.*);
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
 	ysyx_26020046_rv32iALU ALU(.*);
@@ -174,17 +178,28 @@ module ysyx_26020046_rv32i(
 		end
 	`endif
 	endmodule
-module ysyx_26020046_rv32iMEM(
-	SimpleBus_t.MEM sbIf
+module ysyx_26020046_rv32iROM(
+	SimpleBus_t.MEM sbIf,
+	input clk
 	);
 	import rv32iBasis::*;
-	// always_ff@(posedge op.clk) begin
-	// 	sbIf.rdata<=pmem_read(sbIf.addr);
-	// end
-	assign sbIf.rdata = pmem_read(sbIf.addr);
+	always_ff@(posedge clk) begin
+		if(sbIf.ren)sbIf.rdata<=pmem_read(sbIf.addr);
+		if(sbIf.wen)pmem_write(sbIf.addr,sbIf.wdata,{4'b0,sbIf.wmask});
+	end
+	endmodule
+module ysyx_26020046_rv32iRAM(
+	SimpleBus_t.MEM sbLs,
+	input clk
+	);
+	import rv32iBasis::*;
+	always_ff@(posedge clk) begin
+		if(sbLs.ren)sbLs.rdata<=pmem_read(sbLs.addr);
+		if(sbLs.wen)pmem_write(sbLs.addr,sbLs.wdata,{4'b0,sbLs.wmask});
+	end
 	endmodule
 module ysyx_26020046_rv32iIFU(
-	SimpleBus_t.IFU sbIf,
+	SimpleBus_t.CPU sbIf,
 	IfId_t.IFU nIfId,
 	val_t.IFU val,
 	input logic clk,reset
@@ -198,9 +213,13 @@ module ysyx_26020046_rv32iIFU(
 			IFUwait:nStatus=nIfId.ready?IFUidle:IFUwait;
 		endcase
 		nIfId.valid=(oStatus==IFUidle);
+		nIfId.code=sbIf.rdata;
 		// nIfId.valid=1;//TODO 完全单周期不启动状态机
 		sbIf.addr=val.pc;
-		nIfId.code=sbIf.rdata;
+		sbIf.ren=(oStatus==IFUwait);
+		sbIf.wen=0;
+		sbIf.wdata='0;
+		sbIf.wmask='0;
 	end
 	always_ff@(posedge clk)begin
 		if(reset) oStatus<=IFUidle;
@@ -459,9 +478,10 @@ module ysyx_26020046_rv32iALU(
 	end
 	endmodule
 module ysyx_26020046_rv32iLSU(
+	SimpleBus_t sbLs,
 	AlLs_t.LSU nAlLs,
-	LsWb_t.LSU nLsWb,
-	input clk
+	LsWb_t.LSU nLsWb
+	// input clk
 	);
 	import rv32iBasis::*;
 
@@ -495,17 +515,25 @@ module ysyx_26020046_rv32iLSU(
 			default:begin 	data=0;$fatal("unknown date==0x%x",nAlLs.LSop);end
 		endcase end else 	data='0;
 	end
-	always_comb begin :write
-		if((nAlLs.enL)&clk)begin
-			iRAM=pmem_read(nAlLs.addr);
-			`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:RESD  [%x] => %x",nAlLs.addr,iRAM);`endif
-		end else iRAM = '0;
-	end
-	always_ff@(posedge clk) begin:control_write
-		if (nAlLs.enS) begin // 有写请求时
-			`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:write [%x] <(%b)= %x",nAlLs.addr,mask,nAlLs.oR2);`endif
-			pmem_write(nAlLs.addr,nAlLs.oR2, {4'b0,mask});
-		end
+	// always_comb begin :write
+	// 	if((nAlLs.enL)&clk)begin
+	// 		iRAM=pmem_read(nAlLs.addr);
+	// 		`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:RESD  [%x] => %x",nAlLs.addr,iRAM);`endif
+	// 	end else iRAM = '0;
+	// end
+	// always_ff@(posedge clk) begin:control_write
+	// 	if (nAlLs.enS) begin // 有写请求时
+	// 		`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:write [%x] <(%b)= %x",nAlLs.addr,mask,nAlLs.oR2);`endif
+	// 		pmem_write(nAlLs.addr,nAlLs.oR2, {4'b0,mask});
+	// 	end
+	// end
+	always_comb begin
+		sbLs.addr=nAlLs.addr;
+		sbLs.wdata=nAlLs.oR2;
+		sbLs.wmask=mask;
+		sbLs.ren=nAlLs.enL;
+		sbLs.wen=nAlLs.enS;
+		iRAM=sbLs.rdata;
 	end
 	endmodule
 module ysyx_26020046_rv32iGPR(
