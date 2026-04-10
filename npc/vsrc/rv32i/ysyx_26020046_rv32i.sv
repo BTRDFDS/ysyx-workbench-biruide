@@ -67,11 +67,13 @@ interface IfId_t();
 	code_t code;
 	word_t addr;
 	logic enJfun;
-	modport IFU(output code,valid,input  ready,addr,enJfun);
-	modport IDU(input  code,valid,output ready,addr,enJfun);
+	modport IFU(output code,valid,input  addr,enJfun,ready);
+	modport IDU(input  code,valid,output addr,enJfun,ready);
 	endinterface
 interface IdAl_t();
 	import rv32iBasis::*;
+	logic valid,ready;
+
 	in1_t		in1;
 	in2_t		in2;
 	logic 		enJcod;
@@ -94,11 +96,13 @@ interface IdAl_t();
 	word_t addr;
 	logic enJfun;
 
-	modport IDU(output in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd,input  addr,enJfun);
-	modport ALU(input  in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd,output addr,enJfun);
+	modport IDU(output in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd,valid,input  addr,enJfun,ready);
+	modport ALU(input  in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd,valid,output addr,enJfun,ready);
 	endinterface
 interface AlLs_t();
 	import rv32iBasis::*;
+	logic valid,ready;
+
 	logic enS,enL;
 	LSUop_t LSop;
 	word_t addr,res,iCsr,oR2;
@@ -106,18 +110,22 @@ interface AlLs_t();
 	CSRop_t SRop;
 
 	reg_t cRd;
-	modport ALU(output enS,enL,LSop,res,addr,oR2,cRd,iCsr,SRaddr,SRop);
-	modport LSU(input  enS,enL,LSop,res,addr,oR2,cRd,iCsr,SRaddr,SRop);
+	modport ALU(output enS,enL,LSop,res,addr,oR2,cRd,iCsr,SRaddr,SRop,valid,input  ready);
+	modport LSU(input  enS,enL,LSop,res,addr,oR2,cRd,iCsr,SRaddr,SRop,valid,output ready);
 	endinterface
 interface LsWb_t();
 	import rv32iBasis::*;
+	logic valid,ready;
+	logic readySr,readyRg;
+
 	reg_t cRd;
 	logic [11:0] SRaddr;
 	CSRop_t SRop;
 	word_t iRd,iCsr;
-	modport LSU(output iRd,cRd,iCsr,SRaddr,SRop);
-	modport GPR(input  iRd,cRd);
-	modport CSR(input  iCsr,SRaddr,SRop);
+	assign ready=readyRg&readySr;
+	modport LSU(output iRd,cRd,iCsr,SRaddr,SRop,valid,input ready);
+	modport GPR(input  iRd,cRd,valid,output readyRg);
+	modport CSR(input  iCsr,SRaddr,SRop,valid,output readySr);
 	endinterface
 interface val_t();
 	import rv32iBasis::*;
@@ -247,13 +255,16 @@ module ysyx_26020046_rv32iIDU(
 	val_t.IDU val
 	);
 	import rv32iBasis::*;
-	assign nIfId.ready	=1;
-	assign nIfId.addr	=nIdAl.addr;
-	assign nIfId.enJfun	=nIdAl.enJfun;
-	assign nIdAl.oR1	=val.oR1;
-	assign nIdAl.oR2	=val.oR2;
-	assign nIdAl.oCsr	=val.oCsr;
-	assign nIdAl.pc		=val.pc;
+	always_comb begin
+		nIdAl.oR1	=val.oR1;
+		nIdAl.oR2	=val.oR2;
+		nIdAl.oCsr	=val.oCsr;
+		nIdAl.pc	=val.pc;
+		nIdAl.valid	=nIfId.valid;
+		nIfId.addr	=nIdAl.addr;
+		nIfId.enJfun=nIdAl.enJfun;
+		nIfId.ready	=nIdAl.ready;
+	end
 	always_comb begin : ID
 		nIdAl.in1=IR1;nIdAl.in2=IR2;
 		nIdAl.adr=NAD;nIdAl.cal=NCAL;nIdAl.bfu=NBFU;
@@ -411,9 +422,11 @@ module ysyx_26020046_rv32iALU(
 		nAlLs.cRd	=nIdAl.cRd;
 		nAlLs.SRaddr=nIdAl.SRaddr;
 		nAlLs.SRop	=nIdAl.SRop;
+		nAlLs.valid	=nIdAl.valid;
+		nIdAl.ready	=nAlLs.ready;
 	end
 
-	always_comb begin : cal
+	always_comb begin if(nIdAl.valid)begin
 		unique case(nIdAl.in1)
 			IR1:in1=nIdAl.oR1;
 			PC_:in1=nIdAl.pc;
@@ -454,8 +467,6 @@ module ysyx_26020046_rv32iALU(
 			NCSR_:nAlLs.iCsr='0;
 			default:begin nAlLs.iCsr='0;$error("unknown csr==0x%x",nIdAl.cCsr);$stop;end
 		endcase
-	end
-	always_comb begin : bfu
 		unique case(nIdAl.bfu)
 			BEQ_:enBfun=(nIdAl.oR1==nIdAl.oR2);
 			BNE_:enBfun=(nIdAl.oR1!=nIdAl.oR2);
@@ -466,8 +477,6 @@ module ysyx_26020046_rv32iALU(
 			NBFU:enBfun='0;
 			default:begin enBfun='0;$fatal("unknown bfu==0x%x",nIdAl.bfu);end
 			endcase
-	end
-	always_comb begin : adr
 		unique case(nIdAl.adr)
 			R1I:nAlLs.addr=nIdAl.oR1+nIdAl.imm;
 			PCI:nAlLs.addr=nIdAl.pc +nIdAl.imm;
@@ -478,7 +487,7 @@ module ysyx_26020046_rv32iALU(
 		endcase
 		nIdAl.enJfun=nIdAl.enJcod|enBfun;
 		nIdAl.addr=nAlLs.addr;
-	end
+	end end
 	endmodule
 module ysyx_26020046_rv32iLSU(
 	SimpleBus_t sbLs,
@@ -497,19 +506,33 @@ module ysyx_26020046_rv32iLSU(
 		nLsWb.iCsr	=nAlLs.iCsr;
 		nLsWb.SRaddr=nAlLs.SRaddr;
 		nLsWb.SRop	=nAlLs.SRop;
+		nLsWb.valid	=nAlLs.valid;//TODO next time write about if read and write success
+		nAlLs.ready	=nLsWb.ready;//TODO also like that
 	end
-
-	always_comb begin : choose_mask
-		if (nAlLs.enS) begin unique case(nAlLs.LSop)
+	always_comb begin
+		sbLs.addr	='0;
+		sbLs.wdata	='0;
+		sbLs.wmask	='0;
+		sbLs.ren	='0;
+		sbLs.wen	='0;
+		iRAM		='0;
+		if(nAlLs.valid)begin
+		sbLs.addr	=nAlLs.addr;
+		sbLs.wdata	=nAlLs.oR2;
+		sbLs.wmask	=mask;
+		sbLs.ren	=nAlLs.enL;
+		sbLs.wen	=nAlLs.enS;
+		iRAM		=sbLs.rdata;
+	end end
+	always_comb begin
+		if (nAlLs.enS&nAlLs.valid) begin unique case(nAlLs.LSop)
 			B_:				mask=4'b0001;
 			H_:				mask=4'b0011;
 			W_:				mask=4'b1111;
 			NM:				mask=4'b0000;
 			default:begin 	mask=4'b0000;$fatal("unknown mask==0x%x",nAlLs.LSop);end
 		endcase end else 	mask=4'b0000;
-	end
-	always_comb begin : choose_date_input
-		if(nAlLs.enL) begin unique case(nAlLs.LSop)
+		if(nAlLs.enL&nAlLs.valid) begin unique case(nAlLs.LSop)
 			B_:				data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
 			H_:				data={{16{iRAM[15]}},iRAM[15: 0]};
 			W_:				data=iRAM;
@@ -517,24 +540,6 @@ module ysyx_26020046_rv32iLSU(
 			HU:				data={{16{1'b0}},iRAM[15: 0]};
 			default:begin 	data=0;$fatal("unknown date==0x%x",nAlLs.LSop);end
 		endcase end else 	data='0;
-	end
-	// always_comb begin :write
-	// 	if((nAlLs.enL)&clk)begin
-	// 		iRAM=pmem_read(nAlLs.addr);
-	// 	end else iRAM = '0;
-	// end
-	// always_ff@(posedge clk) begin:control_write
-	// 	if (nAlLs.enS) begin // 有写请求时
-	// 		pmem_write(nAlLs.addr,nAlLs.oR2, {4'b0,mask});
-	// 	end
-	// end
-	always_comb begin
-		sbLs.addr=nAlLs.addr;
-		sbLs.wdata=nAlLs.oR2;
-		sbLs.wmask=mask;
-		sbLs.ren=nAlLs.enL;
-		sbLs.wen=nAlLs.enS;
-		iRAM=sbLs.rdata;
 	end
 	endmodule
 module ysyx_26020046_rv32iGPR(
@@ -546,10 +551,11 @@ module ysyx_26020046_rv32iGPR(
 
 	word_t gpr [2**REG_NUMBER -1:1];
 
+	assign nLsWb.readyRg=1;
 	always_ff@(posedge clk) begin:reg_write
 		if(reset)begin
 			for (int i = 1; i < 32; i++) gpr[i]<='0;
-		end else begin
+		end else if(nLsWb.valid)begin
 			`ifdef RV32I_DEBUG if(nLsWb.cRd!=0)$fdisplay(logFile,"RG:[%d]%x <= %x",nLsWb.cRd,gpr[nLsWb.cRd],nLsWb.iRd);`endif
 			if (nLsWb.cRd!=0) gpr[nLsWb.cRd] <= nLsWb.iRd;
     	end
@@ -571,6 +577,7 @@ module ysyx_26020046_rv32iCSR(
 
 	word_t mepc,mstatus,mtvec,mcause,mcycle,mcycleh,marchid,mvendorid;
 
+	assign nLsWb.readySr=1;
 	always_ff@(posedge clk) begin:csr_write
 		if(reset)begin
 			mepc		<=PC_RESET;
@@ -600,7 +607,7 @@ module ysyx_26020046_rv32iCSR(
 			end
 	`endif
 			{mcycleh,mcycle}<={mcycleh,mcycle}+1;
-			unique case(nLsWb.SRop)
+			if(nLsWb.valid) begin unique case(nLsWb.SRop)
 				ECALL:begin mepc<=nLsWb.iCsr;mcause<=11;end
 				MRET_:begin mstatus<=MSTATUS_RESET;mcause<='0;end
 				WCCSR:begin unique case(nLsWb.SRaddr)
@@ -616,7 +623,7 @@ module ysyx_26020046_rv32iCSR(
 					endcase end
 				NCSR_:;
 				default:begin $fatal("unknown op.SRop==0x%x",nLsWb.SRop); end
-				endcase
+			endcase end
 			end
 		end
 
