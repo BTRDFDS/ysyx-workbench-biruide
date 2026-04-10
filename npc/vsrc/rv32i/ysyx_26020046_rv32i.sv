@@ -140,10 +140,10 @@ interface val_t();
 interface SimpleBus_t();
 	import rv32iBasis::*;
 	word_t addr,rdata,wdata;
-	logic ren,wen;
+	logic ren,wen,respValid;
 	logic[3:0] wmask;
-	modport CPU(input  rdata,output addr,ren,wen,wdata,wmask);
-	modport MEM(output rdata,input  addr,ren,wen,wdata,wmask);
+	modport CPU(input  rdata,respValid,output addr,ren,wen,wdata,wmask);
+	modport MEM(output rdata,respValid,input  addr,ren,wen,wdata,wmask);
 	endinterface
 module ysyx_26020046_rv32i(
 	input logic clk,
@@ -178,9 +178,12 @@ module ysyx_26020046_rv32i(
 			else begin
 				$fdisplay(logFile,"nIfId code=%x valid=%b ready=%b addr=%x enJfun=%b",nIfId.code,nIfId.valid,nIfId.ready,nIfId.addr,nIfId.enJfun);
 				$fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);
-				$fdisplay(logFile,"nIdAl in1=%s in2=%s oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b cal=%s adr=%s cCsr=%s cIrd=%s enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x addr=%x enJfun=%b",nIdAl.in1.name(),nIdAl.in2.name(),nIdAl.oR1,nIdAl.oR2,nIdAl.oCsr,nIdAl.imm,nIdAl.pc,nIdAl.enJcod,nIdAl.cal.name(),nIdAl.adr.name(),nIdAl.cCsr.name(),nIdAl.cIrd.name(),nIdAl.enL,nIdAl.enS,nIdAl.LSop.name(),nIdAl.SRaddr,nIdAl.SRop.name(),nIdAl.cRd,nIdAl.addr,nIdAl.enJfun);
-				$fdisplay(logFile,"nAlLs enS=%b enL=%b LSop=%s res=%x addr=%x oR2=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nAlLs.enS,nAlLs.enL,nAlLs.LSop.name(),nAlLs.res,nAlLs.addr,nAlLs.oR2,nAlLs.cRd,nAlLs.iCsr,nAlLs.SRaddr,nAlLs.SRop.name());
-				$fdisplay(logFile,"nLsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nLsWb.iRd,nLsWb.cRd,nLsWb.iCsr,nLsWb.SRaddr,nLsWb.SRop.name());
+				$fdisplay(logFile,"nIdAl oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b vaild=%b ready=%b",nIdAl.oR1,nIdAl.oR2,nIdAl.oCsr,nIdAl.imm,nIdAl.pc,nIdAl.enJcod,nIdAl.valid,nIdAl.ready);
+				$fdisplay(logFile,"nIdAl in1=%s in2=%s al=%s adr=%s cCsr=%s cIrd=%s addr=%x enJfun=%b",nIdAl.in1.name(),nIdAl.in2.name(),nIdAl.cal.name(),nIdAl.adr.name(),nIdAl.cCsr.name(),nIdAl.cIrd.name(),nIdAl.addr,nIdAl.enJfun);
+				$fdisplay(logFile,"nIdAl enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x",nIdAl.enL,nIdAl.enS,nIdAl.LSop.name(),nIdAl.SRaddr,nIdAl.SRop.name(),nIdAl.cRd);
+				$fdisplay(logFile,"nAlLs enS=%b enL=%b LSop=%s res=%x addr=%x valid=%b ready=%b",nAlLs.enS,nAlLs.enL,nAlLs.LSop.name(),nAlLs.res,nAlLs.addr,nAlLs.valid,nAlLs.ready);
+				$fdisplay(logFile,"nAlLs oR2=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nAlLs.oR2,nAlLs.cRd,nAlLs.iCsr,nAlLs.SRaddr,nAlLs.SRop.name());
+				$fdisplay(logFile,"nLsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s valid=%b ready=%b",nLsWb.iRd,nLsWb.cRd,nLsWb.iCsr,nLsWb.SRaddr,nLsWb.SRop.name(),nLsWb.valid,nLsWb.ready);
 			end
 			$fstrobe(logFile,"");
 		end
@@ -192,7 +195,10 @@ module ysyx_26020046_rv32iROM(
 	);
 	import rv32iBasis::*;
 	always_ff@(posedge clk) begin
-		if(sbIf.ren)sbIf.rdata<=pmem_read(sbIf.addr);
+		if(sbIf.ren)begin
+			sbIf.rdata<=pmem_read(sbIf.addr);
+			sbIf.respValid<=0;
+		end else sbIf.respValid<=1;
 		if(sbIf.wen)pmem_write(sbIf.addr,sbIf.wdata,{4'b0,sbIf.wmask});
 	end
 	endmodule
@@ -220,30 +226,26 @@ module ysyx_26020046_rv32iIFU(
 	IFUstatus_t nStatus,oStatus;
 	always_comb begin
 		unique case(oStatus)
-			IFUidle:nStatus=IFUwait;//TODO 先默认是有数据要发送
-			IFUwait:nStatus=nIfId.ready?IFUidle:IFUwait;
+			IFUidle:nStatus=nIfId.ready?IFUwait:IFUidle;//TODO 先默认是有数据要发送
+			IFUwait:nStatus=sbIf.respValid?IFUwait:IFUidle;
 		endcase
-		nIfId.valid=(oStatus==IFUidle);
-		nIfId.code=sbIf.rdata;
-		// nIfId.valid=1;//TODO 完全单周期不启动状态机
 		sbIf.addr=val.pc;
 		sbIf.ren=(oStatus==IFUwait);
 		sbIf.wen=0;
 		sbIf.wdata='0;
 		sbIf.wmask='0;
+		
+		nIfId.valid=(oStatus==IFUidle);
+		nIfId.code	=sbIf.rdata;
 	end
 	always_ff@(posedge clk)begin
-		if(reset) oStatus<=IFUidle;
+		if(reset) oStatus<=IFUwait;
 		else oStatus<=nStatus;
 	end
-
-	// assign sbIf.addr=val.pc;
-	// assign nIfId.code=sbIf.rdata;
-
 	always_ff @(posedge clk) begin : pc
 		`ifdef RV32I_DEBUG if(nIfId.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,nIfId.addr);`endif
 		if(reset) val.pc<=PC_RESET;
-		else if(oStatus==IFUidle)begin
+		else if(oStatus==IFUidle)begin//TODO 问题所在
 			if(nIfId.enJfun) val.pc<=(nIfId.addr&32'hFFFFFFFC);
 			else val.pc<=val.pc+4;
 		end
