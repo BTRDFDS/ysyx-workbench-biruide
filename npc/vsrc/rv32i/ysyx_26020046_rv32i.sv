@@ -1,5 +1,5 @@
 package rv32iBasis;
-	`define RV32I_DEBUG
+	// `define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -255,7 +255,7 @@ module ysyx_26020046_rv32iIFU(
 		nIfId.code	=sbIf.rdata;
 	end
 	always_ff@(posedge clk)begin
-		$fdisplay(logFile,"IFU:s=%s,ns=%s",oStatus.name(),nStatus.name());
+		`ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s",oStatus.name(),nStatus.name());`endif
 		if(reset) oStatus<=IFUwait;
 		else oStatus<=nStatus;
 	end
