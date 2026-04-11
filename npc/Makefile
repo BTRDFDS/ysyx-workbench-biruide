@@ -16,7 +16,7 @@ vFile = $(shell find vsrc -type f -name "*.v")
 cFile = $(patsubst vsrc/%.v,csrc/%.cpp,$(vFile))
 BINS  = $(patsubst vsrc/%.v,bin/%,$(vFile))
 NAME  = $(basename $(vFile))
-CXXFLAGS += -O3 -march=native -fomit-frame-pointer
+CXXFLAGS += -O3 -march=native -fomit-frame-pointer -MMD
 
 INC_PATH ?=
 INCFLAGS = $(addprefix -I, $(INC_PATH))

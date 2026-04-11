@@ -52,6 +52,7 @@ package rv32iBasis;
 	} code_t;
 
 	typedef enum logic [0:0]{IFUidle,IFUwait} IFUstatus_t;
+	typedef enum logic [1:0]{MEMidle,MEMread} MEMstatus_t;
 
 	`ifdef RV32I_DEBUG
 		integer logFile;
@@ -147,7 +148,8 @@ interface SimpleBus_t();
 	endinterface
 module ysyx_26020046_rv32i(
 	input logic clk,
-	input logic reset
+	input logic reset,
+	output logic difftest
 	);
 	import rv32iBasis::*;
 
@@ -168,6 +170,8 @@ module ysyx_26020046_rv32i(
 	ysyx_26020046_rv32iGPR GPR(.*);
 	ysyx_26020046_rv32iCSR CSR(.*);
 
+	// assign difftest=nIfId.ready&nIfId.valid;
+	always_ff@(posedge clk)difftest<=nIfId.ready&nIfId.valid;
 	`ifdef RV32I_DEBUG
 		initial begin
 			logFile = $fopen("log/rv32iDebugLog.txt");
@@ -185,7 +189,7 @@ module ysyx_26020046_rv32i(
 				$fdisplay(logFile,"nAlLs oR2=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nAlLs.oR2,nAlLs.cRd,nAlLs.iCsr,nAlLs.SRaddr,nAlLs.SRop.name());
 				$fdisplay(logFile,"nLsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s valid=%b ready=%b",nLsWb.iRd,nLsWb.cRd,nLsWb.iCsr,nLsWb.SRaddr,nLsWb.SRop.name(),nLsWb.valid,nLsWb.ready);
 			end
-			$fstrobe(logFile,"");
+			$fstrobe(logFile,"nIfId valid=%b ready=%b difftest=%b\n",nIfId.valid,nIfId.ready,difftest);
 		end
 	`endif
 	endmodule
@@ -197,8 +201,8 @@ module ysyx_26020046_rv32iROM(
 	always_ff@(posedge clk) begin
 		if(sbIf.ren)begin
 			sbIf.rdata<=pmem_read(sbIf.addr);
-			sbIf.respValid<=0;
-		end else sbIf.respValid<=1;
+			sbIf.respValid<=1;
+		end else sbIf.respValid<=0;
 		if(sbIf.wen)pmem_write(sbIf.addr,sbIf.wdata,{4'b0,sbIf.wmask});
 	end
 	endmodule
@@ -207,12 +211,24 @@ module ysyx_26020046_rv32iRAM(
 	input clk
 	);
 	import rv32iBasis::*;
+	MEMstatus_t s,ns;
+	always_comb begin
+		case(s)
+			MEMidle:ns=sbLs.ren?MEMread:MEMidle;
+			MEMread:ns=MEMidle;
+			default:ns=MEMidle;
+		endcase
+		sbLs.respValid=(s==MEMread);
+	end
+	always_ff @(posedge clk)begin
+		s<=ns;
+	end
 	assign sbLs.rdata=sbLs.ren?pmem_read(sbLs.addr):'0;
 	always_ff@(posedge clk) begin
 		// if(sbLs.ren)sbLs.rdata<=pmem_read(sbLs.addr);
-	// 		`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:RESD  [%x] => %x",nAlLs.addr,iRAM);`endif
+			`ifdef RV32I_DEBUG if(sbLs.ren)$fdisplay(logFile,"LS:RESD  [%x] => %x",sbLs.addr,sbLs.rdata);`endif
 		if(sbLs.wen)pmem_write(sbLs.addr,sbLs.wdata,{4'b0,sbLs.wmask});
-	// 		`ifdef RV32I_DEBUG $fdisplay(logFile,"LS:write [%x] <(%b)= %x",nAlLs.addr,mask,nAlLs.oR2);`endif
+			`ifdef RV32I_DEBUG if(sbLs.wen)$fdisplay(logFile,"LS:write [%x] <(%b)= %x",sbLs.addr,sbLs.wmask,sbLs.wdata);`endif
 	end
 	endmodule
 module ysyx_26020046_rv32iIFU(
@@ -226,7 +242,7 @@ module ysyx_26020046_rv32iIFU(
 	IFUstatus_t nStatus,oStatus;
 	always_comb begin
 		unique case(oStatus)
-			IFUidle:nStatus=nIfId.ready?IFUwait:IFUidle;//TODO 先默认是有数据要发送
+			IFUidle:nStatus=nIfId.ready?IFUwait:IFUidle;
 			IFUwait:nStatus=sbIf.respValid?IFUwait:IFUidle;
 		endcase
 		sbIf.addr=val.pc;
@@ -239,13 +255,14 @@ module ysyx_26020046_rv32iIFU(
 		nIfId.code	=sbIf.rdata;
 	end
 	always_ff@(posedge clk)begin
+		$fdisplay(logFile,"IFU:s=%s,ns=%s",oStatus.name(),nStatus.name());
 		if(reset) oStatus<=IFUwait;
 		else oStatus<=nStatus;
 	end
 	always_ff @(posedge clk) begin : pc
 		`ifdef RV32I_DEBUG if(nIfId.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,nIfId.addr);`endif
 		if(reset) val.pc<=PC_RESET;
-		else if(oStatus==IFUidle)begin//TODO 问题所在
+		else if(oStatus==IFUidle&nIfId.ready)begin
 			if(nIfId.enJfun) val.pc<=(nIfId.addr&32'hFFFFFFFC);
 			else val.pc<=val.pc+4;
 		end
@@ -508,8 +525,8 @@ module ysyx_26020046_rv32iLSU(
 		nLsWb.iCsr	=nAlLs.iCsr;
 		nLsWb.SRaddr=nAlLs.SRaddr;
 		nLsWb.SRop	=nAlLs.SRop;
-		nLsWb.valid	=nAlLs.valid;//TODO next time write about if read and write success
-		nAlLs.ready	=nLsWb.ready;//TODO also like that
+		nLsWb.valid	=nAlLs.enL?nAlLs.valid&sbLs.respValid:nAlLs.valid;
+		nAlLs.ready	=nAlLs.enL?nLsWb.ready&sbLs.respValid:nLsWb.ready;
 	end
 	always_comb begin
 		sbLs.addr	='0;

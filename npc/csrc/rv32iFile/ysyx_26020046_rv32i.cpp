@@ -182,7 +182,7 @@ void NpcStep(){
 	runStep++;
 
 	NpcTraceWrite(nPc,nCode,pc);
-	NpcDifftestCheck(pc);
+	if(top->difftest)NpcDifftestCheck(pc);
 }
 void NpcRun(uint32_t times){
 	if(npcFinishHad){printf("has ebreak.ues 'q' to exit\n");}
