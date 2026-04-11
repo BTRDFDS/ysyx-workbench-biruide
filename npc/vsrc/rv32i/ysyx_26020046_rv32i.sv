@@ -1,5 +1,5 @@
 package rv32iBasis;
-	// `define RV32I_DEBUG
+	`define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -52,7 +52,7 @@ package rv32iBasis;
 	} code_t;
 
 	typedef enum logic [0:0]{IFUidle,IFUwait} IFUstatus_t;
-	typedef enum logic [1:0]{MEMidle,MEMread} MEMstatus_t;
+	typedef enum logic [1:0]{MEMidle,MEMread,MEMwait} MEMstatus_t;
 
 	`ifdef RV32I_DEBUG
 		integer logFile;
@@ -180,6 +180,7 @@ module ysyx_26020046_rv32i(
 		always @(posedge clk) begin
 			if(reset)$fdisplay(logFile,"!!!reset!!!");
 			else begin
+				$fdisplay(logFile,"sbIf  addr=%x ren=%b wen=%b wdata=%x wmask=%b respValid=%b rdata=%x",sbIf.addr,sbIf.ren,sbIf.wen,sbIf.wdata,sbIf.wmask,sbIf.respValid,sbIf.rdata);
 				$fdisplay(logFile,"nIfId code=%x valid=%b ready=%b addr=%x enJfun=%b",nIfId.code,nIfId.valid,nIfId.ready,nIfId.addr,nIfId.enJfun);
 				$fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);
 				$fdisplay(logFile,"nIdAl oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b vaild=%b ready=%b",nIdAl.oR1,nIdAl.oR2,nIdAl.oCsr,nIdAl.imm,nIdAl.pc,nIdAl.enJcod,nIdAl.valid,nIdAl.ready);
@@ -198,11 +199,25 @@ module ysyx_26020046_rv32iROM(
 	input clk
 	);
 	import rv32iBasis::*;
+	MEMstatus_t s,ns;
+	word_t cnt;
+	parameter max = 10;
+	always_comb begin
+		case(s)
+			MEMidle:ns=sbIf.ren?MEMread:MEMidle;
+			MEMwait:ns=(cnt<max-2)?MEMwait:MEMread;
+			MEMread:ns=MEMidle;
+			default:ns=MEMidle;
+		endcase
+		sbIf.respValid=(s==MEMread);
+	end
+	always_ff @(posedge clk)begin
+		`ifdef RV32I_DEBUG $fdisplay(logFile,"ROM:s=%s,ns=%s cnt=%d",s.name(),ns.name(),cnt);`endif
+		cnt<=(s==MEMwait)?cnt+1:0;
+		s<=ns;
+	end
 	always_ff@(posedge clk) begin
-		if(sbIf.ren)begin
-			sbIf.rdata<=pmem_read(sbIf.addr);
-			sbIf.respValid<=1;
-		end else sbIf.respValid<=0;
+		if(sbIf.ren)sbIf.rdata<=pmem_read(sbIf.addr);
 		if(sbIf.wen)pmem_write(sbIf.addr,sbIf.wdata,{4'b0,sbIf.wmask});
 	end
 	endmodule
@@ -212,15 +227,20 @@ module ysyx_26020046_rv32iRAM(
 	);
 	import rv32iBasis::*;
 	MEMstatus_t s,ns;
+	word_t cnt;
+	parameter max = 10;
 	always_comb begin
 		case(s)
 			MEMidle:ns=sbLs.ren?MEMread:MEMidle;
+			MEMwait:ns=(cnt<max-3)?MEMwait:MEMread;
 			MEMread:ns=MEMidle;
 			default:ns=MEMidle;
 		endcase
 		sbLs.respValid=(s==MEMread);
 	end
-	always_ff @(posedge clk)begin
+	always_ff@(posedge clk)begin
+		`ifdef RV32I_DEBUG $fdisplay(logFile,"RAM:s=%s,ns=%s cnt=%d",s.name(),ns.name(),cnt);`endif
+		cnt<=(s==MEMwait)?cnt+1:0;
 		s<=ns;
 	end
 	assign sbLs.rdata=sbLs.ren?pmem_read(sbLs.addr):'0;
@@ -243,26 +263,27 @@ module ysyx_26020046_rv32iIFU(
 	always_comb begin
 		unique case(oStatus)
 			IFUidle:nStatus=nIfId.ready?IFUwait:IFUidle;
-			IFUwait:nStatus=sbIf.respValid?IFUwait:IFUidle;
+			IFUwait:nStatus=sbIf.respValid?IFUidle:IFUwait;
 		endcase
+		`ifdef RV32I_DEBUG $fdisplay(logFile,"s=%s,ns=%s,ready=%b,respValid=%b",oStatus.name(),nStatus.name(),nIfId.ready,sbIf.respValid);`endif
 		sbIf.addr=val.pc;
 		sbIf.ren=(oStatus==IFUwait);
 		sbIf.wen=0;
 		sbIf.wdata='0;
 		sbIf.wmask='0;
 		
-		nIfId.valid=(oStatus==IFUidle);
+		nIfId.valid=(oStatus==IFUwait&sbIf.respValid);
 		nIfId.code	=sbIf.rdata;
 	end
 	always_ff@(posedge clk)begin
-		`ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s",oStatus.name(),nStatus.name());`endif
-		if(reset) oStatus<=IFUwait;
+		`ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b respValid=%b",oStatus.name(),nStatus.name(),nIfId.ready,sbIf.respValid);`endif
+		if(reset) oStatus<=IFUidle;
 		else oStatus<=nStatus;
 	end
 	always_ff @(posedge clk) begin : pc
 		`ifdef RV32I_DEBUG if(nIfId.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,nIfId.addr);`endif
 		if(reset) val.pc<=PC_RESET;
-		else if(oStatus==IFUidle&nIfId.ready)begin
+		else if(nIfId.valid&nIfId.ready)begin
 			if(nIfId.enJfun) val.pc<=(nIfId.addr&32'hFFFFFFFC);
 			else val.pc<=val.pc+4;
 		end
