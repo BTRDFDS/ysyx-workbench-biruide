@@ -51,7 +51,7 @@ package rv32iBasis;
 		logic [6:0] op;
 	} code_t;
 
-	typedef enum logic [0:0]{IFUidle,IFUwait} IFUstatus_t;
+	typedef enum logic [0:0]{IFUback,IFUcall} IFUstatus_t;
 	typedef enum logic [1:0]{MEMidle,MEMread,MEMwait} MEMstatus_t;
 
 	`ifdef RV32I_DEBUG
@@ -196,7 +196,7 @@ module ysyx_26020046_rv32i(
 	endmodule
 module ysyx_26020046_rv32iROM(
 	SimpleBus_t.MEM sbIf,
-	input clk
+	input clk,reset
 	);
 	import rv32iBasis::*;
 	MEMstatus_t s,ns;
@@ -205,16 +205,20 @@ module ysyx_26020046_rv32iROM(
 	always_comb begin
 		case(s)
 			MEMidle:ns=sbIf.ren?MEMread:MEMidle;
-			MEMwait:ns=(cnt<max-2)?MEMwait:MEMread;
-			MEMread:ns=MEMidle;
+			MEMread:ns=(cnt+1<max)?MEMread:MEMidle;//改成!=可以兼容1的情况下
 			default:ns=MEMidle;
 		endcase
-		sbIf.respValid=(s==MEMread);
+		sbIf.respValid=(ns==MEMidle)&&(s==MEMread);
 	end
 	always_ff @(posedge clk)begin
-		`ifdef RV32I_DEBUG $fdisplay(logFile,"ROM:s=%s,ns=%s cnt=%d",s.name(),ns.name(),cnt);`endif
-		cnt<=(s==MEMwait)?cnt+1:0;
-		s<=ns;
+		if(reset)begin
+			cnt<=0;
+			s<=MEMidle;
+		end else begin
+			`ifdef RV32I_DEBUG $fdisplay(logFile,"ROM:s=%s,ns=%s cnt=%d",s.name(),ns.name(),cnt);`endif
+			cnt<=(s==MEMread)?cnt+1:0;
+			s<=ns;
+		end
 	end
 	always_ff@(posedge clk) begin
 		if(sbIf.ren)sbIf.rdata<=pmem_read(sbIf.addr);
@@ -232,15 +236,15 @@ module ysyx_26020046_rv32iRAM(
 	always_comb begin
 		case(s)
 			MEMidle:ns=sbLs.ren?MEMread:MEMidle;
-			MEMwait:ns=(cnt<max-3)?MEMwait:MEMread;
-			MEMread:ns=MEMidle;
+			MEMread:ns=(cnt+1<max)?MEMread:MEMidle;
 			default:ns=MEMidle;
 		endcase
-		sbLs.respValid=(s==MEMread);
+		// sbLs.respValid=(s==MEMread)&&(cnt==max);
+		sbLs.respValid=1;
 	end
 	always_ff@(posedge clk)begin
 		`ifdef RV32I_DEBUG $fdisplay(logFile,"RAM:s=%s,ns=%s cnt=%d",s.name(),ns.name(),cnt);`endif
-		cnt<=(s==MEMwait)?cnt+1:0;
+		cnt<=(s==MEMread)?cnt+1:0;
 		s<=ns;
 	end
 	assign sbLs.rdata=sbLs.ren?pmem_read(sbLs.addr):'0;
@@ -262,22 +266,22 @@ module ysyx_26020046_rv32iIFU(
 	IFUstatus_t nStatus,oStatus;
 	always_comb begin
 		unique case(oStatus)
-			IFUidle:nStatus=nIfId.ready?IFUwait:IFUidle;
-			IFUwait:nStatus=sbIf.respValid?IFUidle:IFUwait;
+			IFUback:nStatus=(nIfId.ready&sbIf.respValid)?IFUcall:IFUback;
+			IFUcall:nStatus=IFUback;
 		endcase
 		`ifdef RV32I_DEBUG $fdisplay(logFile,"s=%s,ns=%s,ready=%b,respValid=%b",oStatus.name(),nStatus.name(),nIfId.ready,sbIf.respValid);`endif
 		sbIf.addr=val.pc;
-		sbIf.ren=(oStatus==IFUwait);
+		sbIf.ren=(oStatus==IFUcall);
 		sbIf.wen=0;
 		sbIf.wdata='0;
 		sbIf.wmask='0;
 		
-		nIfId.valid=(oStatus==IFUwait&sbIf.respValid);
+		nIfId.valid=(oStatus==IFUback&sbIf.respValid);
 		nIfId.code	=sbIf.rdata;
 	end
 	always_ff@(posedge clk)begin
 		`ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b respValid=%b",oStatus.name(),nStatus.name(),nIfId.ready,sbIf.respValid);`endif
-		if(reset) oStatus<=IFUidle;
+		if(reset) oStatus<=IFUcall;
 		else oStatus<=nStatus;
 	end
 	always_ff @(posedge clk) begin : pc
@@ -631,6 +635,7 @@ module ysyx_26020046_rv32iCSR(
 		end else begin
 	`ifdef RV32I_DEBUG
 			if(~reset)begin
+				// if(mcycle>='d10000)$stop;//特殊调试，用于观测死循环
 				if(nLsWb.SRop==ECALL)$fdisplay(logFile,"SR:ecall mepc %x<=%x mcause %x<=%x",mepc,nLsWb.iCsr,mcause,11);
 				else if(nLsWb.SRop==MRET_)$fdisplay(logFile,"SR:mret mstatus %x<=%x mcause %x<=%x",mstatus,nLsWb.iCsr,mcause,0);
 				else if(nLsWb.SRop==WCCSR)begin unique case(nLsWb.SRaddr)
