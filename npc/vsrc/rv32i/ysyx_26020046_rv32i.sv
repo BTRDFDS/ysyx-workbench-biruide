@@ -51,7 +51,7 @@ package rv32iBasis;
 		logic [6:0] op;
 	} code_t;
 
-	typedef enum logic [0:0]{IFUback,IFUcall} IFUstatus_t;
+	typedef enum logic [0:0]{CPUback,CPUcall} CPUstatus_t;
 	typedef enum logic [1:0]{MEMidle,MEMfunc,MEMwait} MEMstatus_t;
 
 	`ifdef RV32I_DEBUG
@@ -277,27 +277,27 @@ module ysyx_26020046_rv32iIFU(
 	);
 	import rv32iBasis::*;
 
-	IFUstatus_t nStatus,oStatus;
+	CPUstatus_t ns,s;
 	always_comb begin
-		unique case(oStatus)
-			IFUback:nStatus=(nIfId.ready&sbIf.respValid)?IFUcall:IFUback;
-			IFUcall:nStatus=sbIf.reqReady?IFUback:IFUcall;
+		unique case(s)
+			CPUback:ns=(nIfId.ready&sbIf.respValid)?CPUcall:CPUback;
+			CPUcall:ns=sbIf.reqReady?CPUback:CPUcall;
 		endcase
-		`ifdef RV32I_DEBUG $fdisplay(logFile,"s=%s,ns=%s,ready=%b,respValid=%b",oStatus.name(),nStatus.name(),nIfId.ready,sbIf.respValid);`endif
+		`ifdef RV32I_DEBUG $fdisplay(logFile,"s=%s,ns=%s,ready=%b,respValid=%b",s.name(),ns.name(),nIfId.ready,sbIf.respValid);`endif
 		sbIf.addr=val.pc;
-		sbIf.reqValid=(oStatus==IFUcall);
+		sbIf.reqValid=(s==CPUcall);
 		sbIf.wen=0;
 		sbIf.wdata='0;
 		sbIf.wmask='0;
-		sbIf.respReady=(oStatus==IFUback);
+		sbIf.respReady=(s==CPUback);
 		
-		nIfId.valid=(oStatus==IFUback&sbIf.respValid);
+		nIfId.valid=(s==CPUback&sbIf.respValid);
 		nIfId.code	=sbIf.rdata;
 	end
 	always_ff@(posedge clk)begin
-		`ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b respValid=%b",oStatus.name(),nStatus.name(),nIfId.ready,sbIf.respValid);`endif
-		if(reset) oStatus<=IFUcall;
-		else oStatus<=nStatus;
+		`ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b respValid=%b",s.name(),ns.name(),nIfId.ready,sbIf.respValid);`endif
+		if(reset) s<=CPUcall;
+		else s<=ns;
 	end
 	always_ff @(posedge clk) begin : pc
 		`ifdef RV32I_DEBUG if(nIfId.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,nIfId.addr);`endif
@@ -551,24 +551,42 @@ module ysyx_26020046_rv32iALU(
 module ysyx_26020046_rv32iLSU(
 	SimpleBus_t sbLs,
 	AlLs_t.LSU nAlLs,
-	LsWb_t.LSU nLsWb
-	// input clk
+	LsWb_t.LSU nLsWb,
+	input logic clk,reset
 	);
 	import rv32iBasis::*;
 
 	logic[3:0] mask;
 	word_t iRAM,data;
 
+	CPUstatus_t s,ns;
 	always_comb begin
-		nLsWb.iRd=(nAlLs.enS|nAlLs.enL)?data:nAlLs.res;
+		unique case(s)
+			CPUback:ns=(nLsWb.ready&sbLs.respValid)?CPUcall:CPUback;
+			CPUcall:ns=(sbLs.reqReady&(nAlLs.enS|nAlLs.enL))?CPUback:CPUcall;
+			default:ns=CPUcall;
+		endcase
+	end
+	always_ff@(posedge clk) begin
+		if(reset)begin
+			s<=CPUcall;
+			end else begin
+			s<=ns;
+	end end
+	assign nLsWb.valid=(nAlLs.enS|nAlLs.enL)?(s==CPUback&sbLs.respValid&nAlLs.valid):nAlLs.valid;
+	always_comb begin
+		nLsWb.iRd	=(nAlLs.enS|nAlLs.enL)?data:nAlLs.res;
 		nLsWb.cRd	=nAlLs.cRd;
 		nLsWb.iCsr	=nAlLs.iCsr;
 		nLsWb.SRaddr=nAlLs.SRaddr;
 		nLsWb.SRop	=nAlLs.SRop;
-		nLsWb.valid	=nAlLs.enL?nAlLs.valid&sbLs.respValid:nAlLs.valid;
-		if(nAlLs.enL)nAlLs.ready=nLsWb.ready&sbLs.respValid&sbLs.reqReady;
-		else if(nAlLs.enS)nAlLs.ready=nLsWb.ready&sbLs.reqReady;
-		else nAlLs.ready=nLsWb.ready;
+		unique case({nAlLs.enL,nAlLs.enS})
+			2'b00:nAlLs.ready=nLsWb.ready;
+			2'b01:nAlLs.ready=nLsWb.ready&sbLs.reqReady;
+			2'b10:nAlLs.ready=nLsWb.ready&sbLs.respValid&sbLs.reqReady;
+			2'b11:nAlLs.ready=nLsWb.ready&sbLs.respValid&sbLs.reqReady;
+			default:begin nAlLs.ready='0;$fatal("unknown enL==0x%x,enS==0x%x",nAlLs.enL,nAlLs.enS);end
+		endcase
 	end
 	always_comb begin
 		sbLs.addr	='0;
