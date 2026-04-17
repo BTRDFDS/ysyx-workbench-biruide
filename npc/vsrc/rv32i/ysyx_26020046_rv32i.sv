@@ -31,6 +31,7 @@ package rv32iBasis;
 	parameter MSTATUS_RESET = 32'h1800;
 
 	parameter false = 0;
+	parameter true = 1;
 
 	typedef logic [DATA_WIDTH-1:0] word_t;
 	typedef logic [REG_NUMBER-1:0] reg_t;
@@ -185,10 +186,10 @@ module ysyx_26020046_rv32i(
 	LsWb_t nLsWb();
 	val_t val();
 	AXI4_Lite_t sbIf();
-	SimpleBus_t sbLs();
+	AXI4_Lite_t sbLs();
 
 	ysyx_26020046_rv32iMEM ROM(.*,.axi4(sbIf));
-	ysyx_26020046_rv32iRAM RAM(.*);
+	ysyx_26020046_rv32iMEM RAM(.*,.axi4(sbLs));
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
 	ysyx_26020046_rv32iALU ALU(.*);
@@ -219,51 +220,6 @@ module ysyx_26020046_rv32i(
 			$fstrobe (logFile,"nLsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s valid=%b ready=%b",nLsWb.iRd,nLsWb.cRd,nLsWb.iCsr,nLsWb.SRaddr,nLsWb.SRop.name(),nLsWb.valid,nLsWb.ready);
 		end end
 	`endif
-	endmodule
-module ysyx_26020046_rv32iRAM(
-	SimpleBus_t.MEM sbLs,
-	input clk,reset
-	);
-	import rv32iBasis::*;
-	MEMstatus_t Rs,nRs,Ws,nWs;
-	word_t rCnt,wCnt;
-	parameter rMax = 10;
-	parameter wMax = 1;
-	always_comb begin case(Rs)
-			MEMidle:nRs=sbLs.reqValid?MEMfunc:MEMidle;
-			MEMfunc:nRs=(rCnt+1<rMax&sbLs.respReady)?MEMfunc:MEMidle;
-			default:nRs=MEMidle;
-		endcase end always_ff@(posedge clk)begin
-		if(reset)begin
-			rCnt<=0;
-			Rs<=MEMidle;
-		end else begin
-			`ifdef RV32I_DEBUG $fdisplay(logFile,"RAM:Rs=%s,nRs=%s cRnt=%d",Rs.name(),nRs.name(),rCnt);`endif
-			rCnt<=(Rs==MEMfunc)?rCnt+1:0;
-			Rs<=nRs;
-	end end
-	always_comb begin case(Ws)
-			MEMidle:nWs=sbLs.wen?MEMfunc:MEMidle;
-			MEMfunc:nWs=(wCnt+1<wMax)?MEMfunc:MEMidle;
-			default:nWs=MEMidle;
-		endcase end always_ff@(posedge clk)begin
-		if(reset)begin
-			wCnt<=0;
-			Ws<=MEMidle;
-		end else begin
-			`ifdef RV32I_DEBUG $fdisplay(logFile,"RAM:Ws=%s,nWs=%s wCnt=%d",Ws.name(),nWs.name(),wCnt);`endif
-			wCnt<=(Ws==MEMfunc)?wCnt+1:0;
-			Ws<=nWs;
-	end end
-	assign sbLs.respValid=(nRs==MEMidle&Rs==MEMfunc)|(nWs==MEMidle&Ws==MEMfunc);
-	assign sbLs.reqReady=Ws==MEMidle;
-	// assign sbLs.rdata=sbLs.reqValid?pmem_read(sbLs.addr):'0;
-	always_ff@(posedge clk) begin
-		if(sbLs.reqValid)sbLs.rdata<=pmem_read(sbLs.addr);
-			`ifdef RV32I_DEBUG if(sbLs.reqValid)$fdisplay(logFile,"LS:RESD  [%x] => %x",sbLs.addr,sbLs.rdata);`endif
-		if(sbLs.wen)pmem_write(sbLs.addr,sbLs.wdata,{4'b0,sbLs.wmask});
-			`ifdef RV32I_DEBUG if(sbLs.wen)$fdisplay(logFile,"LS:write [%x] <(%b)= %x",sbLs.addr,sbLs.wmask,sbLs.wdata);`endif
-	end
 	endmodule
 module ysyx_26020046_rv32iMEM(
 	AXI4_Lite_t.MEM axi4,
@@ -314,9 +270,11 @@ module ysyx_26020046_rv32iMEM(
 	end always_ff @(posedge clk) begin
 		if(axi4.awready&axi4.awvalid)awaddr	<=axi4.awaddr;
 		if(axi4.awready&axi4.awvalid)hasAddr<=1'b1;
+		if(Ws==MEMback				)hasAddr<=1'b0;
 		if(axi4.wready &axi4.wvalid )wdata	<=axi4.wdata;
 		if(axi4.wready &axi4.wvalid )wstrb	<=axi4.wstrb;
 		if(axi4.wready &axi4.wvalid )hasData<=1'b1;
+		if(Ws==MEMback				)hasData<=1'b0;
 		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"MEM:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
 		if(Ws==MEMfunc)pmem_write(awaddr,wdata,{4'b0,wstrb});
 	end always_comb begin
@@ -626,7 +584,7 @@ module ysyx_26020046_rv32iALU(
 	end end
 	endmodule
 module ysyx_26020046_rv32iLSU(
-	SimpleBus_t sbLs,
+	AXI4_Lite_t sbLs,
 	AlLs_t.LSU nAlLs,
 	LsWb_t.LSU nLsWb,
 	input logic clk,reset
@@ -635,53 +593,64 @@ module ysyx_26020046_rv32iLSU(
 
 	logic[3:0] mask;
 	word_t iRAM,data;
+	logic hasAddr,hasData;
+	CPUstatus_t Rs,nRs,Ws,nWs;
 
-	CPUstatus_t s,ns;
-	always_comb begin
-		unique case(s)
-			CPUback:ns=(nLsWb.ready&sbLs.respValid)?CPUcall:CPUback;
-			CPUcall:ns=(sbLs.reqReady&(nAlLs.enS|nAlLs.enL))?CPUback:CPUcall;
-			default:ns=CPUcall;
-		endcase
+	always_comb case(Rs)
+			CPUfunc:nRs=(nAlLs.enL		)?CPUcall:CPUfunc;
+			CPUcall:nRs=(sbLs.arready	)?CPUback:CPUcall;
+			CPUback:nRs=(sbLs.rvalid	)?CPUfunc:CPUback;
+			default:nRs=CPUfunc;
+	endcase always_ff@(posedge clk) if(reset)begin
+			Rs<=CPUfunc;
+	end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"Rs=%s nRs=%s",Rs.name(),nRs.name());`endif
+			Rs<=nRs;
+	end always_ff@(posedge clk) begin
+			iRAM<=(Rs==CPUback&nRs==CPUfunc)?sbLs.rdata:'0;
+	end always_comb begin
+			sbLs.araddr	=nAlLs.addr;
+			sbLs.arvalid=(Rs==CPUfunc);
+			sbLs.rready	=(Rs==CPUback);
+			case(sbLs.rresp)
+				OKAY:;
+				default:begin $fatal("unknown rresp==0x%x",sbLs.rresp);end
+			endcase
 	end
-	always_ff@(posedge clk) begin
-		if(reset)begin
-			s<=CPUcall;
-			end else begin
-			s<=ns;
-	end end
-	assign nLsWb.valid=(nAlLs.enS|nAlLs.enL)?(s==CPUback&sbLs.respValid&nAlLs.valid):nAlLs.valid;
+
+	always_comb case(Ws)
+			CPUfunc:nWs=(nAlLs.enS		)?CPUcall:CPUfunc;
+			CPUcall:nWs=(hasAddr&hasData)?CPUback:CPUcall;
+			CPUback:nWs=(sbLs.bvalid	)?CPUfunc:CPUback;
+			default:nWs=CPUfunc;
+	endcase always_ff@(posedge clk) if(reset&(~nAlLs.valid))begin
+			Ws<=CPUfunc;
+	end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"Ws=%s nWs=%s",Ws.name(),nWs.name());`endif
+			Ws<=nWs;
+	end always_ff@(posedge clk) begin
+			if(Ws==CPUcall&sbLs.awready)hasAddr<=true;
+			if(Ws==CPUback|Ws==CPUfunc)	hasAddr<=false;
+			if(Ws==CPUcall&sbLs.wready)	hasData<=true;
+			if(Ws==CPUback|Ws==CPUfunc)	hasData<=false;
+	end always_comb begin
+			sbLs.awaddr	=nAlLs.addr;
+			sbLs.awvalid=(Ws==CPUcall);
+			sbLs.wdata	=nAlLs.oR2;
+			sbLs.wstrb	=mask;
+			sbLs.wvalid	=(Ws==CPUcall);
+			sbLs.bready	=(Ws==CPUback);
+			case(sbLs.bresp)
+				OKAY:;
+				default:begin $fatal("unknown bresp==0x%x",sbLs.bresp);end
+			endcase
+	end
 	always_comb begin
 		nLsWb.iRd	=(nAlLs.enS|nAlLs.enL)?data:nAlLs.res;
 		nLsWb.cRd	=nAlLs.cRd;
 		nLsWb.iCsr	=nAlLs.iCsr;
 		nLsWb.SRaddr=nAlLs.SRaddr;
 		nLsWb.SRop	=nAlLs.SRop;
-		unique case({nAlLs.enL,nAlLs.enS})
-			2'b00:nAlLs.ready=nLsWb.ready;
-			2'b01:nAlLs.ready=nLsWb.ready&sbLs.reqReady;
-			2'b10:nAlLs.ready=nLsWb.ready&sbLs.respValid&sbLs.reqReady;
-			2'b11:nAlLs.ready=nLsWb.ready&sbLs.respValid&sbLs.reqReady;
-			default:begin nAlLs.ready='0;$fatal("unknown enL==0x%x,enS==0x%x",nAlLs.enL,nAlLs.enS);end
-		endcase
+		// nLsWb.valid	=//TODO 状态机有破绽
 	end
-	always_comb begin
-		sbLs.addr	='0;
-		sbLs.wdata	='0;
-		sbLs.wmask	='0;
-		sbLs.reqValid	='0;
-		sbLs.wen	='0;
-		sbLs.respReady=0;
-		iRAM		='0;
-		if(nAlLs.valid)begin
-		sbLs.addr	=nAlLs.addr;
-		sbLs.wdata	=nAlLs.oR2;
-		sbLs.wmask	=mask;
-		sbLs.reqValid	=nAlLs.enL;
-		sbLs.wen	=nAlLs.enS;
-		sbLs.respReady=nAlLs.valid&nLsWb.ready;
-		iRAM		=sbLs.rdata;
-	end end
 	always_comb begin
 		if (nAlLs.enS&nAlLs.valid) begin unique case(nAlLs.LSop)
 			B_:				mask=4'b0001;
