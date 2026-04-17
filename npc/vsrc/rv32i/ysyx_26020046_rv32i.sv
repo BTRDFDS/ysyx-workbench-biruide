@@ -1,5 +1,5 @@
 package rv32iBasis;
-	// `define RV32I_DEBUG
+	`define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -210,14 +210,17 @@ module ysyx_26020046_rv32i(
 			$fdisplay(logFile,"sbIf:araddr=%x arvalid=%b arready=%b rdata=%x rresp=%s rvalid=%b rready=%b",sbIf.araddr,sbIf.arvalid,sbIf.arready,sbIf.rdata,sbIf.rresp.name(),sbIf.rvalid,sbIf.rready);
 			$fdisplay(logFile,"sbIf:awaddr=%x awvalid=%b awready=%b wdata=%x wstrb=%b wvalid=%b wready=%b",sbIf.awaddr,sbIf.awvalid,sbIf.awready,sbIf.wdata,sbIf.wstrb,sbIf.wvalid,sbIf.wready);
 			$fdisplay(logFile,"sbIf:bresp=%s bvalid=%b bready=%b",sbIf.bresp.name(),sbIf.bvalid,sbIf.bready);
-			$fstrobe (logFile,"nIfId code=%x valid=%b ready=%b addr=%x enJfun=%b difftest=%b",nIfId.code,nIfId.valid,nIfId.ready,nIfId.addr,nIfId.enJfun,difftest);
+			$fdisplay(logFile,"sbLs:araddr=%x arvalid=%b arready=%b rdata=%x rresp=%s rvalid=%b rready=%b",sbLs.araddr,sbLs.arvalid,sbLs.arready,sbLs.rdata,sbLs.rresp.name(),sbLs.rvalid,sbLs.rready);
+			$fdisplay(logFile,"sbLs:awaddr=%x awvalid=%b awready=%b wdata=%x wstrb=%b wvalid=%b wready=%b",sbLs.awaddr,sbLs.awvalid,sbLs.awready,sbLs.wdata,sbLs.wstrb,sbLs.wvalid,sbLs.wready);
+			$fdisplay(logFile,"sbLs:bresp=%s bvalid=%b bready=%b",sbLs.bresp.name(),sbLs.bvalid,sbLs.bready);
+			$fdisplay(logFile,"nIfId code=%x valid=%b ready=%b addr=%x enJfun=%b difftest=%b",nIfId.code,nIfId.valid,nIfId.ready,nIfId.addr,nIfId.enJfun,difftest);
 			$fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);
-			$fstrobe (logFile,"nIdAl oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b vaild=%b ready=%b",nIdAl.oR1,nIdAl.oR2,nIdAl.oCsr,nIdAl.imm,nIdAl.pc,nIdAl.enJcod,nIdAl.valid,nIdAl.ready);
-			$fstrobe (logFile,"nIdAl in1=%s in2=%s al=%s adr=%s cCsr=%s cIrd=%s addr=%x enJfun=%b",nIdAl.in1.name(),nIdAl.in2.name(),nIdAl.cal.name(),nIdAl.adr.name(),nIdAl.cCsr.name(),nIdAl.cIrd.name(),nIdAl.addr,nIdAl.enJfun);
-			$fstrobe (logFile,"nIdAl enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x",nIdAl.enL,nIdAl.enS,nIdAl.LSop.name(),nIdAl.SRaddr,nIdAl.SRop.name(),nIdAl.cRd);
-			$fstrobe (logFile,"nAlLs enS=%b enL=%b LSop=%s res=%x addr=%x valid=%b ready=%b",nAlLs.enS,nAlLs.enL,nAlLs.LSop.name(),nAlLs.res,nAlLs.addr,nAlLs.valid,nAlLs.ready);
-			$fstrobe (logFile,"nAlLs oR2=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nAlLs.oR2,nAlLs.cRd,nAlLs.iCsr,nAlLs.SRaddr,nAlLs.SRop.name());
-			$fstrobe (logFile,"nLsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s valid=%b ready=%b",nLsWb.iRd,nLsWb.cRd,nLsWb.iCsr,nLsWb.SRaddr,nLsWb.SRop.name(),nLsWb.valid,nLsWb.ready);
+			$fdisplay(logFile,"nIdAl oR1=%x oR2=%x oCsr=%x imm=%x pc=%x enJcod=%b vaild=%b ready=%b",nIdAl.oR1,nIdAl.oR2,nIdAl.oCsr,nIdAl.imm,nIdAl.pc,nIdAl.enJcod,nIdAl.valid,nIdAl.ready);
+			$fdisplay(logFile,"nIdAl in1=%s in2=%s al=%s adr=%s cCsr=%s cIrd=%s addr=%x enJfun=%b",nIdAl.in1.name(),nIdAl.in2.name(),nIdAl.cal.name(),nIdAl.adr.name(),nIdAl.cCsr.name(),nIdAl.cIrd.name(),nIdAl.addr,nIdAl.enJfun);
+			$fdisplay(logFile,"nIdAl enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x",nIdAl.enL,nIdAl.enS,nIdAl.LSop.name(),nIdAl.SRaddr,nIdAl.SRop.name(),nIdAl.cRd);
+			$fdisplay(logFile,"nAlLs enS=%b enL=%b LSop=%s res=%x addr=%x valid=%b ready=%b",nAlLs.enS,nAlLs.enL,nAlLs.LSop.name(),nAlLs.res,nAlLs.addr,nAlLs.valid,nAlLs.ready);
+			$fdisplay(logFile,"nAlLs oR2=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nAlLs.oR2,nAlLs.cRd,nAlLs.iCsr,nAlLs.SRaddr,nAlLs.SRop.name());
+			$fdisplay(logFile,"nLsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s valid=%b ready=%b",nLsWb.iRd,nLsWb.cRd,nLsWb.iCsr,nLsWb.SRaddr,nLsWb.SRop.name(),nLsWb.valid,nLsWb.ready);
 		end end
 	`endif
 	endmodule
@@ -242,13 +245,13 @@ module ysyx_26020046_rv32iMEM(
 	endcase	always_ff@(posedge clk) if(reset)begin
 			Rs	<=MEMidle;
 			rCnt<=0;
-		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"MEM:Rs=%s,nRs=%s rCnt=%d",Rs.name(),nRs.name(),rCnt);`endif
+		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"%m:Rs=%s,nRs=%s rCnt=%d",Rs.name(),nRs.name(),rCnt);`endif
 			Rs	<=nRs;
 			rCnt<=(Rs==MEMwait)?rCnt+1:0;
 	end always_ff@(posedge clk)begin
 		if(axi4.arready&axi4.arvalid)araddr<=axi4.araddr;
-		if(Rs==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"MEM:read [%x]",araddr);`endif
 		if(Rs==MEMfunc)axi4.rdata<=pmem_read(araddr);
+		`ifdef RV32I_DEBUG if(Rs==MEMfunc)$fdisplay(logFile,"%m:read [%x]==%x",araddr,axi4.rdata);`endif
 	end always_comb begin
 		axi4.arready=(Rs==MEMidle);
 		axi4.rresp=OKAY;
@@ -264,7 +267,7 @@ module ysyx_26020046_rv32iMEM(
 	endcase always_ff@(posedge clk) if(reset)begin
 			Ws	<=MEMidle;
 			wCnt<=0;
-		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"MEM:Ws=%s,nWs=%s wCnt=%d",Ws.name(),nWs.name(),wCnt);`endif
+		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"%m:Ws=%s,nWs=%s wCnt=%d",Ws.name(),nWs.name(),wCnt);`endif
 			Ws	<=nWs;
 			wCnt<=(Ws==MEMwait)?wCnt+1:0;
 	end always_ff @(posedge clk) begin
@@ -275,7 +278,7 @@ module ysyx_26020046_rv32iMEM(
 		if(axi4.wready &axi4.wvalid )wstrb	<=axi4.wstrb;
 		if(axi4.wready &axi4.wvalid )hasData<=1'b1;
 		if(Ws==MEMback				)hasData<=1'b0;
-		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"MEM:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
+		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"%m:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
 		if(Ws==MEMfunc)pmem_write(awaddr,wdata,{4'b0,wstrb});
 	end always_comb begin
 		axi4.awready=(Ws==MEMidle&!hasAddr);
@@ -603,13 +606,13 @@ module ysyx_26020046_rv32iLSU(
 			default:nRs=CPUfunc;
 	endcase always_ff@(posedge clk) if(reset)begin
 			Rs<=CPUfunc;
-	end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"Rs=%s nRs=%s",Rs.name(),nRs.name());`endif
+	end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"LSU:Rs=%s nRs=%s",Rs.name(),nRs.name());`endif
 			Rs<=nRs;
 	end always_ff@(posedge clk) begin
 			iRAM<=(Rs==CPUback&nRs==CPUfunc)?sbLs.rdata:'0;
 	end always_comb begin
 			sbLs.araddr	=nAlLs.addr;
-			sbLs.arvalid=(Rs==CPUfunc);
+			sbLs.arvalid=(Rs==CPUcall);
 			sbLs.rready	=(Rs==CPUback);
 			case(sbLs.rresp)
 				OKAY:;
@@ -624,7 +627,7 @@ module ysyx_26020046_rv32iLSU(
 			default:nWs=CPUfunc;
 	endcase always_ff@(posedge clk) if(reset&(~nAlLs.valid))begin
 			Ws<=CPUfunc;
-	end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"Ws=%s nWs=%s",Ws.name(),nWs.name());`endif
+	end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"LSU:Ws=%s nWs=%s",Ws.name(),nWs.name());`endif
 			Ws<=nWs;
 	end always_ff@(posedge clk) begin
 			if(Ws==CPUcall&sbLs.awready)hasAddr<=true;
@@ -649,9 +652,12 @@ module ysyx_26020046_rv32iLSU(
 		nLsWb.iCsr	=nAlLs.iCsr;
 		nLsWb.SRaddr=nAlLs.SRaddr;
 		nLsWb.SRop	=nAlLs.SRop;
-		// nLsWb.valid	=//TODO 状态机有破绽
+		nLsWb.valid	=(~(nAlLs.enL^(Rs==CPUback&nRs==CPUfunc)))&(~(nAlLs.enS^(Ws==CPUback&nWs==CPUfunc)))&nAlLs.valid;
+		nAlLs.ready	=(~(nAlLs.enL^(Rs==CPUback&nRs==CPUfunc)))&(~(nAlLs.enS^(Ws==CPUback&nWs==CPUfunc)))&nLsWb.ready;
+		//TODO 状态机有破绽
 	end
 	always_comb begin
+		`ifdef RV32I_DEBUG if(nAlLs.enL)$fdisplay(logFile,"LSU:enL=%b valid=%b iRAM=%x",nAlLs.enL,nAlLs.valid,iRAM);`endif
 		if (nAlLs.enS&nAlLs.valid) begin unique case(nAlLs.LSop)
 			B_:				mask=4'b0001;
 			H_:				mask=4'b0011;
@@ -667,6 +673,7 @@ module ysyx_26020046_rv32iLSU(
 			HU:				data={{16{1'b0}},iRAM[15: 0]};
 			default:begin 	data=0;$fatal("unknown date==0x%x",nAlLs.LSop);end
 		endcase end else 	data='0;
+		`ifdef RV32I_DEBUG if(nAlLs.enL)$fstrobe(logFile,"LSU:enL=%b valid=%b data=%x iRAM=%x",nAlLs.enL,nAlLs.valid,data,iRAM);`endif
 	end
 	endmodule
 module ysyx_26020046_rv32iGPR(
