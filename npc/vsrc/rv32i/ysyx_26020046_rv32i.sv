@@ -30,6 +30,8 @@ package rv32iBasis;
 
 	parameter MSTATUS_RESET = 32'h1800;
 
+	parameter false = 0;
+
 	typedef logic [DATA_WIDTH-1:0] word_t;
 	typedef logic [REG_NUMBER-1:0] reg_t;
 	typedef enum logic[3:0] {ADD_,SLL_,SLT_,SLTU,XOR_,SRL_,OR__,AND_,SUB_,SRA_,NCAL} ALUopCal_t;
@@ -43,16 +45,18 @@ package rv32iBasis;
 	typedef enum logic [1:0] {MRET_,ECALL,WCCSR,NCSR_} CSRop_t;
 
 	typedef struct packed {
-		logic [6:0] fun7;
 		logic [4:0] r2;
 		logic [4:0] r1;
 		logic [2:0] fun3;
+		logic [6:0] fun7;
 		logic [4:0] rd;
 		logic [6:0] op;
 	} code_t;
 
-	typedef enum logic [0:0]{CPUback,CPUcall} CPUstatus_t;
-	typedef enum logic [1:0]{MEMidle,MEMfunc,MEMwait} MEMstatus_t;
+	typedef enum logic [1:0]{CPUback,CPUcall,CPUfunc} CPUstatus_t;
+	typedef enum logic [1:0]{MEMidle,MEMfunc,MEMback,MEMwait} MEMstatus_t;
+
+	typedef enum logic [1:0]{OKAY,EXOKAY,SLVERR,DECERR} resp_t;//TODO
 
 	`ifdef RV32I_DEBUG
 		integer logFile;
@@ -146,6 +150,28 @@ interface SimpleBus_t();
 	modport CPU(input  rdata,respValid,reqReady,output addr,reqValid,respReady,wen,wdata,wmask);
 	modport MEM(output rdata,respValid,reqReady,input  addr,reqValid,respReady,wen,wdata,wmask);
 	endinterface
+interface AXI4_Lite_t();
+	import rv32iBasis::*;
+	logic arready,arvalid;
+	word_t araddr;
+
+	logic rready,rvalid;
+	word_t rdata;
+	resp_t [1:0] rresp;
+
+	logic awready,awvalid;
+	word_t awaddr;
+
+	logic wvalid,wready;
+	logic [3:0] wstrb;//mask
+	word_t wdata;
+
+	logic bvalid,bready;
+	resp_t [1:0] bresp;
+
+	modport CPU(input  arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,output araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
+	modport MEM(output arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,input  araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
+	endinterface;
 module ysyx_26020046_rv32i(
 	input logic clk,
 	input logic reset,
@@ -158,7 +184,7 @@ module ysyx_26020046_rv32i(
 	AlLs_t nAlLs();
 	LsWb_t nLsWb();
 	val_t val();
-	SimpleBus_t sbIf();
+	AXI4_Lite_t sbIf();
 	SimpleBus_t sbLs();
 
 	ysyx_26020046_rv32iROM ROM(.*);
@@ -192,17 +218,17 @@ module ysyx_26020046_rv32i(
 	`endif
 	endmodule
 module ysyx_26020046_rv32iROM(
-	SimpleBus_t.MEM sbIf,
+	AXI4_Lite_t.MEM sbIf,
 	input clk,reset
 	);
 	import rv32iBasis::*;
 	MEMstatus_t s,ns;
 	word_t cnt;
-	parameter max = 10;
+	parameter max = 10;//延迟至少是1
 	always_comb begin
 		case(s)
 			MEMidle:ns=sbIf.reqValid?MEMfunc:MEMidle;
-			MEMfunc:ns=(cnt+1<max&sbIf.respReady)?MEMfunc:MEMidle;//延迟至少是1
+			MEMfunc:ns=(cnt+1<max&sbIf.respReady)?MEMfunc:MEMidle;
 			default:ns=MEMidle;
 		endcase
 		sbIf.respValid=(ns==MEMidle);
@@ -269,8 +295,68 @@ module ysyx_26020046_rv32iRAM(
 			`ifdef RV32I_DEBUG if(sbLs.wen)$fdisplay(logFile,"LS:write [%x] <(%b)= %x",sbLs.addr,sbLs.wmask,sbLs.wdata);`endif
 	end
 	endmodule
+module ysyx_26020046_rv32iMEM(
+	AXI4_Lite_t.MEM axi4,
+	input clk,reset
+	);
+	import rv32iBasis::*;
+	MEMstatus_t Rs,nRs,Ws,nWs;
+	word_t rCnt,wCnt;
+	parameter rMax = 10;
+	parameter wMax = 10;
+	word_t araddr,awaddr,wdata;
+	logic [3:0]wstrb;
+	logic hasAddr,hasData;
+	always_comb case(Rs)
+			MEMidle:nRs=(axi4.arvalid)?MEMfunc:MEMidle;
+			MEMwait:nRs=(rCnt+1<rMax )?MEMfunc:MEMidle;
+			MEMfunc:nRs=MEMback;
+			MEMback:nRs=(axi4.rready )?MEMidle:MEMback;
+			default:nRs=MEMidle;
+	endcase	always_ff@(posedge clk) if(reset)begin
+			Rs	<=MEMidle;
+			rCnt<=0;
+		end else begin
+			Rs	<=nRs;
+			rCnt<=(Rs==MEMwait)?rCnt+1:0;
+	end always_ff@(posedge clk)begin
+		if(axi4.arready&axi4.arvalid)araddr=axi4.araddr;
+		if(Rs==MEMfunc)axi4.rdata<=pmem_read(araddr);
+	end always_comb begin
+		axi4.arready=(Rs==MEMidle);
+		axi4.rresp=OKAY;
+		axi4.rvalid=(Rs==MEMback);
+	end
+
+	always_comb case(Ws)
+			MEMidle:nWs=(axi4.awvalid|hasAddr)&(axi4.wvalid|hasData)?MEMfunc:MEMidle;
+			MEMwait:nWs=(wCnt+1<wMax)?MEMfunc:MEMidle;
+			MEMfunc:nWs=MEMback;
+			MEMback:nWs=(axi4.bready)?MEMidle:MEMback;
+			default:nWs=MEMidle;
+	endcase always_ff@(posedge clk) if(reset)begin
+			Ws	<=MEMidle;
+			wCnt<=0;
+		end else begin
+			Ws	<=nWs;
+			wCnt<=(Ws==MEMwait)?wCnt+1:0;
+	end always_ff @(posedge clk) begin
+		if(axi4.awready&axi4.awvalid)awaddr	<=axi4.awaddr;
+		if(axi4.awready&axi4.awvalid)hasAddr<=1'b1;
+		if(axi4.wready &axi4.wvalid )wdata	<=axi4.wdata;
+		if(axi4.wready &axi4.wvalid )wstrb	<=axi4.wstrb;
+		if(axi4.wready &axi4.wvalid )hasData<=1'b1;
+		if(Rs==MEMfunc)pmem_write(awaddr,wdata,{4'b0,wstrb});
+	end always_comb begin
+		axi4.awready=(Ws==MEMidle&!hasAddr);
+		axi4.wready	=(Ws==MEMidle&!hasData);
+		axi4.bresp	=OKAY;
+		axi4.bvalid	=(Ws==MEMback);
+	end
+	
+	endmodule
 module ysyx_26020046_rv32iIFU(
-	SimpleBus_t.CPU sbIf,
+	AXI4_Lite_t.CPU sbIf,
 	IfId_t.IFU nIfId,
 	val_t.IFU val,
 	input logic clk,reset
@@ -280,19 +366,37 @@ module ysyx_26020046_rv32iIFU(
 	CPUstatus_t ns,s;
 	always_comb begin
 		unique case(s)
-			CPUback:ns=(nIfId.ready&sbIf.respValid)?CPUcall:CPUback;
-			CPUcall:ns=sbIf.reqReady?CPUback:CPUcall;
+			CPUfunc:ns=nIfId.ready	?CPUcall:CPUfunc;
+			CPUcall:ns=sbIf.arready	?CPUback:CPUcall;
+			CPUback:ns=sbIf.rvalid	?CPUcall:CPUback;
+			default:ns=CPUcall;
 		endcase
 		`ifdef RV32I_DEBUG $fdisplay(logFile,"s=%s,ns=%s,ready=%b,respValid=%b",s.name(),ns.name(),nIfId.ready,sbIf.respValid);`endif
-		sbIf.addr=val.pc;
-		sbIf.reqValid=(s==CPUcall);
-		sbIf.wen=0;
+	end
+	always_comb begin : out
+		sbIf.araddr=val.pc;
+		sbIf.arvalid=(s==CPUcall);
+
+		sbIf.rready=(s==CPUback);
+
+		sbIf.awaddr='0;
+		sbIf.awvalid=false;
+
 		sbIf.wdata='0;
-		sbIf.wmask='0;
-		sbIf.respReady=(s==CPUback);
-		
-		nIfId.valid=(s==CPUback&sbIf.respValid);
-		nIfId.code	=sbIf.rdata;
+		sbIf.wstrb='0;
+		sbIf.wvalid=false;
+
+		sbIf.bready=false;
+	end
+	logic nuseTrue=1'b1|sbIf.awready|sbIf.wready|sbIf.bvalid|(|sbIf.bresp);
+	always_comb begin : in
+		nIfId.code=sbIf.rdata;
+		case(sbIf.rresp)
+			OKAY	:;
+			default	:$stop("rresp");
+		endcase
+
+		nIfId.valid=(s==CPUfunc)&nuseTrue;//无关信号就都绑定到valid上
 	end
 	always_ff@(posedge clk)begin
 		`ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b respValid=%b",s.name(),ns.name(),nIfId.ready,sbIf.respValid);`endif
