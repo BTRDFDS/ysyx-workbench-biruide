@@ -1,5 +1,5 @@
 package rv32iBasis;
-	`define RV32I_DEBUG
+	// `define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -143,14 +143,6 @@ interface val_t();
 	modport CSR(input SRaddr ,output oCsr);
 	modport IFU(output pc);
 	endinterface;
-interface SimpleBus_t();
-	import rv32iBasis::*;
-	word_t addr,rdata,wdata;
-	logic reqValid,reqReady,wen,respValid,respReady;
-	logic[3:0] wmask;
-	modport CPU(input  rdata,respValid,reqReady,output addr,reqValid,respReady,wen,wdata,wmask);
-	modport MEM(output rdata,respValid,reqReady,input  addr,reqValid,respReady,wen,wdata,wmask);
-	endinterface
 interface AXI4_Lite_t();
 	import rv32iBasis::*;
 	logic arready,arvalid;
@@ -598,11 +590,12 @@ module ysyx_26020046_rv32iLSU(
 	word_t iRAM,data;
 	logic hasAddr,hasData;
 	CPUstatus_t Rs,nRs,Ws,nWs;
+	logic Rfinish,Wfinish;
 
 	always_comb case(Rs)
-			CPUfunc:nRs=(nAlLs.enL		)?CPUcall:CPUfunc;
-			CPUcall:nRs=(sbLs.arready	)?CPUback:CPUcall;
-			CPUback:nRs=(sbLs.rvalid	)?CPUfunc:CPUback;
+			CPUfunc:nRs=(nAlLs.enL&(~Rfinish)	)?CPUcall:CPUfunc;
+			CPUcall:nRs=(sbLs.arready			)?CPUback:CPUcall;
+			CPUback:nRs=(sbLs.rvalid			)?CPUfunc:CPUback;
 			default:nRs=CPUfunc;
 	endcase always_ff@(posedge clk) if(reset)begin
 			Rs<=CPUfunc;
@@ -610,6 +603,8 @@ module ysyx_26020046_rv32iLSU(
 			Rs<=nRs;
 	end always_ff@(posedge clk) begin
 			iRAM<=(Rs==CPUback&nRs==CPUfunc)?sbLs.rdata:'0;
+			if(Rs==CPUback&nRs==CPUfunc)Rfinish<=true;
+			if(nAlLs.ready&nLsWb.valid)	Rfinish<=false;
 	end always_comb begin
 			sbLs.araddr	=nAlLs.addr;
 			sbLs.arvalid=(Rs==CPUcall);
@@ -621,9 +616,9 @@ module ysyx_26020046_rv32iLSU(
 	end
 
 	always_comb case(Ws)
-			CPUfunc:nWs=(nAlLs.enS		)?CPUcall:CPUfunc;
-			CPUcall:nWs=(hasAddr&hasData)?CPUback:CPUcall;
-			CPUback:nWs=(sbLs.bvalid	)?CPUfunc:CPUback;
+			CPUfunc:nWs=(nAlLs.enS&(~Wfinish)	)?CPUcall:CPUfunc;
+			CPUcall:nWs=(hasAddr&hasData		)?CPUback:CPUcall;
+			CPUback:nWs=(sbLs.bvalid			)?CPUfunc:CPUback;
 			default:nWs=CPUfunc;
 	endcase always_ff@(posedge clk) if(reset&(~nAlLs.valid))begin
 			Ws<=CPUfunc;
@@ -634,6 +629,8 @@ module ysyx_26020046_rv32iLSU(
 			if(Ws==CPUback|Ws==CPUfunc)	hasAddr<=false;
 			if(Ws==CPUcall&sbLs.wready)	hasData<=true;
 			if(Ws==CPUback|Ws==CPUfunc)	hasData<=false;
+			if(Ws==CPUback&nWs==CPUfunc)Wfinish<=true;
+			if(nAlLs.ready&nLsWb.valid)	Wfinish<=false;
 	end always_comb begin
 			sbLs.awaddr	=nAlLs.addr;
 			sbLs.awvalid=(Ws==CPUcall);
@@ -652,9 +649,8 @@ module ysyx_26020046_rv32iLSU(
 		nLsWb.iCsr	=nAlLs.iCsr;
 		nLsWb.SRaddr=nAlLs.SRaddr;
 		nLsWb.SRop	=nAlLs.SRop;
-		nLsWb.valid	=(~(nAlLs.enL^(Rs==CPUback&nRs==CPUfunc)))&(~(nAlLs.enS^(Ws==CPUback&nWs==CPUfunc)))&nAlLs.valid;
-		nAlLs.ready	=(~(nAlLs.enL^(Rs==CPUback&nRs==CPUfunc)))&(~(nAlLs.enS^(Ws==CPUback&nWs==CPUfunc)))&nLsWb.ready;
-		//TODO 状态机有破绽
+		nLsWb.valid	=(~(nAlLs.enL^Rfinish))&(~(nAlLs.enS^Wfinish))&nAlLs.valid;
+		nAlLs.ready	=(~(nAlLs.enL^Rfinish))&(~(nAlLs.enS^Wfinish))&nLsWb.ready;
 	end
 	always_comb begin
 		`ifdef RV32I_DEBUG if(nAlLs.enL)$fdisplay(logFile,"LSU:enL=%b valid=%b iRAM=%x",nAlLs.enL,nAlLs.valid,iRAM);`endif
@@ -726,7 +722,7 @@ module ysyx_26020046_rv32iCSR(
 	`ifdef RV32I_DEBUG
 			if(~reset)begin
 				$fstrobe(logFile,"mcycle = %d\n",mcycle);
-				if(mcycle>='d100000)$stop;//特殊调试，用于观测死循环
+				if(mcycle>='d10000000)$stop;//特殊调试，用于观测死循环
 				if(nLsWb.SRop==ECALL)$fdisplay(logFile,"SR:ecall mepc %x<=%x mcause %x<=%x",mepc,nLsWb.iCsr,mcause,11);
 				else if(nLsWb.SRop==MRET_)$fdisplay(logFile,"SR:mret mstatus %x<=%x mcause %x<=%x",mstatus,nLsWb.iCsr,mcause,0);
 				else if(nLsWb.SRop==WCCSR)begin unique case(nLsWb.SRaddr)
