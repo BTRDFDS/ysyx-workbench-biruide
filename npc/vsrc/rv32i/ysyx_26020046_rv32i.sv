@@ -1,5 +1,5 @@
 package rv32iBasis;
-	// `define RV32I_DEBUG
+	`define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -222,15 +222,15 @@ module ysyx_26020046_rv32iMEM(
 	);
 	import rv32iBasis::*;
 	MEMstatus_t Rs,nRs,Ws,nWs;
-	word_t rCnt,wCnt;
+	word_t rCnt,wCnt;//cnt会加3，这是因为会经过三段状态转移有三周期延迟
 	parameter rMax = 10;
 	parameter wMax = 10;
 	word_t araddr,awaddr,wdata;
 	logic [3:0]wstrb;
 	logic hasAddr,hasData;
 	always_comb case(Rs)
-			MEMidle:nRs=(axi4.arvalid)?MEMfunc:MEMidle;
-			MEMwait:nRs=(rCnt+1<rMax )?MEMfunc:MEMidle;
+			MEMidle:nRs=(axi4.arvalid)?MEMwait:MEMidle;
+			MEMwait:nRs=(rCnt+3<rMax )?MEMwait:MEMfunc;
 			MEMfunc:nRs=MEMback;
 			MEMback:nRs=(axi4.rready )?MEMidle:MEMback;
 			default:nRs=MEMidle;
@@ -251,8 +251,8 @@ module ysyx_26020046_rv32iMEM(
 	end
 
 	always_comb case(Ws)
-			MEMidle:nWs=(axi4.awvalid|hasAddr)&(axi4.wvalid|hasData)?MEMfunc:MEMidle;
-			MEMwait:nWs=(wCnt+1<wMax)?MEMfunc:MEMidle;
+			MEMidle:nWs=(axi4.awvalid|hasAddr)&(axi4.wvalid|hasData)?MEMwait:MEMidle;
+			MEMwait:nWs=(wCnt+3<wMax)?MEMwait:MEMfunc;
 			MEMfunc:nWs=MEMback;
 			MEMback:nWs=(axi4.bready)?MEMidle:MEMback;
 			default:nWs=MEMidle;
@@ -278,8 +278,16 @@ module ysyx_26020046_rv32iMEM(
 		axi4.bresp	=OKAY;
 		axi4.bvalid	=(Ws==MEMback);
 	end
-	
 	endmodule
+// module ysyx_26020046_rv32iARB(
+// 	AXI4_Lite_t.CPU sbIf,
+// 	AXI4_Lite_t.CPU sbLs,
+// 	AXI4_Lite_t.MEM axi4,
+// 	input clk,reset
+// 	);
+// 	import rv32iBasis::*;
+	
+// 	endmodule
 module ysyx_26020046_rv32iIFU(
 	AXI4_Lite_t.CPU sbIf,
 	IfId_t.IFU nIfId,
@@ -289,7 +297,7 @@ module ysyx_26020046_rv32iIFU(
 	import rv32iBasis::*;
 
 	CPUstatus_t ns,s;
-	always_comb	unique case(s)
+	always_comb	unique case(s)//两段状态转移会有1周期延迟
 			CPUfunc:ns=nIfId.ready	?CPUcall:CPUfunc;
 			CPUcall:ns=sbIf.arready	?CPUback:CPUcall;
 			CPUback:ns=sbIf.rvalid	?CPUfunc:CPUback;
