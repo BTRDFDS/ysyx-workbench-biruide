@@ -1,5 +1,5 @@
 package rv32iBasis;
-	`define RV32I_DEBUG
+	// `define RV32I_DEBUG
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter PC_RESET	= 32'h80000000;
@@ -56,6 +56,7 @@ package rv32iBasis;
 
 	typedef enum logic [1:0]{CPUback,CPUcall,CPUfunc} CPUstatus_t;
 	typedef enum logic [1:0]{MEMidle,MEMfunc,MEMback,MEMwait} MEMstatus_t;
+	typedef enum logic [1:0]{ARBidle,ARBifuR,ARBlsuR,ARBlsuW} ARBstatus_t;
 
 	typedef enum logic [1:0]{OKAY,EXOKAY,SLVERR,DECERR} resp_t;//TODO
 
@@ -179,9 +180,12 @@ module ysyx_26020046_rv32i(
 	val_t val();
 	AXI4_Lite_t sbIf();
 	AXI4_Lite_t sbLs();
+	AXI4_Lite_t axi4();
 
-	ysyx_26020046_rv32iMEM ROM(.*,.axi4(sbIf));
-	ysyx_26020046_rv32iMEM RAM(.*,.axi4(sbLs));
+	// ysyx_26020046_rv32iMEM ROM(.*,.axi4(sbIf));
+	// ysyx_26020046_rv32iMEM RAM(.*,.axi4(sbLs));
+	ysyx_26020046_rv32iMEM MEM(.*);
+	ysyx_26020046_rv32iARB ARB(.*);
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
 	ysyx_26020046_rv32iALU ALU(.*);
@@ -279,15 +283,90 @@ module ysyx_26020046_rv32iMEM(
 		axi4.bvalid	=(Ws==MEMback);
 	end
 	endmodule
-// module ysyx_26020046_rv32iARB(
-// 	AXI4_Lite_t.CPU sbIf,
-// 	AXI4_Lite_t.CPU sbLs,
-// 	AXI4_Lite_t.MEM axi4,
-// 	input clk,reset
-// 	);
-// 	import rv32iBasis::*;
-	
-// 	endmodule
+module ysyx_26020046_rv32iARB(
+	AXI4_Lite_t.MEM sbIf,
+	AXI4_Lite_t.MEM sbLs,
+	AXI4_Lite_t.CPU axi4,
+	input clk,reset
+	);
+	import rv32iBasis::*;
+	ARBstatus_t s,ns;
+	always_comb	unique case(s)//TODO 现在默认是LSU不会同时读写
+			ARBidle: if(sbLs.arvalid&axi4.arready)ns=ARBlsuR;
+				else if(sbLs.awvalid&axi4.awready)ns=ARBlsuW;
+				else if(sbLs.wvalid &axi4.wready )ns=ARBlsuW;
+				else if(sbIf.arvalid&axi4.arready)ns=ARBifuR;
+				else ns=ARBidle;
+			ARBlsuR:ns=(sbLs.rready&axi4.rvalid)?ARBidle:ARBlsuR;
+			ARBlsuW:ns=(sbLs.bready&axi4.bvalid)?ARBidle:ARBlsuW;
+			ARBifuR:ns=(sbIf.rready&axi4.rvalid)?ARBidle:ARBifuR;
+			default:ns=ARBidle;
+	endcase always_ff@(posedge clk)if(reset)begin
+			s<=ARBidle;
+		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
+			s<=ns;
+		end always_comb begin
+			axi4.araddr	='0;
+			axi4.arvalid=false;
+			axi4.rready	=false;
+			axi4.awaddr	='0;
+			axi4.awvalid=false;
+			axi4.wdata	='0;
+			axi4.wstrb	='0;
+			axi4.wvalid	=false;
+			axi4.bready	=false;
+			
+			sbLs.arready=false;
+			sbLs.rdata	='0;
+			sbLs.rresp	=OKAY;
+			sbLs.rvalid	=false;
+			sbLs.awready=false;
+			sbLs.wready	=false;
+			sbLs.bresp	=OKAY;
+			sbLs.bvalid	=false;
+
+			sbIf.arready=false;
+			sbIf.rdata	='0;
+			sbIf.rresp	=OKAY;
+			sbIf.rvalid	=false;
+			sbIf.awready=false;
+			sbIf.wready	=false;
+			sbIf.bresp	=OKAY;
+			sbIf.bvalid	=false;
+		unique case(s)
+			ARBidle:;
+			ARBlsuR:begin
+				axi4.araddr	=sbLs.araddr;
+				axi4.arvalid=sbLs.arvalid;
+				sbLs.arready=axi4.arready;
+				sbLs.rdata	=axi4.rdata;
+				sbLs.rresp	=axi4.rresp;
+				sbLs.rvalid	=axi4.rvalid;
+				axi4.rready	=sbLs.rready;
+				end
+			ARBlsuW:begin
+				axi4.awaddr	=sbLs.awaddr;
+				axi4.awvalid=sbLs.awvalid;
+				sbLs.awready=axi4.awready;
+				axi4.wdata	=sbLs.wdata;
+				axi4.wstrb	=sbLs.wstrb;
+				axi4.wvalid	=sbLs.wvalid;
+				sbLs.wready	=axi4.wready;
+				sbLs.bresp	=axi4.bresp;
+				sbLs.bvalid	=axi4.bvalid;
+				axi4.bready	=sbLs.bready;
+				end
+			ARBifuR:begin
+				axi4.araddr	=sbIf.araddr;
+				axi4.arvalid=sbIf.arvalid;
+				sbIf.arready=axi4.arready;
+				sbIf.rdata	=axi4.rdata;
+				sbIf.rresp	=axi4.rresp;
+				sbIf.rvalid	=axi4.rvalid;
+				axi4.rready	=sbIf.rready;
+				end
+	endcase end
+	endmodule
 module ysyx_26020046_rv32iIFU(
 	AXI4_Lite_t.CPU sbIf,
 	IfId_t.IFU nIfId,
