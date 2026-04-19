@@ -68,14 +68,6 @@
 	import "DPI-C" function int pmem_read(input int unsigned addr);
 	import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
 
-// interface IfId_t();
-// 	logic valid,ready;
-// 	code_t code;
-// 	word_t addr;
-// 	logic enJfun;
-// 	modport IFU(output code,valid,input  addr,enJfun,ready);
-// 	modport IDU(input  code,valid,output addr,enJfun,ready);
-// 	endinterface
 typedef struct packed {
 	logic valid;
 	code_t code;	
@@ -156,6 +148,29 @@ interface AXI4_Lite_t();
 	modport CPU(input  arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,output araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
 	modport MEM(output arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,input  araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
 	endinterface
+typedef struct packed {
+	logic arvalid;
+	word_t araddr;
+	logic rready;
+
+	logic awvalid;
+	word_t awaddr;
+	mask_t wstrb;
+	word_t wdata;
+	logic wvalid;
+	logic bready;
+} AXI4Cal_t;
+typedef struct packed {
+	logic arready;
+	word_t rdata;
+	resp_t rresp;
+	logic rvalid;
+
+	logic awready;
+	logic wready;
+	resp_t bresp;
+	logic bvalid;
+} AXI4Bak_t;
 module ysyx_26020046_rv32i(
 	input logic clk,
 	input logic reset,
@@ -170,7 +185,11 @@ module ysyx_26020046_rv32i(
 	val_t val();
 	AXI4_Lite_t sbIf();
 	AXI4_Lite_t sbLs();
-	AXI4_Lite_t axi4();
+	// AXI4_Lite_t axi4();
+
+	// AXI4Cal_t IfuCal;AXI4Bak_t IfuBak;
+	// AXI4Cal_t LsuCal;AXI4Bak_t LsuBak;
+	AXI4Cal_t MemCal;AXI4Bak_t MemBak;
 
 	ysyx_26020046_rv32iMEM MEM(.*);
 	ysyx_26020046_rv32iARB ARB(.*);
@@ -209,7 +228,8 @@ module ysyx_26020046_rv32i(
 	`endif
 	endmodule
 module ysyx_26020046_rv32iMEM(
-	AXI4_Lite_t.MEM axi4,
+	input  AXI4Cal_t MemCal,
+	output AXI4Bak_t MemBak,
 	input clk,reset
 	);
 	MEMstatus_t Rs,nRs,Ws,nWs;
@@ -220,10 +240,10 @@ module ysyx_26020046_rv32iMEM(
 	mask_t wstrb;
 	logic hasAddr,hasData;
 	always_comb case(Rs)
-			MEMidle:nRs=(axi4.arvalid)?MEMwait:MEMidle;
-			MEMwait:nRs=(rCnt+3<rMax )?MEMwait:MEMfunc;
+			MEMidle:nRs=(MemCal.arvalid)?MEMwait:MEMidle;
+			MEMwait:nRs=(rCnt+3<rMax )	?MEMwait:MEMfunc;
 			MEMfunc:nRs=MEMback;
-			MEMback:nRs=(axi4.rready )?MEMidle:MEMback;
+			MEMback:nRs=(MemCal.rready )?MEMidle:MEMback;
 			default:nRs=MEMidle;
 	endcase	always_ff@(posedge clk) if(reset)begin
 			Rs	<=MEMidle;
@@ -232,20 +252,20 @@ module ysyx_26020046_rv32iMEM(
 			Rs	<=nRs;
 			rCnt<=(Rs==MEMwait)?rCnt+1:0;
 	end always_ff@(posedge clk)begin
-		if(axi4.arready&axi4.arvalid)araddr<=axi4.araddr;
-		if(Rs==MEMfunc)axi4.rdata<=pmem_read(araddr);
+		if(MemBak.arready&MemCal.arvalid)araddr<=MemCal.araddr;
+		if(Rs==MEMfunc)MemBak.rdata<=pmem_read(araddr);
 		`ifdef RV32I_DEBUG if(Rs==MEMfunc)$fdisplay(logFile,"%m:read [%x]==%x",araddr,axi4.rdata);`endif
 	end always_comb begin
-		axi4.arready=(Rs==MEMidle);
-		axi4.rresp=OKAY;
-		axi4.rvalid=(Rs==MEMback);
+		MemBak.arready=(Rs==MEMidle);
+		MemBak.rresp=OKAY;
+		MemBak.rvalid=(Rs==MEMback);
 	end
 
 	always_comb case(Ws)
-			MEMidle:nWs=(axi4.awvalid|hasAddr)&(axi4.wvalid|hasData)?MEMwait:MEMidle;
+			MEMidle:nWs=(MemCal.awvalid|hasAddr)&(MemCal.wvalid|hasData)?MEMwait:MEMidle;
 			MEMwait:nWs=(wCnt+3<wMax)?MEMwait:MEMfunc;
 			MEMfunc:nWs=MEMback;
-			MEMback:nWs=(axi4.bready)?MEMidle:MEMback;
+			MEMback:nWs=(MemCal.bready)?MEMidle:MEMback;
 			default:nWs=MEMidle;
 	endcase always_ff@(posedge clk) if(reset)begin
 			Ws	<=MEMidle;
@@ -254,53 +274,55 @@ module ysyx_26020046_rv32iMEM(
 			Ws	<=nWs;
 			wCnt<=(Ws==MEMwait)?wCnt+1:0;
 	end always_ff @(posedge clk) begin
-		if(axi4.awready&axi4.awvalid)awaddr	<=axi4.awaddr;
-		if(axi4.awready&axi4.awvalid)hasAddr<=1'b1;
-		if(Ws==MEMback				)hasAddr<=1'b0;
-		if(axi4.wready &axi4.wvalid )wdata	<=axi4.wdata;
-		if(axi4.wready &axi4.wvalid )wstrb	<=axi4.wstrb;
-		if(axi4.wready &axi4.wvalid )hasData<=1'b1;
-		if(Ws==MEMback				)hasData<=1'b0;
+		if(MemBak.awready&MemCal.awvalid)	awaddr	<=MemCal.awaddr;
+		if(MemBak.awready&MemCal.awvalid)	hasAddr<=1'b1;
+		if(Ws==MEMback)						hasAddr<=1'b0;
+		if(MemBak.wready &MemCal.wvalid)	wdata	<=MemCal.wdata;
+		if(MemBak.wready &MemCal.wvalid)	wstrb	<=MemCal.wstrb;
+		if(MemBak.wready &MemCal.wvalid)	hasData<=1'b1;
+		if(Ws==MEMback)						hasData<=1'b0;
 		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"%m:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
 		if(Ws==MEMfunc)pmem_write(awaddr,wdata,{4'b0,wstrb});
 	end always_comb begin
-		axi4.awready=(Ws==MEMidle&!hasAddr);
-		axi4.wready	=(Ws==MEMidle&!hasData);
-		axi4.bresp	=OKAY;
-		axi4.bvalid	=(Ws==MEMback);
+		MemBak.awready=(Ws==MEMidle&!hasAddr);
+		MemBak.wready	=(Ws==MEMidle&!hasData);
+		MemBak.bresp	=OKAY;
+		MemBak.bvalid	=(Ws==MEMback);
 	end
 	endmodule
 module ysyx_26020046_rv32iARB(
 	AXI4_Lite_t.MEM sbIf,
 	AXI4_Lite_t.MEM sbLs,
-	AXI4_Lite_t.CPU axi4,
+	// AXI4_Lite_t.CPU axi4,
+	input  AXI4Bak_t MemBak,
+	output AXI4Cal_t MemCal,
 	input clk,reset
 	);
 	ARBstatus_t s,ns;
 	always_comb	unique case(s)//TODO 现在默认是LSU不会同时读写
-			ARBidle: if(sbLs.arvalid&axi4.arready)ns=ARBlsuR;
-				else if(sbLs.awvalid&axi4.awready)ns=ARBlsuW;
-				else if(sbLs.wvalid &axi4.wready )ns=ARBlsuW;
-				else if(sbIf.arvalid&axi4.arready)ns=ARBifuR;
+			ARBidle: if(sbLs.arvalid&MemBak.arready)ns=ARBlsuR;
+				else if(sbLs.awvalid&MemBak.awready)ns=ARBlsuW;
+				else if(sbLs.wvalid &MemBak.wready )ns=ARBlsuW;
+				else if(sbIf.arvalid&MemBak.arready)ns=ARBifuR;
 				else ns=ARBidle;
-			ARBlsuR:ns=(sbLs.rready&axi4.rvalid)?ARBidle:ARBlsuR;
-			ARBlsuW:ns=(sbLs.bready&axi4.bvalid)?ARBidle:ARBlsuW;
-			ARBifuR:ns=(sbIf.rready&axi4.rvalid)?ARBidle:ARBifuR;
+			ARBlsuR:ns=(sbLs.rready&MemBak.rvalid)?ARBidle:ARBlsuR;
+			ARBlsuW:ns=(sbLs.bready&MemBak.bvalid)?ARBidle:ARBlsuW;
+			ARBifuR:ns=(sbIf.rready&MemBak.rvalid)?ARBidle:ARBifuR;
 			default:ns=ARBidle;
 	endcase always_ff@(posedge clk)if(reset)begin
 			s<=ARBidle;
 		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
 			s<=ns;
 		end always_comb begin
-			axi4.araddr	='0;
-			axi4.arvalid=false;
-			axi4.rready	=false;
-			axi4.awaddr	='0;
-			axi4.awvalid=false;
-			axi4.wdata	='0;
-			axi4.wstrb	='0;
-			axi4.wvalid	=false;
-			axi4.bready	=false;
+			MemCal.araddr	='0;
+			MemCal.arvalid=false;
+			MemCal.rready	=false;
+			MemCal.awaddr	='0;
+			MemCal.awvalid=false;
+			MemCal.wdata	='0;
+			MemCal.wstrb	='0;
+			MemCal.wvalid	=false;
+			MemCal.bready	=false;
 			
 			sbLs.arready=false;
 			sbLs.rdata	='0;
@@ -322,34 +344,34 @@ module ysyx_26020046_rv32iARB(
 		unique case(s)
 			ARBidle:;
 			ARBlsuR:begin
-				axi4.araddr	=sbLs.araddr;
-				axi4.arvalid=sbLs.arvalid;
-				sbLs.arready=axi4.arready;
-				sbLs.rdata	=axi4.rdata;
-				sbLs.rresp	=axi4.rresp;
-				sbLs.rvalid	=axi4.rvalid;
-				axi4.rready	=sbLs.rready;
+				MemCal.araddr	=sbLs.araddr;
+				MemCal.arvalid	=sbLs.arvalid;
+				sbLs.arready	=MemBak.arready;
+				sbLs.rdata		=MemBak.rdata;
+				sbLs.rresp		=MemBak.rresp;
+				sbLs.rvalid		=MemBak.rvalid;
+				MemCal.rready	=sbLs.rready;
 				end
 			ARBlsuW:begin
-				axi4.awaddr	=sbLs.awaddr;
-				axi4.awvalid=sbLs.awvalid;
-				sbLs.awready=axi4.awready;
-				axi4.wdata	=sbLs.wdata;
-				axi4.wstrb	=sbLs.wstrb;
-				axi4.wvalid	=sbLs.wvalid;
-				sbLs.wready	=axi4.wready;
-				sbLs.bresp	=axi4.bresp;
-				sbLs.bvalid	=axi4.bvalid;
-				axi4.bready	=sbLs.bready;
+				MemCal.awaddr	=sbLs.awaddr;
+				MemCal.awvalid	=sbLs.awvalid;
+				sbLs.awready	=MemBak.awready;
+				MemCal.wdata	=sbLs.wdata;
+				MemCal.wstrb	=sbLs.wstrb;
+				MemCal.wvalid	=sbLs.wvalid;
+				sbLs.wready		=MemBak.wready;
+				sbLs.bresp		=MemBak.bresp;
+				sbLs.bvalid		=MemBak.bvalid;
+				MemCal.bready	=sbLs.bready;
 				end
 			ARBifuR:begin
-				axi4.araddr	=sbIf.araddr;
-				axi4.arvalid=sbIf.arvalid;
-				sbIf.arready=axi4.arready;
-				sbIf.rdata	=axi4.rdata;
-				sbIf.rresp	=axi4.rresp;
-				sbIf.rvalid	=axi4.rvalid;
-				axi4.rready	=sbIf.rready;
+				MemCal.araddr	=sbIf.araddr;
+				MemCal.arvalid	=sbIf.arvalid;
+				sbIf.arready	=MemBak.arready;
+				sbIf.rdata		=MemBak.rdata;
+				sbIf.rresp		=MemBak.rresp;
+				sbIf.rvalid		=MemBak.rvalid;
+				MemCal.rready	=sbIf.rready;
 				end
 	endcase end
 	endmodule
