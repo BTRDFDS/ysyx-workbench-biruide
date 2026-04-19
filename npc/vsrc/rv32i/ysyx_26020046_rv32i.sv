@@ -76,8 +76,8 @@ interface IfId_t();
 	modport IFU(output code,valid,input  addr,enJfun,ready);
 	modport IDU(input  code,valid,output addr,enJfun,ready);
 	endinterface
-interface IdAl_t();
-	logic valid,ready;
+typedef struct packed {
+	logic valid;
 
 	in1_t		in1;
 	in2_t		in2;
@@ -97,26 +97,11 @@ interface IdAl_t();
 	CSRop_t SRop;
 
 	word_t oR1,oR2,oCsr,imm,pc;
-
+} IdAl_t;
+typedef struct packed {
 	word_t addr;
-	logic enJfun;
-
-	modport IDU(output in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd,valid,input  addr,enJfun,ready);
-	modport ALU(input  in1,in2,oR1,oR2,oCsr,imm,pc,enJcod,cal,bfu,adr,cCsr,cIrd,enL,enS,LSop,SRaddr,SRop,cRd,valid,output addr,enJfun,ready);
-	endinterface
-// interface AlLs_t();
-// 	logic valid,ready;
-
-// 	logic enS,enL;
-// 	LSUop_t LSop;
-// 	word_t addr,res,iCsr,oR2;
-// 	logic [11:0] SRaddr;
-// 	CSRop_t SRop;
-
-// 	reg_t cRd;
-// 	modport ALU(output enS,enL,LSop,res,addr,oR2,cRd,iCsr,SRaddr,SRop,valid,input  ready);
-// 	modport LSU(input  enS,enL,LSop,res,addr,oR2,cRd,iCsr,SRaddr,SRop,valid,output ready);
-// 	endinterface
+	logic enJfun,ready;
+} enJready_t;
 typedef struct packed {
 	logic valid;
 	logic enS,enL;
@@ -126,19 +111,6 @@ typedef struct packed {
 	CSRop_t SRop;
 	reg_t cRd;
 } AlLs_t;
-// interface LsWb_t();
-// 	logic valid,ready;
-// 	logic readySr,readyRg;
-
-// 	reg_t cRd;
-// 	SRaddr_t SRaddr;
-// 	CSRop_t SRop;
-// 	word_t iRd,iCsr;
-// 	assign ready=readyRg&readySr;
-// 	modport LSU(output iRd,cRd,iCsr,SRaddr,SRop,valid,input ready);
-// 	modport GPR(input  iRd,cRd,valid,output readyRg);
-// 	modport CSR(input  iCsr,SRaddr,SRop,valid,output readySr);
-// 	endinterface
 typedef struct packed {
 	word_t iRd;
 	reg_t cRd;
@@ -187,7 +159,7 @@ module ysyx_26020046_rv32i(
 	);
 
 	IfId_t nIfId();
-	IdAl_t nIdAl();
+	IdAl_t nIdAl;
 	AlLs_t nAlLs;
 	LsRg_t nLsRg;
 	LsSr_t nLsSr;
@@ -196,8 +168,8 @@ module ysyx_26020046_rv32i(
 	AXI4_Lite_t sbLs();
 	AXI4_Lite_t axi4();
 
-	logic LsSrReady,LsRgReady,AlLsReady;//,IdAlReady,IfIdReady;
-
+	logic LsSrReady,LsRgReady,AlLsReady;//,IfIdReady;
+	enJready_t IdAlReady;
 	// ysyx_26020046_rv32iMEM ROM(.*,.axi4(sbIf));
 	// ysyx_26020046_rv32iMEM RAM(.*,.axi4(sbLs));
 	ysyx_26020046_rv32iMEM MEM(.*);
@@ -437,7 +409,8 @@ module ysyx_26020046_rv32iIFU(
 	endmodule
 module ysyx_26020046_rv32iIDU(
 	IfId_t.IDU nIfId,
-	IdAl_t.IDU nIdAl,
+	output IdAl_t nIdAl,
+	input enJready_t IdAlReady,
 	val_t.IDU val
 	);
 	always_comb begin
@@ -446,9 +419,9 @@ module ysyx_26020046_rv32iIDU(
 		nIdAl.oCsr	=val.oCsr;
 		nIdAl.pc	=val.pc;
 		nIdAl.valid	=nIfId.valid;
-		nIfId.addr	=nIdAl.addr;
-		nIfId.enJfun=nIdAl.enJfun;
-		nIfId.ready	=nIdAl.ready;
+		nIfId.addr	=IdAlReady.addr;
+		nIfId.enJfun=IdAlReady.enJfun;
+		nIfId.ready	=IdAlReady.ready;
 	end
 	always_comb begin : ID
 		nIdAl.in1=IR1;nIdAl.in2=IR2;
@@ -594,40 +567,42 @@ module ysyx_26020046_rv32iIDU(
 	end
 	endmodule
 module ysyx_26020046_rv32iALU(
-	IdAl_t.ALU nIdAl,
-	// output logic IdAlReady,
+	input  IdAl_t nIdAl,
+	output enJready_t IdAlReady,
 	output AlLs_t nAlLs,
-	input logic AlLsReady
+	input  logic AlLsReady
 	);
 	logic enBfun;
 	word_t result,in1,in2;
+	IdAl_t oIdAl;
+
+	always_comb oIdAl=nIdAl;
 
 	always_comb begin
-		nAlLs.oR2	=nIdAl.oR2;
-		nAlLs.enS	=nIdAl.enS;
-		nAlLs.enL	=nIdAl.enL;
-		nAlLs.LSop	=nIdAl.LSop;
-		nAlLs.cRd	=nIdAl.cRd;
-		nAlLs.SRaddr	=nIdAl.SRaddr;
-		nAlLs.SRop	=nIdAl.SRop;
-		nAlLs.valid	=nIdAl.valid;
-		nIdAl.ready	=AlLsReady;
-		// IdAlReady	=AlLsReady;
+		nAlLs.oR2		=oIdAl.oR2;
+		nAlLs.enS		=oIdAl.enS;
+		nAlLs.enL		=oIdAl.enL;
+		nAlLs.LSop		=oIdAl.LSop;
+		nAlLs.cRd		=oIdAl.cRd;
+		nAlLs.SRaddr	=oIdAl.SRaddr;
+		nAlLs.SRop		=oIdAl.SRop;
+		nAlLs.valid		=oIdAl.valid;
+		IdAlReady.ready	=AlLsReady;
 	end
 
-	always_comb begin if(nIdAl.valid)begin
+	always_comb begin if(oIdAl.valid)begin
 			// $fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);
-		unique case(nIdAl.in1)
-			IR1:in1=nIdAl.oR1;
-			PC_:in1=nIdAl.pc;
-			default:begin in1='0;$fatal("unknown in1==0x%x",nIdAl.in1);end
+		unique case(oIdAl.in1)
+			IR1:in1=oIdAl.oR1;
+			PC_:in1=oIdAl.pc;
+			default:begin in1='0;$fatal("unknown in1==0x%x",oIdAl.in1);end
 		endcase
-		unique case(nIdAl.in2)
-			IR2:in2=nIdAl.oR2;
-			IMM:in2=nIdAl.imm;
-			default:begin in2='0;$fatal("unknown in2==0x%x",nIdAl.in2);end
+		unique case(oIdAl.in2)
+			IR2:in2=oIdAl.oR2;
+			IMM:in2=oIdAl.imm;
+			default:begin in2='0;$fatal("unknown in2==0x%x",oIdAl.in2);end
 		endcase
-		unique case(nIdAl.cal)
+		unique case(oIdAl.cal)
 			ADD_:result=in1+in2;
 			SLL_:result=in1<<in2[4:0];
 			SLT_:result=  $signed(in1) <  $signed(in2)?1:0;
@@ -639,54 +614,54 @@ module ysyx_26020046_rv32iALU(
 			SUB_:result=in1-in2;
 			SRA_:result=  $signed(in1)>>>in2[4:0];
 			NCAL:result='0;
-			default:begin result='0;$fatal("unknown cal==0x%x",nIdAl.cal);end
+			default:begin result='0;$fatal("unknown cal==0x%x",oIdAl.cal);end
 		endcase
 		
-		unique case(nIdAl.cIrd)
+		unique case(oIdAl.cIrd)
 			CAL_:nAlLs.res=result;
-			IMM_:nAlLs.res=nIdAl.imm;
-			CCSR:nAlLs.res=nIdAl.oCsr;
-			SNPC:nAlLs.res=nIdAl.pc+4;
+			IMM_:nAlLs.res=oIdAl.imm;
+			CCSR:nAlLs.res=oIdAl.oCsr;
+			SNPC:nAlLs.res=oIdAl.pc+4;
 			NCHO:nAlLs.res='0;
-			default:begin nAlLs.res='0;$error("unknown cho==0x%x",nIdAl.cIrd);$stop;end
+			default:begin nAlLs.res='0;$error("unknown cho==0x%x",oIdAl.cIrd);$stop;end
 		endcase
-		unique case(nIdAl.cCsr)
-			WACSR:nAlLs.iCsr=nIdAl.oR1;
-			RACSR:nAlLs.iCsr=nIdAl.oR1|nIdAl.oCsr;
-			JUMP_:nAlLs.iCsr=nIdAl.pc;
+		unique case(oIdAl.cCsr)
+			WACSR:nAlLs.iCsr=oIdAl.oR1;
+			RACSR:nAlLs.iCsr=oIdAl.oR1|oIdAl.oCsr;
+			JUMP_:nAlLs.iCsr=oIdAl.pc;
 			NCSR_:nAlLs.iCsr='0;
-			default:begin nAlLs.iCsr='0;$error("unknown csr==0x%x",nIdAl.cCsr);$stop;end
+			default:begin nAlLs.iCsr='0;$error("unknown csr==0x%x",oIdAl.cCsr);$stop;end
 		endcase
-		unique case(nIdAl.bfu)
-			BEQ_:enBfun=(nIdAl.oR1==nIdAl.oR2);
-			BNE_:enBfun=(nIdAl.oR1!=nIdAl.oR2);
-			BLT_:enBfun=(   $signed(nIdAl.oR1) <  $signed(nIdAl.oR2));
-			BGE_:enBfun=(   $signed(nIdAl.oR1)>=  $signed(nIdAl.oR2));
-			BLTU:enBfun=( $unsigned(nIdAl.oR1) <$unsigned(nIdAl.oR2));
-			BGEU:enBfun=( $unsigned(nIdAl.oR1)>=$unsigned(nIdAl.oR2));
+		unique case(oIdAl.bfu)
+			BEQ_:enBfun=(oIdAl.oR1==oIdAl.oR2);
+			BNE_:enBfun=(oIdAl.oR1!=oIdAl.oR2);
+			BLT_:enBfun=(   $signed(oIdAl.oR1) <  $signed(oIdAl.oR2));
+			BGE_:enBfun=(   $signed(oIdAl.oR1)>=  $signed(oIdAl.oR2));
+			BLTU:enBfun=( $unsigned(oIdAl.oR1) <$unsigned(oIdAl.oR2));
+			BGEU:enBfun=( $unsigned(oIdAl.oR1)>=$unsigned(oIdAl.oR2));
 			NBFU:enBfun='0;
-			default:begin enBfun='0;$fatal("unknown bfu==0x%x",nIdAl.bfu);end
+			default:begin enBfun='0;$fatal("unknown bfu==0x%x",oIdAl.bfu);end
 			endcase
-		unique case(nIdAl.adr)
-			R1I:nAlLs.addr=nIdAl.oR1+nIdAl.imm;
-			PCI:nAlLs.addr=nIdAl.pc +nIdAl.imm;
-			ECJ:nAlLs.addr=nIdAl.oCsr;
-			ERE:nAlLs.addr=nIdAl.oCsr;
+		unique case(oIdAl.adr)
+			R1I:nAlLs.addr=oIdAl.oR1+oIdAl.imm;
+			PCI:nAlLs.addr=oIdAl.pc +oIdAl.imm;
+			ECJ:nAlLs.addr=oIdAl.oCsr;
+			ERE:nAlLs.addr=oIdAl.oCsr;
 			NAD:nAlLs.addr='0;
-			default:begin nAlLs.addr='0;$fatal("unknown adr==0x%x",nIdAl.adr);end
+			default:begin nAlLs.addr='0;$fatal("unknown adr==0x%x",oIdAl.adr);end
 		endcase
-		nIdAl.enJfun=nIdAl.enJcod|enBfun;
-		nIdAl.addr=nAlLs.addr;
+		IdAlReady.enJfun=oIdAl.enJcod|enBfun;
+		IdAlReady.addr=nAlLs.addr;
 	end end
 	endmodule
 module ysyx_26020046_rv32iLSU(
 	AXI4_Lite_t sbLs,
-	input AlLs_t nAlLs,
-	input logic LsRgReady,LsSrReady,
+	input  AlLs_t nAlLs,
+	input  logic LsRgReady,LsSrReady,
 	output LsRg_t nLsRg,
 	output LsSr_t nLsSr,
 	output logic AlLsReady,
-	input logic clk,reset
+	input  logic clk,reset
 	);
 
 	AlLs_t oAlLs;
@@ -782,10 +757,10 @@ module ysyx_26020046_rv32iLSU(
 	end
 	endmodule
 module ysyx_26020046_rv32iGPR(
-	input LsRg_t nLsRg,
+	input  LsRg_t nLsRg,
 	output logic LsRgReady,
-	val_t.GPR val,
-	input clk,reset
+	val_t. GPR val,
+	input  clk,reset
 	);
 
 	LsRg_t oLsRg;
@@ -812,10 +787,10 @@ module ysyx_26020046_rv32iGPR(
 	endfunction
 	endmodule
 module ysyx_26020046_rv32iCSR(
-	input LsSr_t nLsSr,
+	input  LsSr_t nLsSr,
 	output logic LsSrReady,
 	val_t.CSR val,
-	input clk,reset
+	input  clk,reset
 	);
 
 	LsSr_t oLsSr;
