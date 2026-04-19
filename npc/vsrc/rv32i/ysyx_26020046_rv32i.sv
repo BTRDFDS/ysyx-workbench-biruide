@@ -148,29 +148,10 @@ interface AXI4_Lite_t();
 	modport CPU(input  arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,output araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
 	modport MEM(output arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,input  araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
 	endinterface
-typedef struct packed {
-	logic arvalid;
-	word_t araddr;
-	logic rready;
-
-	logic awvalid;
-	word_t awaddr;
-	mask_t wstrb;
-	word_t wdata;
-	logic wvalid;
-	logic bready;
-} AXI4Cal_t;
-typedef struct packed {
-	logic arready;
-	word_t rdata;
-	resp_t rresp;
-	logic rvalid;
-
-	logic awready;
-	logic wready;
-	resp_t bresp;
-	logic bvalid;
-} AXI4Bak_t;
+typedef struct packed {logic arvalid,rready;word_t araddr;}AXI4rCal_t;
+typedef struct packed {logic awvalid,wvalid,bready;word_t awaddr,wdata;mask_t wstrb;}AXI4wCal_t;
+typedef struct packed {logic arready;word_t rdata;resp_t rresp;logic rvalid;}AXI4rBak_t;
+typedef struct packed {logic awready,wready,bvalid;resp_t bresp;}AXI4wBak_t;
 module ysyx_26020046_rv32i(
 	input logic clk,
 	input logic reset,
@@ -183,13 +164,14 @@ module ysyx_26020046_rv32i(
 	LsRg_t nLsRg;logic  iRgLs;
 	LsSr_t nLsSr;logic  iSrLs;
 	val_t val();
-	AXI4_Lite_t sbIf();
+	// AXI4_Lite_t sbIf();
 	AXI4_Lite_t sbLs();
 	// AXI4_Lite_t axi4();
 
-	// AXI4Cal_t IfuCal;AXI4Bak_t IfuBak;
-	// AXI4Cal_t LsuCal;AXI4Bak_t LsuBak;
-	AXI4Cal_t MemCal;AXI4Bak_t MemBak;
+	AXI4rCal_t rIfCal;AXI4rBak_t rIfBak;
+	// AXI4rCal_t LsuCal;AXI4rBak_t LsuBak;
+	AXI4rCal_t rMeCal;AXI4rBak_t rMeBak;
+	AXI4wCal_t wMeCal;AXI4wBak_t wMeBak;
 
 	ysyx_26020046_rv32iMEM MEM(.*);
 	ysyx_26020046_rv32iARB ARB(.*);
@@ -228,8 +210,10 @@ module ysyx_26020046_rv32i(
 	`endif
 	endmodule
 module ysyx_26020046_rv32iMEM(
-	input  AXI4Cal_t MemCal,
-	output AXI4Bak_t MemBak,
+	input  AXI4rCal_t rMeCal,
+	input  AXI4wCal_t wMeCal,
+	output AXI4rBak_t rMeBak,
+	output AXI4wBak_t wMeBak,
 	input clk,reset
 	);
 	MEMstatus_t Rs,nRs,Ws,nWs;
@@ -240,10 +224,10 @@ module ysyx_26020046_rv32iMEM(
 	mask_t wstrb;
 	logic hasAddr,hasData;
 	always_comb case(Rs)
-			MEMidle:nRs=(MemCal.arvalid)?MEMwait:MEMidle;
+			MEMidle:nRs=(rMeCal.arvalid)?MEMwait:MEMidle;
 			MEMwait:nRs=(rCnt+3<rMax )	?MEMwait:MEMfunc;
 			MEMfunc:nRs=MEMback;
-			MEMback:nRs=(MemCal.rready )?MEMidle:MEMback;
+			MEMback:nRs=(rMeCal.rready )?MEMidle:MEMback;
 			default:nRs=MEMidle;
 	endcase	always_ff@(posedge clk) if(reset)begin
 			Rs	<=MEMidle;
@@ -252,20 +236,20 @@ module ysyx_26020046_rv32iMEM(
 			Rs	<=nRs;
 			rCnt<=(Rs==MEMwait)?rCnt+1:0;
 	end always_ff@(posedge clk)begin
-		if(MemBak.arready&MemCal.arvalid)araddr<=MemCal.araddr;
-		if(Rs==MEMfunc)MemBak.rdata<=pmem_read(araddr);
+		if(rMeBak.arready&rMeCal.arvalid)araddr<=rMeCal.araddr;
+		if(Rs==MEMfunc)rMeBak.rdata<=pmem_read(araddr);
 		`ifdef RV32I_DEBUG if(Rs==MEMfunc)$fdisplay(logFile,"%m:read [%x]==%x",araddr,axi4.rdata);`endif
 	end always_comb begin
-		MemBak.arready=(Rs==MEMidle);
-		MemBak.rresp=OKAY;
-		MemBak.rvalid=(Rs==MEMback);
+		rMeBak.arready=(Rs==MEMidle);
+		rMeBak.rresp=OKAY;
+		rMeBak.rvalid=(Rs==MEMback);
 	end
 
 	always_comb case(Ws)
-			MEMidle:nWs=(MemCal.awvalid|hasAddr)&(MemCal.wvalid|hasData)?MEMwait:MEMidle;
+			MEMidle:nWs=(wMeCal.awvalid|hasAddr)&(wMeCal.wvalid|hasData)?MEMwait:MEMidle;
 			MEMwait:nWs=(wCnt+3<wMax)?MEMwait:MEMfunc;
 			MEMfunc:nWs=MEMback;
-			MEMback:nWs=(MemCal.bready)?MEMidle:MEMback;
+			MEMback:nWs=(wMeCal.bready)?MEMidle:MEMback;
 			default:nWs=MEMidle;
 	endcase always_ff@(posedge clk) if(reset)begin
 			Ws	<=MEMidle;
@@ -274,55 +258,55 @@ module ysyx_26020046_rv32iMEM(
 			Ws	<=nWs;
 			wCnt<=(Ws==MEMwait)?wCnt+1:0;
 	end always_ff @(posedge clk) begin
-		if(MemBak.awready&MemCal.awvalid)	awaddr	<=MemCal.awaddr;
-		if(MemBak.awready&MemCal.awvalid)	hasAddr<=1'b1;
+		if(wMeBak.awready&wMeCal.awvalid)	awaddr	<=wMeCal.awaddr;
+		if(wMeBak.awready&wMeCal.awvalid)	hasAddr<=1'b1;
 		if(Ws==MEMback)						hasAddr<=1'b0;
-		if(MemBak.wready &MemCal.wvalid)	wdata	<=MemCal.wdata;
-		if(MemBak.wready &MemCal.wvalid)	wstrb	<=MemCal.wstrb;
-		if(MemBak.wready &MemCal.wvalid)	hasData<=1'b1;
+		if(wMeBak.wready &wMeCal.wvalid)	wdata	<=wMeCal.wdata;
+		if(wMeBak.wready &wMeCal.wvalid)	wstrb	<=wMeCal.wstrb;
+		if(wMeBak.wready &wMeCal.wvalid)	hasData<=1'b1;
 		if(Ws==MEMback)						hasData<=1'b0;
 		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"%m:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
 		if(Ws==MEMfunc)pmem_write(awaddr,wdata,{4'b0,wstrb});
 	end always_comb begin
-		MemBak.awready=(Ws==MEMidle&!hasAddr);
-		MemBak.wready	=(Ws==MEMidle&!hasData);
-		MemBak.bresp	=OKAY;
-		MemBak.bvalid	=(Ws==MEMback);
+		wMeBak.awready=(Ws==MEMidle&!hasAddr);
+		wMeBak.wready	=(Ws==MEMidle&!hasData);
+		wMeBak.bresp	=OKAY;
+		wMeBak.bvalid	=(Ws==MEMback);
 	end
 	endmodule
 module ysyx_26020046_rv32iARB(
-	AXI4_Lite_t.MEM sbIf,
 	AXI4_Lite_t.MEM sbLs,
-	// AXI4_Lite_t.CPU axi4,
-	input  AXI4Bak_t MemBak,
-	output AXI4Cal_t MemCal,
+	input  AXI4rCal_t rIfCal,
+	output AXI4rBak_t rIfBak,
+	input  AXI4rBak_t rMeBak,
+	output AXI4rCal_t rMeCal,
 	input clk,reset
 	);
 	ARBstatus_t s,ns;
 	always_comb	unique case(s)//TODO 现在默认是LSU不会同时读写
-			ARBidle: if(sbLs.arvalid&MemBak.arready)ns=ARBlsuR;
-				else if(sbLs.awvalid&MemBak.awready)ns=ARBlsuW;
-				else if(sbLs.wvalid &MemBak.wready )ns=ARBlsuW;
-				else if(sbIf.arvalid&MemBak.arready)ns=ARBifuR;
+			ARBidle: if(sbLs.arvalid&rMeBak.arready)ns=ARBlsuR;
+				else if(sbLs.awvalid&wMeBak.awready)ns=ARBlsuW;
+				else if(sbLs.wvalid &wMeBak.wready )ns=ARBlsuW;
+				else if(rIfCal.arvalid&rMeBak.arready)ns=ARBifuR;
 				else ns=ARBidle;
-			ARBlsuR:ns=(sbLs.rready&MemBak.rvalid)?ARBidle:ARBlsuR;
-			ARBlsuW:ns=(sbLs.bready&MemBak.bvalid)?ARBidle:ARBlsuW;
-			ARBifuR:ns=(sbIf.rready&MemBak.rvalid)?ARBidle:ARBifuR;
+			ARBlsuR:ns=(sbLs.rready&rMeBak.rvalid)?ARBidle:ARBlsuR;
+			ARBlsuW:ns=(sbLs.bready&wMeBak.bvalid)?ARBidle:ARBlsuW;
+			ARBifuR:ns=(rIfCal.rready&rMeBak.rvalid)?ARBidle:ARBifuR;
 			default:ns=ARBidle;
 	endcase always_ff@(posedge clk)if(reset)begin
 			s<=ARBidle;
 		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
 			s<=ns;
 		end always_comb begin
-			MemCal.araddr	='0;
-			MemCal.arvalid=false;
-			MemCal.rready	=false;
-			MemCal.awaddr	='0;
-			MemCal.awvalid=false;
-			MemCal.wdata	='0;
-			MemCal.wstrb	='0;
-			MemCal.wvalid	=false;
-			MemCal.bready	=false;
+			rMeCal.araddr	='0;
+			rMeCal.arvalid=false;
+			rMeCal.rready	=false;
+			wMeCal.awaddr	='0;
+			wMeCal.awvalid=false;
+			wMeCal.wdata	='0;
+			wMeCal.wstrb	='0;
+			wMeCal.wvalid	=false;
+			wMeCal.bready	=false;
 			
 			sbLs.arready=false;
 			sbLs.rdata	='0;
@@ -333,50 +317,47 @@ module ysyx_26020046_rv32iARB(
 			sbLs.bresp	=OKAY;
 			sbLs.bvalid	=false;
 
-			sbIf.arready=false;
-			sbIf.rdata	='0;
-			sbIf.rresp	=OKAY;
-			sbIf.rvalid	=false;
-			sbIf.awready=false;
-			sbIf.wready	=false;
-			sbIf.bresp	=OKAY;
-			sbIf.bvalid	=false;
+			rIfBak.arready=false;
+			rIfBak.rdata	='0;
+			rIfBak.rresp	=OKAY;
+			rIfBak.rvalid	=false;
 		unique case(s)
 			ARBidle:;
 			ARBlsuR:begin
-				MemCal.araddr	=sbLs.araddr;
-				MemCal.arvalid	=sbLs.arvalid;
-				sbLs.arready	=MemBak.arready;
-				sbLs.rdata		=MemBak.rdata;
-				sbLs.rresp		=MemBak.rresp;
-				sbLs.rvalid		=MemBak.rvalid;
-				MemCal.rready	=sbLs.rready;
+				rMeCal.araddr	=sbLs.araddr;
+				rMeCal.arvalid	=sbLs.arvalid;
+				sbLs.arready	=rMeBak.arready;
+				sbLs.rdata		=rMeBak.rdata;
+				sbLs.rresp		=rMeBak.rresp;
+				sbLs.rvalid		=rMeBak.rvalid;
+				rMeCal.rready	=sbLs.rready;
 				end
 			ARBlsuW:begin
-				MemCal.awaddr	=sbLs.awaddr;
-				MemCal.awvalid	=sbLs.awvalid;
-				sbLs.awready	=MemBak.awready;
-				MemCal.wdata	=sbLs.wdata;
-				MemCal.wstrb	=sbLs.wstrb;
-				MemCal.wvalid	=sbLs.wvalid;
-				sbLs.wready		=MemBak.wready;
-				sbLs.bresp		=MemBak.bresp;
-				sbLs.bvalid		=MemBak.bvalid;
-				MemCal.bready	=sbLs.bready;
+				wMeCal.awaddr	=sbLs.awaddr;
+				wMeCal.awvalid	=sbLs.awvalid;
+				sbLs.awready	=wMeBak.awready;
+				wMeCal.wdata	=sbLs.wdata;
+				wMeCal.wstrb	=sbLs.wstrb;
+				wMeCal.wvalid	=sbLs.wvalid;
+				sbLs.wready		=wMeBak.wready;
+				sbLs.bresp		=wMeBak.bresp;
+				sbLs.bvalid		=wMeBak.bvalid;
+				wMeCal.bready	=sbLs.bready;
 				end
 			ARBifuR:begin
-				MemCal.araddr	=sbIf.araddr;
-				MemCal.arvalid	=sbIf.arvalid;
-				sbIf.arready	=MemBak.arready;
-				sbIf.rdata		=MemBak.rdata;
-				sbIf.rresp		=MemBak.rresp;
-				sbIf.rvalid		=MemBak.rvalid;
-				MemCal.rready	=sbIf.rready;
+				rMeCal.araddr	=rIfCal.araddr;
+				rMeCal.arvalid	=rIfCal.arvalid;
+				rIfBak.arready	=rMeBak.arready;
+				rIfBak.rdata	=rMeBak.rdata;
+				rIfBak.rresp	=rMeBak.rresp;
+				rIfBak.rvalid	=rMeBak.rvalid;
+				rMeCal.rready	=rIfCal.rready;
 				end
 	endcase end
 	endmodule
 module ysyx_26020046_rv32iIFU(
-	AXI4_Lite_t.CPU sbIf,
+	input  AXI4rBak_t rIfBak,
+	output AXI4rCal_t rIfCal,
 	output IfId_t nIfId,
 	input upBk_t iIdIf,
 	val_t.IFU val,
@@ -385,41 +366,31 @@ module ysyx_26020046_rv32iIFU(
 
 	CPUstatus_t ns,s;
 	always_comb	unique case(s)//两段状态转移会有1周期延迟
-			CPUfunc:ns=iIdIf.ready	?CPUcall:CPUfunc;
-			CPUcall:ns=sbIf.arready	?CPUback:CPUcall;
-			CPUback:ns=sbIf.rvalid	?CPUfunc:CPUback;
+			CPUfunc:ns=iIdIf.ready		?CPUcall:CPUfunc;
+			CPUcall:ns=rIfBak.arready	?CPUback:CPUcall;
+			CPUback:ns=rIfBak.rvalid	?CPUfunc:CPUback;
 			default:ns=CPUcall;
 	endcase always_ff@(posedge clk)if(reset)begin
 			s<=CPUcall;
 		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b",s.name(),ns.name(),nIfId.ready);`endif
 			s<=ns;
 	end always_comb begin : out
-		sbIf.araddr=val.pc;
-		sbIf.arvalid=(s==CPUcall);
+		rIfCal.araddr=val.pc;
+		rIfCal.arvalid=(s==CPUcall);
 
-		sbIf.rready=(s==CPUback);
-
-		sbIf.awaddr='0;
-		sbIf.awvalid=false;
-
-		sbIf.wdata='0;
-		sbIf.wstrb='0;
-		sbIf.wvalid=false;
-
-		sbIf.bready=false;
+		rIfCal.rready=(s==CPUback);
 	end
-	logic nuseTrue=1'b1|sbIf.awready|sbIf.wready|sbIf.bvalid|(|sbIf.bresp);
 	always_ff@(posedge clk)begin
-		if(s==CPUback&ns==CPUfunc)nIfId.code<=sbIf.rdata;
+		if(s==CPUback&ns==CPUfunc)nIfId.code<=rIfBak.rdata;
 	end
 	always_comb begin : in
 		// nIfId.code=sbIf.rdata;
-		case(sbIf.rresp)
+		case(rIfBak.rresp)
 			OKAY	:;
 			default	:$stop("rresp");
 		endcase
 
-		nIfId.valid=(s==CPUfunc)&nuseTrue;//无关信号就都绑定到valid上
+		nIfId.valid=(s==CPUfunc);
 	end
 	always_ff @(posedge clk) begin : pc
 		`ifdef RV32I_DEBUG if(nIfId.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,nIfId.addr);`endif
