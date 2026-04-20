@@ -37,7 +37,8 @@ void NpcRun(uint32_t times);
 uint32_t NpcMemRead(uint32_t addr,memReadMode mode);
 
 ////////////////////////////////////////////////////////////////////////////////////////
-extern "C" int getReg(int addr);//注意：0号寄存器替代为pc
+extern "C" int getReg(int addr);
+extern "C" int getPc();
 extern "C" int pmem_read(uint32_t raddr) {
 	if(raddr==addrTimer){//返回毫秒数
 		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddr);
@@ -171,12 +172,12 @@ void NpcReset(){
 	runStep=0;
 }
 void NpcStep(){
-	pc=getReg(0);
+	pc=getPc();
 	uint32_t nPc=pc;
 	uint32_t nCode=NpcMemRead(pc,memReadSTEP);
 	top->clk=1;top->eval();
 
-	pc=getReg(0);
+	pc=getPc();
 	top->clk=0;top->eval();
 
 	runStep++;
