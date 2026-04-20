@@ -128,7 +128,7 @@ module ysyx_26020046_rv32i(
 
 	IfId_t nIfId;upBk_t iAlId;
 	IdAl_t nIdAl;upBk_t iIdIf;valcl_t vIdAl;
-	AlLs_t nAlLs;LsAl_t  iLsAl;valcl_t vAlLs;
+	AlLs_t nAlLs;LsAl_t iLsAl;valcl_t vAlLs;
 	LsRg_t nLsRg;RgLs_t iRgLs;valRg_t vLsRg;
 	LsSr_t nLsSr;SrLs_t iSrLs;valSr_t vLsSr;
 
@@ -174,6 +174,16 @@ module ysyx_26020046_rv32i(
 			$fdisplay(logFile,"LsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s valid=%b ready=%b",LsWb.iRd,LsWb.cRd,LsWb.iCsr,LsWb.SRaddr,LsWb.SRop.name(),LsWb.valid,LsWb.ready);
 		end end
 	`endif
+	
+	`ifndef RV32I_STA
+	export "DPI-C" function getReg;
+	function int getReg(input int addr);
+		return (addr == 0) ? '0 : GPR.gpr[addr];
+	endfunction
+	export "DPI-C" function getPc;
+	function int getPc();
+		return nIfId.pc;
+	endfunction `endif
 	endmodule
 `ifndef RV32I_STA module ysyx_26020046_rv32iMEM(
 	input  AXI4rCal_t rMeCal,
@@ -370,10 +380,6 @@ module ysyx_26020046_rv32iIFU(
 			else nIfId.pc<=nIfId.pc+4;
 		end
 	end
-	`ifndef RV32I_STA export "DPI-C" function getPc;
-	function int getPc();
-		return nIfId.pc;
-	endfunction `endif
 	endmodule
 module ysyx_26020046_rv32iIDU(
 	input  IfId_t  nIfId,
@@ -388,6 +394,7 @@ module ysyx_26020046_rv32iIDU(
 
 	always_comb begin
 		nIdAl.valid	=oIfId.valid;
+		nIdAl.pc	=oIfId.pc;
 		iIdIf.addr	=iAlId.addr;
 		iIdIf.enJfun=iAlId.enJfun;
 		iIdIf.ready	=iAlId.ready;
@@ -540,6 +547,8 @@ module ysyx_26020046_rv32iALU(
 	input  IdAl_t nIdAl,
 	output upBk_t iAlId,
 	output AlLs_t nAlLs,
+	input  valcl_t vIdAl,
+	output valcl_t vAlLs,
 	input  LsAl_t iLsAl
 	);
 	logic enBfun;
@@ -547,6 +556,8 @@ module ysyx_26020046_rv32iALU(
 	IdAl_t oIdAl;
 
 	always_comb oIdAl=nIdAl;
+
+	always_comb vAlLs=vIdAl;
 
 	always_comb begin
 		nAlLs.oR2		=iLsAl.oR2;
@@ -654,6 +665,15 @@ module ysyx_26020046_rv32iLSU(
 	logic Rfinish,Wfinish,LsWbValid;
 
 	always_comb oAlLs=nAlLs;
+	always_comb begin
+		vLsRg.cR1=vAlLs.cR1;
+		vLsRg.cR2=vAlLs.cR2;
+		vLsSr.SRaddr=vAlLs.SRaddr;
+	end always_comb begin
+		iLsAl.oR1=iRgLs.oR1;
+		iLsAl.oR2=iRgLs.oR2;
+		iLsAl.oCsr=iSrLs.oCsr;
+	end
 
 	always_comb case(Rs)
 			CPUfunc:nRs=(oAlLs.enL&(~Rfinish)	)?CPUcall:CPUfunc;
@@ -762,10 +782,6 @@ module ysyx_26020046_rv32iGPR(
 	assign iRgLs.oR1=(vLsRg.cR1==0)?'0:gpr[vLsRg.cR1];
 	assign iRgLs.oR2=(vLsRg.cR2==0)?'0:gpr[vLsRg.cR2];
 
-	`ifndef RV32I_STA export "DPI-C" function getReg;
-	function int getReg(input int addr);
-		return (addr == 0) ? `0 : gpr[addr];
-	endfunction `endif
 	endmodule
 module ysyx_26020046_rv32iCSR(
 	input  LsSr_t nLsSr,

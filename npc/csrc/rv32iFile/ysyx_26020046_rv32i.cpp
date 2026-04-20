@@ -158,7 +158,7 @@ void NpcInitDevice(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new Vysyx_26020046_rv32i{contextp};
-	scope=svGetScopeFromName("TOP.ysyx_26020046_rv32i.GPR");
+	scope=svGetScopeFromName("TOP.ysyx_26020046_rv32i");
 	svSetScope(scope);
 
 	NpcSdbInit();
