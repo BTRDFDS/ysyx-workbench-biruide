@@ -1,4 +1,5 @@
 // `define RV32I_DEBUG
+`define RV32I_STA
 
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
@@ -61,16 +62,16 @@
 	typedef enum logic [1:0]{ARBidle,ARBifuR,ARBlsuR,ARBlsuW} ARBstatus_t;
 
 	typedef enum logic [1:0]{OKAY,EXOKAY,SLVERR,DECERR} resp_t;//TODO 目前是只有OKAY有用
-	`ifdef RV32I_DEBUG
-		integer logFile;
-	`endif
+	`ifdef RV32I_DEBUG integer logFile;`endif
+	`ifndef RV32I_STA
 	import "DPI-C" function void stop(input bit eb);
 	import "DPI-C" function int pmem_read(input int unsigned addr);
 	import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
+	`endif
 
 typedef struct packed {
 	logic valid;
-	code_t code;	
+	code_t code;
 } IfId_t;
 typedef struct packed {
 	logic valid;
@@ -94,57 +95,21 @@ typedef struct packed {
 
 	word_t oR1,oR2,oCsr,imm,pc;
 } IdAl_t;
-typedef struct packed {
-	word_t addr;
-	logic enJfun,ready;
-} upBk_t;
-typedef struct packed {
-	logic valid;
-	logic enS,enL;
-	LSUop_t LSop;
-	word_t addr,res,iCsr,oR2;
-	SRaddr_t SRaddr;
-	CSRop_t SRop;
-	reg_t cRd;
-} AlLs_t;
-typedef struct packed {
-	word_t iRd;
-	reg_t cRd;
-	logic valid;
-} LsRg_t;
-typedef struct packed {
-	word_t iCsr;
-	SRaddr_t SRaddr;
-	CSRop_t SRop;
-	logic valid;
-} LsSr_t;
-interface val_t();
-	reg_t cR1,cR2;
-	SRaddr_t SRaddr;
-	word_t oR1,oR2,oCsr,pc;
-	modport IDU(input oR1,oR2,pc,oCsr,output cR1,cR2,SRaddr);
-	modport GPR(input cR1,cR2,output oR1,oR2,input pc);//PC用于getReg的调试
-	modport CSR(input SRaddr ,output oCsr);
-	modport IFU(output pc);
-	endinterface
+typedef struct packed {word_t addr;logic enJfun,ready;}upBk_t;
+typedef struct packed {logic valid,enS,enL;word_t addr,res,iCsr,oR2;LSUop_t LSop;SRaddr_t SRaddr;CSRop_t SRop;reg_t cRd;}AlLs_t;
+typedef struct packed {word_t iRd;reg_t cRd;logic valid;}LsRg_t;
+typedef struct packed {word_t iCsr;SRaddr_t SRaddr;CSRop_t SRop;logic valid;}LsSr_t;
+typedef struct packed {reg_t cR1,cR2;}	valcRg_t;
+typedef struct packed {word_t oR1,oR2;}	valbRg_t;
+typedef struct packed {SRaddr_t SRaddr;}valcSr_t;
+typedef struct packed {word_t oCsr;}	valbSr_t;
+typedef struct packed {word_t pc;}		valbIf_t;
 interface AXI4_Lite_t();
-	logic arready,arvalid;
-	word_t araddr;
-
-	logic rready,rvalid;
-	word_t rdata;
-	resp_t rresp;
-
-	logic awready,awvalid;
-	word_t awaddr;
-
-	logic wvalid,wready;
-	mask_t wstrb;//mask
-	word_t wdata;
-
-	logic bvalid,bready;
-	resp_t bresp;
-
+	logic arready,arvalid;word_t araddr;
+	logic rready,rvalid;word_t rdata;resp_t rresp;
+	logic awready,awvalid;word_t awaddr;
+	logic wvalid,wready;mask_t wstrb;word_t wdata;
+	logic bvalid,bready;resp_t bresp;
 	modport CPU(input  arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,output araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
 	modport MEM(output arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,input  araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
 	endinterface
@@ -153,9 +118,15 @@ typedef struct packed {logic awvalid,wvalid,bready;word_t awaddr,wdata;mask_t ws
 typedef struct packed {logic arready;word_t rdata;resp_t rresp;logic rvalid;}AXI4rBak_t;
 typedef struct packed {logic awready,wready,bvalid;resp_t bresp;}AXI4wBak_t;
 module ysyx_26020046_rv32i(
-	input logic clk,
-	input logic reset,
-	output logic difftest
+	`ifdef RV32I_STA
+		output AXI4rCal_t rMeCal,
+		output AXI4wCal_t wMeCal,
+		input  AXI4rBak_t rMeBak,
+		input  AXI4wBak_t wMeBak,
+	`else
+		output logic difftest,
+	`endif
+	input logic clk,reset
 	);
 
 	IfId_t nIfId;upBk_t iAlId;
@@ -163,18 +134,23 @@ module ysyx_26020046_rv32i(
 	AlLs_t nAlLs;logic  iLsAl;
 	LsRg_t nLsRg;logic  iRgLs;
 	LsSr_t nLsSr;logic  iSrLs;
-	val_t val();
-	// AXI4_Lite_t sbIf();
-	// AXI4_Lite_t sbLs();
-	// AXI4_Lite_t axi4();
+
+	valcSr_t valcSr;
+	valbSr_t valbSr;
+	valcRg_t valcRg;
+	valbRg_t valbRg;
+	valbIf_t valbIf;
 
 	AXI4rCal_t rIfCal;AXI4rBak_t rIfBak;
 	AXI4rCal_t rLsCal;AXI4rBak_t rLsBak;
 	AXI4wCal_t wLsCal;AXI4wBak_t wLsBak;
-	AXI4rCal_t rMeCal;AXI4rBak_t rMeBak;
-	AXI4wCal_t wMeCal;AXI4wBak_t wMeBak;
 
-	ysyx_26020046_rv32iMEM MEM(.*);
+	`ifndef RV32I_STA
+		AXI4rCal_t rMeCal;AXI4rBak_t rMeBak;
+		AXI4wCal_t wMeCal;AXI4wBak_t wMeBak;
+		ysyx_26020046_rv32iMEM MEM(.*);
+	`endif
+
 	ysyx_26020046_rv32iARB ARB(.*);
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
@@ -183,9 +159,7 @@ module ysyx_26020046_rv32i(
 	ysyx_26020046_rv32iGPR GPR(.*);
 	ysyx_26020046_rv32iCSR CSR(.*);
 
-	// assign difftest=nIfId.ready&nIfId.valid;
-	always_ff@(posedge clk)difftest<=iIdIf.ready&nIfId.valid;
-	// always_ff@(negedge clk)difftest<=nIfId.ready&nIfId.valid;
+	`ifndef RV32I_STA always_ff@(posedge clk)difftest<=iIdIf.ready&nIfId.valid;`endif
 	`ifdef RV32I_DEBUG
 		initial begin
 			logFile = $fopen("log/rv32iDebugLog.txt");
@@ -210,7 +184,7 @@ module ysyx_26020046_rv32i(
 		end end
 	`endif
 	endmodule
-module ysyx_26020046_rv32iMEM(
+`ifndef RV32I_STA module ysyx_26020046_rv32iMEM(
 	input  AXI4rCal_t rMeCal,
 	input  AXI4wCal_t wMeCal,
 	output AXI4rBak_t rMeBak,
@@ -274,7 +248,7 @@ module ysyx_26020046_rv32iMEM(
 		wMeBak.bresp	=OKAY;
 		wMeBak.bvalid	=(Ws==MEMback);
 	end
-	endmodule
+endmodule`endif
 module ysyx_26020046_rv32iARB(
 	input  AXI4rCal_t rIfCal,
 	output AXI4rBak_t rIfBak,
@@ -365,8 +339,8 @@ module ysyx_26020046_rv32iIFU(
 	input  AXI4rBak_t rIfBak,
 	output AXI4rCal_t rIfCal,
 	output IfId_t nIfId,
-	input upBk_t iIdIf,
-	val_t.IFU val,
+	input  upBk_t iIdIf,
+	output valbIf_t valbIf,
 	input logic clk,reset
 	);
 
@@ -381,7 +355,7 @@ module ysyx_26020046_rv32iIFU(
 		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b",s.name(),ns.name(),nIfId.ready);`endif
 			s<=ns;
 	end always_comb begin : out
-		rIfCal.araddr=val.pc;
+		rIfCal.araddr=valbIf.pc;
 		rIfCal.arvalid=(s==CPUcall);
 
 		rIfCal.rready=(s==CPUback);
@@ -393,36 +367,42 @@ module ysyx_26020046_rv32iIFU(
 		// nIfId.code=sbIf.rdata;
 		case(rIfBak.rresp)
 			OKAY	:;
-			default	:$stop("rresp");
+			default	:`ifndef RV32I_STA $stop("rresp")`endif;
 		endcase
 
 		nIfId.valid=(s==CPUfunc);
 	end
 	always_ff @(posedge clk) begin : pc
 		`ifdef RV32I_DEBUG if(nIfId.enJfun) $fdisplay(logFile,"PC:%x => %x",val.pc,nIfId.addr);`endif
-		if(reset) val.pc<=PC_RESET;
+		if(reset) valbIf.pc<=PC_RESET;
 		else if(nIfId.valid&iIdIf.ready)begin
-			if(iIdIf.enJfun) val.pc<=(iIdIf.addr&32'hFFFFFFFC);
-			else val.pc<=val.pc+4;
+			if(iIdIf.enJfun) valbIf.pc<=(iIdIf.addr&32'hFFFFFFFC);
+			else valbIf.pc<=valbIf.pc+4;
 		end
 	end	
 	endmodule
 module ysyx_26020046_rv32iIDU(
-	input IfId_t nIfId,
+	input  IfId_t nIfId,
 	output upBk_t iIdIf,
+
+	output valcSr_t valcSr,
+	output valcRg_t valcRg,
+	input  valbIf_t valbIf,
+	input  valbSr_t valbSr,
+	input  valbRg_t valbRg,
+
 	output IdAl_t nIdAl,
-	input upBk_t iAlId,
-	val_t.IDU val
+	input  upBk_t iAlId
 	);
 	IfId_t oIfId;
 
 	always_comb oIfId=nIfId;
 
 	always_comb begin
-		nIdAl.oR1	=val.oR1;
-		nIdAl.oR2	=val.oR2;
-		nIdAl.oCsr	=val.oCsr;
-		nIdAl.pc	=val.pc;
+		nIdAl.oR1	=valbRg.oR1;
+		nIdAl.oR2	=valbRg.oR2;
+		nIdAl.oCsr	=valbSr.oCsr;
+		nIdAl.pc	=valbIf.pc;
 		nIdAl.valid	=oIfId.valid;
 		iIdIf.addr	=iAlId.addr;
 		iIdIf.enJfun=iAlId.enJfun;
@@ -434,7 +414,8 @@ module ysyx_26020046_rv32iIDU(
 		nIdAl.cCsr=NACSR;nIdAl.cIrd=NCHO;
 		nIdAl.LSop=NM;nIdAl.enS=0;nIdAl.enL=0;
 		nIdAl.SRop=NCSR_;nIdAl.SRaddr='0;
-		{val.cR1,val.cR2,nIdAl.cRd,nIdAl.enJcod,nIdAl.imm}='0;
+		{valcRg.cR1,valcRg.cR2,nIdAl.cRd,nIdAl.enJcod,nIdAl.imm}='0;
+		valcSr.SRaddr='0;
 
 		if(oIfId.valid) begin
 			`ifdef RV32I_DEBUG $fdisplay(logFile,"IDU:op=%x fun3=%x fun7=%x r1=%x r2=%x rd=%x",oIfId.code.op,oIfId.code.fun3,oIfId.code.fun7,oIfId.code.r1,oIfId.code.r2,oIfId.code.rd);`endif
@@ -470,12 +451,12 @@ module ysyx_26020046_rv32iIDU(
 				OP_I_A	:begin unique case(oIfId.code.fun3)
 						3'b001:begin unique case(oIfId.code.fun7)
 								7'b0000000:nIdAl.cal=SLL_;
-								default:begin $fatal("slli fun7(%x)!=0",oIfId.code.fun7);stop(0);end
+								default:begin `ifndef RV32I_STA $fatal("slli fun7(%x)!=0",oIfId.code.fun7);stop(0);`endif end
 							endcase end
 						3'b101:begin unique case(oIfId.code.fun7)
 								7'b0000000:nIdAl.cal=SRL_;
 								7'b0100000:nIdAl.cal=SRA_;
-								default:begin $fatal("srai/srli fun7(%x)!=0/20",oIfId.code.fun7);stop(0);end
+								default:begin `ifndef RV32I_STA $fatal("srai/srli fun7(%x)!=0/20",oIfId.code.fun7);stop(0);`endif end
 							endcase end
 						default:nIdAl.cal=ALUopCal_t'(oIfId.code.fun3);
 					endcase end
@@ -484,9 +465,9 @@ module ysyx_26020046_rv32iIDU(
 						7'b0100000:begin unique case(oIfId.code.fun3)
 								3'b000:nIdAl.cal=SUB_;
 								3'b101:nIdAl.cal=SRA_;
-								default:begin $fatal("R fun7==20 fun3(%x)!=1/5",oIfId.code.fun3);stop(0);end
+								default:begin `ifndef RV32I_STA $fatal("R fun7==20 fun3(%x)!=1/5",oIfId.code.fun3);stop(0);`endif end
 							endcase end
-						default:begin $fatal("R fun7(%x)!=0/20",oIfId.code.fun7);stop(0);end
+						default:begin `ifndef RV32I_STA $fatal("R fun7(%x)!=0/20",oIfId.code.fun7);stop(0);`endif end
 					endcase end
 				default	:nIdAl.cal=NCAL;
 			endcase
@@ -532,8 +513,8 @@ module ysyx_26020046_rv32iIDU(
 				3'b000	:begin unique case(oIfId.code)
 						OP_CSR_MRET__	:begin nIdAl.SRaddr=CSR_ADDR_MEPC;		end
 						OP_CSR_ECALL_	:begin nIdAl.SRaddr=CSR_ADDR_MTVEC;	end
-						OP_CSR_EBREAK	:begin nIdAl.SRaddr='0;stop(1);		end
-						default			:begin nIdAl.SRaddr='0;stop(0);		end endcase end
+						OP_CSR_EBREAK	:begin nIdAl.SRaddr='0;`ifndef RV32I_STA stop(1);`endif end
+						default			:begin nIdAl.SRaddr='0;`ifndef RV32I_STA stop(0);`endif end endcase end
 				3'b001					:begin nIdAl.SRaddr={oIfId.code[31:20]};end
 				3'b010					:begin nIdAl.SRaddr={oIfId.code[31:20]};end
 				default					:begin nIdAl.SRaddr='0;				end
@@ -547,20 +528,20 @@ module ysyx_26020046_rv32iIDU(
 				3'b010					:nIdAl.SRop=(oIfId.code.r1=='0)?NCSR_:WCCSR;
 				default					:nIdAl.SRop=NCSR_;
 			endcase end else begin nIdAl.cCsr=NACSR;nIdAl.SRaddr='0;nIdAl.SRop=NCSR_;end
-			val.SRaddr=nIdAl.SRaddr;
+			valcSr.SRaddr=nIdAl.SRaddr;
 
 			unique case(oIfId.code.op)//选cR1 这里7/10就反选
-				OP_U_I	:val.cR1='0;
-				OP_U_P	:val.cR1='0;
-				OP_J__	:val.cR1='0;
-				default	:val.cR1=oIfId.code.r1;
+				OP_U_I	:valcRg.cR1='0;
+				OP_U_P	:valcRg.cR1='0;
+				OP_J__	:valcRg.cR1='0;
+				default	:valcRg.cR1=oIfId.code.r1;
 			endcase
 			// $fdisplay(logFile,"cR1=%x opR1=%b code=%b",val.cR1,oIfId.code.r1,oIfId.code);
 			unique case(oIfId.code.op)//选cR2
-				OP_S__	:val.cR2=oIfId.code.r2;
-				OP_R__	:val.cR2=oIfId.code.r2;
-				OP_B__	:val.cR2=oIfId.code.r2;
-				default	:val.cR2='0;
+				OP_S__	:valcRg.cR2=oIfId.code.r2;
+				OP_R__	:valcRg.cR2=oIfId.code.r2;
+				OP_B__	:valcRg.cR2=oIfId.code.r2;
+				default	:valcRg.cR2='0;
 			endcase
 			unique case(oIfId.code.op)//选cRd 也是反选
 				OP_B__	:nIdAl.cRd='0;
@@ -595,17 +576,21 @@ module ysyx_26020046_rv32iALU(
 		iAlId.ready	=iLsAl;
 	end
 
-	always_comb begin if(oIdAl.valid)begin
+	always_comb begin
+		nAlLs.res='0;nAlLs.iCsr='0;nAlLs.addr='0;
+		iAlId.enJfun='0;iAlId.addr='0;enBfun=0;
+		result='0;in1='0;in2='0;
+	 if(oIdAl.valid)begin
 			// $fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);
 		unique case(oIdAl.in1)
 			IR1:in1=oIdAl.oR1;
 			PC_:in1=oIdAl.pc;
-			default:begin in1='0;$fatal("unknown in1==0x%x",oIdAl.in1);end
+			default:begin in1='0;`ifndef RV32I_STA $fatal("unknown in1==0x%x",oIdAl.in1);`endif end
 		endcase
 		unique case(oIdAl.in2)
 			IR2:in2=oIdAl.oR2;
 			IMM:in2=oIdAl.imm;
-			default:begin in2='0;$fatal("unknown in2==0x%x",oIdAl.in2);end
+			default:begin in2='0;`ifndef RV32I_STA $fatal("unknown in2==0x%x",oIdAl.in2);`endif end
 		endcase
 		unique case(oIdAl.cal)
 			ADD_:result=in1+in2;
@@ -619,7 +604,7 @@ module ysyx_26020046_rv32iALU(
 			SUB_:result=in1-in2;
 			SRA_:result=  $signed(in1)>>>in2[4:0];
 			NCAL:result='0;
-			default:begin result='0;$fatal("unknown cal==0x%x",oIdAl.cal);end
+			default:begin result='0;`ifndef RV32I_STA $fatal("unknown cal==0x%x",oIdAl.cal);`endif end
 		endcase
 		
 		unique case(oIdAl.cIrd)
@@ -628,14 +613,14 @@ module ysyx_26020046_rv32iALU(
 			CCSR:nAlLs.res=oIdAl.oCsr;
 			SNPC:nAlLs.res=oIdAl.pc+4;
 			NCHO:nAlLs.res='0;
-			default:begin nAlLs.res='0;$error("unknown cho==0x%x",oIdAl.cIrd);$stop;end
+			default:begin nAlLs.res='0;`ifndef RV32I_STA $error("unknown cho==0x%x",oIdAl.cIrd);$stop;`endif end
 		endcase
 		unique case(oIdAl.cCsr)
 			WACSR:nAlLs.iCsr=oIdAl.oR1;
 			RACSR:nAlLs.iCsr=oIdAl.oR1|oIdAl.oCsr;
 			JUMP_:nAlLs.iCsr=oIdAl.pc;
 			NCSR_:nAlLs.iCsr='0;
-			default:begin nAlLs.iCsr='0;$error("unknown csr==0x%x",oIdAl.cCsr);$stop;end
+			default:begin nAlLs.iCsr='0;`ifndef RV32I_STA $error("unknown csr==0x%x",oIdAl.cCsr);$stop;`endif end
 		endcase
 		unique case(oIdAl.bfu)
 			BEQ_:enBfun=(oIdAl.oR1==oIdAl.oR2);
@@ -645,7 +630,7 @@ module ysyx_26020046_rv32iALU(
 			BLTU:enBfun=( $unsigned(oIdAl.oR1) <$unsigned(oIdAl.oR2));
 			BGEU:enBfun=( $unsigned(oIdAl.oR1)>=$unsigned(oIdAl.oR2));
 			NBFU:enBfun='0;
-			default:begin enBfun='0;$fatal("unknown bfu==0x%x",oIdAl.bfu);end
+			default:begin enBfun='0;`ifndef RV32I_STA $fatal("unknown bfu==0x%x",oIdAl.bfu);`endif end
 			endcase
 		unique case(oIdAl.adr)
 			R1I:nAlLs.addr=oIdAl.oR1+oIdAl.imm;
@@ -653,7 +638,7 @@ module ysyx_26020046_rv32iALU(
 			ECJ:nAlLs.addr=oIdAl.oCsr;
 			ERE:nAlLs.addr=oIdAl.oCsr;
 			NAD:nAlLs.addr='0;
-			default:begin nAlLs.addr='0;$fatal("unknown adr==0x%x",oIdAl.adr);end
+			default:begin nAlLs.addr='0;`ifndef RV32I_STA $fatal("unknown adr==0x%x",oIdAl.adr);`endif end
 		endcase
 		iAlId.enJfun=oIdAl.enJcod|enBfun;
 		iAlId.addr=nAlLs.addr;
@@ -701,7 +686,7 @@ module ysyx_26020046_rv32iLSU(
 			rLsCal.rready	=(Rs==CPUback);
 			case(rLsBak.rresp)
 				OKAY:;
-				default:begin $fatal("unknown rresp==0x%x",rLsBak.rresp);end
+				default:begin `ifndef RV32I_STA $fatal("unknown rresp==0x%x",rLsBak.rresp);`endif end
 			endcase
 	end
 
@@ -730,7 +715,7 @@ module ysyx_26020046_rv32iLSU(
 			wLsCal.bready	=(Ws==CPUback);
 			case(wLsBak.bresp)
 				OKAY:;
-				default:begin $fatal("unknown bresp==0x%x",wLsBak.bresp);end
+				default:begin `ifndef RV32I_STA $fatal("unknown bresp==0x%x",wLsBak.bresp);`endif end
 			endcase
 	end
 	always_comb begin
@@ -751,7 +736,7 @@ module ysyx_26020046_rv32iLSU(
 			H_:				mask=4'b0011;
 			W_:				mask=4'b1111;
 			NM:				mask=4'b0000;
-			default:begin 	mask=4'b0000;$fatal("unknown mask==0x%x",oAlLs.LSop);end
+			default:begin 	mask=4'b0000;`ifndef RV32I_STA $fatal("unknown mask==0x%x",oAlLs.LSop);`endif end
 		endcase end else 	mask=4'b0000;
 		if(oAlLs.enL&oAlLs.valid) begin unique case(oAlLs.LSop)
 			B_:				data={{24{iRAM[ 7]}},iRAM[ 7: 0]};
@@ -759,7 +744,7 @@ module ysyx_26020046_rv32iLSU(
 			W_:				data=iRAM;
 			BU:				data={{24{1'b0}},iRAM[ 7: 0]};
 			HU:				data={{16{1'b0}},iRAM[15: 0]};
-			default:begin 	data=0;$fatal("unknown date==0x%x",oAlLs.LSop);end
+			default:begin 	data=0;`ifndef RV32I_STA $fatal("unknown date==0x%x",oAlLs.LSop);`endif end
 		endcase end else 	data='0;
 		`ifdef RV32I_DEBUG if(oAlLs.enL)$fstrobe(logFile,"LSU:enL=%b valid=%b data=%x iRAM=%x",oAlLs.enL,oAlLs.valid,data,iRAM);`endif
 	end
@@ -767,7 +752,9 @@ module ysyx_26020046_rv32iLSU(
 module ysyx_26020046_rv32iGPR(
 	input  LsRg_t nLsRg,
 	output logic iRgLs,
-	val_t. GPR val,
+	input  valcRg_t valcRg,
+	output valbRg_t valbRg,
+	input  valbIf_t valbIf,//TODO 仅仅是用于调试
 	input  clk,reset
 	);
 
@@ -786,18 +773,20 @@ module ysyx_26020046_rv32iGPR(
 			if (oLsRg.cRd!=0) gpr[oLsRg.cRd] <= oLsRg.iRd;
     	end
 	end
-	assign val.oR1=(val.cR1==0)?'0:gpr[val.cR1];
-	assign val.oR2=(val.cR2==0)?'0:gpr[val.cR2];
+	assign valbRg.oR1=(valcRg.cR1==0)?'0:gpr[valcRg.cR1];
+	assign valbRg.oR2=(valcRg.cR2==0)?'0:gpr[valcRg.cR2];
 
-	export "DPI-C" function getReg;
+	`ifndef RV32I_STA export "DPI-C" function getReg;
 	function int getReg(input int addr);
-		return (addr == 0) ? val.pc : gpr[addr];
-	endfunction
+		return (addr == 0) ? valbIf.pc : gpr[addr];
+	endfunction `endif
 	endmodule
 module ysyx_26020046_rv32iCSR(
 	input  LsSr_t nLsSr,
 	output logic iSrLs,
-	val_t.CSR val,
+	// val_t.CSR val,
+	input  valcSr_t valcSr,
+	output valbSr_t valbSr,
 	input  clk,reset
 	);
 
@@ -851,25 +840,25 @@ module ysyx_26020046_rv32iCSR(
 					CSR_ADDR_MCYCLEH	:mcycleh	<=oLsSr.iCsr;
 					CSR_ADDR_MARCHID	:marchid	<=oLsSr.iCsr;
 					CSR_ADDR_MVENDORID	:mvendorid	<=oLsSr.iCsr;
-					default:begin $fatal("unknown csrAddr==0x%x",oLsSr.SRaddr); end
+					default:begin `ifndef RV32I_STA $fatal("unknown csrAddr==0x%x",oLsSr.SRaddr);`endif end
 					endcase end
 				NCSR_:;
-				default:begin $fatal("unknown op.SRop==0x%x",oLsSr.SRop); end
+				default:begin `ifndef RV32I_STA $fatal("unknown op.SRop==0x%x",oLsSr.SRop);`endif end
 			endcase end
 			end
 		end
 
 	always_comb begin:choose_csr
-		unique case(val.SRaddr)
-			CSR_ADDR_MEPC		:val.oCsr=mepc;
-			CSR_ADDR_MSTAUS		:val.oCsr=mstatus;
-			CSR_ADDR_MTVEC		:val.oCsr=mtvec;
-			CSR_ADDR_MCAUSE		:val.oCsr=mcause;
-			CSR_ADDR_MCYCLE		:val.oCsr=mcycle;
-			CSR_ADDR_MCYCLEH	:val.oCsr=mcycleh;
-			CSR_ADDR_MARCHID	:val.oCsr=marchid;
-			CSR_ADDR_MVENDORID	:val.oCsr=mvendorid;
-			default				:val.oCsr='0;
+		unique case(valcSr.SRaddr)
+			CSR_ADDR_MEPC		:valbSr.oCsr=mepc;
+			CSR_ADDR_MSTAUS		:valbSr.oCsr=mstatus;
+			CSR_ADDR_MTVEC		:valbSr.oCsr=mtvec;
+			CSR_ADDR_MCAUSE		:valbSr.oCsr=mcause;
+			CSR_ADDR_MCYCLE		:valbSr.oCsr=mcycle;
+			CSR_ADDR_MCYCLEH	:valbSr.oCsr=mcycleh;
+			CSR_ADDR_MARCHID	:valbSr.oCsr=marchid;
+			CSR_ADDR_MVENDORID	:valbSr.oCsr=mvendorid;
+			default				:valbSr.oCsr='0;
 		endcase
 	end
 	endmodule
