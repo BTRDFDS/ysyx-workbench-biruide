@@ -167,3 +167,13 @@ test:
 	make -C $(RISCV_TESTS_AM_HOME) run ARCH=$(ARCH)
 	make -C $(RISCV_ARCH_TEST_AM_HOME) run ARCH=$(ARCH)
 	make -C $(RT_THREAD_AM_HOME)/bsp/abstract-machine run ARCH=$(ARCH)
+	
+synALL:
+	make syn t=ysyx_26020046_rv32i
+	make syn t=ysyx_26020046_rv32iARB
+	make syn t=ysyx_26020046_rv32iIFU
+	make syn t=ysyx_26020046_rv32iIDU
+	make syn t=ysyx_26020046_rv32iALU
+	make syn t=ysyx_26020046_rv32iLSU
+	make syn t=ysyx_26020046_rv32iGPR
+	make syn t=ysyx_26020046_rv32iCSR

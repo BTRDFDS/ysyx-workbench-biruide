@@ -6,91 +6,55 @@
         +----------Local Count, excluding submodules.
         |        +-Local Area, excluding submodules.
         |        | 
-      944        - wires
-      944        - wire bits
-      944        - public wires
-      944        - public wire bits
+     1284        - wires
+     1284        - wire bits
+     1284        - public wires
+     1284        - public wire bits
        94        - ports
        94        - port bits
-      883  2802.52 cells
-       11    18.48   AND2X1H7L
-        1     1.68   AND2X1P4H7L
-        5      9.8   AND3X0P5H7L
-        7    13.72   AND3X1H7L
-       12    23.52   AND3X1P4H7L
-       13    29.12   AND4X0P5H7L
-        6    13.44   AND4X1P4H7L
-        1     5.88   AND4X6H7L
-       27    52.92   AOI211X0P5H7L
-        2     3.92   AOI211X1P4H7L
-       15       21   AOI21X0P5H7L
-        2      2.8   AOI21X0P7H7L
-        5        7   AOI21X1H7L
-        9     12.6   AOI21X1P4H7L
-       64   197.12   AOI222X0P5H7L
-       31    60.76   AOI22X0P5H7L
-        1     1.96   AOI22X1P4H7L
-        2     3.92   AOI31X0P5H7L
-        5      9.8   AOI31X1P4H7L
-        1     2.24   AOI31X2H7L
-        1     5.04   BUFX16H7L
-        1     1.12   BUFX1P4H7L
-       11     15.4   BUFX3H7L
-        2     3.36   BUFX3P5H7L
-        2     3.92   BUFX5H7L
-        3     7.56   BUFX7H7L
-      256  1576.96   DFFQX1H7L
-        6    36.96   ICGX0P5H7L
-        2     1.68   INVX0P5H7L
-        1     1.12   INVX2P5H7L
-        3      4.2   NAND2BX0P5H7L
-       19    21.28   NAND2X0P5H7L
-        3     3.36   NAND2X1P4H7L
-        1     1.96   NAND3BX0P5H7L
-        1     1.96   NAND3BX2H7L
-       13     18.2   NAND3X0P5H7L
-       31     43.4   NAND3X1P4H7L
-        2      5.6   NAND4BBX0P5H7L
-        1      2.8   NAND4BBX2H7L
-        2     4.48   NAND4BX1P4H7L
-        6    11.76   NAND4X0P5H7L
-        3     5.88   NAND4X1P4H7L
-        2     4.48   NAND4X2H7L
-        1      4.2   NAND4X4H7L
-        3    15.96   NAND4X6H7L
-        4      5.6   NOR2BX1H7L
-       64     89.6   NOR2BX1P4H7L
-        1     2.52   NOR2BX3H7L
-       31    34.72   NOR2X0P5H7L
-        1     1.12   NOR2X1P4H7L
-        4     7.84   NOR3BX0P5H7L
-        1     1.96   NOR3BX1P4H7L
-        2     6.72   NOR3BX3H7L
-        1     4.76   NOR3BX6H7L
-        4      5.6   NOR3X0P5H7L
-       11     15.4   NOR3X1P4H7L
-        3      8.4   NOR3X3H7L
-        2      8.4   NOR3X6H7L
-        4     8.96   NOR4BX0P5H7L
-        1     5.04   NOR4BX4H7L
-        8    15.68   NOR4X0P5H7L
-        2     3.92   NOR4X1H7L
-        2    10.64   NOR4X6H7L
-       43     60.2   OAI21X0P5H7L
-        2     3.92   OAI2BB1X0P5H7L
-        1     1.96   OAI31X0P5H7L
-        2     4.48   OAI32X0P5H7L
-        3     6.72   OAOI211X0P5H7L
-       13    29.12   OAOI211X1P4H7L
-        1     2.52   OAOI211X2H7L
-        1      1.4   OR2X0P7H7L
-       31     43.4   OR2X1P4H7L
-        7    15.68   OR4X1P4H7L
-        1     1.12   TIEHIH7L
-       26     72.8   XNOR2X0P5H7L
-        1      2.8   XNOR2X1P4H7L
-        9     25.2   XOR2X0P5H7L
+      967 2.01E+03 cells
+       12   12.768   AND2_X1
+       11    14.63   AND3_X1
+       13   20.748   AND4_X1
+       15    19.95   AOI211_X1
+       60    63.84   AOI21_X1
+       14   22.344   AOI221_X1
+       18   38.304   AOI222_X1
+       78   103.74   AOI22_X1
+       11    8.778   BUF_X1
+        9    9.576   BUF_X2
+        5     9.31   BUF_X4
+        6   20.748   CLKGATE_X1
+      256 1.16E+03   DFF_X1
+       51   27.132   INV_X1
+        1    0.532   LOGIC1_X1
+        2    3.724   MUX2_X1
+       63   50.274   NAND2_X1
+       48   51.072   NAND3_X1
+        1    1.862   NAND3_X2
+        1    3.458   NAND3_X4
+       15    19.95   NAND4_X1
+        5    11.97   NAND4_X2
+        3   14.364   NAND4_X4
+       89   71.022   NOR2_X1
+        1     1.33   NOR2_X2
+       39   41.496   NOR3_X1
+        3    5.586   NOR3_X2
+        2    7.448   NOR3_X4
+        4     5.32   NOR4_X1
+        3   14.364   NOR4_X4
+       39   41.496   OAI21_X1
+       11    14.63   OAI22_X1
+        1    2.394   OAI22_X2
+        2    3.724   OAI33_X1
+        7    7.448   OR2_X1
+        1     1.33   OR3_X1
+        2    3.192   OR3_X2
+        1    1.862   OR4_X2
+        1    3.458   OR4_X4
+       21   33.516   XNOR2_X1
+       42   67.032   XOR2_X1
 
-   Chip area for module '\ysyx_26020046_rv32iCSR': 2802.520000
-     of which used for sequential elements: 1576.960000 (56.27%)
+   Chip area for module '\ysyx_26020046_rv32iCSR': 2013.354000
+     of which used for sequential elements: 1157.632000 (57.50%)
 
