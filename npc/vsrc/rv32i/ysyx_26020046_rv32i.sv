@@ -1,5 +1,5 @@
 // `define RV32I_DEBUG
-`define RV32I_STA
+	`define RV32I_STA
 
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
@@ -70,51 +70,52 @@
 	import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
 	`endif
 
-typedef struct packed {logic valid;code_t code;word_t pc;} IfId_t;
-typedef struct packed {
-	logic valid;
+	typedef struct packed {logic valid;code_t code;word_t pc;} IfId_t;
+	typedef struct packed {
+		logic valid;
 
-	in1_t		in1;
-	in2_t		in2;
-	logic 		enJcod;
-	ALUopCal_t 	cal;
-	ALUopBfu_t	bfu;
-	ALUopADR_t	adr;
-	ALUopCsr_t	cCsr;
-	ALUopCho_t	cIrd;
+		in1_t		in1;
+		in2_t		in2;
+		logic 		enJcod;
+		ALUopCal_t 	cal;
+		ALUopBfu_t	bfu;
+		ALUopADR_t	adr;
+		ALUopCsr_t	cCsr;
+		ALUopCho_t	cIrd;
 
-	logic enS,enL;
-	LSUop_t LSop;
+		logic enS,enL;
+		LSUop_t LSop;
 
-	reg_t cRd;
-	
-	SRaddr_t SRaddr;
-	CSRop_t SRop;
+		reg_t cRd;
+		
+		SRaddr_t SRaddr;
+		CSRop_t SRop;
 
-	word_t imm,pc;
-} IdAl_t;
-typedef struct packed {reg_t cR1,cR2;SRaddr_t SRaddr;}																		valcl_t;typedef struct packed {word_t addr;logic enJfun,ready;}																		upBk_t;
-typedef struct packed {logic valid,enS,enL;word_t addr,res,iCsr,oR2;LSUop_t LSop;SRaddr_t SRaddr;CSRop_t SRop;reg_t cRd;}	AlLs_t;
-typedef struct packed {logic ready;word_t oR1,oR2;word_t oCsr;}																LsAl_t;
-typedef struct packed {word_t iRd;reg_t cRd;logic valid;}																	LsRg_t;
-typedef struct packed {word_t iCsr;SRaddr_t SRaddr;CSRop_t SRop;logic valid;}												LsSr_t;
-typedef struct packed {logic ready;word_t oCsr;}																			SrLs_t;
-typedef struct packed {logic ready;word_t oR1,oR2;}																			RgLs_t;
-typedef struct packed {reg_t cR1,cR2;}																						valRg_t;
-typedef struct packed {SRaddr_t SRaddr;}																					valSr_t;
-interface AXI4_Lite_t();
-	logic arready,arvalid;word_t araddr;
-	logic rready,rvalid;word_t rdata;resp_t rresp;
-	logic awready,awvalid;word_t awaddr;
-	logic wvalid,wready;mask_t wstrb;word_t wdata;
-	logic bvalid,bready;resp_t bresp;
-	modport CPU(input  arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,output araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
-	modport MEM(output arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,input  araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
-	endinterface
-typedef struct packed {logic arvalid,rready;word_t araddr;}AXI4rCal_t;
-typedef struct packed {logic awvalid,wvalid,bready;word_t awaddr,wdata;mask_t wstrb;}AXI4wCal_t;
-typedef struct packed {logic arready;word_t rdata;resp_t rresp;logic rvalid;}AXI4rBak_t;
-typedef struct packed {logic awready,wready,bvalid;resp_t bresp;}AXI4wBak_t;
+		word_t imm,pc;
+	} IdAl_t;
+	typedef struct packed {reg_t cR1,cR2;SRaddr_t SRaddr;}																		valcl_t;typedef struct packed {word_t addr;logic enJfun,ready;}																		upBk_t;
+	typedef struct packed {logic valid,enS,enL;word_t addr,res,iCsr,oR2;LSUop_t LSop;SRaddr_t SRaddr;CSRop_t SRop;reg_t cRd;}	AlLs_t;
+	typedef struct packed {logic ready;word_t oR1,oR2;word_t oCsr;}																LsAl_t;
+	typedef struct packed {word_t iRd;reg_t cRd;logic valid;}																	LsRg_t;
+	typedef struct packed {word_t iCsr;SRaddr_t SRaddr;CSRop_t SRop;logic valid;}												LsSr_t;
+	typedef struct packed {logic ready;word_t oCsr;}																			SrLs_t;
+	typedef struct packed {logic ready;word_t oR1,oR2;}																			RgLs_t;
+	typedef struct packed {reg_t cR1,cR2;}																						valRg_t;
+	typedef struct packed {SRaddr_t SRaddr;}																					valSr_t;
+	interface AXI4_Lite_t();
+		logic arready,arvalid;word_t araddr;
+		logic rready,rvalid;word_t rdata;resp_t rresp;
+		logic awready,awvalid;word_t awaddr;
+		logic wvalid,wready;mask_t wstrb;word_t wdata;
+		logic bvalid,bready;resp_t bresp;
+		modport CPU(input  arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,output araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
+		modport MEM(output arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,input  araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
+		endinterface
+	typedef struct packed {logic arvalid,rready;word_t araddr;}AXI4rCal_t;
+	typedef struct packed {logic awvalid,wvalid,bready;word_t awaddr,wdata;mask_t wstrb;}AXI4wCal_t;
+	typedef struct packed {logic arready;word_t rdata;resp_t rresp;logic rvalid;}AXI4rBak_t;
+	typedef struct packed {logic awready,wready,bvalid;resp_t bresp;}AXI4wBak_t;
+
 module ysyx_26020046_rv32i(
 	`ifdef RV32I_STA
 		output AXI4rCal_t rMeCal,
@@ -249,7 +250,7 @@ module ysyx_26020046_rv32i(
 		wMeBak.bresp	=OKAY;
 		wMeBak.bvalid	=(Ws==MEMback);
 	end
-endmodule`endif
+	endmodule`endif
 module ysyx_26020046_rv32iARB(
 	input  AXI4rCal_t rIfCal,
 	output AXI4rBak_t rIfBak,

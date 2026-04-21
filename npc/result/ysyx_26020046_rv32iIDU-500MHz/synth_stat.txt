@@ -1,0 +1,80 @@
+
+25. Printing statistics.
+
+=== ysyx_26020046_rv32iIDU ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+      371        - wires
+      371        - wire bits
+      371        - public wires
+      371        - public wire bits
+      262        - ports
+      262        - port bits
+      192   317.24 cells
+        4     6.72   AND2X1H7L
+        1     1.96   AND3X1P4H7L
+        2     4.48   AND4X0P5H7L
+        1     2.52   AO211X1P4H7L
+        1     2.24   AO21X1H7L
+        4    10.08   AO22X0P7H7L
+        1     2.52   AOA211X1P4H7L
+        2     3.92   AOAI211X0P5H7L
+        1     3.64   AOAI211X3H7L
+        1     1.96   AOI211X0P5H7L
+        2     3.92   AOI211X1P4H7L
+        4      5.6   AOI21X0P5H7L
+        1      1.4   AOI21X1P4H7L
+        1     1.96   AOI22X0P5H7L
+        1     1.96   AOI22X1P4H7L
+        2     3.92   AOI2BB1X0P5H7L
+        2     3.92   AOI2BB1X1P4H7L
+        1     1.96   AOI31X0P5H7L
+        1     2.24   AOI32X0P5H7L
+        1     2.52   AOI33X0P5H7L
+        1     2.52   AOI33X0P7H7L
+        2     2.24   BUFX1P4H7L
+        5        7   BUFX3H7L
+       12    10.08   INVX0P5H7L
+        1     0.84   INVX1H7L
+        1      2.8   MUX2X1P4H7L
+        7      9.8   NAND2BX0P5H7L
+        2      2.8   NAND2BX1P4H7L
+       12    13.44   NAND2X0P5H7L
+        1     1.12   NAND2X1H7L
+        2     2.24   NAND2X1P4H7L
+        1     1.96   NAND2X3H7L
+        1      1.4   NAND3X0P5H7L
+        1      4.2   NAND3X6H7L
+        2     4.48   NAND4BX1P4H7L
+        1     1.96   NAND4X0P5H7L
+        1     1.96   NAND4X1P4H7L
+       12     16.8   NOR2BX1H7L
+       18     25.2   NOR2BX1P4H7L
+       14    15.68   NOR2X0P5H7L
+        1     1.12   NOR2X1P4H7L
+        3     5.88   NOR2X3H7L
+        7      9.8   NOR3X0P5H7L
+        1      4.2   NOR3X6H7L
+        1      2.8   NOR4BBX0P5H7L
+        1     5.32   NOR4BBX4H7L
+        1     2.24   NOR4BX0P5H7L
+        1     5.04   NOR4BX4H7L
+        3     5.88   NOR4X0P5H7L
+        1     1.96   NOR4X1P4H7L
+        1     2.52   NOR4X2H7L
+        1     2.24   OA21X0P7H7L
+        1     1.68   OAI211X1P4H7L
+        1     2.52   OAI211X2H7L
+        6      8.4   OAI21X0P5H7L
+        5        7   OAI21X1P4H7L
+        1      2.8   OAI21X3H7L
+        1     1.96   OAI22X1P4H7L
+       21    41.16   OAI2BB1X0P5H7L
+        2      2.8   OR2X1P4H7L
+        1     1.96   OR2X3H7L
+
+   Chip area for module '\ysyx_26020046_rv32iIDU': 317.240000
+     of which used for sequential elements: 0.000000 (0.00%)
+

@@ -1,0 +1,46 @@
+
+25. Printing statistics.
+
+=== ysyx_26020046_rv32iARB ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+      397        - wires
+      397        - wire bits
+      397        - public wires
+      397        - public wire bits
+      364        - ports
+      364        - port bits
+      215   391.16 cells
+       36    60.48   AND2X1H7L
+       34    85.68   AO22X0P7H7L
+        1     2.52   AO22X1P4H7L
+        1     2.52   AO31X0P5H7L
+        2     3.92   AOAI211X0P5H7L
+        1      1.4   AOI21X0P5H7L
+        1     1.96   AOI22X0P5H7L
+        1     2.24   AOI32X0P5H7L
+        1     3.64   BUFX10H7L
+        1     1.68   BUFX3P5H7L
+        1     1.96   BUFX5H7L
+        5     12.6   BUFX7H7L
+        4    24.64   DFFQX1H7L
+        1      1.4   NAND2BX0P5H7L
+        1     2.24   NAND2BX3H7L
+        1     3.64   NAND2BX6H7L
+        4     4.48   NAND2X0P5H7L
+        1     1.96   NAND3BX0P5H7L
+        1      2.8   NAND4BBX0P5H7L
+        1     2.24   NAND4BX0P5H7L
+        1      1.4   NOR2BX1H7L
+      110      154   NOR2BX1P4H7L
+        1     1.68   NOR2BX2H7L
+        1     1.12   NOR2X0P5H7L
+        1     3.36   NOR2X6H7L
+        1      4.2   NOR3X6H7L
+        1      1.4   OAI21X0P5H7L
+
+   Chip area for module '\ysyx_26020046_rv32iARB': 391.160000
+     of which used for sequential elements: 24.640000 (6.30%)
+

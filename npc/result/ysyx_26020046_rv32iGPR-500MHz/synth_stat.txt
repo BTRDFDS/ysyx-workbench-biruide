@@ -1,0 +1,99 @@
+
+25. Printing statistics.
+
+=== ysyx_26020046_rv32iGPR ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+     3561        - wires
+     3561        - wire bits
+     3561        - public wires
+     3561        - public wire bits
+      115        - ports
+      115        - port bits
+     3511 1.23E+04 cells
+        4     6.72   AND2X1H7L
+        1     1.68   AND2X1P4H7L
+       10     19.6   AND3X0P5H7L
+       18    35.28   AND3X1H7L
+        7    13.72   AND3X1P4H7L
+       23    51.52   AND4X0P5H7L
+        1     2.52   AO211X1H7L
+        4    10.08   AO211X1P4H7L
+        6    18.48   AO221X0P5H7L
+       10     25.2   AO22X0P7H7L
+       16    31.36   AOAI211X0P5H7L
+       13    25.48   AOI211X0P5H7L
+       17     23.8   AOI21X0P5H7L
+       57   143.64   AOI221X0P5H7L
+      119   233.24   AOI22X0P5H7L
+        1     1.96   AOI2BB1X0P5H7L
+        1     2.52   AOI2BB2X0P5H7L
+       20     39.2   AOI31X0P5H7L
+        3     6.72   AOI32X0P5H7L
+        9    22.68   AOI33X0P5H7L
+       15     16.8   BUFX0P5H7L
+       32    35.84   BUFX0P7H7L
+        5     18.2   BUFX10H7L
+        2     7.84   BUFX12H7L
+        2    10.08   BUFX16H7L
+        9    10.08   BUFX1H7L
+       18    20.16   BUFX1P4H7L
+        1     6.16   BUFX20H7L
+       14     19.6   BUFX3H7L
+       14    23.52   BUFX3P5H7L
+       30     58.8   BUFX5H7L
+       41   103.32   BUFX7H7L
+        8     22.4   BUFX8H7L
+      992  6110.72   DFFQX1H7L
+       31   190.96   ICGX0P5H7L
+       31    26.04   INVX0P5H7L
+      123    344.4   MUX2X0P5H7L
+      374  2408.56   MUX4X1P4H7L
+       23    70.84   MUXI2X0P5H7L
+       47     65.8   NAND2BX0P5H7L
+        2      2.8   NAND2BX1H7L
+      121   135.52   NAND2X0P5H7L
+        1     1.12   NAND2X0P7H7L
+        2     2.24   NAND2X1H7L
+       19    37.24   NAND2X3H7L
+       12    36.96   NAND2X6H7L
+        1     2.52   NAND3BBX0P5H7L
+        1     3.08   NAND3BBX6H7L
+        4     7.84   NAND3BX0P5H7L
+        1     1.96   NAND3BX2H7L
+        5        7   NAND3X0P5H7L
+        1      1.4   NAND3X1P4H7L
+        2     3.92   NAND4X0P5H7L
+       31     43.4   NOR2BX1H7L
+      996   1394.4   NOR2BX1P4H7L
+        3     7.56   NOR2BX3H7L
+        4     4.48   NOR2X0P5H7L
+        1     1.12   NOR2X0P7H7L
+        7    13.72   NOR2X3H7L
+        1     1.96   NOR3BX0P5H7L
+        3     5.88   NOR3BX1P4H7L
+        5        7   NOR3X0P5H7L
+        1      1.4   NOR3X0P7H7L
+        8     11.2   NOR3X1P4H7L
+        1      4.2   NOR3X6H7L
+        1     2.24   NOR4BX0P5H7L
+        2     4.48   NOR4BX1P4H7L
+        1     5.32   NOR4X6H7L
+        2     5.04   OA211X1P4H7L
+        1     2.52   OA22X0P5H7L
+       46    77.28   OAI211X0P7H7L
+        5      8.4   OAI211X1H7L
+        7    11.76   OAI211X1P4H7L
+        3      4.2   OAI21X0P5H7L
+       36    70.56   OAI22X0P5H7L
+        7    13.72   OAI2BB1X0P5H7L
+       10     22.4   OAOI211X0P5H7L
+        1     2.24   OAOI211X1P4H7L
+        3      4.2   OR2X0P5H7L
+        1     1.12   TIEHIH7L
+
+   Chip area for module '\ysyx_26020046_rv32iGPR': 12260.920000
+     of which used for sequential elements: 6110.720000 (49.84%)
+

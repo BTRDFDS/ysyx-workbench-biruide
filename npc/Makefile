@@ -34,7 +34,7 @@ VERILATOR_CFLAGS += -DDEBUG
 CXXFLAGS += -DDEBUG
 endif
 
-t?=water#工程名称
+t?=ysyx_26020046_rv32i#工程名称
 tF?=$(t)#工程文件查找名
 tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))#工程文件查找结果
 tC?=$(shell find csrc -type f -name "$(tF).cpp")#驱动文件查找结果
