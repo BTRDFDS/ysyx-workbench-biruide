@@ -753,7 +753,7 @@ module ysyx_26020046_rv32iGPR(
 	input  LsRg_t nLsRg,
 	input  valRg_t vLsRg,
 	output RgLs_t iRgLs,
-	input  clk,reset
+	input  clk
 	);
 
 	LsRg_t oLsRg;
@@ -763,14 +763,10 @@ module ysyx_26020046_rv32iGPR(
 	word_t gpr [2**REG_NUMBER -1:1];
 
 	assign iRgLs.ready=1;
-	always_ff@(posedge clk) begin:reg_write
-		if(reset)begin
-			for (int i = 1; i < 32; i++) gpr[i]<='0;
-		end else if(oLsRg.valid)begin
+	always_ff@(posedge clk) if(oLsRg.valid)begin
 			`ifdef RV32I_DEBUG if(oLsRg.cRd!=0)$fdisplay(logFile,"RG:[%d]%x <= %x",oLsRg.cRd,gpr[oLsRg.cRd],oLsRg.iRd);`endif
 			if (oLsRg.cRd!=0) gpr[oLsRg.cRd] <= oLsRg.iRd;
     	end
-	end
 	assign iRgLs.oR1=(vLsRg.cR1==0)?'0:gpr[vLsRg.cR1];
 	assign iRgLs.oR2=(vLsRg.cR2==0)?'0:gpr[vLsRg.cR2];
 
