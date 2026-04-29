@@ -1,5 +1,5 @@
 // `define RV32I_DEBUG
-	// `define RV32I_STA
+	`define RV32I_STA
 
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
@@ -109,6 +109,7 @@
 	typedef struct packed {logic arready;word_t rdata;resp_t rresp;logic rvalid;}												AXI4rBak_t;
 	typedef struct packed {logic awready,wready,bvalid;resp_t bresp;}															AXI4wBak_t;
 
+	`ifndef RV32I_STA
 	function string sIfId(IfId_t i);return $sformatf("valid=%b,code=%x,pc=%x",i.valid,i.code,i.pc);endfunction
 	function string sIdAl(IdAl_t i);return $sformatf("valid=%b in1=%s in2=%s enJ=%b cal=%s bfu=%s adr=%s csr=%s iRd=%s enS=%s enL=%s LSop=%s cRd=%x SRaddr=%x SRop=%s imm=%x pc=%x",i.valid,i.in1.name(),i.in2.name(),i.enJcod,i.cal.name(),i.bfu.name(),i.adr.name(),i.cCsr.name(),i.cIrd.name(),i.enS,i.enL,i.LSop.name(),i.cRd,i.SRaddr,i.SRop.name(),i.imm,i.pc);endfunction
 	function string sValcal(valcl_t i);return $sformatf("cR1=%x cR2=%x SRaddr=%x",i.cR1,i.cR2,i.SRaddr);endfunction
@@ -125,6 +126,7 @@
 	function string sAXI4wCal(AXI4wCal_t i);return $sformatf("awvalid=%b wvalid=%b bready=%b awaddr=%x wdata=%x wstrb=%b",i.awvalid,i.wvalid,i.bready,i.awaddr,i.wdata,i.wstrb);endfunction
 	function string sAXI4rBak(AXI4rBak_t i);return $sformatf("arready=%b rdata=%x rresp=%s rvalid=%b rready=%b",i.arready,i.rdata,i.rresp.name(),i.rvalid,i.arready);endfunction
 	function string sAXI4wBak(AXI4wBak_t i);return $sformatf("awready=%b wready=%b bvalid=%b bresp=%s",i.awready,i.wready,i.bvalid,i.bresp.name());endfunction
+	`endif
 
 module ysyx_26020046_rv32i(
 	`ifdef RV32I_STA
