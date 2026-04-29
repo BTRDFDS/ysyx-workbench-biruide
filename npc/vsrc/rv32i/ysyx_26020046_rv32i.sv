@@ -109,6 +109,23 @@
 	typedef struct packed {logic arready;word_t rdata;resp_t rresp;logic rvalid;}												AXI4rBak_t;
 	typedef struct packed {logic awready,wready,bvalid;resp_t bresp;}															AXI4wBak_t;
 
+	function string sIfId(IfId_t i);return $sformatf("valid=%b,code=%x,pc=%x",i.valid,i.code,i.pc);endfunction
+	function string sIdAl(IdAl_t i);return $sformatf("valid=%b in1=%s in2=%s enJ=%b cal=%s bfu=%s adr=%s csr=%s iRd=%s enS=%s enL=%s LSop=%s cRd=%x SRaddr=%x SRop=%s imm=%x pc=%x",i.valid,i.in1.name(),i.in2.name(),i.enJcod,i.cal.name(),i.bfu.name(),i.adr.name(),i.cCsr.name(),i.cIrd.name(),i.enS,i.enL,i.LSop.name(),i.cRd,i.SRaddr,i.SRop.name(),i.imm,i.pc);endfunction
+	function string sValcal(valcl_t i);return $sformatf("cR1=%x cR2=%x SRaddr=%x",i.cR1,i.cR2,i.SRaddr);endfunction
+	function string sUpBk(upBk_t i);return $sformatf("addr=%x enJ=%b ready=%b",i.addr,i.enJfun,i.ready);endfunction
+	function string sAlLs(AlLs_t i);return $sformatf("valid=%b enS=%b enL=%b addr=%x res=%x iCsr=%x oR2=%x LSop=%x SRaddr=%x SRop=%s cRd=%x",i.valid,i.enS,i.enL,i.addr,i.res,i.iCsr,i.oR2,i.LSop,i.SRaddr,i.SRop.name(),i.cRd);endfunction
+	function string sLsAl(LsAl_t i);return $sformatf("ready=%b oR1=%x oR2=%x oCsr=%x",i.ready,i.oR1,i.oR2,i.oCsr);endfunction
+	function string sLsRg(LsRg_t i);return $sformatf("valid=%b iRd=%x cRd=%x",i.valid,i.iRd,i.cRd);endfunction
+	function string sLsSr(LsSr_t i);return $sformatf("valid=%b iCsr=%x SRaddr=%x SRop=%s",i.valid,i.iCsr,i.SRaddr,i.SRop.name());endfunction
+	function string sSrLs(SrLs_t i);return $sformatf("ready=%b oCsr=%x",i.ready,i.oCsr);endfunction
+	function string sRgLs(RgLs_t i);return $sformatf("ready=%b oR1=%x oR2=%x",i.ready,i.oR1,i.oR2);endfunction
+	function string sValRg(valRg_t i);return $sformatf("cR1=%x cR2=%x",i.cR1,i.cR2);endfunction
+	function string sValSr(valSr_t i);return $sformatf("SRaddr=%x",i.SRaddr);endfunction
+	function string sAXI4rCal(AXI4rCal_t i);return $sformatf("arvalid=%b rready=%b araddr=%x",i.arvalid,i.rready,i.araddr);endfunction
+	function string sAXI4wCal(AXI4wCal_t i);return $sformatf("awvalid=%b wvalid=%b bready=%b awaddr=%x wdata=%x wstrb=%b",i.awvalid,i.wvalid,i.bready,i.awaddr,i.wdata,i.wstrb);endfunction
+	function string sAXI4rBak(AXI4rBak_t i);return $sformatf("arready=%b rdata=%x rresp=%s rvalid=%b rready=%b",i.arready,i.rdata,i.rresp.name(),i.rvalid,i.arready);endfunction
+	function string sAXI4wBak(AXI4wBak_t i);return $sformatf("awready=%b wready=%b bvalid=%b bresp=%s",i.awready,i.wready,i.bvalid,i.bresp.name());endfunction
+
 module ysyx_26020046_rv32i(
 	`ifdef RV32I_STA
 		output AXI4rCal_t rMeCal,
@@ -157,18 +174,26 @@ module ysyx_26020046_rv32i(
 			// $fstrobe
 		end
 		always @(posedge clk) begin if(~reset)begin
-			$fdisplay(logFile,"sbIf:araddr=%x arvalid=%b arready=%b rdata=%x rresp=%s rvalid=%b rready=%b",rIfCal.araddr,rIfCal.arvalid,rIfBak.arready,rIfBak.rdata,rIfBak.rresp.name(),rIfBak.rvalid,rIfCal.rready);
-			$fdisplay(logFile,"sbLs:araddr=%x arvalid=%b arready=%b rdata=%x rresp=%s rvalid=%b rready=%b",rLsCal.araddr,rLsCal.arvalid,rLsBak.arready,rLsBak.rdata,rLsBak.rresp.name(),rLsBak.rvalid,rLsCal.rready);
-			$fdisplay(logFile,"sbLs:awaddr=%x awvalid=%b awready=%b wdata=%x wstrb=%b wvalid=%b wready=%b",wLsCal.awaddr,wLsCal.awvalid,wLsBak.awready,wLsCal.wdata,wLsCal.wstrb,wLsCal.wvalid,wLsBak.wready);
-			$fdisplay(logFile,"sbLs:bresp=%s bvalid=%b bready=%b",wLsBak.bresp.name(),wLsBak.bvalid,wLsCal.bready);
-			$fdisplay(logFile,"nIfId code=%x valid=%b ready=%b addr=%x enJfun=%b difftest=%b",nIfId.code,nIfId.valid,iIdIf.ready,iIdIf.addr,iIdIf.enJfun,difftest);
-			// $fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);//TODO
-			$fdisplay(logFile,"nIdAl imm=%x pc=%x enJcod=%b vaild=%b ready=%b",nIdAl.imm,nIdAl.pc,nIdAl.enJcod,nIdAl.valid,iAlId.ready);
-			$fdisplay(logFile,"nIdAl in1=%s in2=%s al=%s adr=%s cCsr=%s cIrd=%s addr=%x enJfun=%b",nIdAl.in1.name(),nIdAl.in2.name(),nIdAl.cal.name(),nIdAl.adr.name(),nIdAl.cCsr.name(),nIdAl.cIrd.name(),iAlId.addr,iAlId.enJfun);
-			$fdisplay(logFile,"nIdAl enL=%b enS=%b LSop=%s SRaddr=%x SRop=%s cRd=%x",nIdAl.enL,nIdAl.enS,nIdAl.LSop.name(),nIdAl.SRaddr,nIdAl.SRop.name(),nIdAl.cRd);
-			$fdisplay(logFile,"nAlLs enS=%b enL=%b LSop=%s res=%x addr=%x valid=%b ready=%b",nAlLs.enS,nAlLs.enL,nAlLs.LSop.name(),nAlLs.res,nAlLs.addr,nAlLs.valid,iLsAl.ready);
-			$fdisplay(logFile,"nAlLs oR2=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s",nAlLs.oR2,nAlLs.cRd,nAlLs.iCsr,nAlLs.SRaddr,nAlLs.SRop.name());
-			// $fdisplay(logFile,"LsWb iRd=%x cRd=%x iCsr=%x SRaddr=%x SRop=%s valid=%b ready=%b",LsWb.iRd,LsWb.cRd,LsWb.iCsr,LsWb.SRaddr,LsWb.SRop.name(),LsWb.valid,LsWb.ready);//TODO
+			$fdisplay(logFile,"rMeCal:%s",sAXI4rCal(rMeCal));$fdisplay(logFile,"rMeBak:%s",sAXI4rBak(rMeBak));
+			$fdisplay(logFile,"wMeCal:%s",sAXI4wCal(wMeCal));$fdisplay(logFile,"wMeBak:%s",sAXI4wBak(wMeBak));
+			$fdisplay(logFile,"rIfCal:%s",sAXI4rCal(rIfCal));$fdisplay(logFile,"rIfBak:%s",sAXI4rBak(rIfBak));
+			$fdisplay(logFile,"rLsCal:%s",sAXI4rCal(rLsCal));$fdisplay(logFile,"rLsBak:%s",sAXI4rBak(rLsBak));
+			$fdisplay(logFile,"wLsCal:%s",sAXI4wCal(wLsCal));$fdisplay(logFile,"wLsBak:%s",sAXI4wBak(wLsBak));
+			$fdisplay(logFile,"nIfId:%s",sIfId(nIfId));$fdisplay(logFile,"iIdIf:%s",sUpBk(iIdIf));
+			$fdisplay(logFile,"nIdAl:%s",sIdAl(nIdAl));$fdisplay(logFile,"iAlId:%s",sUpBk(iAlId));$fdisplay(logFile,"vIdAl:%s",sValcal(vIdAl));
+			$fdisplay(logFile,"nAlLs:%s",sAlLs(nAlLs));$fdisplay(logFile,"iLsAl:%s",sLsAl(iLsAl));$fdisplay(logFile,"vAlLs:%s",sValcal(vAlLs));
+			$fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));$fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));$fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
+			$fdisplay(logFile,"nRgCt:%s",sLsSr(nLsSr));$fdisplay(logFile,"iCtRg:%s",sSrLs(iSrLs));$fdisplay(logFile,"vRgCt:%s",sValSr(vLsSr));
+			// $fstrobe(logFile,"rMeCal:%s",sAXI4rCal(rMeCal));$fstrobe(logFile,"rMeBak:%s",sAXI4rBak(rMeBak));
+			// $fstrobe(logFile,"wMeCal:%s",sAXI4wCal(wMeCal));$fstrobe(logFile,"wMeBak:%s",sAXI4wBak(wMeBak));
+			// $fstrobe(logFile,"rIfCal:%s",sAXI4rCal(rIfCal));$fstrobe(logFile,"rIfBak:%s",sAXI4rBak(rIfBak));
+			// $fstrobe(logFile,"rLsCal:%s",sAXI4rCal(rLsCal));$fstrobe(logFile,"rLsBak:%s",sAXI4rBak(rLsBak));
+			// $fstrobe(logFile,"wLsCal:%s",sAXI4wCal(wLsCal));$fstrobe(logFile,"wLsBak:%s",sAXI4wBak(wLsBak));
+			// $fstrobe(logFile,"nIfId:%s",sIfId(nIfId));$fstrobe(logFile,"iIdIf:%s",sUpBk(iIdIf));
+			// $fstrobe(logFile,"nIdAl:%s",sIdAl(nIdAl));$fstrobe(logFile,"iAlId:%s",sUpBk(iAlId));$fstrobe(logFile,"vIdAl:%s",sValcal(vIdAl));
+			// $fstrobe(logFile,"nAlLs:%s",sAlLs(nAlLs));$fstrobe(logFile,"iLsAl:%s",sLsAl(iLsAl));$fstrobe(logFile,"vAlLs:%s",sValcal(vAlLs));
+			// $fstrobe(logFile,"nLsRg:%s",sLsRg(nLsRg));$fstrobe(logFile,"iRgLs:%s",sRgLs(iRgLs));$fstrobe(logFile,"vLsRg:%s",sValRg(vLsRg));
+			// $fstrobe(logFile,"nRgCt:%s",sLsSr(nLsSr));$fstrobe(logFile,"iCtRg:%s",sSrLs(iSrLs));$fstrobe(logFile,"vRgCt:%s",sValSr(vLsSr));
 		end end
 	`endif
 	
@@ -194,6 +219,7 @@ module ysyx_26020046_rv32iCLT(
 	CLTsatus_t s,ns;
 	logic hasAddr,hasData;
 	word_t araddr,awaddr,wdata;
+	mask_t wstrb;
 	always_comb unique case(s)
 		CLTidle:unique case('1)
 			rCtCal.arvalid:ns=CLTrbak;
@@ -204,19 +230,19 @@ module ysyx_26020046_rv32iCLT(
 		default:ns=CLTidle;
 	endcase always_ff@(posedge clk) if(reset)s<=CLTidle;else s<=ns;
 	always_ff@(posedge clk)begin
-		if(s==CLTidle&rCtCal.arvalid)araddr=rCtCal.araddr;
+		if(s==CLTidle&rCtCal.arvalid)araddr<=rCtCal.araddr;
 
 		if(s==CLTidle&wCtCal.awvalid)awaddr<=wCtCal.awaddr;
 		if(s==CLTidle&wCtCal.awvalid)hasAddr<=true;
 		if(s==CLTwbak)hasAddr<=false;
 		if(s==CLTidle&wCtCal.wvalid)wdata<=wCtCal.wdata;
+		if(s==CLTidle&wCtCal.wvalid)wstrb<=wCtCal.wstrb;
 		if(s==CLTidle&wCtCal.wvalid)hasData<=true;
 		if(s==CLTwbak)hasData<=false;
 
-		if(reset)			{clint['h2fff],clint['h2ffe]}<='0;
-		else if(s==CLTwbak)	clint[awaddr[31:2]]<=wdata;
-		else 				{clint['h2fff],clint['h2ffe]}<={clint['h2fff],clint['h2ffe]}+1;
-
+		if(reset){clint['h2fff],clint['h2ffe]}<='0;
+		else begin	{clint['h2fff],clint['h2ffe]}<={clint['h2fff],clint['h2ffe]}+1;
+					if(s==CLTwbak)	clint[awaddr[31:2]]<=wdata;end
 	end always_comb begin
 		rCtBak.arready	=(s==CLTidle);
 		rCtBak.rvalid	=(s==CLTrbak);
@@ -226,7 +252,7 @@ module ysyx_26020046_rv32iCLT(
 		wCtBak.awready	=(s==CLTidle);
 		wCtBak.wready	=(s==CLTwbak);
 		wCtBak.bvalid	=(s==CLTwbak);
-		wCtBak.bresp	=(awaddr[1:0]=='0)?OKAY:EXOKAY;
+		wCtBak.bresp	=(awaddr[1:0]=='0&wstrb==4'b1111)?OKAY:EXOKAY;
 	end
 	endmodule
 `ifndef RV32I_STA module ysyx_26020046_rv32iMEM(
@@ -306,7 +332,8 @@ module ysyx_26020046_rv32iARB(
 	input clk,reset
 	);
 	ARBstatus_t s,ns;
-	// word_t addr;//貌似也可以省略，因为我这里的就只有两种，且理论上不可能发送地址变化
+	word_t /*verilator lint_off UNUSEDSIGNAL */ addr /*verilator lint_on UNUSEDSIGNAL */ ;
+	// word_t addr;
 	// AXI4rBak_t rArBak;AXI4wBak_t wArBak;
 	// AXI4rCal_t rArCal;AXI4wCal_t wArCal;//好像没必要，毕竟就两种结构
 	always_comb	unique case(s)//TODO 现在默认是LSU不会同时读写
@@ -321,9 +348,14 @@ module ysyx_26020046_rv32iARB(
 			default:ns=ARBidle;
 	endcase always_ff@(posedge clk)if(reset)begin
 			s<=ARBidle;
-		end else begin `ifdef RV32I_DEBUG $fdispl     ay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
+		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
 			s<=ns;
-		end always_comb begin
+	end always_ff@(posedge clk)begin
+		if(s==ARBidle&ns==ARBlsuR)	addr<=rLsCal.araddr;
+		if(s==ARBidle&ns==ARBlsuW)	addr<=wLsCal.awaddr;
+		if(s==ARBidle&ns==ARBifuR)	addr<=rIfCal.araddr;
+		if(ns==ARBidle)				addr<='0;
+	end always_comb begin
 			rMeCal.araddr	='0;
 			rMeCal.arvalid	=false;
 			rMeCal.rready	=false;
@@ -357,52 +389,21 @@ module ysyx_26020046_rv32iARB(
 			rIfBak.rdata	='0;
 			rIfBak.rresp	=OKAY;
 			rIfBak.rvalid	=false;
+		// $fdisplay(logFile,"ARB:s=%s,ns=%s ifr %xx:%x",s.name(),ns.name(),rIfCal.araddr[31:24],8'h80);
 		unique case(s)
 			ARBidle:;
-			ARBlsuR:if(rLsCal.arvalid&rLsCal.araddr[31:24]==8'h80)begin
-					rMeCal.araddr	=rLsCal.araddr;
-					rMeCal.arvalid	=rLsCal.arvalid;
-					rLsBak.arready	=rMeBak.arready;
-					rLsBak.rdata	=rMeBak.rdata;
-					rLsBak.rresp	=rMeBak.rresp;
-					rLsBak.rvalid	=rMeBak.rvalid;
-					rMeCal.rready	=rLsCal.rready;
-				end else begin
-					rLsBak.arready	=true;
-					rLsBak.rdata	=true;
-					rLsBak.rresp	=EXOKAY;
-					rLsBak.rvalid	=true;
-				end
+			ARBlsuR:unique case('1)
+				addr[31:24]== 8'h10  :begin rMeCal=rLsCal;rLsBak=rMeBak;end
+				addr[31:24]== 8'h80  :begin rMeCal=rLsCal;rLsBak=rMeBak;end
+				addr[31:16]==16'h0200:begin rCtCal=rLsCal;rLsBak=rCtBak;end
+				default:begin rLsBak.arready=true;rLsBak.rdata='0;rLsBak.rresp=EXOKAY;rLsBak.rvalid=true;end endcase
 			ARBlsuW:unique case('1)
-				wLsCal.awvalid&(wLsCal.awaddr[31:24]==8'h80):begin
-					wMeCal.awaddr	=wLsCal.awaddr;
-					wMeCal.awvalid	=wLsCal.awvalid;
-					wLsBak.awready	=wMeBak.awready;
-					wMeCal.wdata	=wLsCal.wdata;
-					wMeCal.wstrb	=wLsCal.wstrb;
-					wMeCal.wvalid	=wLsCal.wvalid;
-					wLsBak.wready	=wMeBak.wready;
-					wLsBak.bresp	=wMeBak.bresp;
-					wLsBak.bvalid	=wMeBak.bvalid;
-					wMeCal.bready	=wLsCal.bready;
-				end
-				wLsCal.awvalid&(wLsCal.awaddr[31:16]==16'h0200):begin
-					wCtCal.awaddr	=wLsCal.awaddr;
-					wCtCal.awvalid	=wLsCal.awvalid;
-					wLsBak.awready	=wCtBak.awready;
-					wCtCal.wdata	=wLsCal.wdata;
-					wCtCal.wstrb	=wLsCal.wstrb;
-					wCtCal.wvalid	=wLsCal.wvalid;
-					wLsBak.wready	=wCtBak.wready;
-					wLsBak.bresp	=wCtBak.bresp;
-					wLsBak.bvalid	=wCtBak.bvalid;
-					wCtCal.bready	=wLsCal.bready;
-				end
-				default:begin wLsBak.awready =true;wLsBak.wready =true;wLsBak.bresp =EXOKAY;wLsBak.bvalid =true;end endcase
-			ARBifuR:unique case('1)
-				rIfCal.arvalid&(rIfCal.araddr[31:24]== 8'h80  ):begin rMeCal=rIfCal;rIfBak=rMeBak;end
-				rIfCal.arvalid&(rIfCal.araddr[31:16]==16'h0200):begin rCtCal=rIfCal;rIfBak=rCtBak;end
-				default:begin rIfBak.arready =true;rIfBak.rdata =true;rIfBak.rresp =EXOKAY;rIfBak.rvalid =true;end endcase
+				addr[31:24]== 8'h80  :begin wMeCal=wLsCal;wLsBak=wMeBak;end
+				addr[31:24]== 8'h10  :begin wMeCal=wLsCal;wLsBak=wMeBak;end
+				addr[31:16]==16'h0200:begin wCtCal=wLsCal;wLsBak=wCtBak;end
+				default:begin wLsBak.awready=true;wLsBak.wready=true;wLsBak.bresp=EXOKAY;wLsBak.bvalid=true;end endcase
+			ARBifuR: if(addr[31:24]==8'h80)begin rMeCal=rIfCal;rIfBak=rMeBak;end
+				else begin rIfBak.arready=true;rIfBak.rdata='0;rIfBak.rresp=EXOKAY;rIfBak.rvalid=true;end
 	endcase end
 	endmodule
 module ysyx_26020046_rv32iIFU(
@@ -434,9 +435,9 @@ module ysyx_26020046_rv32iIFU(
 	end
 	always_comb begin : in
 		// nIfId.code=sbIf.rdata;
-		case(rIfBak.rresp)
+		if(s==IFUback)case(rIfBak.rresp)
 			OKAY	:;
-			default	:`ifndef RV32I_STA $stop("rresp")`endif;
+			default	:begin `ifndef RV32I_STA $error("rIfBak.rresp=%s:",rIfBak.rresp.name());$stop();`endif end
 		endcase
 
 		nIfId.valid=(s==IFUfunc);
@@ -777,11 +778,11 @@ module ysyx_26020046_rv32iLSU(
 			wLsCal.wstrb	=oAlLs.enS?mask:'0;
 			wLsCal.wvalid	=oAlLs.enS&(s==LSUcall);
 			wLsCal.bready	=oAlLs.enS&(s==LSUback);
-			case(rLsBak.rresp)
+			if(s==LSUback)case(rLsBak.rresp)
 				OKAY:;
 				default:begin `ifndef RV32I_STA $fatal("unknown rresp==0x%x",rLsBak.rresp);`endif end
 			endcase
-			case(wLsBak.bresp)
+			if(s==LSUback)case(wLsBak.bresp)
 				OKAY:;
 				default:begin `ifndef RV32I_STA $fatal("unknown bresp==0x%x",wLsBak.bresp);`endif end
 			endcase

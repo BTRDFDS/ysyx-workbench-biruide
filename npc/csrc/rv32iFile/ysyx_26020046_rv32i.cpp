@@ -21,7 +21,7 @@ const uint32_t addrReset	=0x80000000;
 const uint32_t addrTimer	=0x0200BFF8;
 const uint32_t addrSerial	=0x10000000;
 const uint32_t addrInput 	=0x10011000;
-const uint32_t memSize=0xa000000;
+const uint32_t memSize		=0xa000000;
 
 uint8_t mem[memSize];
 uint32_t runStep,pc;
