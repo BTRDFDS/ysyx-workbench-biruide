@@ -193,6 +193,21 @@ module ysyx_26020046_rv32i(
 		return nIfId.pc;
 	endfunction `endif
 	endmodule
+module ysyx_26020046_rv32iUAR(
+	input  AXI4wCal_t wUaCal,
+	output AXI4wBak_t wUaBak,
+	input clk,reset
+	);
+	always_ff @(posedge clk) begin//TODO 还是一样需要一个状态机
+		if(wUaCal.awvalid)$write(wUaCal.wdata);
+	end
+	always_comb begin
+		wUaBak.awready	=1'b1;
+		wUaBak.wready	=1'b1;
+		wUaBak.bvalid	=1'b1;
+		wUaBak.bresp	=OKAY;
+	end
+	endmodule
 module ysyx_26020046_rv32iCLT(
 	input  AXI4rCal_t rCtCal,
 	input  AXI4wCal_t wCtCal,
