@@ -57,10 +57,11 @@
 		logic [6:0] op;
 	} code_t;
 
-	typedef enum logic [1:0]{IFUback,IFUcall,IFUfunc} IFUstatus_t;
-	typedef enum logic [1:0]{LSUback,LSUcall,LSUidle,LSUsuce} LSUstatus_t;
-	typedef enum logic [1:0]{MEMidle,MEMfunc,MEMback,MEMwait} MEMstatus_t;
-	typedef enum logic [1:0]{ARBidle,ARBifuR,ARBlsuR,ARBlsuW} ARBstatus_t;
+	typedef enum logic [1:0]{IFUback,IFUcall,IFUfunc}			IFUstatus_t;
+	typedef enum logic [1:0]{LSUback,LSUcall,LSUidle,LSUsuce}	LSUstatus_t;
+	typedef enum logic [1:0]{MEMidle,MEMfunc,MEMback,MEMwait}	MEMstatus_t;
+	typedef enum logic [1:0]{ARBidle,ARBifuR,ARBlsuR,ARBlsuW}	ARBstatus_t;
+	typedef enum logic [1:0]{CLTidle,CLTrbak,CLTwbak}			CLTsatus_t;
 
 	typedef enum logic [1:0]{OKAY,EXOKAY,SLVERR,DECERR} resp_t;//TODO 目前是只有OKAY有用
 	`ifdef RV32I_DEBUG integer logFile;`endif
@@ -93,7 +94,8 @@
 
 		word_t imm,pc;
 	} IdAl_t;
-	typedef struct packed {reg_t cR1,cR2;SRaddr_t SRaddr;}																		valcl_t;typedef struct packed {word_t addr;logic enJfun,ready;}																		upBk_t;
+	typedef struct packed {reg_t cR1,cR2;SRaddr_t SRaddr;}																		valcl_t;
+	typedef struct packed {word_t addr;logic enJfun,ready;}																		upBk_t;
 	typedef struct packed {logic valid,enS,enL;word_t addr,res,iCsr,oR2;LSUop_t LSop;SRaddr_t SRaddr;CSRop_t SRop;reg_t cRd;}	AlLs_t;
 	typedef struct packed {logic ready;word_t oR1,oR2;word_t oCsr;}																LsAl_t;
 	typedef struct packed {word_t iRd;reg_t cRd;logic valid;}																	LsRg_t;
@@ -102,19 +104,10 @@
 	typedef struct packed {logic ready;word_t oR1,oR2;}																			RgLs_t;
 	typedef struct packed {reg_t cR1,cR2;}																						valRg_t;
 	typedef struct packed {SRaddr_t SRaddr;}																					valSr_t;
-	interface AXI4_Lite_t();
-		logic arready,arvalid;word_t araddr;
-		logic rready,rvalid;word_t rdata;resp_t rresp;
-		logic awready,awvalid;word_t awaddr;
-		logic wvalid,wready;mask_t wstrb;word_t wdata;
-		logic bvalid,bready;resp_t bresp;
-		modport CPU(input  arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,output araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
-		modport MEM(output arready,rdata,rresp,rvalid,awready,wready,bresp,bvalid,input  araddr,arvalid,rready,awaddr,awvalid,wdata,wstrb,wvalid,bready);
-		endinterface
-	typedef struct packed {logic arvalid,rready;word_t araddr;}AXI4rCal_t;
-	typedef struct packed {logic awvalid,wvalid,bready;word_t awaddr,wdata;mask_t wstrb;}AXI4wCal_t;
-	typedef struct packed {logic arready;word_t rdata;resp_t rresp;logic rvalid;}AXI4rBak_t;
-	typedef struct packed {logic awready,wready,bvalid;resp_t bresp;}AXI4wBak_t;
+	typedef struct packed {logic arvalid,rready;word_t araddr;}																	AXI4rCal_t;
+	typedef struct packed {logic awvalid,wvalid,bready;word_t awaddr,wdata;mask_t wstrb;}										AXI4wCal_t;
+	typedef struct packed {logic arready;word_t rdata;resp_t rresp;logic rvalid;}												AXI4rBak_t;
+	typedef struct packed {logic awready,wready,bvalid;resp_t bresp;}															AXI4wBak_t;
 
 module ysyx_26020046_rv32i(
 	`ifdef RV32I_STA
@@ -137,6 +130,8 @@ module ysyx_26020046_rv32i(
 	AXI4rCal_t rIfCal;AXI4rBak_t rIfBak;
 	AXI4rCal_t rLsCal;AXI4rBak_t rLsBak;
 	AXI4wCal_t wLsCal;AXI4wBak_t wLsBak;
+	AXI4rCal_t rCtCal;AXI4rBak_t rCtBak;
+	AXI4wCal_t wCtCal;AXI4wBak_t wCtBak;
 
 	`ifndef RV32I_STA
 		AXI4rCal_t rMeCal;AXI4rBak_t rMeBak;
@@ -144,6 +139,7 @@ module ysyx_26020046_rv32i(
 		ysyx_26020046_rv32iMEM MEM(.*);
 	`endif
 
+	ysyx_26020046_rv32iCLT CLT(.*);
 	ysyx_26020046_rv32iARB ARB(.*);
 	ysyx_26020046_rv32iIFU IFU(.*);
 	ysyx_26020046_rv32iIDU IDU(.*);
@@ -185,6 +181,53 @@ module ysyx_26020046_rv32i(
 	function int getPc();
 		return nIfId.pc;
 	endfunction `endif
+	endmodule
+module ysyx_26020046_rv32iCLT(
+	input  AXI4rCal_t rCtCal,
+	input  AXI4wCal_t wCtCal,
+	output AXI4rBak_t rCtBak,
+	output AXI4wBak_t wCtBak,
+	input clk,reset
+	);
+	// word_t mtime,mtimeh;
+	word_t clint['h2fff:'h2ffe];
+	CLTsatus_t s,ns;
+	logic hasAddr,hasData;
+	word_t araddr,awaddr,wdata;
+	always_comb unique case(s)
+		CLTidle:unique case('1)
+			rCtCal.arvalid:ns=CLTrbak;
+			(wCtCal.awvalid|hasAddr)&(wCtCal.wvalid|hasData):ns=CLTwbak;
+			default:ns=CLTidle;endcase
+		CLTrbak:ns=(rCtCal.rready)?CLTidle:CLTrbak;
+		CLTwbak:ns=(wCtCal.bready)?CLTidle:CLTwbak;
+		default:ns=CLTidle;
+	endcase always_ff@(posedge clk) if(reset)s<=CLTidle;else s<=ns;
+	always_ff@(posedge clk)begin
+		if(s==CLTidle&rCtCal.arvalid)araddr=rCtCal.araddr;
+
+		if(s==CLTidle&wCtCal.awvalid)awaddr<=wCtCal.awaddr;
+		if(s==CLTidle&wCtCal.awvalid)hasAddr<=true;
+		if(s==CLTwbak)hasAddr<=false;
+		if(s==CLTidle&wCtCal.wvalid)wdata<=wCtCal.wdata;
+		if(s==CLTidle&wCtCal.wvalid)hasData<=true;
+		if(s==CLTwbak)hasData<=false;
+
+		if(reset)			{clint['h2fff],clint['h2ffe]}<='0;
+		else if(s==CLTwbak)	clint[awaddr[31:2]]<=wdata;
+		else 				{clint['h2fff],clint['h2ffe]}<={clint['h2fff],clint['h2ffe]}+1;
+
+	end always_comb begin
+		rCtBak.arready	=(s==CLTidle);
+		rCtBak.rvalid	=(s==CLTrbak);
+		rCtBak.rdata	=(s==CLTrbak)?clint[araddr[31:2]]:'0;
+		rCtBak.rresp	=(araddr[1:0]=='0)?OKAY:EXOKAY;
+
+		wCtBak.awready	=(s==CLTidle);
+		wCtBak.wready	=(s==CLTwbak);
+		wCtBak.bvalid	=(s==CLTwbak);
+		wCtBak.bresp	=(awaddr[1:0]=='0)?OKAY:EXOKAY;
+	end
 	endmodule
 `ifndef RV32I_STA module ysyx_26020046_rv32iMEM(
 	input  AXI4rCal_t rMeCal,
@@ -245,7 +288,7 @@ module ysyx_26020046_rv32i(
 		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"%m:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
 		if(Ws==MEMfunc)pmem_write(awaddr,wdata,{4'b0,wstrb});
 	end always_comb begin
-		wMeBak.awready=(Ws==MEMidle&!hasAddr);
+		wMeBak.awready	=(Ws==MEMidle&!hasAddr);
 		wMeBak.wready	=(Ws==MEMidle&!hasData);
 		wMeBak.bresp	=OKAY;
 		wMeBak.bvalid	=(Ws==MEMback);
@@ -254,17 +297,18 @@ module ysyx_26020046_rv32i(
 module ysyx_26020046_rv32iARB(
 	input  AXI4rCal_t rIfCal,
 	output AXI4rBak_t rIfBak,
-	input  AXI4rCal_t rLsCal,
-	output AXI4rBak_t rLsBak,
-	input  AXI4wCal_t wLsCal,
-	output AXI4wBak_t wLsBak,
-	input  AXI4rBak_t rMeBak,
-	input  AXI4wBak_t wMeBak,
-	output AXI4rCal_t rMeCal,
-	output AXI4wCal_t wMeCal,
+	input  AXI4rCal_t rLsCal,output AXI4rBak_t rLsBak,
+	input  AXI4wCal_t wLsCal,output AXI4wBak_t wLsBak,
+	input  AXI4rBak_t rMeBak,input  AXI4wBak_t wMeBak,
+	output AXI4rCal_t rMeCal,output AXI4wCal_t wMeCal,
+	input  AXI4rBak_t rCtBak,input  AXI4wBak_t wCtBak,
+	output AXI4rCal_t rCtCal,output AXI4wCal_t wCtCal,
 	input clk,reset
 	);
 	ARBstatus_t s,ns;
+	// word_t addr;//貌似也可以省略，因为我这里的就只有两种，且理论上不可能发送地址变化
+	// AXI4rBak_t rArBak;AXI4wBak_t wArBak;
+	// AXI4rCal_t rArCal;AXI4wCal_t wArCal;//好像没必要，毕竟就两种结构
 	always_comb	unique case(s)//TODO 现在默认是LSU不会同时读写
 			ARBidle: if(rLsCal.arvalid)ns=ARBlsuR;
 				else if(wLsCal.awvalid)ns=ARBlsuW;
@@ -277,64 +321,88 @@ module ysyx_26020046_rv32iARB(
 			default:ns=ARBidle;
 	endcase always_ff@(posedge clk)if(reset)begin
 			s<=ARBidle;
-		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
+		end else begin `ifdef RV32I_DEBUG $fdispl     ay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
 			s<=ns;
 		end always_comb begin
 			rMeCal.araddr	='0;
-			rMeCal.arvalid=false;
+			rMeCal.arvalid	=false;
 			rMeCal.rready	=false;
 			wMeCal.awaddr	='0;
-			wMeCal.awvalid=false;
+			wMeCal.awvalid	=false;
 			wMeCal.wdata	='0;
 			wMeCal.wstrb	='0;
 			wMeCal.wvalid	=false;
 			wMeCal.bready	=false;
 			
-			rLsBak.arready=false;
+			rCtCal.araddr	='0;
+			rCtCal.arvalid	=false;
+			rCtCal.rready	=false;
+			wCtCal.awaddr	='0;
+			wCtCal.awvalid	=false;
+			wCtCal.wdata	='0;
+			wCtCal.wstrb	='0;
+			wCtCal.wvalid	=false;
+			wCtCal.bready	=false;
+
+			rLsBak.arready	=false;
 			rLsBak.rdata	='0;
 			rLsBak.rresp	=OKAY;
 			rLsBak.rvalid	=false;
-			wLsBak.awready=false;
+			wLsBak.awready	=false;
 			wLsBak.wready	=false;
 			wLsBak.bresp	=OKAY;
 			wLsBak.bvalid	=false;
 
-			rIfBak.arready=false;
+			rIfBak.arready	=false;
 			rIfBak.rdata	='0;
 			rIfBak.rresp	=OKAY;
 			rIfBak.rvalid	=false;
 		unique case(s)
 			ARBidle:;
-			ARBlsuR:begin
-				rMeCal.araddr	=rLsCal.araddr;
-				rMeCal.arvalid	=rLsCal.arvalid;
-				rLsBak.arready	=rMeBak.arready;
-				rLsBak.rdata	=rMeBak.rdata;
-				rLsBak.rresp	=rMeBak.rresp;
-				rLsBak.rvalid	=rMeBak.rvalid;
-				rMeCal.rready	=rLsCal.rready;
+			ARBlsuR:if(rLsCal.arvalid&rLsCal.araddr[31:24]==8'h80)begin
+					rMeCal.araddr	=rLsCal.araddr;
+					rMeCal.arvalid	=rLsCal.arvalid;
+					rLsBak.arready	=rMeBak.arready;
+					rLsBak.rdata	=rMeBak.rdata;
+					rLsBak.rresp	=rMeBak.rresp;
+					rLsBak.rvalid	=rMeBak.rvalid;
+					rMeCal.rready	=rLsCal.rready;
+				end else begin
+					rLsBak.arready	=true;
+					rLsBak.rdata	=true;
+					rLsBak.rresp	=EXOKAY;
+					rLsBak.rvalid	=true;
 				end
-			ARBlsuW:begin
-				wMeCal.awaddr	=wLsCal.awaddr;
-				wMeCal.awvalid	=wLsCal.awvalid;
-				wLsBak.awready	=wMeBak.awready;
-				wMeCal.wdata	=wLsCal.wdata;
-				wMeCal.wstrb	=wLsCal.wstrb;
-				wMeCal.wvalid	=wLsCal.wvalid;
-				wLsBak.wready	=wMeBak.wready;
-				wLsBak.bresp	=wMeBak.bresp;
-				wLsBak.bvalid	=wMeBak.bvalid;
-				wMeCal.bready	=wLsCal.bready;
+			ARBlsuW:unique case('1)
+				wLsCal.awvalid&(wLsCal.awaddr[31:24]==8'h80):begin
+					wMeCal.awaddr	=wLsCal.awaddr;
+					wMeCal.awvalid	=wLsCal.awvalid;
+					wLsBak.awready	=wMeBak.awready;
+					wMeCal.wdata	=wLsCal.wdata;
+					wMeCal.wstrb	=wLsCal.wstrb;
+					wMeCal.wvalid	=wLsCal.wvalid;
+					wLsBak.wready	=wMeBak.wready;
+					wLsBak.bresp	=wMeBak.bresp;
+					wLsBak.bvalid	=wMeBak.bvalid;
+					wMeCal.bready	=wLsCal.bready;
 				end
-			ARBifuR:begin
-				rMeCal.araddr	=rIfCal.araddr;
-				rMeCal.arvalid	=rIfCal.arvalid;
-				rIfBak.arready	=rMeBak.arready;
-				rIfBak.rdata	=rMeBak.rdata;
-				rIfBak.rresp	=rMeBak.rresp;
-				rIfBak.rvalid	=rMeBak.rvalid;
-				rMeCal.rready	=rIfCal.rready;
+				wLsCal.awvalid&(wLsCal.awaddr[31:16]==16'h0200):begin
+					wCtCal.awaddr	=wLsCal.awaddr;
+					wCtCal.awvalid	=wLsCal.awvalid;
+					wLsBak.awready	=wCtBak.awready;
+					wCtCal.wdata	=wLsCal.wdata;
+					wCtCal.wstrb	=wLsCal.wstrb;
+					wCtCal.wvalid	=wLsCal.wvalid;
+					wLsBak.wready	=wCtBak.wready;
+					wLsBak.bresp	=wCtBak.bresp;
+					wLsBak.bvalid	=wCtBak.bvalid;
+					wCtCal.bready	=wLsCal.bready;
 				end
+				default:begin wLsBak.awready =true;wLsBak.wready =true;wLsBak.bresp =EXOKAY;wLsBak.bvalid =true;end endcase
+			ARBifuR:unique case('1)
+				rIfCal.arvalid&(rIfCal.araddr[31:24]== 8'h80  ):begin rMeCal=rIfCal;rIfBak=rMeBak;end
+				rIfCal.arvalid&(rIfCal.araddr[31:16]==16'h0200):begin rCtCal=rIfCal;rIfBak=rCtBak;end
+				default:begin rIfBak.arready =true;rIfBak.rdata =true;rIfBak.rresp =EXOKAY;rIfBak.rvalid =true;end endcase
 	endcase end
 	endmodule
 module ysyx_26020046_rv32iIFU(
