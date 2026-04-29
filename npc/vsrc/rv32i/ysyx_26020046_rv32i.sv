@@ -1,25 +1,10 @@
 // `define RV32I_DEBUG
-	`define RV32I_STA
+	// `define RV32I_STA
 
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
 	parameter false = 0;
 	parameter true = 1;
-
-	parameter OP_I_J	= 7'b1100111;//jalr
-	parameter OP_I_A	= 7'b0010011;//i运算
-	parameter OP_I_L	= 7'b0000011;//l系列
-	parameter OP_U_I	= 7'b0110111;//lui
-	parameter OP_U_P	= 7'b0010111;//auipc
-	parameter OP_S__	= 7'b0100011;//s系列
-	parameter OP_B__	= 7'b1100011;//b比较系列
-	parameter OP_J__	= 7'b1101111;//jal
-	parameter OP_R__ 	= 7'b0110011;//r运算
-	parameter OP_CSR	= 7'b1110011;//CSR系列
-
-	parameter OP_CSR_ECALL_	= 32'h00000073;
-	parameter OP_CSR_EBREAK	= 32'h00100073;
-	parameter OP_CSR_MRET__	= 32'h30200073;
 
 	parameter CSR_ADDR_MSTAUS	= 12'h300;
 	parameter CSR_ADDR_MTVEC	= 12'h305;
@@ -456,6 +441,21 @@ module ysyx_26020046_rv32iIDU(
 	output IdAl_t  nIdAl,
 	input  upBk_t  iAlId
 	);
+	//OP宏定义
+		parameter OP_I_J	= 7'b1100111;//jalr
+		parameter OP_I_A	= 7'b0010011;//i运算
+		parameter OP_I_L	= 7'b0000011;//l系列
+		parameter OP_U_I	= 7'b0110111;//lui
+		parameter OP_U_P	= 7'b0010111;//auipc
+		parameter OP_S__	= 7'b0100011;//s系列
+		parameter OP_B__	= 7'b1100011;//b比较系列
+		parameter OP_J__	= 7'b1101111;//jal
+		parameter OP_R__ 	= 7'b0110011;//r运算
+		parameter OP_CSR	= 7'b1110011;//CSR系列
+
+		parameter OP_CSR_ECALL_	= 32'h00000073;
+		parameter OP_CSR_EBREAK	= 32'h00100073;
+		parameter OP_CSR_MRET__	= 32'h30200073;
 	IfId_t oIfId;
 
 	always_comb oIfId=nIfId;
