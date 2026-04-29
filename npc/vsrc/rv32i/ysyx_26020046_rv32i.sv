@@ -170,7 +170,6 @@ module ysyx_26020046_rv32i(
 		initial begin
 			logFile = $fopen("log/rv32iDebugLog.txt");
 			$write("\033[1;35m SV_DEBUG \033[0m");
-			// $display("log/rv32iDebugLog.txt");
 			// $fstrobe
 		end
 		always @(posedge clk) begin if(~reset)begin
@@ -332,10 +331,7 @@ module ysyx_26020046_rv32iARB(
 	input clk,reset
 	);
 	ARBstatus_t s,ns;
-	word_t /*verilator lint_off UNUSEDSIGNAL */ addr /*verilator lint_on UNUSEDSIGNAL */ ;
-	// word_t addr;
-	// AXI4rBak_t rArBak;AXI4wBak_t wArBak;
-	// AXI4rCal_t rArCal;AXI4wCal_t wArCal;//好像没必要，毕竟就两种结构
+	/*verilator lint_off UNUSEDSIGNAL */word_t addr;/*verilator lint_on UNUSEDSIGNAL */
 	always_comb	unique case(s)//TODO 现在默认是LSU不会同时读写
 			ARBidle: if(rLsCal.arvalid)ns=ARBlsuR;
 				else if(wLsCal.awvalid)ns=ARBlsuW;
