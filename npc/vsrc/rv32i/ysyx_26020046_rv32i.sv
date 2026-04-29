@@ -1,5 +1,5 @@
 // `define RV32I_DEBUG
-	`define RV32I_STA
+	// `define RV32I_STA
 
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
@@ -266,10 +266,10 @@ module ysyx_26020046_rv32iARB(
 	);
 	ARBstatus_t s,ns;
 	always_comb	unique case(s)//TODO 现在默认是LSU不会同时读写
-			ARBidle: if(rLsCal.arvalid&rMeBak.arready)ns=ARBlsuR;
-				else if(wLsCal.awvalid&wMeBak.awready)ns=ARBlsuW;
-				else if(wLsCal.wvalid &wMeBak.wready )ns=ARBlsuW;
-				else if(rIfCal.arvalid&rMeBak.arready)ns=ARBifuR;
+			ARBidle: if(rLsCal.arvalid)ns=ARBlsuR;
+				else if(wLsCal.awvalid)ns=ARBlsuW;
+				else if(wLsCal.wvalid )ns=ARBlsuW;
+				else if(rIfCal.arvalid)ns=ARBifuR;
 				else ns=ARBidle;
 			ARBlsuR:ns=(rLsCal.rready&rMeBak.rvalid)?ARBidle:ARBlsuR;
 			ARBlsuW:ns=(wLsCal.bready&wMeBak.bvalid)?ARBidle:ARBlsuW;
