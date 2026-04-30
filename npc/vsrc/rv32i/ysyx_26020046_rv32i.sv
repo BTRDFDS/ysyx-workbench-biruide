@@ -1,4 +1,4 @@
-// `define RV32I_DEBUG
+`define RV32I_DEBUG
 	// `define RV32I_STA
 
 	parameter REG_NUMBER= 5;
@@ -96,7 +96,7 @@
 
 	`ifndef RV32I_STA
 	function string sIfId(IfId_t i);return $sformatf("valid=%b,code=%x,pc=%x",i.valid,i.code,i.pc);endfunction
-	function string sIdAl(IdAl_t i);return $sformatf("valid=%b in1=%s in2=%s enJ=%b cal=%s bfu=%s adr=%s csr=%s iRd=%s enS=%s enL=%s LSop=%s cRd=%x SRaddr=%x SRop=%s imm=%x pc=%x",i.valid,i.in1.name(),i.in2.name(),i.enJcod,i.cal.name(),i.bfu.name(),i.adr.name(),i.cCsr.name(),i.cIrd.name(),i.enS,i.enL,i.LSop.name(),i.cRd,i.SRaddr,i.SRop.name(),i.imm,i.pc);endfunction
+	function string sIdAl(IdAl_t i);return $sformatf("valid=%b in1=%s in2=%s enJ=%b cal=%s bfu=%s adr=%s csr=%s iRd=%s enS=%b enL=%b LSop=%s cRd=%x SRaddr=%x SRop=%s imm=%x pc=%x",i.valid,i.in1.name(),i.in2.name(),i.enJcod,i.cal.name(),i.bfu.name(),i.adr.name(),i.cCsr.name(),i.cIrd.name(),i.enS,i.enL,i.LSop.name(),i.cRd,i.SRaddr,i.SRop.name(),i.imm,i.pc);endfunction
 	function string sValcal(valcl_t i);return $sformatf("cR1=%x cR2=%x SRaddr=%x",i.cR1,i.cR2,i.SRaddr);endfunction
 	function string sUpBk(upBk_t i);return $sformatf("addr=%x enJ=%b ready=%b",i.addr,i.enJfun,i.ready);endfunction
 	function string sAlLs(AlLs_t i);return $sformatf("valid=%b enS=%b enL=%b addr=%x res=%x iCsr=%x oR2=%x LSop=%x SRaddr=%x SRop=%s cRd=%x",i.valid,i.enS,i.enL,i.addr,i.res,i.iCsr,i.oR2,i.LSop,i.SRaddr,i.SRop.name(),i.cRd);endfunction
@@ -141,8 +141,9 @@ module ysyx_26020046_rv32i(
 		AXI4rCal_t rMeCal;AXI4rBak_t rMeBak;
 		AXI4wCal_t wMeCal;AXI4wBak_t wMeBak;
 		ysyx_26020046_rv32iMEM MEM(.*);
+		AXI4wCal_t wUaCal;AXI4wBak_t wUaBak;
+		ysyx_26020046_rv32iUAR UAR(.*);
 	`endif
-
 	ysyx_26020046_rv32iCLT CLT(.*);
 	ysyx_26020046_rv32iARB ARB(.*);
 	ysyx_26020046_rv32iIFU IFU(.*);
@@ -198,14 +199,34 @@ module ysyx_26020046_rv32iUAR(
 	output AXI4wBak_t wUaBak,
 	input clk,reset
 	);
-	always_ff @(posedge clk) begin//TODO 还是一样需要一个状态机
-		if(wUaCal.awvalid)$write(wUaCal.wdata);
-	end
-	always_comb begin
-		wUaBak.awready	=1'b1;
-		wUaBak.wready	=1'b1;
-		wUaBak.bvalid	=1'b1;
-		wUaBak.bresp	=OKAY;
+	MEMstatus_t Ws,nWs;
+	word_t awaddr,wdata;
+	mask_t wstrb;
+	logic hasAddr,hasData;
+	always_comb unique case(Ws)
+			MEMidle:nWs=(wUaCal.awvalid|hasAddr)&(wUaCal.wvalid|hasData)?MEMfunc:MEMidle;
+			MEMfunc:nWs=MEMback;
+			MEMback:nWs=(wUaCal.bready)?MEMidle:MEMback;
+			default:nWs=MEMidle;
+	endcase always_ff@(posedge clk) if(reset)begin
+			Ws	<=MEMidle;
+		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"%m:Ws=%s,nWs=%s",Ws.name(),nWs.name());`endif
+			Ws	<=nWs;
+	end always_ff @(posedge clk) begin
+		if(wUaBak.awready&wUaCal.awvalid)	awaddr	<=wUaCal.awaddr;
+		if(wUaBak.awready&wUaCal.awvalid)	hasAddr<=1'b1;
+		if(Ws==MEMback)						hasAddr<=1'b0;
+		if(wUaBak.wready &wUaCal.wvalid)	wdata	<=wUaCal.wdata;
+		if(wUaBak.wready &wUaCal.wvalid)	wstrb	<=wUaCal.wstrb;
+		if(wUaBak.wready &wUaCal.wvalid)	hasData<=1'b1;
+		if(Ws==MEMback)						hasData<=1'b0;
+		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"%m:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
+		if(Ws==MEMfunc)$display("%s",wdata);
+	end always_comb begin
+		wUaBak.awready	=(Ws==MEMidle&!hasAddr);
+		wUaBak.wready	=(Ws==MEMidle&!hasData);
+		wUaBak.bresp	=(awaddr=='h10000000&wstrb==4'b1111)?OKAY:EXOKAY;
+		wUaBak.bvalid	=(Ws==MEMback);
 	end
 	endmodule
 module ysyx_26020046_rv32iCLT(
@@ -328,6 +349,7 @@ module ysyx_26020046_rv32iARB(
 	input  AXI4wCal_t wLsCal,output AXI4wBak_t wLsBak,
 	input  AXI4rBak_t rMeBak,input  AXI4wBak_t wMeBak,
 	output AXI4rCal_t rMeCal,output AXI4wCal_t wMeCal,
+	input  AXI4wBak_t wUaBak,output AXI4wCal_t wUaCal,
 	input  AXI4rBak_t rCtBak,input  AXI4wBak_t wCtBak,
 	output AXI4rCal_t rCtCal,output AXI4wCal_t wCtCal,
 	input clk,reset
@@ -391,13 +413,13 @@ module ysyx_26020046_rv32iARB(
 		unique case(s)
 			ARBidle:;
 			ARBlsuR:unique case('1)
-				addr[31:24]== 8'h10  :begin rMeCal=rLsCal;rLsBak=rMeBak;end
+				// addr[31:24]== 8'h10  :begin rMeCal=rLsCal;rLsBak=rMeBak;end//目前还不允许读UART
 				addr[31:24]== 8'h80  :begin rMeCal=rLsCal;rLsBak=rMeBak;end
 				addr[31:16]==16'h0200:begin rCtCal=rLsCal;rLsBak=rCtBak;end
 				default:begin rLsBak.arready=true;rLsBak.rdata='0;rLsBak.rresp=EXOKAY;rLsBak.rvalid=true;end endcase
 			ARBlsuW:unique case('1)
 				addr[31:24]== 8'h80  :begin wMeCal=wLsCal;wLsBak=wMeBak;end
-				addr[31:24]== 8'h10  :begin wMeCal=wLsCal;wLsBak=wMeBak;end
+				addr[31:24]== 8'h10  :begin wUaCal=wLsCal;wLsBak=wUaBak;end
 				addr[31:16]==16'h0200:begin wCtCal=wLsCal;wLsBak=wCtBak;end
 				default:begin wLsBak.awready=true;wLsBak.wready=true;wLsBak.bresp=EXOKAY;wLsBak.bvalid=true;end endcase
 			ARBifuR: if(addr[31:24]==8'h80)begin rMeCal=rIfCal;rIfBak=rMeBak;end
@@ -878,6 +900,7 @@ module ysyx_26020046_rv32iCSR(
 			marchid		<=32'h018D08CE;
 			mvendorid	<=32'h79737978;
 		end else begin
+				if(mcycle>='d1000)$stop;//特殊调试，用于观测死循环
 	`ifdef RV32I_DEBUG
 			if(~reset)begin
 				$fstrobe(logFile,"mcycle = %d\n",mcycle);
