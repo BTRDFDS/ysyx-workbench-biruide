@@ -12,6 +12,8 @@ void rtc_test() {
     } else {
       printf("%d seconds).\n", sec);
     }
+    // printf("%d seconds).\n", sec);//尽可能排除干扰，就会把上面的都注释掉
     sec ++;
+    // if(sec==100)return;//100秒后退出
   }
 }

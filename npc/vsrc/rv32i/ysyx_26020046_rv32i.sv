@@ -1,4 +1,4 @@
-`define RV32I_DEBUG
+// `define RV32I_DEBUG
 	// `define RV32I_STA
 
 	parameter REG_NUMBER= 5;
