@@ -185,14 +185,9 @@ module ysyx_26020046_rv32i(
 	`endif
 	
 	`ifndef RV32I_STA
-	export "DPI-C" function getReg;
-	function int getReg(input int addr);
-		return (addr == 0) ? '0 : GPR.gpr[addr];
-	endfunction
-	export "DPI-C" function getPc;
-	function int getPc();
-		return nIfId.pc;
-	endfunction `endif
+	export "DPI-C" function getReg;export "DPI-C" function getPc;
+	function int getReg(input int addr);return (addr == 0) ? '0 : GPR.gpr[addr];endfunction
+	function int getPc();return nIfId.pc;endfunction `endif
 	endmodule
 module ysyx_26020046_rv32iUAR(
 	input  AXI4wCal_t wUaCal,
