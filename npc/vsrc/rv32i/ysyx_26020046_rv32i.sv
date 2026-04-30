@@ -221,11 +221,11 @@ module ysyx_26020046_rv32iUAR(
 		if(wUaBak.wready &wUaCal.wvalid)	hasData<=1'b1;
 		if(Ws==MEMback)						hasData<=1'b0;
 		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"%m:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
-		if(Ws==MEMfunc)$display("%s",wdata);
+		if(Ws==MEMfunc)$write("%s",wdata[7:0]);
 	end always_comb begin
 		wUaBak.awready	=(Ws==MEMidle&!hasAddr);
 		wUaBak.wready	=(Ws==MEMidle&!hasData);
-		wUaBak.bresp	=(awaddr=='h10000000&wstrb==4'b1111)?OKAY:EXOKAY;
+		wUaBak.bresp	=(awaddr=='h10000000&wstrb==4'b1111)?OKAY:(wdata=='0?EXOKAY:EXOKAY);
 		wUaBak.bvalid	=(Ws==MEMback);
 	end
 	endmodule
@@ -355,27 +355,30 @@ module ysyx_26020046_rv32iARB(
 	input clk,reset
 	);
 	ARBstatus_t s,ns;
-	/*verilator lint_off UNUSEDSIGNAL */word_t addr;/*verilator lint_on UNUSEDSIGNAL */
+	// /*verilator lint_off UNUSEDSIGNAL */word_t addr;/*verilator lint_on UNUSEDSIGNAL */
+	logic [31:16] addr;
+	logic backvalid;
 	always_comb	unique case(s)//TODO 现在默认是LSU不会同时读写
 			ARBidle: if(rLsCal.arvalid)ns=ARBlsuR;
 				else if(wLsCal.awvalid)ns=ARBlsuW;
 				else if(wLsCal.wvalid )ns=ARBlsuW;
 				else if(rIfCal.arvalid)ns=ARBifuR;
 				else ns=ARBidle;
-			ARBlsuR:ns=(rLsCal.rready&rMeBak.rvalid)?ARBidle:ARBlsuR;
-			ARBlsuW:ns=(wLsCal.bready&wMeBak.bvalid)?ARBidle:ARBlsuW;
-			ARBifuR:ns=(rIfCal.rready&rMeBak.rvalid)?ARBidle:ARBifuR;
+			ARBlsuR:ns=(rLsCal.rready&backvalid)?ARBidle:ARBlsuR;
+			ARBlsuW:ns=(wLsCal.bready&backvalid)?ARBidle:ARBlsuW;
+			ARBifuR:ns=(rIfCal.rready&backvalid)?ARBidle:ARBifuR;
 			default:ns=ARBidle;
 	endcase always_ff@(posedge clk)if(reset)begin
 			s<=ARBidle;
 		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
 			s<=ns;
 	end always_ff@(posedge clk)begin
-		if(s==ARBidle&ns==ARBlsuR)	addr<=rLsCal.araddr;
-		if(s==ARBidle&ns==ARBlsuW)	addr<=wLsCal.awaddr;
-		if(s==ARBidle&ns==ARBifuR)	addr<=rIfCal.araddr;
+		if(s==ARBidle&ns==ARBlsuR)	addr<=rLsCal.araddr[31:16];
+		if(s==ARBidle&ns==ARBlsuW)	addr<=wLsCal.awaddr[31:16];
+		if(s==ARBidle&ns==ARBifuR)	addr<=rIfCal.araddr[31:16];
 		if(ns==ARBidle)				addr<='0;
 	end always_comb begin
+		//默认折叠
 			rMeCal.araddr	='0;
 			rMeCal.arvalid	=false;
 			rMeCal.rready	=false;
@@ -414,15 +417,15 @@ module ysyx_26020046_rv32iARB(
 			ARBidle:;
 			ARBlsuR:unique case('1)
 				// addr[31:24]== 8'h10  :begin rMeCal=rLsCal;rLsBak=rMeBak;end//目前还不允许读UART
-				addr[31:24]== 8'h80  :begin rMeCal=rLsCal;rLsBak=rMeBak;end
-				addr[31:16]==16'h0200:begin rCtCal=rLsCal;rLsBak=rCtBak;end
+				addr[31:24]== 8'h80  :begin rMeCal=rLsCal;rLsBak=rMeBak;backvalid=rMeBak.rvalid;end
+				addr[31:16]==16'h0200:begin rCtCal=rLsCal;rLsBak=rCtBak;backvalid=rCtBak.rvalid;end
 				default:begin rLsBak.arready=true;rLsBak.rdata='0;rLsBak.rresp=EXOKAY;rLsBak.rvalid=true;end endcase
 			ARBlsuW:unique case('1)
-				addr[31:24]== 8'h80  :begin wMeCal=wLsCal;wLsBak=wMeBak;end
-				addr[31:24]== 8'h10  :begin wUaCal=wLsCal;wLsBak=wUaBak;end
-				addr[31:16]==16'h0200:begin wCtCal=wLsCal;wLsBak=wCtBak;end
+				addr[31:24]== 8'h80  :begin wMeCal=wLsCal;wLsBak=wMeBak;backvalid=wMeBak.bvalid;end
+				addr[31:24]== 8'h10  :begin wUaCal=wLsCal;wLsBak=wUaBak;backvalid=wUaBak.bvalid;end
+				addr[31:16]==16'h0200:begin wCtCal=wLsCal;wLsBak=wCtBak;backvalid=wCtBak.bvalid;end
 				default:begin wLsBak.awready=true;wLsBak.wready=true;wLsBak.bresp=EXOKAY;wLsBak.bvalid=true;end endcase
-			ARBifuR: if(addr[31:24]==8'h80)begin rMeCal=rIfCal;rIfBak=rMeBak;end
+			ARBifuR: if(addr[31:24]==8'h80)begin rMeCal=rIfCal;rIfBak=rMeBak;backvalid=rMeBak.rvalid;end
 				else begin rIfBak.arready=true;rIfBak.rdata='0;rIfBak.rresp=EXOKAY;rIfBak.rvalid=true;end
 	endcase end
 	endmodule
@@ -900,7 +903,7 @@ module ysyx_26020046_rv32iCSR(
 			marchid		<=32'h018D08CE;
 			mvendorid	<=32'h79737978;
 		end else begin
-				if(mcycle>='d1000)$stop;//特殊调试，用于观测死循环
+				// if(mcycle>='d1000)$stop;//特殊调试，用于观测死循环
 	`ifdef RV32I_DEBUG
 			if(~reset)begin
 				$fstrobe(logFile,"mcycle = %d\n",mcycle);
