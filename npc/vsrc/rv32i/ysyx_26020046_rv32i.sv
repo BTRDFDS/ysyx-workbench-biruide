@@ -141,8 +141,6 @@ module ysyx_26020046_rv32i(
 		AXI4rCal_t rMeCal;AXI4rBak_t rMeBak;
 		AXI4wCal_t wMeCal;AXI4wBak_t wMeBak;
 		ysyx_26020046_rv32iMEM MEM(.*);
-		AXI4wCal_t wUaCal;AXI4wBak_t wUaBak;
-		ysyx_26020046_rv32iUAR UAR(.*);
 	`endif
 	ysyx_26020046_rv32iCLT CLT(.*);
 	ysyx_26020046_rv32iARB ARB(.*);
@@ -188,41 +186,6 @@ module ysyx_26020046_rv32i(
 	export "DPI-C" function getReg;export "DPI-C" function getPc;
 	function int getReg(input int addr);return (addr == 0) ? '0 : GPR.gpr[addr];endfunction
 	function int getPc();return nIfId.pc;endfunction `endif
-	endmodule
-module ysyx_26020046_rv32iUAR(
-	input  AXI4wCal_t wUaCal,
-	output AXI4wBak_t wUaBak,
-	input clk,reset
-	);
-	MEMstatus_t Ws,nWs;
-	word_t awaddr,wdata;
-	mask_t wstrb;
-	logic hasAddr,hasData;
-	always_comb unique case(Ws)
-			MEMidle:nWs=(wUaCal.awvalid|hasAddr)&(wUaCal.wvalid|hasData)?MEMfunc:MEMidle;
-			MEMfunc:nWs=MEMback;
-			MEMback:nWs=(wUaCal.bready)?MEMidle:MEMback;
-			default:nWs=MEMidle;
-	endcase always_ff@(posedge clk) if(reset)begin
-			Ws	<=MEMidle;
-		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"%m:Ws=%s,nWs=%s",Ws.name(),nWs.name());`endif
-			Ws	<=nWs;
-	end always_ff @(posedge clk) begin
-		if(wUaBak.awready&wUaCal.awvalid)	awaddr	<=wUaCal.awaddr;
-		if(wUaBak.awready&wUaCal.awvalid)	hasAddr<=1'b1;
-		if(Ws==MEMback)						hasAddr<=1'b0;
-		if(wUaBak.wready &wUaCal.wvalid)	wdata	<=wUaCal.wdata;
-		if(wUaBak.wready &wUaCal.wvalid)	wstrb	<=wUaCal.wstrb;
-		if(wUaBak.wready &wUaCal.wvalid)	hasData<=1'b1;
-		if(Ws==MEMback)						hasData<=1'b0;
-		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"%m:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
-		if(Ws==MEMfunc)$write("%s",wdata[7:0]);
-	end always_comb begin
-		wUaBak.awready	=(Ws==MEMidle&!hasAddr);
-		wUaBak.wready	=(Ws==MEMidle&!hasData);
-		wUaBak.bresp	=(awaddr=='h10000000&wstrb==4'b1111)?OKAY:(wdata=='0?EXOKAY:EXOKAY);
-		wUaBak.bvalid	=(Ws==MEMback);
-	end
 	endmodule
 module ysyx_26020046_rv32iCLT(
 	input  AXI4rCal_t rCtCal,
@@ -344,7 +307,6 @@ module ysyx_26020046_rv32iARB(
 	input  AXI4wCal_t wLsCal,output AXI4wBak_t wLsBak,
 	input  AXI4rBak_t rMeBak,input  AXI4wBak_t wMeBak,
 	output AXI4rCal_t rMeCal,output AXI4wCal_t wMeCal,
-	input  AXI4wBak_t wUaBak,output AXI4wCal_t wUaCal,
 	input  AXI4rBak_t rCtBak,input  AXI4wBak_t wCtBak,
 	output AXI4rCal_t rCtCal,output AXI4wCal_t wCtCal,
 	input clk,reset
@@ -417,7 +379,7 @@ module ysyx_26020046_rv32iARB(
 				default:begin rLsBak.arready=true;rLsBak.rdata='0;rLsBak.rresp=EXOKAY;rLsBak.rvalid=true;end endcase
 			ARBlsuW:unique case('1)
 				addr[31:24]== 8'h80  :begin wMeCal=wLsCal;wLsBak=wMeBak;backvalid=wMeBak.bvalid;end
-				addr[31:24]== 8'h10  :begin wUaCal=wLsCal;wLsBak=wUaBak;backvalid=wUaBak.bvalid;end
+				addr[31:24]== 8'h10  :begin wMeCal=wLsCal;wLsBak=wMeBak;backvalid=wMeBak.bvalid;end
 				addr[31:16]==16'h0200:begin wCtCal=wLsCal;wLsBak=wCtBak;backvalid=wCtBak.bvalid;end
 				default:begin wLsBak.awready=true;wLsBak.wready=true;wLsBak.bresp=EXOKAY;wLsBak.bvalid=true;end endcase
 			ARBifuR: if(addr[31:24]==8'h80)begin rMeCal=rIfCal;rIfBak=rMeBak;backvalid=rMeBak.rvalid;end
