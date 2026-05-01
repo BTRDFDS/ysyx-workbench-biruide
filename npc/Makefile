@@ -97,7 +97,8 @@ bin/%: $(tVd) $(tCd) | build/$(tF) bin
 # 	verilator --lint-only -Wall $(tVd) --top-module $(tT) -Wno-DECLFILENAME $(SOC_CFLAGS)
 	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tCd) --Mdir build/$(tF) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(tT) \
-	-CFLAGS -I$(NPC_HOME)/include $(SOC_CFLAGS) \
+	$(SOC_CFLAGS) \
+	-CFLAGS -I$(NPC_HOME)/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	cp build/$(tF)/V$(tT) bin/$(tT)

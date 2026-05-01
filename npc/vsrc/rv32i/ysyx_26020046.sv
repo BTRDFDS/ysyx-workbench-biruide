@@ -1,4 +1,4 @@
-// `define RV32I_DEBUG
+`define RV32I_DEBUG
 	// `define RV32I_STA
 
 	parameter REG_NUMBER= 5;
@@ -52,8 +52,8 @@
 	`ifdef RV32I_DEBUG integer logFile;`endif
 	`ifndef RV32I_STA
 	import "DPI-C" function void stop(input bit eb);
-	import "DPI-C" function int pmem_read(input int unsigned addr);
-	import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
+	// import "DPI-C" function int pmem_read(input int unsigned addr);//接入SOC后被移除了
+	// import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
 	`endif
 
 	typedef struct packed {logic valid;code_t code;word_t pc;} IfId_t;
@@ -115,71 +115,68 @@
 
 module ysyx_26020046(
 	/*verilator lint_off UNUSED*/
-	input	logic 		io_interrupt,
+		input	logic 		io_interrupt,
 
-	input	logic		io_master_awready,
-	output	logic		io_master_awvalid,
-	output	logic[31:0]	io_master_awaddr,
-	output	logic[3:0]	io_master_awid,
-	output	logic[7:0]	io_master_awlen,
-	output	logic[2:0]	io_master_awsize,
-	output	logic[1:0]	io_master_awburst,
-	input	logic		io_master_wready,
-	output	logic		io_master_wvalid,
-	output	logic[31:0]	io_master_wdata,
-	output	logic[3:0]	io_master_wstrb,
-	output	logic		io_master_wlast,
-	output	logic		io_master_bready,
-	input	logic		io_master_bvalid,
-	input	logic[1:0]	io_master_bresp,
-	input	logic[3:0]	io_master_bid,
-	input	logic		io_master_arready,
-	output	logic		io_master_arvalid,
-	output	logic[31:0]	io_master_araddr,
-	output	logic[3:0]	io_master_arid,
-	output	logic[7:0]	io_master_arlen,
-	output	logic[2:0]	io_master_arsize,
-	output	logic[1:0]	io_master_arburst,
-	output	logic		io_master_rready,
-	input	logic		io_master_rvalid,
-	input	logic[1:0]	io_master_rresp,
-	input	logic[31:0]	io_master_rdata,
-	input	logic		io_master_rlast,
-	input	logic[3:0]	io_master_rid,
-	
-	output	logic		io_slave_awready,
-	input	logic		io_slave_awvalid,
-	input	logic[31:0]	io_slave_awaddr,
-	input	logic[3:0]	io_slave_awid,
-	input	logic[7:0]	io_slave_awlen,
-	input	logic[2:0]	io_slave_awsize,
-	input	logic[1:0]	io_slave_awburst,
-	output	logic		io_slave_wready,
-	input	logic		io_slave_wvalid,
-	input	logic[31:0]	io_slave_wdata,
-	input	logic[3:0]	io_slave_wstrb,
-	input	logic		io_slave_wlast,
-	input	logic		io_slave_bready,
-	output	logic		io_slave_bvalid,
-	output	logic[1:0]	io_slave_bresp,
-	output	logic[3:0]	io_slave_bid,
-	output	logic		io_slave_arready,
-	input	logic		io_slave_arvalid,
-	input	logic[31:0]	io_slave_araddr,
-	input	logic[3:0]	io_slave_arid,
-	input	logic[7:0]	io_slave_arlen,
-	input	logic[2:0]	io_slave_arsize,
-	input	logic[1:0]	io_slave_arburst,
-	input	logic		io_slave_rready,
-	output	logic		io_slave_rvalid,
-	output	logic[1:0]	io_slave_rresp,
-	output	logic[31:0]	io_slave_rdata,
-	output	logic		io_slave_rlast,
-	output	logic[3:0]	io_slave_rid,
-	/*verilator lint_on UNUSED*/
-	`ifndef RV32I_STA
-		// output logic difftest,
-	`endif
+		input	logic		io_master_awready,
+		output	logic		io_master_awvalid,
+		output	logic[31:0]	io_master_awaddr,
+		output	logic[3:0]	io_master_awid,
+		output	logic[7:0]	io_master_awlen,
+		output	logic[2:0]	io_master_awsize,
+		output	logic[1:0]	io_master_awburst,
+		input	logic		io_master_wready,
+		output	logic		io_master_wvalid,
+		output	logic[31:0]	io_master_wdata,
+		output	logic[3:0]	io_master_wstrb,
+		output	logic		io_master_wlast,
+		output	logic		io_master_bready,
+		input	logic		io_master_bvalid,
+		input	logic[1:0]	io_master_bresp,
+		input	logic[3:0]	io_master_bid,
+		input	logic		io_master_arready,
+		output	logic		io_master_arvalid,
+		output	logic[31:0]	io_master_araddr,
+		output	logic[3:0]	io_master_arid,
+		output	logic[7:0]	io_master_arlen,
+		output	logic[2:0]	io_master_arsize,
+		output	logic[1:0]	io_master_arburst,
+		output	logic		io_master_rready,
+		input	logic		io_master_rvalid,
+		input	logic[1:0]	io_master_rresp,
+		input	logic[31:0]	io_master_rdata,
+		input	logic		io_master_rlast,
+		input	logic[3:0]	io_master_rid,
+		
+		output	logic		io_slave_awready,
+		input	logic		io_slave_awvalid,
+		input	logic[31:0]	io_slave_awaddr,
+		input	logic[3:0]	io_slave_awid,
+		input	logic[7:0]	io_slave_awlen,
+		input	logic[2:0]	io_slave_awsize,
+		input	logic[1:0]	io_slave_awburst,
+		output	logic		io_slave_wready,
+		input	logic		io_slave_wvalid,
+		input	logic[31:0]	io_slave_wdata,
+		input	logic[3:0]	io_slave_wstrb,
+		input	logic		io_slave_wlast,
+		input	logic		io_slave_bready,
+		output	logic		io_slave_bvalid,
+		output	logic[1:0]	io_slave_bresp,
+		output	logic[3:0]	io_slave_bid,
+		output	logic		io_slave_arready,
+		input	logic		io_slave_arvalid,
+		input	logic[31:0]	io_slave_araddr,
+		input	logic[3:0]	io_slave_arid,
+		input	logic[7:0]	io_slave_arlen,
+		input	logic[2:0]	io_slave_arsize,
+		input	logic[1:0]	io_slave_arburst,
+		input	logic		io_slave_rready,
+		output	logic		io_slave_rvalid,
+		output	logic[1:0]	io_slave_rresp,
+		output	logic[31:0]	io_slave_rdata,
+		output	logic		io_slave_rlast,
+		output	logic[3:0]	io_slave_rid,
+		/*verilator lint_on UNUSED*/
 	input logic clock,reset
 	);
 
@@ -226,7 +223,7 @@ module ysyx_26020046(
 		io_slave_rid		='0;
 	end
 
-	initial $display("%m");
+	// initial $display("%m");
 
 	IfId_t nIfId;upBk_t iAlId;
 	IdAl_t nIdAl;upBk_t iIdIf;valcl_t vIdAl;
@@ -282,10 +279,12 @@ module ysyx_26020046(
 		end end
 	`endif
 	
-	`ifndef RV32I_STA
-	export "DPI-C" function getReg;export "DPI-C" function getPc;
-	function int getReg(input int addr);return (addr == 0) ? '0 : GPR.gpr[addr];endfunction
-	function int getPc();return nIfId.pc;endfunction `endif
+	`ifndef RV32I_STA logic difftest;always_ff@(posedge clock)difftest<=iIdIf.ready&nIfId.valid;
+		export "DPI-C" function getReg;export "DPI-C" function getPc;export "DPI-C" function chkDft;
+		function int getReg(input int addr);return (addr == 0) ? '0 : GPR.gpr[addr];endfunction
+		function int getPc();return nIfId.pc;endfunction
+		function bit chkDft();return difftest;endfunction
+		`endif
 	endmodule
 module ysyx_26020046_rv32i_CLT(
 	input  AXI4rCal_t rCtCal,
@@ -825,6 +824,7 @@ module ysyx_26020046_rv32i_LSU(
 				OKAY:;
 				default:begin `ifndef RV32I_STA $fatal("unknown bresp==0x%x",wLsBak.bresp);`endif end
 			endcase
+			// if(s==LSUsuce)$stop;
 	end
 	always_comb begin
 		nLsRg.iRd	=(oAlLs.enS|oAlLs.enL)?data:oAlLs.res;
@@ -904,7 +904,7 @@ module ysyx_26020046_rv32i_CSR(
 			marchid		<=32'h018D08CE;
 			mvendorid	<=32'h79737978;
 		end else begin
-				// if(mcycle>='d1000)$stop;//特殊调试，用于观测死循环
+				// if(mcycle>='d17)$stop;//特殊调试，用于观测死循环
 	`ifdef RV32I_DEBUG
 			if(~reset)begin
 				$fstrobe(logFile,"mcycle = %d\n",mcycle);

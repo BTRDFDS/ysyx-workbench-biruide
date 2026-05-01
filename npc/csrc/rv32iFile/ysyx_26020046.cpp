@@ -17,76 +17,80 @@ VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
 svScope scope;//作用域
 
-const uint32_t addrReset	=0x80000000;
+// const uint32_t addrReset	=0x80000000;
+const uint32_t addrPSRAM	=0x80000000;
 const uint32_t addrTimer	=0x0200BFF8;
+const uint32_t addrMROM		=0x20000000;
 const uint32_t addrSerial	=0x10000000;
 const uint32_t addrInput 	=0x10011000;
 const uint32_t memSize		=0xa000000;
 
+uint32_t addrReset;
 uint8_t mem[memSize];
 uint32_t runStep,pc;
 timespec startTime;//开始时间
 bool npcFinishHad=false;
 int npcFinishCode=-1;
-enum memReadMode{memReadRESET,memReadSTEP,memReadREAD,memReadWRITE,memReadSDB};
 
 void NpcError();
 void NpcEbreak(int returnCode);
 void NpcReturn(int returnCode);
 void NpcRun(uint32_t times);
-uint32_t NpcMemRead(uint32_t addr,memReadMode mode);
+uint32_t NpcMemRead(uint32_t addr);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int getReg(int addr);
 extern "C" int getPc();
+extern "C" unsigned char chkDft();
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	// assert(0); 
-	*data=0x00100073;
+	// *data=0x00100073;
+	*data=NpcMemRead(addr-addrMROM);
 }
-extern "C" int pmem_read(uint32_t raddr) {
-	if(raddr==addrTimer){//返回毫秒数
-		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddr);
-		uint32_t time=0;
-		timespec t;
-		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");NpcError();}
-		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
-		NpcTraceMtrace("%d\n",time);
-		NpcTraceDtrace("%x timer %d\n",pc,time);
-		return time;
-	}else if(raddr==addrInput){
-		return 0;
-	}else if(raddr<addrReset|((raddr-addrReset+3)>=memSize)){//超出mem
-		// printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddr,raddr,pc,runStep);NpcError();
-		return 0;
-	}else{
-		NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddr);
-		NpcTraceMtrace("%x\n",NpcMemRead(raddr,memReadREAD));
-		return NpcMemRead(raddr,memReadREAD);
-	}
-}
-extern "C" void pmem_write(uint32_t wAddr, uint32_t wData, char wMask) {
-	if(wAddr==0x10000000){
-		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,wAddr,wData);
-		printf("%c",wData);
-		fflush(stdout);
-		NpcTraceDtrace("%x serial %c\n",pc,wData);
-		return;
-	}else if(wAddr<addrReset|((wAddr-addrReset+3)>=memSize)){
-		printf("\033[1;31mwrite %x when %x %d (x%x,x%x)\033[0m\n",wAddr,pc,runStep,addrReset,memSize+addrReset);
-		NpcError();
-	}else{
-		NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,wAddr,NpcMemRead(wAddr,memReadWRITE),wMask);
-		for(int i=0;i<4;i++){
-			if((wMask&0x1)==1){
-				mem[wAddr-addrReset+i]=wData&0xff;
-				wData=wData>>8;
-				wMask=wMask>>1;
-			}
-		}
-		NpcTraceMtrace(" become 0x%x\n",NpcMemRead(wAddr,memReadWRITE));
-	}
-}
+// extern "C" int pmem_read(uint32_t raddr) {//接入SOC后被移除了
+// 	if(raddr==addrTimer){//返回毫秒数
+// 		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddr);
+// 		uint32_t time=0;
+// 		timespec t;
+// 		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");NpcError();}
+// 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
+// 		NpcTraceMtrace("%d\n",time);
+// 		NpcTraceDtrace("%x timer %d\n",pc,time);
+// 		return time;
+// 	}else if(raddr==addrInput){
+// 		return 0;
+// 	}else if(raddr<addrReset|((raddr-addrReset+3)>=memSize)){//超出mem
+// 		// printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddr,raddr,pc,runStep);NpcError();
+// 		return 0;
+// 	}else{
+// 		NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddr);
+// 		NpcTraceMtrace("%x\n",NpcMemRead(raddr-addrPSRAM));
+// 		return NpcMemRead(raddr-addrPSRAM);
+// 	}
+// }
+// extern "C" void pmem_write(uint32_t wAddr, uint32_t wData, char wMask) {//接入SOC后被移除了
+// 	if(wAddr==0x10000000){
+// 		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,wAddr,wData);
+// 		printf("%c",wData);
+// 		fflush(stdout);
+// 		NpcTraceDtrace("%x serial %c\n",pc,wData);
+// 		return;
+// 	}else if(wAddr<addrReset|((wAddr-addrReset+3)>=memSize)){
+// 		printf("\033[1;31mwrite %x when %x %d (x%x,x%x)\033[0m\n",wAddr,pc,runStep,addrReset,memSize+addrReset);
+// 		NpcError();
+// 	}else{
+// 		NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,wAddr,NpcMemRead(wAddr-addrPSRAM),wMask);
+// 		for(int i=0;i<4;i++){
+// 			if((wMask&0x1)==1){
+// 				mem[wAddr-addrReset+i]=wData&0xff;
+// 				wData=wData>>8;
+// 				wMask=wMask>>1;
+// 			}
+// 		}
+// 		NpcTraceMtrace(" become 0x%x\n",NpcMemRead(wAddr-addrPSRAM));
+// 	}
+// }
 extern "C" void stop(unsigned char eb){
 	printf("ebreak:");
 	if(eb){
@@ -112,7 +116,7 @@ uint32_t NpcsdbGetReg(uint32_t addr){
     return getReg(addr);
 }
 uint32_t NpcsdbReadMem(uint32_t addr){
-	return NpcMemRead(addr,memReadSDB);
+	return NpcMemRead(addr-addrPSRAM);
 }
 void NpcsdbRun(uint32_t times){
 	NpcRun(times);
@@ -123,17 +127,18 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 	gpr[0]=0;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-uint32_t NpcMemRead(uint32_t addr,memReadMode mode){//读取4个字节
-	if(addr<addrReset|((addr-addrReset+3)>=memSize)){
-		printf("nRead addr=%x@%x %x at %x T=%d\n",addr,pc,(addr-addrReset),mode,runStep);
+uint32_t NpcMemRead(uint32_t addr){//读取4个字节
+	// if(addr<addrReset|((addr-addrReset+3)>=memSize)){
+	if(addr+3>=memSize){
+		printf("nRead addr=%x@%x %x at T=%d\n",addr,pc,(addr),runStep);
 		// NpcError();//临时解除封闭
 		return 0;
 	}else{
 		uint32_t temp=
-		((uint32_t)mem[addr-addrReset+0]<< 0)|
-		((uint32_t)mem[addr-addrReset+1]<< 8)|
-		((uint32_t)mem[addr-addrReset+2]<<16)|
-		((uint32_t)mem[addr-addrReset+3]<<24);
+		((uint32_t)mem[addr+0]<< 0)|
+		((uint32_t)mem[addr+1]<< 8)|
+		((uint32_t)mem[addr+2]<<16)|
+		((uint32_t)mem[addr+3]<<24);
 		return temp;
 	}
 }
@@ -175,13 +180,18 @@ void NpcInitDevice(int argc, char** argv){
 void NpcReset(){
 	top->clock=0;top->reset=1;top->eval();
 	top->clock=1;top->reset=1;top->eval();
+	addrReset=getPc();
+	for(int i=0;i<10;i++){
+		top->clock=0;top->reset=1;top->eval();
+		top->clock=1;top->reset=1;top->eval();
+	}
 	top->clock=0;top->reset=0;top->eval();
 	runStep=0;
 }
 void NpcStep(){
 	pc=getPc();
 	uint32_t nPc=pc;
-	uint32_t nCode=NpcMemRead(pc,memReadSTEP);//由于两个DPI-C的路径问题
+	uint32_t nCode=NpcMemRead(pc-addrReset);//由于两个DPI-C的路径问题
 	top->clock=1;top->eval();
 
 	pc=getPc();
@@ -190,7 +200,7 @@ void NpcStep(){
 	runStep++;
 
 	NpcTraceWrite(nPc,nCode,pc);
-	// if(top->difftest)NpcDifftestCheck(pc);
+	if(chkDft())NpcDifftestCheck(pc);
 }
 void NpcRun(uint32_t times){
 	if(npcFinishHad){printf("has ebreak.ues 'q' to exit\n");}
@@ -232,7 +242,8 @@ void NpcBegin(){
 		NpcReturn(npcFinishCode);
 	}
 #else
-	NpcRun(0);
+	NpcRun(1000);
+	// NpcRun(0);
 #endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
