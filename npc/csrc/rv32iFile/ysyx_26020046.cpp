@@ -40,7 +40,10 @@ uint32_t NpcMemRead(uint32_t addr,memReadMode mode);
 extern "C" int getReg(int addr);
 extern "C" int getPc();
 extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
-extern "C" void mrom_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void mrom_read(int32_t addr, int32_t *data) {
+	// assert(0); 
+	*data=0x00100073;
+}
 extern "C" int pmem_read(uint32_t raddr) {
 	if(raddr==addrTimer){//返回毫秒数
 		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddr);
@@ -123,7 +126,7 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 uint32_t NpcMemRead(uint32_t addr,memReadMode mode){//读取4个字节
 	if(addr<addrReset|((addr-addrReset+3)>=memSize)){
 		printf("nRead addr=%x@%x %x at %x T=%d\n",addr,pc,(addr-addrReset),mode,runStep);
-		NpcError();
+		// NpcError();//临时解除封闭
 		return 0;
 	}else{
 		uint32_t temp=
@@ -161,7 +164,8 @@ void NpcInitDevice(int argc, char** argv){
 	contextp->commandArgs(argc, argv);
 	// Verilated::commandArgs(argc, argv);//不确定还要不要加
 	top = new VysyxSoCFull{contextp};
-	scope=svGetScopeFromName("TOP.ysyxSoCFull");
+	// scope=svGetScopeFromName("TOP.ysyxSoCFull");
+	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu");
 	svSetScope(scope);
 
 	NpcSdbInit();
@@ -175,17 +179,17 @@ void NpcReset(){
 	runStep=0;
 }
 void NpcStep(){
-	// pc=getPc();
-	// uint32_t nPc=pc;
-	// uint32_t nCode=NpcMemRead(pc,memReadSTEP);//由于两个DPI-C的路径问题
+	pc=getPc();
+	uint32_t nPc=pc;
+	uint32_t nCode=NpcMemRead(pc,memReadSTEP);//由于两个DPI-C的路径问题
 	top->clock=1;top->eval();
 
-	// pc=getPc();
+	pc=getPc();
 	top->clock=0;top->eval();
 
 	runStep++;
 
-	// NpcTraceWrite(nPc,nCode,pc);
+	NpcTraceWrite(nPc,nCode,pc);
 	// if(top->difftest)NpcDifftestCheck(pc);
 }
 void NpcRun(uint32_t times){

@@ -226,6 +226,8 @@ module ysyx_26020046(
 		io_slave_rid		='0;
 	end
 
+	initial $display("%m");
+
 	IfId_t nIfId;upBk_t iAlId;
 	IdAl_t nIdAl;upBk_t iIdIf;valcl_t vIdAl;
 	AlLs_t nAlLs;LsAl_t iLsAl;valcl_t vAlLs;
