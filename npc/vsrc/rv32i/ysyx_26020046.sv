@@ -256,12 +256,22 @@ module ysyx_26020046(
 			// $fstrobe
 		end
 		always @(posedge clock) begin if(~reset)begin
+			// $fdisplay(logFile,"rMeCal:%s",sAXI4rCal(rMeCal));$fdisplay(logFile,"rMeBak:%s",sAXI4rBak(rMeBak));
+			// $fdisplay(logFile,"wMeCal:%s",sAXI4wCal(wMeCal));$fdisplay(logFile,"wMeBak:%s",sAXI4wBak(wMeBak));
+			// $fdisplay(logFile,"rIfCal:%s",sAXI4rCal(rIfCal));$fdisplay(logFile,"rIfBak:%s",sAXI4rBak(rIfBak));
+			// $fdisplay(logFile,"rLsCal:%s",sAXI4rCal(rLsCal));$fdisplay(logFile,"rLsBak:%s",sAXI4rBak(rLsBak));
+			// $fdisplay(logFile,"wLsCal:%s",sAXI4wCal(wLsCal));$fdisplay(logFile,"wLsBak:%s",sAXI4wBak(wLsBak));
+			// $fdisplay(logFile,"nIfId:%s",sIfId(nIfId));$fdisplay(logFile,"iIdIf:%s",sUpBk(iIdIf));
+			// $fdisplay(logFile,"nIdAl:%s",sIdAl(nIdAl));$fdisplay(logFile,"iAlId:%s",sUpBk(iAlId));$fdisplay(logFile,"vIdAl:%s",sValcal(vIdAl));
+			// $fdisplay(logFile,"nAlLs:%s",sAlLs(nAlLs));$fdisplay(logFile,"iLsAl:%s",sLsAl(iLsAl));$fdisplay(logFile,"vAlLs:%s",sValcal(vAlLs));
+			// $fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));$fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));$fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
+			// $fdisplay(logFile,"nRgCt:%s",sLsSr(nLsSr));$fdisplay(logFile,"iCtRg:%s",sSrLs(iSrLs));$fdisplay(logFile,"vRgCt:%s",sValSr(vLsSr));
 			$fdisplay(logFile,"rMeCal:%s",sAXI4rCal(rMeCal));$fdisplay(logFile,"rMeBak:%s",sAXI4rBak(rMeBak));
 			$fdisplay(logFile,"wMeCal:%s",sAXI4wCal(wMeCal));$fdisplay(logFile,"wMeBak:%s",sAXI4wBak(wMeBak));
 			$fdisplay(logFile,"rIfCal:%s",sAXI4rCal(rIfCal));$fdisplay(logFile,"rIfBak:%s",sAXI4rBak(rIfBak));
 			$fdisplay(logFile,"rLsCal:%s",sAXI4rCal(rLsCal));$fdisplay(logFile,"rLsBak:%s",sAXI4rBak(rLsBak));
 			$fdisplay(logFile,"wLsCal:%s",sAXI4wCal(wLsCal));$fdisplay(logFile,"wLsBak:%s",sAXI4wBak(wLsBak));
-			$fdisplay(logFile,"nIfId:%s",sIfId(nIfId));$fdisplay(logFile,"iIdIf:%s",sUpBk(iIdIf));
+			$fdisplay(logFile,"nIfId:%s",sIfId(nIfId));
 			$fdisplay(logFile,"nIdAl:%s",sIdAl(nIdAl));$fdisplay(logFile,"iAlId:%s",sUpBk(iAlId));$fdisplay(logFile,"vIdAl:%s",sValcal(vIdAl));
 			$fdisplay(logFile,"nAlLs:%s",sAlLs(nAlLs));$fdisplay(logFile,"iLsAl:%s",sLsAl(iLsAl));$fdisplay(logFile,"vAlLs:%s",sValcal(vAlLs));
 			$fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));$fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));$fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
@@ -501,13 +511,12 @@ module ysyx_26020046_rv32i_IDU(
 	always_comb oIfId=nIfId;
 
 	always_comb begin
-		nIdAl.valid	=oIfId.valid;
-		nIdAl.pc	=oIfId.pc;
-		iIdIf.addr	=iAlId.addr;
-		iIdIf.enJfun=iAlId.enJfun;
-		iIdIf.ready	=iAlId.ready;
+		iIdIf=iAlId;
 	end
 	always_comb begin : ID
+		nIdAl.valid	=oIfId.valid;
+		nIdAl.pc	=oIfId.pc;
+
 		nIdAl.in1=IR1;nIdAl.in2=IR2;
 		nIdAl.adr=NAD;nIdAl.cal=NCAL;nIdAl.bfu=NBFU;
 		nIdAl.cCsr=NACSR;nIdAl.cIrd=NCHO;
@@ -904,7 +913,7 @@ module ysyx_26020046_rv32i_CSR(
 			marchid		<=32'h018D08CE;
 			mvendorid	<=32'h79737978;
 		end else begin
-				// if(mcycle>='d17)$stop;//特殊调试，用于观测死循环
+				// if(mcycle>='d20)$stop;//特殊调试，用于观测死循环
 	`ifdef RV32I_DEBUG
 			if(~reset)begin
 				$fstrobe(logFile,"mcycle = %d\n",mcycle);
