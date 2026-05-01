@@ -15,7 +15,7 @@
 	parameter CSR_ADDR_MVENDORID= 12'hf11;
 	parameter CSR_ADDR_MARCHID	= 12'hf12;
 
-	parameter PC_RESET	= 32'h80000000;
+	parameter PC_RESET	= 32'h20000000;
 	parameter MSTATUS_RESET = 32'h1800;
 
 	typedef logic [DATA_WIDTH-1:0] word_t;
@@ -113,17 +113,118 @@
 	function string sAXI4wBak(AXI4wBak_t i);return $sformatf("awready=%b wready=%b bvalid=%b bresp=%s",i.awready,i.wready,i.bvalid,i.bresp.name());endfunction
 	`endif
 
-module ysyx_26020046_rv32i(
-	`ifdef RV32I_STA
-		output AXI4rCal_t rMeCal,
-		output AXI4wCal_t wMeCal,
-		input  AXI4rBak_t rMeBak,
-		input  AXI4wBak_t wMeBak,
-	`else
-		output logic difftest,
+module ysyx_26020046(
+	/*verilator lint_off UNUSED*/
+	input	logic 		io_interrupt,
+
+	input	logic		io_master_awready,
+	output	logic		io_master_awvalid,
+	output	logic[31:0]	io_master_awaddr,
+	output	logic[3:0]	io_master_awid,
+	output	logic[7:0]	io_master_awlen,
+	output	logic[2:0]	io_master_awsize,
+	output	logic[1:0]	io_master_awburst,
+	input	logic		io_master_wready,
+	output	logic		io_master_wvalid,
+	output	logic[31:0]	io_master_wdata,
+	output	logic[3:0]	io_master_wstrb,
+	output	logic		io_master_wlast,
+	output	logic		io_master_bready,
+	input	logic		io_master_bvalid,
+	input	logic[1:0]	io_master_bresp,
+	input	logic[3:0]	io_master_bid,
+	input	logic		io_master_arready,
+	output	logic		io_master_arvalid,
+	output	logic[31:0]	io_master_araddr,
+	output	logic[3:0]	io_master_arid,
+	output	logic[7:0]	io_master_arlen,
+	output	logic[2:0]	io_master_arsize,
+	output	logic[1:0]	io_master_arburst,
+	output	logic		io_master_rready,
+	input	logic		io_master_rvalid,
+	input	logic[1:0]	io_master_rresp,
+	input	logic[31:0]	io_master_rdata,
+	input	logic		io_master_rlast,
+	input	logic[3:0]	io_master_rid,
+	
+	output	logic		io_slave_awready,
+	input	logic		io_slave_awvalid,
+	input	logic[31:0]	io_slave_awaddr,
+	input	logic[3:0]	io_slave_awid,
+	input	logic[7:0]	io_slave_awlen,
+	input	logic[2:0]	io_slave_awsize,
+	input	logic[1:0]	io_slave_awburst,
+	output	logic		io_slave_wready,
+	input	logic		io_slave_wvalid,
+	input	logic[31:0]	io_slave_wdata,
+	input	logic[3:0]	io_slave_wstrb,
+	input	logic		io_slave_wlast,
+	input	logic		io_slave_bready,
+	output	logic		io_slave_bvalid,
+	output	logic[1:0]	io_slave_bresp,
+	output	logic[3:0]	io_slave_bid,
+	output	logic		io_slave_arready,
+	input	logic		io_slave_arvalid,
+	input	logic[31:0]	io_slave_araddr,
+	input	logic[3:0]	io_slave_arid,
+	input	logic[7:0]	io_slave_arlen,
+	input	logic[2:0]	io_slave_arsize,
+	input	logic[1:0]	io_slave_arburst,
+	input	logic		io_slave_rready,
+	output	logic		io_slave_rvalid,
+	output	logic[1:0]	io_slave_rresp,
+	output	logic[31:0]	io_slave_rdata,
+	output	logic		io_slave_rlast,
+	output	logic[3:0]	io_slave_rid,
+	/*verilator lint_on UNUSED*/
+	`ifndef RV32I_STA
+		// output logic difftest,
 	`endif
-	input logic clk,reset
+	input logic clock,reset
 	);
+
+	always_comb begin
+		wMeBak.awready		=io_master_awready;
+		io_master_awvalid	=wMeCal.awvalid;
+		io_master_awaddr	=wMeCal.awaddr;
+		io_master_awid		='0;
+		io_master_awlen		='0;
+		io_master_awsize	='0;
+		io_master_awburst	='0;
+		wMeBak.wready		=io_master_wready;
+		io_master_wvalid	=wMeCal.wvalid;
+		io_master_wdata		=wMeCal.wdata;
+		io_master_wstrb		=wMeCal.wstrb;
+		io_master_wlast		='0;
+		io_master_bready	=wMeCal.bready;
+		wMeBak.bvalid		=io_master_bvalid;
+		wMeBak.bresp		=resp_t'(io_master_bresp);
+		// wMeBak.		=io_master_bid;
+		rMeBak.arready		=io_master_arready;
+		io_master_arvalid	=rMeCal.arvalid;
+		io_master_araddr	=rMeCal.araddr;
+		io_master_arid		='0;
+		io_master_arlen		='0;
+		io_master_arsize	='0;
+		io_master_arburst	='0;
+		io_master_rready	=rMeCal.rready;
+		rMeBak.rvalid		=io_master_rvalid;
+		rMeBak.rresp		=resp_t'(io_master_rresp);
+		rMeBak.rdata		=io_master_rdata;
+		// rMeBak.	=io_master_rlast;
+		// rMeBak.	=io_master_rid;
+
+		io_slave_awready	='0;
+		io_slave_bvalid		='0;
+		io_slave_bresp		='0;
+		io_slave_bid		='0;
+		io_slave_arready	='0;
+		io_slave_rvalid		='0;
+		io_slave_rresp		='0;
+		io_slave_rdata		='0;
+		io_slave_rlast		='0;
+		io_slave_rid		='0;
+	end
 
 	IfId_t nIfId;upBk_t iAlId;
 	IdAl_t nIdAl;upBk_t iIdIf;valcl_t vIdAl;
@@ -136,29 +237,26 @@ module ysyx_26020046_rv32i(
 	AXI4wCal_t wLsCal;AXI4wBak_t wLsBak;
 	AXI4rCal_t rCtCal;AXI4rBak_t rCtBak;
 	AXI4wCal_t wCtCal;AXI4wBak_t wCtBak;
+	AXI4rCal_t rMeCal;AXI4rBak_t rMeBak;
+	AXI4wCal_t wMeCal;AXI4wBak_t wMeBak;
 
-	`ifndef RV32I_STA
-		AXI4rCal_t rMeCal;AXI4rBak_t rMeBak;
-		AXI4wCal_t wMeCal;AXI4wBak_t wMeBak;
-		ysyx_26020046_rv32iMEM MEM(.*);
-	`endif
-	ysyx_26020046_rv32iCLT CLT(.*);
-	ysyx_26020046_rv32iARB ARB(.*);
-	ysyx_26020046_rv32iIFU IFU(.*);
-	ysyx_26020046_rv32iIDU IDU(.*);
-	ysyx_26020046_rv32iALU ALU(.*);
-	ysyx_26020046_rv32iLSU LSU(.*);
-	ysyx_26020046_rv32iGPR GPR(.*);
-	ysyx_26020046_rv32iCSR CSR(.*);
+	ysyx_26020046_rv32i_CLT CLT(.*);
+	ysyx_26020046_rv32i_ARB ARB(.*);
+	ysyx_26020046_rv32i_IFU IFU(.*);
+	ysyx_26020046_rv32i_IDU IDU(.*);
+	ysyx_26020046_rv32i_ALU ALU(.*);
+	ysyx_26020046_rv32i_LSU LSU(.*);
+	ysyx_26020046_rv32i_GPR GPR(.*);
+	ysyx_26020046_rv32i_CSR CSR(.*);
 
-	`ifndef RV32I_STA always_ff@(posedge clk)difftest<=iIdIf.ready&nIfId.valid;`endif
+	// `ifndef RV32I_STA always_ff@(posedge clock)difftest<=iIdIf.ready&nIfId.valid;`endif
 	`ifdef RV32I_DEBUG
 		initial begin
 			logFile = $fopen("log/rv32iDebugLog.txt");
 			$write("\033[1;35m SV_DEBUG \033[0m");
 			// $fstrobe
 		end
-		always @(posedge clk) begin if(~reset)begin
+		always @(posedge clock) begin if(~reset)begin
 			$fdisplay(logFile,"rMeCal:%s",sAXI4rCal(rMeCal));$fdisplay(logFile,"rMeBak:%s",sAXI4rBak(rMeBak));
 			$fdisplay(logFile,"wMeCal:%s",sAXI4wCal(wMeCal));$fdisplay(logFile,"wMeBak:%s",sAXI4wBak(wMeBak));
 			$fdisplay(logFile,"rIfCal:%s",sAXI4rCal(rIfCal));$fdisplay(logFile,"rIfBak:%s",sAXI4rBak(rIfBak));
@@ -187,12 +285,12 @@ module ysyx_26020046_rv32i(
 	function int getReg(input int addr);return (addr == 0) ? '0 : GPR.gpr[addr];endfunction
 	function int getPc();return nIfId.pc;endfunction `endif
 	endmodule
-module ysyx_26020046_rv32iCLT(
+module ysyx_26020046_rv32i_CLT(
 	input  AXI4rCal_t rCtCal,
 	input  AXI4wCal_t wCtCal,
 	output AXI4rBak_t rCtBak,
 	output AXI4wBak_t wCtBak,
-	input clk,reset
+	input clock,reset
 	);
 	// word_t mtime,mtimeh;
 	word_t clint['h2fff:'h2ffe];
@@ -208,8 +306,8 @@ module ysyx_26020046_rv32iCLT(
 		CLTrbak:ns=(rCtCal.rready)?CLTidle:CLTrbak;
 		CLTwbak:ns=(wCtCal.bready)?CLTidle:CLTwbak;
 		default:ns=CLTidle;
-	endcase always_ff@(posedge clk) if(reset)s<=CLTidle;else s<=ns;
-	always_ff@(posedge clk)begin
+	endcase always_ff@(posedge clock) if(reset)s<=CLTidle;else s<=ns;
+	always_ff@(posedge clock)begin
 		if(s==CLTidle&rCtCal.arvalid)araddr<=rCtCal.araddr;
 
 		if(s==CLTidle&wCtCal.awvalid)awaddr<=wCtCal.awaddr;
@@ -235,72 +333,7 @@ module ysyx_26020046_rv32iCLT(
 		wCtBak.bresp	=(awaddr[1:0]=='0&wstrb==4'b1111)?OKAY:EXOKAY;
 	end
 	endmodule
-`ifndef RV32I_STA module ysyx_26020046_rv32iMEM(
-	input  AXI4rCal_t rMeCal,
-	input  AXI4wCal_t wMeCal,
-	output AXI4rBak_t rMeBak,
-	output AXI4wBak_t wMeBak,
-	input clk,reset
-	);
-	MEMstatus_t Rs,nRs,Ws,nWs;
-	word_t rCnt,wCnt;//cnt会加3，这是因为会经过三段状态转移有三周期延迟
-	parameter rMax = 10;
-	parameter wMax = 10;
-	word_t araddr,awaddr,wdata;
-	mask_t wstrb;
-	logic hasAddr,hasData;
-	always_comb unique case(Rs)
-			MEMidle:nRs=(rMeCal.arvalid)?MEMwait:MEMidle;
-			MEMwait:nRs=(rCnt+3<rMax )	?MEMwait:MEMfunc;
-			MEMfunc:nRs=MEMback;
-			MEMback:nRs=(rMeCal.rready )?MEMidle:MEMback;
-			default:nRs=MEMidle;
-	endcase	always_ff@(posedge clk) if(reset)begin
-			Rs	<=MEMidle;
-			rCnt<=0;
-		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"%m:Rs=%s,nRs=%s rCnt=%d",Rs.name(),nRs.name(),rCnt);`endif
-			Rs	<=nRs;
-			rCnt<=(Rs==MEMwait)?rCnt+1:0;
-	end always_ff@(posedge clk)begin
-		if(rMeBak.arready&rMeCal.arvalid)araddr<=rMeCal.araddr;
-		if(Rs==MEMfunc)rMeBak.rdata<=pmem_read(araddr);
-		`ifdef RV32I_DEBUG if(Rs==MEMfunc)$fdisplay(logFile,"%m:read [%x]==%x",araddr,rMeBak.rdata);`endif
-	end always_comb begin
-		rMeBak.arready=(Rs==MEMidle);
-		rMeBak.rresp=OKAY;
-		rMeBak.rvalid=(Rs==MEMback);
-	end
-
-	always_comb unique case(Ws)
-			MEMidle:nWs=(wMeCal.awvalid|hasAddr)&(wMeCal.wvalid|hasData)?MEMwait:MEMidle;
-			MEMwait:nWs=(wCnt+3<wMax)?MEMwait:MEMfunc;
-			MEMfunc:nWs=MEMback;
-			MEMback:nWs=(wMeCal.bready)?MEMidle:MEMback;
-			default:nWs=MEMidle;
-	endcase always_ff@(posedge clk) if(reset)begin
-			Ws	<=MEMidle;
-			wCnt<=0;
-		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"%m:Ws=%s,nWs=%s wCnt=%d",Ws.name(),nWs.name(),wCnt);`endif
-			Ws	<=nWs;
-			wCnt<=(Ws==MEMwait)?wCnt+1:0;
-	end always_ff @(posedge clk) begin
-		if(wMeBak.awready&wMeCal.awvalid)	awaddr	<=wMeCal.awaddr;
-		if(wMeBak.awready&wMeCal.awvalid)	hasAddr<=1'b1;
-		if(Ws==MEMback)						hasAddr<=1'b0;
-		if(wMeBak.wready &wMeCal.wvalid)	wdata	<=wMeCal.wdata;
-		if(wMeBak.wready &wMeCal.wvalid)	wstrb	<=wMeCal.wstrb;
-		if(wMeBak.wready &wMeCal.wvalid)	hasData<=1'b1;
-		if(Ws==MEMback)						hasData<=1'b0;
-		if(Ws==MEMfunc)`ifdef RV32I_DEBUG $fdisplay(logFile,"%m:write [%x] <(%b)= %x",awaddr,wstrb,wdata);`endif	
-		if(Ws==MEMfunc)pmem_write(awaddr,wdata,{4'b0,wstrb});
-	end always_comb begin
-		wMeBak.awready	=(Ws==MEMidle&!hasAddr);
-		wMeBak.wready	=(Ws==MEMidle&!hasData);
-		wMeBak.bresp	=OKAY;
-		wMeBak.bvalid	=(Ws==MEMback);
-	end
-	endmodule`endif
-module ysyx_26020046_rv32iARB(
+module ysyx_26020046_rv32i_ARB(
 	input  AXI4rCal_t rIfCal,
 	output AXI4rBak_t rIfBak,
 	input  AXI4rCal_t rLsCal,output AXI4rBak_t rLsBak,
@@ -309,7 +342,7 @@ module ysyx_26020046_rv32iARB(
 	output AXI4rCal_t rMeCal,output AXI4wCal_t wMeCal,
 	input  AXI4rBak_t rCtBak,input  AXI4wBak_t wCtBak,
 	output AXI4rCal_t rCtCal,output AXI4wCal_t wCtCal,
-	input clk,reset
+	input clock,reset
 	);
 	ARBstatus_t s,ns;
 	// /*verilator lint_off UNUSEDSIGNAL */word_t addr;/*verilator lint_on UNUSEDSIGNAL */
@@ -325,17 +358,19 @@ module ysyx_26020046_rv32iARB(
 			ARBlsuW:ns=(wLsCal.bready&backvalid)?ARBidle:ARBlsuW;
 			ARBifuR:ns=(rIfCal.rready&backvalid)?ARBidle:ARBifuR;
 			default:ns=ARBidle;
-	endcase always_ff@(posedge clk)if(reset)begin
+	endcase always_ff@(posedge clock)if(reset)begin
 			s<=ARBidle;
 		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
 			s<=ns;
-	end always_ff@(posedge clk)begin
+	end always_ff@(posedge clock)begin
 		if(s==ARBidle&ns==ARBlsuR)	addr<=rLsCal.araddr[31:16];
 		if(s==ARBidle&ns==ARBlsuW)	addr<=wLsCal.awaddr[31:16];
 		if(s==ARBidle&ns==ARBifuR)	addr<=rIfCal.araddr[31:16];
 		if(ns==ARBidle)				addr<='0;
 	end always_comb begin
 		//默认折叠
+			backvalid='0;
+
 			rMeCal.araddr	='0;
 			rMeCal.arvalid	=false;
 			rMeCal.rready	=false;
@@ -372,6 +407,7 @@ module ysyx_26020046_rv32iARB(
 		// $fdisplay(logFile,"ARB:s=%s,ns=%s ifr %xx:%x",s.name(),ns.name(),rIfCal.araddr[31:24],8'h80);
 		unique case(s)
 			ARBidle:;
+			/*
 			ARBlsuR:unique case('1)
 				// addr[31:24]== 8'h10  :begin rMeCal=rLsCal;rLsBak=rMeBak;end//目前还不允许读UART
 				addr[31:24]== 8'h80  :begin rMeCal=rLsCal;rLsBak=rMeBak;backvalid=rMeBak.rvalid;end
@@ -384,14 +420,20 @@ module ysyx_26020046_rv32iARB(
 				default:begin wLsBak.awready=true;wLsBak.wready=true;wLsBak.bresp=EXOKAY;wLsBak.bvalid=true;end endcase
 			ARBifuR: if(addr[31:24]==8'h80)begin rMeCal=rIfCal;rIfBak=rMeBak;backvalid=rMeBak.rvalid;end
 				else begin rIfBak.arready=true;rIfBak.rdata='0;rIfBak.rresp=EXOKAY;rIfBak.rvalid=true;end
+				*/
+			ARBlsuR:if(addr[31:16]==16'h0200)begin rCtCal=rLsCal;rLsBak=rCtBak;backvalid=rCtBak.rvalid;end
+					else begin rMeCal=rLsCal;rLsBak=rMeBak;backvalid=rMeBak.rvalid;end
+			ARBlsuW:if(addr[31:16]==16'h0200)begin wCtCal=wLsCal;wLsBak=wCtBak;backvalid=wCtBak.bvalid;end
+					else begin wMeCal=wLsCal;wLsBak=wMeBak;backvalid=wMeBak.bvalid;end
+			ARBifuR:begin rMeCal=rIfCal;rIfBak=rMeBak;backvalid=rMeBak.rvalid;end//TODO 未进行拦截，很危险
 	endcase end
 	endmodule
-module ysyx_26020046_rv32iIFU(
+module ysyx_26020046_rv32i_IFU(
 	input  AXI4rBak_t	rIfBak,
 	output AXI4rCal_t	rIfCal,
 	output IfId_t		nIfId,
 	input  upBk_t		iIdIf,
-	input logic clk,reset
+	input logic clock,reset
 	);
 
 	IFUstatus_t ns,s;
@@ -400,7 +442,7 @@ module ysyx_26020046_rv32iIFU(
 			IFUcall:ns=rIfBak.arready	?IFUback:IFUcall;
 			IFUback:ns=rIfBak.rvalid	?IFUfunc:IFUback;
 			default:ns=IFUcall;
-	endcase always_ff@(posedge clk)if(reset)begin
+	endcase always_ff@(posedge clock)if(reset)begin
 			s<=IFUcall;
 		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b",s.name(),ns.name(),iIdIf.ready);`endif
 			s<=ns;
@@ -410,7 +452,7 @@ module ysyx_26020046_rv32iIFU(
 
 		rIfCal.rready=(s==IFUback);
 	end
-	always_ff@(posedge clk)begin
+	always_ff@(posedge clock)begin
 		if(s==IFUback&ns==IFUfunc)nIfId.code<=rIfBak.rdata;
 	end
 	always_comb begin : in
@@ -422,7 +464,7 @@ module ysyx_26020046_rv32iIFU(
 
 		nIfId.valid=(s==IFUfunc);
 	end
-	always_ff @(posedge clk) begin : pc
+	always_ff @(posedge clock) begin : pc
 		`ifdef RV32I_DEBUG if(iIdIf.enJfun) $fdisplay(logFile,"PC:%x => %x",nIfId.pc,iIdIf.addr);`endif
 		if(reset) nIfId.pc<=PC_RESET;
 		else if(nIfId.valid&iIdIf.ready)begin
@@ -431,7 +473,7 @@ module ysyx_26020046_rv32iIFU(
 		end
 	end
 	endmodule
-module ysyx_26020046_rv32iIDU(
+module ysyx_26020046_rv32i_IDU(
 	input  IfId_t  nIfId,
 	output upBk_t  iIdIf,
 	output valcl_t vIdAl,
@@ -608,7 +650,7 @@ module ysyx_26020046_rv32iIDU(
 		end
 	end
 	endmodule
-module ysyx_26020046_rv32iALU(
+module ysyx_26020046_rv32i_ALU(
 	input  IdAl_t nIdAl,
 	output upBk_t iAlId,
 	output AlLs_t nAlLs,
@@ -704,7 +746,7 @@ module ysyx_26020046_rv32iALU(
 		iAlId.addr=nAlLs.addr;
 	end end
 	endmodule
-module ysyx_26020046_rv32iLSU(
+module ysyx_26020046_rv32i_LSU(
 	output AXI4rCal_t rLsCal,
 	output AXI4wCal_t wLsCal,
 	input  AXI4rBak_t rLsBak,
@@ -718,7 +760,7 @@ module ysyx_26020046_rv32iLSU(
 	input valcl_t vAlLs,
 	output valSr_t vLsSr,
 	output valRg_t vLsRg,
-	input  logic clk,reset
+	input  logic clock,reset
 	);
 
 	AlLs_t oAlLs;
@@ -752,11 +794,11 @@ module ysyx_26020046_rv32iLSU(
 				default:begin ns=LSUidle;`ifndef RV32I_STA if(~reset)begin $error("LSU back L=%b S=%b reset=%b",oAlLs.enL,oAlLs.enS,reset);$stop;end`endif end endcase
 			LSUsuce:ns=(iLsAl.ready&LsWbValid)	?LSUidle:LSUsuce;
 			default:ns=LSUidle;
-	endcase always_ff@(posedge clk) if(reset)begin
+	endcase always_ff@(posedge clock) if(reset)begin
 			s<=LSUidle;
 	end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"LSU:Rs=%s ns=%s",s.name(),ns.name());`endif
 			s<=ns;
-	end always_ff@(posedge clk) begin
+	end always_ff@(posedge clock) begin
 			iRAM<=(s==LSUback&ns==LSUsuce)?rLsBak.rdata:'0;
 			if(oAlLs.enS&s==LSUcall&wLsBak.awready)	hasAddr<=true;
 			if(oAlLs.enS&s!=LSUcall)				hasAddr<=false;
@@ -813,11 +855,11 @@ module ysyx_26020046_rv32iLSU(
 		`ifdef RV32I_DEBUG if(oAlLs.enL)$fstrobe(logFile,"LSU:enL=%b valid=%b data=%x iRAM=%x",oAlLs.enL,oAlLs.valid,data,iRAM);`endif
 	end
 	endmodule
-module ysyx_26020046_rv32iGPR(
+module ysyx_26020046_rv32i_GPR(
 	input  LsRg_t nLsRg,
 	input  valRg_t vLsRg,
 	output RgLs_t iRgLs,
-	input  clk
+	input  clock
 	);
 
 	LsRg_t oLsRg;
@@ -827,7 +869,7 @@ module ysyx_26020046_rv32iGPR(
 	word_t gpr [2**REG_NUMBER -1:1];
 
 	assign iRgLs.ready=1;
-	always_ff@(posedge clk) if(oLsRg.valid)begin
+	always_ff@(posedge clock) if(oLsRg.valid)begin
 			`ifdef RV32I_DEBUG if(oLsRg.cRd!=0)$fdisplay(logFile,"RG:[%d]%x <= %x",oLsRg.cRd,gpr[oLsRg.cRd],oLsRg.iRd);`endif
 			if (oLsRg.cRd!=0) gpr[oLsRg.cRd] <= oLsRg.iRd;
     	end
@@ -835,11 +877,11 @@ module ysyx_26020046_rv32iGPR(
 	assign iRgLs.oR2=(vLsRg.cR2==0)?'0:gpr[vLsRg.cR2];
 
 	endmodule
-module ysyx_26020046_rv32iCSR(
+module ysyx_26020046_rv32i_CSR(
 	input  LsSr_t nLsSr,
 	input  valSr_t vLsSr,
 	output SrLs_t  iSrLs,
-	input  clk,reset
+	input  clock,reset
 	);
 
 	LsSr_t oLsSr;
@@ -849,7 +891,7 @@ module ysyx_26020046_rv32iCSR(
 	always_comb oLsSr=nLsSr; 
 
 	assign iSrLs.ready=1;
-	always_ff@(posedge clk) begin:csr_write
+	always_ff@(posedge clock) begin:csr_write
 		if(reset)begin
 			mepc		<=PC_RESET;
 			mstatus		<=MSTATUS_RESET;

@@ -36,6 +36,7 @@ endif
 
 t?=ysyx_26020046_rv32i#工程名称
 tF?=$(t)#工程文件查找名
+tT?=tF
 tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))#工程文件查找结果
 tC?=$(shell find csrc -type f -name "$(tF).cpp")#驱动文件查找结果
 # tU?=$(notdir $(basename $(tV)))#工程全程
@@ -64,10 +65,14 @@ ifeq ($(t),minirv)
 	tCd += $(NPC_HOME)/csrc/npcDifftest/*
 endif
 ifeq ($(t),rv32i)
-	tF=ysyx_26020046_rv32i
-# 	tF=ysyx_26020046_rv32iOneHotN
-# 	tF=ysyx_26020046_rv32iCaseInside
-	tVd+= $(NPC_HOME)/vsrc/module/ysyx_26020046_Mux.sv
+	tF=ysyx_26020046
+	tT=ysyxSoCFull
+	tVd += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
+	tVd += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
+	SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/uart16550/rtl
+	SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
+	SOC_CFLAGS += --timescale "1ns/1ns"
+	SOC_CFLAGS += --no-timing
 	tCd += $(NPC_HOME)/csrc/npcSdb/*
 	tCd += $(NPC_HOME)/csrc/npcTrace/*
 	tCd += $(NPC_HOME)/csrc/npcDifftest/*
@@ -80,21 +85,22 @@ endif
 
 bin/%: $(tVd) $(tCd) | build/$(tF) bin
 
-	@echo "t=$(t)"
-	@echo "tF=$(tF)"
-	@echo "tV=$(tV)"
-	@echo "tC=$(tC)"
-	@echo "tVd=$(tVd)"
-	@echo "tCd=$(tCd)"
+# 	@echo "t=$(t)"
+# 	@echo "tF=$(tF)"
+# 	@echo "tT=$(tT)"
+# 	@echo "tV=$(tV)"
+# 	@echo "tC=$(tC)"
+# 	@echo "tVd=$(tVd)"
+# 	@echo "tCd=$(tCd)"
 
 	mkdir -p build/$(tF)
-	verilator --lint-only -Wall $(tVd) --top-module $(tF) -Wno-DECLFILENAME
+# 	verilator --lint-only -Wall $(tVd) --top-module $(tT) -Wno-DECLFILENAME $(SOC_CFLAGS)
 	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tCd) --Mdir build/$(tF) --build $(NVBOARD_ARCHIVE) \
-	--top-module $(tF) \
-	-CFLAGS -I$(NPC_HOME)/include \
+	--top-module $(tT) \
+	-CFLAGS -I$(NPC_HOME)/include $(SOC_CFLAGS) \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-	cp build/$(tF)/V$(tF) bin/$(tF)
+	cp build/$(tF)/V$(tT) bin/$(tT)
 	git add .
 
 bin:
@@ -115,8 +121,8 @@ sim:bin/$(tF) wave
 clean:
 	rm -rf bin/* build/*
 
-run:bin/$(tF)
-	./bin/$(tF) $(ARG) $(xEb)
+run:bin/$(tT)
+	./bin/$(tT) $(ARG) $(xEb)
 # 	perf record -g ./bin/$(tF) $(ARG) $(xEb)
 # 	perf stat ./bin/$(tF) $(ARG) $(xEb)
 # 	./bin/$(tF) $(ARG) $(xEb) > log/$(tF).log

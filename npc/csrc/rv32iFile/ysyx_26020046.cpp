@@ -1,12 +1,12 @@
-//ysyx_26020046_rv32i
-#include "Vysyx_26020046_rv32i.h"
+//ysyxSoCFull
+#include "VysyxSoCFull.h"
 #include "verilated.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h>
 #include "svdpi.h"
-#include "Vysyx_26020046_rv32i__Dpi.h"
+#include "VysyxSoCFull__Dpi.h"
 #include <time.h>
 
 #include <npcSdb.h>
@@ -14,7 +14,7 @@
 #include <npcDifftest.h>
 
 VerilatedContext* contextp;//verilator上下文
-Vysyx_26020046_rv32i* top;//顶层模块
+VysyxSoCFull* top;//顶层模块
 svScope scope;//作用域
 
 const uint32_t addrReset	=0x80000000;
@@ -39,6 +39,8 @@ uint32_t NpcMemRead(uint32_t addr,memReadMode mode);
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int getReg(int addr);
 extern "C" int getPc();
+extern "C" void flash_read(int32_t addr, int32_t *data) { assert(0); }
+extern "C" void mrom_read(int32_t addr, int32_t *data) { assert(0); }
 extern "C" int pmem_read(uint32_t raddr) {
 	if(raddr==addrTimer){//返回毫秒数
 		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddr);
@@ -157,8 +159,9 @@ void NpcInitDevice(int argc, char** argv){
 
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
-	top = new Vysyx_26020046_rv32i{contextp};
-	scope=svGetScopeFromName("TOP.ysyx_26020046_rv32i");
+	// Verilated::commandArgs(argc, argv);//不确定还要不要加
+	top = new VysyxSoCFull{contextp};
+	scope=svGetScopeFromName("TOP.ysyxSoCFull");
 	svSetScope(scope);
 
 	NpcSdbInit();
@@ -166,24 +169,24 @@ void NpcInitDevice(int argc, char** argv){
 	NpcDifftestInit8(memSize,mem);
 }
 void NpcReset(){
-	top->clk=0;top->reset=1;top->eval();
-	top->clk=1;top->reset=1;top->eval();
-	top->clk=0;top->reset=0;top->eval();
+	top->clock=0;top->reset=1;top->eval();
+	top->clock=1;top->reset=1;top->eval();
+	top->clock=0;top->reset=0;top->eval();
 	runStep=0;
 }
 void NpcStep(){
-	pc=getPc();
-	uint32_t nPc=pc;
-	uint32_t nCode=NpcMemRead(pc,memReadSTEP);
-	top->clk=1;top->eval();
+	// pc=getPc();
+	// uint32_t nPc=pc;
+	// uint32_t nCode=NpcMemRead(pc,memReadSTEP);//由于两个DPI-C的路径问题
+	top->clock=1;top->eval();
 
-	pc=getPc();
-	top->clk=0;top->eval();
+	// pc=getPc();
+	top->clock=0;top->eval();
 
 	runStep++;
 
-	NpcTraceWrite(nPc,nCode,pc);
-	if(top->difftest)NpcDifftestCheck(pc);
+	// NpcTraceWrite(nPc,nCode,pc);
+	// if(top->difftest)NpcDifftestCheck(pc);
 }
 void NpcRun(uint32_t times){
 	if(npcFinishHad){printf("has ebreak.ues 'q' to exit\n");}
