@@ -48,55 +48,12 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	// *data=0x00100073;
 	*data=NpcMemRead(addr-addrMROM);
 }
-// extern "C" int pmem_read(uint32_t raddr) {//接入SOC后被移除了
-// 	if(raddr==addrTimer){//返回毫秒数
-// 		NpcTraceMtrace("0x%8x r 0x%x T=",pc,raddr);
-// 		uint32_t time=0;
-// 		timespec t;
-// 		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");NpcError();}
-// 		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
-// 		NpcTraceMtrace("%d\n",time);
-// 		NpcTraceDtrace("%x timer %d\n",pc,time);
-// 		return time;
-// 	}else if(raddr==addrInput){
-// 		return 0;
-// 	}else if(raddr<addrReset|((raddr-addrReset+3)>=memSize)){//超出mem
-// 		// printf("\033[1;31merr x%x %d when x%x %d\033[0m\n",raddr,raddr,pc,runStep);NpcError();
-// 		return 0;
-// 	}else{
-// 		NpcTraceMtrace("0x%8x r 0x%x M=0x",pc,raddr);
-// 		NpcTraceMtrace("%x\n",NpcMemRead(raddr-addrPSRAM));
-// 		return NpcMemRead(raddr-addrPSRAM);
-// 	}
-// }
-// extern "C" void pmem_write(uint32_t wAddr, uint32_t wData, char wMask) {//接入SOC后被移除了
-// 	if(wAddr==0x10000000){
-// 		NpcTraceMtrace("0x%8x w 0x%x S=%c\n",pc,wAddr,wData);
-// 		printf("%c",wData);
-// 		fflush(stdout);
-// 		NpcTraceDtrace("%x serial %c\n",pc,wData);
-// 		return;
-// 	}else if(wAddr<addrReset|((wAddr-addrReset+3)>=memSize)){
-// 		printf("\033[1;31mwrite %x when %x %d (x%x,x%x)\033[0m\n",wAddr,pc,runStep,addrReset,memSize+addrReset);
-// 		NpcError();
-// 	}else{
-// 		NpcTraceMtrace("0x%8x w 0x%x M=0x%x [%x]",pc,wAddr,NpcMemRead(wAddr-addrPSRAM),wMask);
-// 		for(int i=0;i<4;i++){
-// 			if((wMask&0x1)==1){
-// 				mem[wAddr-addrReset+i]=wData&0xff;
-// 				wData=wData>>8;
-// 				wMask=wMask>>1;
-// 			}
-// 		}
-// 		NpcTraceMtrace(" become 0x%x\n",NpcMemRead(wAddr-addrPSRAM));
-// 	}
-// }
 extern "C" void stop(unsigned char eb){
 	printf("ebreak:");
 	if(eb){
 		if(getReg(10)==0){
 			printf("\033[1;32m HIT GOOD TRAP \033[0m at 0x %x %d\n",pc,runStep);
-			NpcEbreak(0);
+			NpcEbreak( 0);
 		}else{
 			printf("\033[1;31m HIT BAD TRAP \033[0m at 0x %x %d\n",pc,runStep);
 			NpcEbreak(-1);
@@ -242,8 +199,8 @@ void NpcBegin(){
 		NpcReturn(npcFinishCode);
 	}
 #else
-	NpcRun(1000);
-	// NpcRun(0);
+	// NpcRun(1000);
+	NpcRun(0);
 #endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////

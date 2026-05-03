@@ -11,6 +11,7 @@ MAKEFLAGS += -k
 # FLAGS=  --debug --cc --trace -MMD -O0
 FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic -MMD
 VERILATOR_CFLAGS += $(FLAGS)
+VERILATOR_CFLAGS += --autoflush
 
 vFile = $(shell find vsrc -type f -name "*.v")
 cFile = $(patsubst vsrc/%.v,csrc/%.cpp,$(vFile))

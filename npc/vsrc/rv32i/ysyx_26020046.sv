@@ -1,4 +1,4 @@
-`define RV32I_DEBUG
+// `define RV32I_DEBUG
 	// `define RV32I_STA
 
 	parameter REG_NUMBER= 5;
@@ -52,8 +52,6 @@
 	`ifdef RV32I_DEBUG integer logFile;`endif
 	`ifndef RV32I_STA
 	import "DPI-C" function void stop(input bit eb);
-	// import "DPI-C" function int pmem_read(input int unsigned addr);//接入SOC后被移除了
-	// import "DPI-C" function void pmem_write(input int unsigned addr, input int unsigned data, input byte mask);
 	`endif
 
 	typedef struct packed {logic valid;code_t code;word_t pc;} IfId_t;
@@ -266,16 +264,10 @@ module ysyx_26020046(
 			// $fdisplay(logFile,"nAlLs:%s",sAlLs(nAlLs));$fdisplay(logFile,"iLsAl:%s",sLsAl(iLsAl));$fdisplay(logFile,"vAlLs:%s",sValcal(vAlLs));
 			// $fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));$fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));$fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
 			// $fdisplay(logFile,"nRgCt:%s",sLsSr(nLsSr));$fdisplay(logFile,"iCtRg:%s",sSrLs(iSrLs));$fdisplay(logFile,"vRgCt:%s",sValSr(vLsSr));
-			$fdisplay(logFile,"rMeCal:%s",sAXI4rCal(rMeCal));$fdisplay(logFile,"rMeBak:%s",sAXI4rBak(rMeBak));
-			$fdisplay(logFile,"wMeCal:%s",sAXI4wCal(wMeCal));$fdisplay(logFile,"wMeBak:%s",sAXI4wBak(wMeBak));
-			$fdisplay(logFile,"rIfCal:%s",sAXI4rCal(rIfCal));$fdisplay(logFile,"rIfBak:%s",sAXI4rBak(rIfBak));
-			$fdisplay(logFile,"rLsCal:%s",sAXI4rCal(rLsCal));$fdisplay(logFile,"rLsBak:%s",sAXI4rBak(rLsBak));
-			$fdisplay(logFile,"wLsCal:%s",sAXI4wCal(wLsCal));$fdisplay(logFile,"wLsBak:%s",sAXI4wBak(wLsBak));
-			$fdisplay(logFile,"nIfId:%s",sIfId(nIfId));
+
 			$fdisplay(logFile,"nIdAl:%s",sIdAl(nIdAl));$fdisplay(logFile,"iAlId:%s",sUpBk(iAlId));$fdisplay(logFile,"vIdAl:%s",sValcal(vIdAl));
 			$fdisplay(logFile,"nAlLs:%s",sAlLs(nAlLs));$fdisplay(logFile,"iLsAl:%s",sLsAl(iLsAl));$fdisplay(logFile,"vAlLs:%s",sValcal(vAlLs));
-			$fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));$fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));$fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
-			$fdisplay(logFile,"nRgCt:%s",sLsSr(nLsSr));$fdisplay(logFile,"iCtRg:%s",sSrLs(iSrLs));$fdisplay(logFile,"vRgCt:%s",sValSr(vLsSr));
+			
 			// $fstrobe(logFile,"rMeCal:%s",sAXI4rCal(rMeCal));$fstrobe(logFile,"rMeBak:%s",sAXI4rBak(rMeBak));
 			// $fstrobe(logFile,"wMeCal:%s",sAXI4wCal(wMeCal));$fstrobe(logFile,"wMeBak:%s",sAXI4wBak(wMeBak));
 			// $fstrobe(logFile,"rIfCal:%s",sAXI4rCal(rIfCal));$fstrobe(logFile,"rIfBak:%s",sAXI4rBak(rIfBak));
@@ -369,15 +361,22 @@ module ysyx_26020046_rv32i_ARB(
 			ARBlsuW:ns=(wLsCal.bready&backvalid)?ARBidle:ARBlsuW;
 			ARBifuR:ns=(rIfCal.rready&backvalid)?ARBidle:ARBifuR;
 			default:ns=ARBidle;
-	endcase always_ff@(posedge clock)if(reset)begin
-			s<=ARBidle;
-		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"ARB:s=%s,ns=%s",s.name(),ns.name());`endif
-			s<=ns;
-	end always_ff@(posedge clock)begin
-		if(s==ARBidle&ns==ARBlsuR)	addr<=rLsCal.araddr[31:16];
-		if(s==ARBidle&ns==ARBlsuW)	addr<=wLsCal.awaddr[31:16];
-		if(s==ARBidle&ns==ARBifuR)	addr<=rIfCal.araddr[31:16];
-		if(ns==ARBidle)				addr<='0;
+	endcase always_ff@(posedge clock)begin
+		//FSM时序输出
+			if(s==ARBidle&ns==ARBlsuR)	addr<=rLsCal.araddr[31:16];
+			if(s==ARBidle&ns==ARBlsuW)	addr<=wLsCal.awaddr[31:16];
+			if(s==ARBidle&ns==ARBifuR)	addr<=rIfCal.araddr[31:16];
+			if(ns==ARBidle)				addr<='0;
+		`ifdef RV32I_DEBUG if(~reset)begin
+			$fdisplay(logFile,"ARB:s=%s ns=%s addr=%x r=%x w=%x",s.name(),ns.name(),addr,rMeCal.araddr,wMeCal.awaddr);
+			$fdisplay(logFile,"rMeCal:%s",sAXI4rCal(rMeCal));$fdisplay(logFile,"rMeBak:%s",sAXI4rBak(rMeBak));
+			$fdisplay(logFile,"wMeCal:%s",sAXI4wCal(wMeCal));$fdisplay(logFile,"wMeBak:%s",sAXI4wBak(wMeBak));
+			$fdisplay(logFile,"rIfCal:%s",sAXI4rCal(rIfCal));$fdisplay(logFile,"rIfBak:%s",sAXI4rBak(rIfBak));
+			$fdisplay(logFile,"rLsCal:%s",sAXI4rCal(rLsCal));$fdisplay(logFile,"rLsBak:%s",sAXI4rBak(rLsBak));
+			$fdisplay(logFile,"wLsCal:%s",sAXI4wCal(wLsCal));$fdisplay(logFile,"wLsBak:%s",sAXI4wBak(wLsBak));
+			end`endif
+		//FSM切换
+			if(reset)s<=ARBidle;else s<=ns;
 	end always_comb begin
 		//默认折叠
 			backvalid='0;
@@ -415,28 +414,13 @@ module ysyx_26020046_rv32i_ARB(
 			rIfBak.rdata	='0;
 			rIfBak.rresp	=OKAY;
 			rIfBak.rvalid	=false;
-		// $fdisplay(logFile,"ARB:s=%s,ns=%s ifr %xx:%x",s.name(),ns.name(),rIfCal.araddr[31:24],8'h80);
 		unique case(s)
 			ARBidle:;
-			/*
-			ARBlsuR:unique case('1)
-				// addr[31:24]== 8'h10  :begin rMeCal=rLsCal;rLsBak=rMeBak;end//目前还不允许读UART
-				addr[31:24]== 8'h80  :begin rMeCal=rLsCal;rLsBak=rMeBak;backvalid=rMeBak.rvalid;end
-				addr[31:16]==16'h0200:begin rCtCal=rLsCal;rLsBak=rCtBak;backvalid=rCtBak.rvalid;end
-				default:begin rLsBak.arready=true;rLsBak.rdata='0;rLsBak.rresp=EXOKAY;rLsBak.rvalid=true;end endcase
-			ARBlsuW:unique case('1)
-				addr[31:24]== 8'h80  :begin wMeCal=wLsCal;wLsBak=wMeBak;backvalid=wMeBak.bvalid;end
-				addr[31:24]== 8'h10  :begin wMeCal=wLsCal;wLsBak=wMeBak;backvalid=wMeBak.bvalid;end
-				addr[31:16]==16'h0200:begin wCtCal=wLsCal;wLsBak=wCtBak;backvalid=wCtBak.bvalid;end
-				default:begin wLsBak.awready=true;wLsBak.wready=true;wLsBak.bresp=EXOKAY;wLsBak.bvalid=true;end endcase
-			ARBifuR: if(addr[31:24]==8'h80)begin rMeCal=rIfCal;rIfBak=rMeBak;backvalid=rMeBak.rvalid;end
-				else begin rIfBak.arready=true;rIfBak.rdata='0;rIfBak.rresp=EXOKAY;rIfBak.rvalid=true;end
-				*/
-			ARBlsuR:if(addr[31:16]==16'h0200)begin rCtCal=rLsCal;rLsBak=rCtBak;backvalid=rCtBak.rvalid;end
-					else begin rMeCal=rLsCal;rLsBak=rMeBak;backvalid=rMeBak.rvalid;end
-			ARBlsuW:if(addr[31:16]==16'h0200)begin wCtCal=wLsCal;wLsBak=wCtBak;backvalid=wCtBak.bvalid;end
-					else begin wMeCal=wLsCal;wLsBak=wMeBak;backvalid=wMeBak.bvalid;end
-			ARBifuR:begin rMeCal=rIfCal;rIfBak=rMeBak;backvalid=rMeBak.rvalid;end//TODO 未进行拦截，很危险
+			ARBlsuR:if(addr[31:16]==16'h0200)	begin rCtCal=rLsCal;rLsBak=rCtBak;backvalid=rCtBak.rvalid;end
+					else						begin rMeCal=rLsCal;rLsBak=rMeBak;backvalid=rMeBak.rvalid;end
+			ARBlsuW:if(addr[31:16]==16'h0200)	begin wCtCal=wLsCal;wLsBak=wCtBak;backvalid=wCtBak.bvalid;end
+					else						begin wMeCal=wLsCal;wLsBak=wMeBak;backvalid=wMeBak.bvalid;end
+			ARBifuR:							begin rMeCal=rIfCal;rIfBak=rMeBak;backvalid=rMeBak.rvalid;end//TODO 未进行拦截，很危险
 	endcase end
 	endmodule
 module ysyx_26020046_rv32i_IFU(
@@ -448,41 +432,40 @@ module ysyx_26020046_rv32i_IFU(
 	);
 
 	IFUstatus_t ns,s;
-	always_comb	unique case(s)//两段状态转移会有1周期延迟
-			IFUfunc:ns=iIdIf.ready		?IFUcall:IFUfunc;
-			IFUcall:ns=rIfBak.arready	?IFUback:IFUcall;
-			IFUback:ns=rIfBak.rvalid	?IFUfunc:IFUback;
-			default:ns=IFUcall;
-	endcase always_ff@(posedge clock)if(reset)begin
-			s<=IFUcall;
-		end else begin `ifdef RV32I_DEBUG $fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b",s.name(),ns.name(),iIdIf.ready);`endif
-			s<=ns;
-	end always_comb begin : out
-		rIfCal.araddr=nIfId.pc;
-		rIfCal.arvalid=(s==IFUcall);
-
-		rIfCal.rready=(s==IFUback);
-	end
-	always_ff@(posedge clock)begin
-		if(s==IFUback&ns==IFUfunc)nIfId.code<=rIfBak.rdata;
-	end
-	always_comb begin : in
-		// nIfId.code=sbIf.rdata;
-		if(s==IFUback)case(rIfBak.rresp)
-			OKAY	:;
-			default	:begin `ifndef RV32I_STA $error("rIfBak.rresp=%s:",rIfBak.rresp.name());$stop();`endif end
-		endcase
-
-		nIfId.valid=(s==IFUfunc);
-	end
-	always_ff @(posedge clock) begin : pc
-		`ifdef RV32I_DEBUG if(iIdIf.enJfun) $fdisplay(logFile,"PC:%x => %x",nIfId.pc,iIdIf.addr);`endif
-		if(reset) nIfId.pc<=PC_RESET;
-		else if(nIfId.valid&iIdIf.ready)begin
-			if(iIdIf.enJfun) nIfId.pc<=(iIdIf.addr&32'hFFFFFFFC);
-			else nIfId.pc<=nIfId.pc+4;
+	always_comb begin
+		//FSM转移	
+			unique case(s)//两段状态转移会有1周期延迟
+				IFUfunc:ns=iIdIf.ready		?IFUcall:IFUfunc;
+				IFUcall:ns=rIfBak.arready	?IFUback:IFUcall;
+				IFUback:ns=rIfBak.rvalid	?IFUfunc:IFUback;
+				default:ns=IFUcall;
+			endcase
+		//FSM组合信号
+			rIfCal.araddr	=nIfId.pc;
+			rIfCal.arvalid	=(s==IFUcall);
+			rIfCal.rready	=(s==IFUback);
+			if(s==IFUback)case(rIfBak.rresp)
+				OKAY	:;
+				default	:begin `ifndef RV32I_STA $error("rIfBak.rresp=%s:",rIfBak.rresp.name());$stop();`endif end
+			endcase
+			nIfId.valid=(s==IFUfunc);
+	end always_ff@(posedge clock)begin
+		`ifdef RV32I_DEBUG if(~reset)begin
+			$fdisplay(logFile,"IFU:s=%s,ns=%s ready=%b valid=%b",s.name(),ns.name(),iIdIf.ready,nIfId.valid);
+			if(iIdIf.enJfun)$fdisplay(logFile,"PC:%x => %x",nIfId.pc,iIdIf.addr);
+			$fdisplay(logFile,"nIfId:%s",sIfId(nIfId));
+			end`endif
+		//FSM状态转移
+			if(reset)s<=IFUcall;else s<=ns;
+		//FSM时序信号
+			if(s==IFUback&ns==IFUfunc)nIfId.code<=rIfBak.rdata;
+		//IFU PC切换
+			if(reset) nIfId.pc<=PC_RESET;
+			else if(nIfId.valid&iIdIf.ready)begin
+				if(iIdIf.enJfun) nIfId.pc<=(iIdIf.addr&32'hFFFFFFFC);
+				else nIfId.pc<=nIfId.pc+4;
+			end
 		end
-	end
 	endmodule
 module ysyx_26020046_rv32i_IDU(
 	input  IfId_t  nIfId,
@@ -510,9 +493,7 @@ module ysyx_26020046_rv32i_IDU(
 
 	always_comb oIfId=nIfId;
 
-	always_comb begin
-		iIdIf=iAlId;
-	end
+	always_comb iIdIf=iAlId;
 	always_comb begin : ID
 		nIdAl.valid	=oIfId.valid;
 		nIdAl.pc	=oIfId.pc;
@@ -658,7 +639,7 @@ module ysyx_26020046_rv32i_IDU(
 				default	:nIdAl.cRd=oIfId.code.rd;
 			endcase
 		end
-	end
+		end
 	endmodule
 module ysyx_26020046_rv32i_ALU(
 	input  IdAl_t nIdAl,
@@ -870,23 +851,27 @@ module ysyx_26020046_rv32i_GPR(
 	input  LsRg_t nLsRg,
 	input  valRg_t vLsRg,
 	output RgLs_t iRgLs,
+	`ifdef RV32I_DEBUG input logic reset,`endif
 	input  clock
 	);
 
 	LsRg_t oLsRg;
-
-	always_comb oLsRg=nLsRg;
-
 	word_t gpr [2**REG_NUMBER -1:1];
 
-	assign iRgLs.ready=1;
-	always_ff@(posedge clock) if(oLsRg.valid)begin
-			`ifdef RV32I_DEBUG if(oLsRg.cRd!=0)$fdisplay(logFile,"RG:[%d]%x <= %x",oLsRg.cRd,gpr[oLsRg.cRd],oLsRg.iRd);`endif
-			if (oLsRg.cRd!=0) gpr[oLsRg.cRd] <= oLsRg.iRd;
-    	end
-	assign iRgLs.oR1=(vLsRg.cR1==0)?'0:gpr[vLsRg.cR1];
-	assign iRgLs.oR2=(vLsRg.cR2==0)?'0:gpr[vLsRg.cR2];
-
+	always_comb begin
+		oLsRg=nLsRg;
+		iRgLs.ready=1;
+		iRgLs.oR1=(vLsRg.cR1==0)?'0:gpr[vLsRg.cR1];
+		iRgLs.oR2=(vLsRg.cR2==0)?'0:gpr[vLsRg.cR2];
+	end always_ff@(posedge clock)begin
+		`ifdef RV32I_DEBUG if(~reset)begin
+			if(oLsRg.cRd!=0)$fdisplay(logFile,"RG:[%d]%x <= %x",oLsRg.cRd,gpr[oLsRg.cRd],oLsRg.iRd);
+			$fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));
+			$fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
+			$fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));
+			end`endif
+		if(oLsRg.valid)if (oLsRg.cRd!=0) gpr[oLsRg.cRd] <= oLsRg.iRd;
+		end
 	endmodule
 module ysyx_26020046_rv32i_CSR(
 	input  LsSr_t nLsSr,
@@ -915,8 +900,7 @@ module ysyx_26020046_rv32i_CSR(
 		end else begin
 				// if(mcycle>='d20)$stop;//特殊调试，用于观测死循环
 	`ifdef RV32I_DEBUG
-			if(~reset)begin
-				$fstrobe(logFile,"mcycle = %d\n",mcycle);
+			$fdisplay(logFile,"nRgCt:%s",sLsSr(nLsSr));$fdisplay(logFile,"iCtRg:%s",sSrLs(iSrLs));$fdisplay(logFile,"vRgCt:%s",sValSr(vLsSr));
 				if(mcycle>='d10000000)$stop;//特殊调试，用于观测死循环
 				if(oLsSr.SRop==ECALL)$fdisplay(logFile,"SR:ecall mepc %x<=%x mcause %x<=%x",mepc,oLsSr.iCsr,mcause,11);
 				else if(oLsSr.SRop==MRET_)$fdisplay(logFile,"SR:mret mstatus %x<=%x mcause %x<=%x",mstatus,oLsSr.iCsr,mcause,0);
@@ -931,7 +915,7 @@ module ysyx_26020046_rv32i_CSR(
 					CSR_ADDR_MVENDORID	:$fdisplay(logFile,"SR:mvendorid %x<=%x", mvendorid,	oLsSr.iCsr);
 					default:begin $fatal("unknown csrAddr==0x%x",oLsSr.SRaddr); end
 				endcase end
-			end
+			$fstrobe(logFile,"mcycle = %d\n",mcycle);
 	`endif
 			{mcycleh,mcycle}<={mcycleh,mcycle}+1;
 			if(oLsSr.valid) begin unique case(oLsSr.SRop)
