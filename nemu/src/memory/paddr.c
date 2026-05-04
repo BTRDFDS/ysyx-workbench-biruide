@@ -58,7 +58,7 @@ void init_mem() {
 #endif
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
-  IFDEF(CONFIG_MEM_RANDOM, memset(SRAM, rand(), CONFIG_MSIZE));
+  IFDEF(CONFIG_MEM_RANDOM, memset(SRAM, rand(), CONFIG_SRAM_END-CONFIG_SRAM_START));
   Log("SRAM [" FMT_PADDR ", " FMT_PADDR "]", CONFIG_SRAM_START, CONFIG_SRAM_END);
 }
 
