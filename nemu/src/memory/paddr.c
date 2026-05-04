@@ -59,7 +59,7 @@ void init_mem() {
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
   IFDEF(CONFIG_MEM_RANDOM, memset(SRAM, rand(), CONFIG_MSIZE));
-  Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", CONFIG_SRAM_START, CONFIG_SRAM_END);
+  Log("SRAM [" FMT_PADDR ", " FMT_PADDR "]", CONFIG_SRAM_START, CONFIG_SRAM_END);
 }
 
 word_t paddr_read(paddr_t addr, int len) {
