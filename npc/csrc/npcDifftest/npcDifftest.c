@@ -56,7 +56,7 @@ void NpcDifftestCheck(uint32_t pc){
 #endif
 }
 
-void NpcDifftestInit8(uint32_t memSize,uint8_t *mem){
+void NpcDifftestInit8(uint32_t memSize,uint8_t *mem,uint32_t pcReset){
 #ifdef NPC_DIFFTEST
     if(mem==NULL){printf("mem==NULL\n");exit(-1);}
     uint32_t *M=NULL;
@@ -86,12 +86,12 @@ void NpcDifftestInit8(uint32_t memSize,uint8_t *mem){
 
     ref_difftest_init(0);
     uint32_t mem_size = (memSize/4) * sizeof(uint32_t);
-    ref_difftest_memcpy(0x80000000, M, mem_size/4, DIFFTEST_TO_REF);
+    ref_difftest_memcpy(pcReset, M, mem_size/4, DIFFTEST_TO_REF);
     dftDebug(printf("内存转移完成\n"););
     // 同步初始寄存器状态
     riscv32_CPU_state init_state;
     memset(&init_state, 0, sizeof(riscv32_CPU_state));
-    init_state.pc = 0x80000000;
+    init_state.pc = pcReset;
     ref_difftest_regcpy(&init_state, DIFFTEST_TO_REF);
     dftDebug(printf("寄存器同步完成\n"););
     difftest_enabled = true;

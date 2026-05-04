@@ -23,7 +23,8 @@ const uint32_t addrTimer	=0x0200BFF8;
 const uint32_t addrMROM		=0x20000000;
 const uint32_t addrSerial	=0x10000000;
 const uint32_t addrInput 	=0x10011000;
-const uint32_t memSize		=0xa000000;
+// const uint32_t memSize		=0xa000000;
+const uint32_t memSize		=0xFFF;//MROM
 
 uint32_t addrReset;
 uint8_t mem[memSize];
@@ -132,7 +133,7 @@ void NpcInitDevice(int argc, char** argv){
 
 	NpcSdbInit();
 	NpcTraceInit(argv[1]);
-	NpcDifftestInit8(memSize,mem);
+	NpcDifftestInit8(memSize,mem,addrMROM);
 }
 void NpcReset(){
 	top->clock=0;top->reset=1;top->eval();
