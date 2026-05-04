@@ -91,6 +91,7 @@ int main(int argc, char *argv[]) {
 
   //结束前的最终清理
   closeLog();
+  extern void free_mem();free_mem();
   IFDEF(CONFIG_FTRACE, closeFtrace());
 
   return is_exit_status_bad();

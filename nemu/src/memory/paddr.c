@@ -26,6 +26,12 @@ static uint8_t *SRAM = NULL;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 static uint8_t SRAM[CONFIG_SRAM_END-CONFIG_SRAM_START] PG_ALIGN = {};
 #endif
+void free_mem() {
+#if   defined(CONFIG_PMEM_MALLOC)
+  if(pmem)free(pmem);
+  if(SRAM)free(SRAM);
+#endif
+}
 
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
