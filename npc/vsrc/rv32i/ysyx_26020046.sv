@@ -776,8 +776,8 @@ module ysyx_26020046_rv32i_LSU(
 	always_comb unique case(s)
 			LSUidle:ns=(oAlLs.enL|oAlLs.enS)	?LSUcall:LSUidle;
 			LSUcall:unique case('1)
-				oAlLs.enL:ns=(rLsBak.arready)	?LSUback:LSUcall;
-				oAlLs.enS:ns=(hasAddr&hasData)	?LSUback:LSUcall;
+				oAlLs.enL:ns=(rLsBak.arready)									?LSUback:LSUcall;
+				oAlLs.enS:ns=((hasAddr|wLsBak.awready)&(hasData|wLsBak.wready))	?LSUback:LSUcall;
 				default:begin ns=LSUidle;`ifndef RV32I_STA if(~reset)begin $error("LSU call L=%b S=%b reset=%b",oAlLs.enL,oAlLs.enS,reset);$stop;end`endif end endcase
 			LSUback:unique case('1)
 				oAlLs.enL:ns=(rLsBak.rvalid)	?LSUsuce:LSUback;
