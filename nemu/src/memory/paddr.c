@@ -21,20 +21,27 @@
 
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
+static uint8_t *SRAM = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+static uint8_t SRAM[CONFIG_SRAM_END-CONFIG_SRAM_START] PG_ALIGN = {};
 #endif
 
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 
 static word_t pmem_read(paddr_t addr, int len) {
-  word_t ret = host_read(guest_to_host(addr), len);
-  return ret;
+  // word_t ret = host_read(guest_to_host(addr), len);
+  if(addr - CONFIG_MBASE < CONFIG_MSIZE)return host_read(guest_to_host(addr), len);
+  if(CONFIG_SRAM_START<=addr<CONFIG_SRAM_END)return host_read(SRAM + addr - CONFIG_SRAM_START, len);
+  // return ret;
+  return 0;
 }
 
 static void pmem_write(paddr_t addr, int len, word_t data) {
-  host_write(guest_to_host(addr), len, data);
+  // host_write(guest_to_host(addr), len, data); 
+  if(addr - CONFIG_MBASE < CONFIG_MSIZE)host_write(guest_to_host(addr), len, data);
+  else if(CONFIG_SRAM_START<=addr<CONFIG_SRAM_END)host_write(SRAM + addr - CONFIG_SRAM_START, len, data);
 }
 
 static void out_of_bound(paddr_t addr) {
@@ -46,9 +53,13 @@ void init_mem() {
 #if   defined(CONFIG_PMEM_MALLOC)
   pmem = malloc(CONFIG_MSIZE);
   assert(pmem);
+  SRAM = malloc(CONFIG_SRAM_END-CONFIG_SRAM_START);
+  assert(SRAM);
 #endif
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
+  IFDEF(CONFIG_MEM_RANDOM, memset(SRAM, rand(), CONFIG_MSIZE));
+  Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", CONFIG_SRAM_START, CONFIG_SRAM_END);
 }
 
 word_t paddr_read(paddr_t addr, int len) {

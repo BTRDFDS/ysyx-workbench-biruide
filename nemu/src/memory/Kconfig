@@ -5,6 +5,13 @@ config MBASE
   default 0x0        if ISA_x86
   default 0x80000000
 
+config SRAM_START
+  hex "SRAM start"
+  default 0x0f000000
+config SRAM_END
+  hex "SRAM end"
+  default 0x0f001fff
+
 config MSIZE
   hex "Memory size"
   default 0x8000000
