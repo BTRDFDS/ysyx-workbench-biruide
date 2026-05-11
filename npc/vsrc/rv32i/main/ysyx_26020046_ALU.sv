@@ -21,7 +21,7 @@ module ysyx_26020046_ALU(
 		nAlLs.enL		=oIdAl.enL;
 		nAlLs.LSop		=oIdAl.LSop;
 		nAlLs.cRd		=oIdAl.cRd;
-		nAlLs.SRaddr	=oIdAl.SRaddr;
+		nAlLs.SRmesg	=oIdAl.SRmesg;
 		nAlLs.SRop		=oIdAl.SRop;
 		nAlLs.valid		=oIdAl.valid;
 		iAlId.ready	=iLsAl.ready;

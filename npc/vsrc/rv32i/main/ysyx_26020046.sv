@@ -169,7 +169,7 @@ module ysyx_26020046(
 	
 	`ifndef RV32I_STA logic difftest;always_ff@(posedge clock)difftest<=iIdIf.ready&nIfId.valid;
 		export "DPI-C" function getReg;export "DPI-C" function getPc;export "DPI-C" function chkDft;
-		function int getReg(input int addr);return (addr == 0) ? '0 : GPR.gpr[addr];endfunction
+		function int getReg(input int addr);return (addr == 0) ? '0 : REG.gpr[addr];endfunction
 		function int getPc();return nIfId.pc;endfunction
 		function bit chkDft();return difftest;endfunction
 		`endif

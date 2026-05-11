@@ -22,7 +22,7 @@ module ysyx_26020046_IDU(
 		parameter OP_CSR_EBREAK	= 32'h00100073;
 		parameter OP_CSR_MRET__	= 32'h30200073;
 	IfId_t oIfId;
-	CSRop_t op;word_t mesg;
+	logic error;;word_t mesg;
 
 	always_comb oIfId=nIfId;
 	always_comb iIdIf=iAlId;
@@ -35,7 +35,7 @@ module ysyx_26020046_IDU(
 			nIdAl.SRop=NCSR_;nIdAl.SRmesg='0;
 			{vIdAl.cR1,vIdAl.cR2,nIdAl.cRd,nIdAl.enJcod,nIdAl.imm}='0;
 			vIdAl.SRaddr='0;
-			op=NCSR_;mesg=32'd2;
+			error=false;mesg=32'd2;
 			if(oIfId.valid) begin
 				`ifdef RV32I_DEBUG $fdisplay(logFile,"IDU:op=%x fun3=%x fun7=%x r1=%x r2=%x rd=%x",oIfId.code.op,oIfId.code.fun3,oIfId.code.fun7,oIfId.code.r1,oIfId.code.r2,oIfId.code.rd);`endif
 				unique case(oIfId.code.op)
@@ -84,8 +84,8 @@ module ysyx_26020046_IDU(
 							7'b0100000:begin unique case(oIfId.code.fun3)
 									3'b000:nIdAl.cal=SUB_;
 									3'b101:nIdAl.cal=SRA_;
-									default:begin op=ERROR;`ifndef RV32I_STA $display("R fun7==20 fun3(%x)!=1/5",oIfId.code.fun3);	`endif end endcase end
-							default:		begin op=ERROR;`ifndef RV32I_STA $display("R fun7(%x)!=0/20",oIfId.code.fun7);			`endif end
+									default:begin error=true;`ifndef RV32I_STA $display("R fun7==20 fun3(%x)!=1/5",oIfId.code.fun3);	`endif end endcase end
+							default:		begin error=true;`ifndef RV32I_STA $display("R fun7(%x)!=0/20",oIfId.code.fun7);			`endif end
 						endcase end
 					default	:nIdAl.cal=NCAL;
 				endcase
@@ -122,31 +122,38 @@ module ysyx_26020046_IDU(
 				nIdAl.enL=(oIfId.code.op==OP_I_L);
 				nIdAl.enS=(oIfId.code.op==OP_S__);
 
-				if(oIfId.code.op==OP_CSR)begin unique case(oIfId.code.fun3)
-					3'b000	:nIdAl.cCsr=JUMP_;
-					3'b001	:nIdAl.cCsr=WACSR;						
-					3'b010	:nIdAl.cCsr=(oIfId.code.r1=='0)?NACSR:RACSR;
-					default	:nIdAl.cCsr=NACSR;						
-				endcase  unique case(oIfId.code.fun3)
-					3'b000	:begin unique case(oIfId.code)
-							OP_CSR_MRET__	:begin nIdAl.SRaddr=CSR_ADDR_MEPC;		end
-							OP_CSR_ECALL_	:begin nIdAl.SRaddr=CSR_ADDR_MTVEC;		end
-							OP_CSR_EBREAK	:begin nIdAl.SRaddr='0;mesg=32'd3;		end
-							default			:begin nIdAl.SRaddr='0;mesg=32'd2;		end endcase end
-					3'b001					:begin nIdAl.SRaddr={oIfId.code[31:20]};end
-					3'b010					:begin nIdAl.SRaddr={oIfId.code[31:20]};end
-					default					:begin nIdAl.SRaddr='0;					end
-				endcase  unique case(oIfId.code.fun3)
-					3'b000	:begin unique case(oIfId.code)
-							OP_CSR_MRET__	:nIdAl.SRop=MRET_;
-							OP_CSR_ECALL_	:nIdAl.SRop=ERROR;
-							OP_CSR_EBREAK	:nIdAl.SRop=ERROR;
-							default			:nIdAl.SRop=NCSR_;endcase end
-					3'b001					:nIdAl.SRop=WCCSR;
-					3'b010					:nIdAl.SRop=(oIfId.code.r1=='0)?NCSR_:WCCSR;
-					default					:nIdAl.SRop=NCSR_;
-				endcase end else begin nIdAl.cCsr=NACSR;nIdAl.SRaddr='0;nIdAl.SRop=NCSR_;end
-				vIdAl.SRaddr=nIdAl.SRaddr;
+				if(oIfId.error|error)begin
+					nIdAl.SRmesg=error?32'd2:oIfId.cause;
+					nIdAl.SRop=ERROR;
+				end else if(oIfId.code.op==OP_CSR)begin unique case(oIfId.code.fun3)
+						3'b000	:nIdAl.cCsr=JUMP_;
+						3'b001	:nIdAl.cCsr=WACSR;						
+						3'b010	:nIdAl.cCsr=(oIfId.code.r1=='0)?NACSR:RACSR;
+						default	:nIdAl.cCsr=NACSR;
+					endcase unique case(oIfId.code.fun3)
+						3'b000	:begin unique case(oIfId.code)
+								OP_CSR_MRET__	:begin nIdAl.SRmesg={20'b0,CSR_ADDR_MEPC};		end
+								OP_CSR_ECALL_	:begin nIdAl.SRmesg={20'b0,CSR_ADDR_MTVEC};		end
+								OP_CSR_EBREAK	:begin nIdAl.SRmesg=32'd3;						end
+								default			:begin nIdAl.SRmesg=32'd2;						end endcase end
+						3'b001					:begin nIdAl.SRmesg={20'b0,oIfId.code[31:20]};	end
+						3'b010					:begin nIdAl.SRmesg={20'b0,oIfId.code[31:20]};	end
+						default					:begin nIdAl.SRmesg=32'd2;						end
+					endcase unique case(oIfId.code.fun3)
+						3'b000	:begin unique case(oIfId.code)
+								OP_CSR_MRET__	:nIdAl.SRop=MRET_;
+								OP_CSR_ECALL_	:nIdAl.SRop=ERROR;
+								OP_CSR_EBREAK	:nIdAl.SRop=ERROR;
+								default			:nIdAl.SRop=ERROR;endcase end
+						3'b001					:nIdAl.SRop=WCCSR;
+						3'b010					:nIdAl.SRop=(oIfId.code.r1=='0)?NCSR_:WCCSR;
+						default					:nIdAl.SRop=ERROR;
+					endcase unique case(oIfId.code.fun3)
+						3'b000					:begin vIdAl.SRaddr=CSR_ADDR_MEPC;		end
+						3'b001					:begin vIdAl.SRaddr=oIfId.code[31:20];	end
+						3'b010					:begin vIdAl.SRaddr=oIfId.code[31:20];	end
+						default					:begin vIdAl.SRaddr='0;					end
+					endcase end
 
 				unique case(oIfId.code.op)//选cR1 这里7/10就反选
 					OP_U_I	:vIdAl.cR1='0;
@@ -171,7 +178,5 @@ module ysyx_26020046_IDU(
 		//传递流水
 			nIdAl.valid	=oIfId.valid;
 			nIdAl.pc	=oIfId.pc;
-			nIdAl.error	=oIfId.error|error;
-			nIdAl.cause	=error?cause:oIfId.cause;
 		end
     endmodule

@@ -1,7 +1,7 @@
 `include "ysyx_26020046_config.svh"
 module ysyx_26020046_GPR(
 	input  LsRg_t nLsRg,
-	input  valRg_t vLsRg,
+	input  valcl_t vLsRg,
 	output RgLs_t iRgLs,
 	`ifdef RV32I_DEBUG input logic reset,`endif
 	input  clock
@@ -18,9 +18,9 @@ module ysyx_26020046_GPR(
 	end always_ff@(posedge clock)begin
 		`ifdef RV32I_DEBUG if(~reset)begin
 			if(oLsRg.cRd!=0)$fdisplay(logFile,"RG:[%d]%x <= %x",oLsRg.cRd,gpr[oLsRg.cRd],oLsRg.iRd);
-			$fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));
-			$fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
-			$fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));
+			// $fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));
+			// $fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
+			// $fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));
 			end`endif
 		if(oLsRg.valid)if (oLsRg.cRd!=0) gpr[oLsRg.cRd] <= oLsRg.iRd;
 		end

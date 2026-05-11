@@ -20,6 +20,7 @@ module ysyx_26020046_IFU(
 			rIfCal.araddr	=nIfId.pc;
 			rIfCal.arvalid	=(s==IFUcall);
 			rIfCal.rready	=(s==IFUback);
+			nIfId.error=true;nIfId.cause='0;
 			if(s==IFUback)case(rIfBak.rresp)
 				OKAY	:;
 				// default	:begin `ifndef RV32I_STA $error("rIfBak.rresp=%s:",rIfBak.rresp.name());$stop();`endif end
