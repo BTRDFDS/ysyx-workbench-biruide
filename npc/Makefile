@@ -37,7 +37,7 @@ endif
 
 t?=ysyx_26020046_rv32i#工程名称
 tF?=$(t)#工程文件查找名
-tT?=tF
+tT?=$(tF)
 tV?=$(shell find vsrc -type f \( -name "$(tF).sv" -o -name "$(tF).v" \))#工程文件查找结果
 tC?=$(shell find csrc -type f -name "$(tF).cpp")#驱动文件查找结果
 # tU?=$(notdir $(basename $(tV)))#工程全程
@@ -68,6 +68,9 @@ endif
 ifeq ($(t),rv32i)
 	tF=ysyx_26020046
 	tT=ysyxSoCFull
+	tVd += $(shell find $(NPC_HOME)/vsrc/rv32i/main -type f -name "*.sv")
+# 	tVd += $(shell find $(NPC_HOME)/vsrc/rv32i/main -type f -name "*.svh")
+	VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/rv32i/main/
 	tVd += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
 	tVd += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
 	SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/uart16550/rtl
@@ -81,6 +84,10 @@ endif
 ifeq ($(t),rv32iSta)
 	tF=ysyx_26020046_rv32iSta
 	tVd+= $(NPC_HOME)/vsrc/module/ysyx_26020046_Mux.sv
+endif
+ifeq ($(t),sCpu)
+	tF=sCpu
+	tVd+= $(NPC_HOME)/vsrc/chisel/build/Seg.sv
 endif
 # tVd+= $(NPC_HOME)/vsrc/module/ysyx_26020046_Mux.sv
 
@@ -96,7 +103,7 @@ bin/%: $(tVd) $(tCd) | build/$(tF) bin
 
 	mkdir -p build/$(tF)
 # 	verilator --lint-only -Wall $(tVd) --top-module $(tT) -Wno-DECLFILENAME $(SOC_CFLAGS)
-	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(tVd) --exe $(tCd) --Mdir build/$(tF) --build $(NVBOARD_ARCHIVE) \
+	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(sort $(tVd)) --exe $(tCd) --Mdir build/$(tF) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(tT) \
 	$(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/include \
