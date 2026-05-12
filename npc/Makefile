@@ -12,6 +12,7 @@ MAKEFLAGS += -k
 FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic -MMD
 VERILATOR_CFLAGS += $(FLAGS)
 VERILATOR_CFLAGS += --autoflush
+# VERILATOR_CFLAGS += --public
 
 vFile = $(shell find vsrc -type f -name "*.v")
 cFile = $(patsubst vsrc/%.v,csrc/%.cpp,$(vFile))
@@ -72,7 +73,7 @@ ifeq ($(t),rv32i)
 # 	tVd += $(shell find $(NPC_HOME)/vsrc/rv32i/main -type f -name "*.svh")
 # 	tVd += $(NPC_HOME)//trace/ysyxsocTrace.vlt
 	VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/rv32i/main/
-	VERILATOR_CFLAGS += --trace-fst --trace-structs
+	VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params
 	tVd += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
 	tVd += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
 	SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/uart16550/rtl

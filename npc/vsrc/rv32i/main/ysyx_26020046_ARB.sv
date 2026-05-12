@@ -45,38 +45,38 @@ module ysyx_26020046_ARB(
 			backvalid='0;
 
 			rMeCal.araddr	='0;
-			rMeCal.arvalid	=false;
-			rMeCal.rready	=false;
+			rMeCal.arvalid	=0;
+			rMeCal.rready	=0;
 			wMeCal.awaddr	='0;
-			wMeCal.awvalid	=false;
+			wMeCal.awvalid	=0;
 			wMeCal.wdata	='0;
 			wMeCal.wstrb	='0;
-			wMeCal.wvalid	=false;
-			wMeCal.bready	=false;
+			wMeCal.wvalid	=0;
+			wMeCal.bready	=0;
 			
 			rCtCal.araddr	='0;
-			rCtCal.arvalid	=false;
-			rCtCal.rready	=false;
+			rCtCal.arvalid	=0;
+			rCtCal.rready	=0;
 			wCtCal.awaddr	='0;
-			wCtCal.awvalid	=false;
+			wCtCal.awvalid	=0;
 			wCtCal.wdata	='0;
 			wCtCal.wstrb	='0;
-			wCtCal.wvalid	=false;
-			wCtCal.bready	=false;
+			wCtCal.wvalid	=0;
+			wCtCal.bready	=0;
 
-			rLsBak.arready	=false;
+			rLsBak.arready	=0;
 			rLsBak.rdata	='0;
 			rLsBak.rresp	=OKAY;
-			rLsBak.rvalid	=false;
-			wLsBak.awready	=false;
-			wLsBak.wready	=false;
+			rLsBak.rvalid	=0;
+			wLsBak.awready	=0;
+			wLsBak.wready	=0;
 			wLsBak.bresp	=OKAY;
-			wLsBak.bvalid	=false;
+			wLsBak.bvalid	=0;
 
-			rIfBak.arready	=false;
+			rIfBak.arready	=0;
 			rIfBak.rdata	='0;
 			rIfBak.rresp	=OKAY;
-			rIfBak.rvalid	=false;
+			rIfBak.rvalid	=0;
 		unique case(s)
 			ARBidle:;
 			ARBlsuR:if(addr[31:16]==16'h0200)	begin rCtCal=rLsCal;rLsBak=rCtBak;backvalid=rCtBak.rvalid;end

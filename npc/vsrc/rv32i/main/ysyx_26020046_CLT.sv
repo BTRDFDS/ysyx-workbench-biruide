@@ -25,12 +25,12 @@ module ysyx_26020046_CLT(
 		if(s==CLTidle&rCtCal.arvalid)araddr<=rCtCal.araddr;
 
 		if(s==CLTidle&wCtCal.awvalid)awaddr<=wCtCal.awaddr;
-		if(s==CLTidle&wCtCal.awvalid)hasAddr<=true;
-		if(s==CLTwbak)hasAddr<=false;
+		if(s==CLTidle&wCtCal.awvalid)hasAddr<=1;
+		if(s==CLTwbak)hasAddr<=0;
 		if(s==CLTidle&wCtCal.wvalid)wdata<=wCtCal.wdata;
 		if(s==CLTidle&wCtCal.wvalid)wstrb<=wCtCal.wstrb;
-		if(s==CLTidle&wCtCal.wvalid)hasData<=true;
-		if(s==CLTwbak)hasData<=false;
+		if(s==CLTidle&wCtCal.wvalid)hasData<=1;
+		if(s==CLTwbak)hasData<=0;
 
 		if(reset){clint['h2fff],clint['h2ffe]}<='0;
 		else begin	{clint['h2fff],clint['h2ffe]}<={clint['h2fff],clint['h2ffe]}+1;

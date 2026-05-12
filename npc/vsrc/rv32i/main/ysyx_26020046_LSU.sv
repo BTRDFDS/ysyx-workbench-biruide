@@ -50,10 +50,10 @@ module ysyx_26020046_LSU(
 			s<=ns;
 	end always_ff@(posedge clock) begin
 			iRAM<=(s==LSUback&ns==LSUsuce)?rLsBak.rdata:'0;
-			if(oAlLs.enS&s==LSUcall&wLsBak.awready)	hasAddr<=true;
-			if(oAlLs.enS&s!=LSUcall)				hasAddr<=false;
-			if(oAlLs.enS&s==LSUcall&wLsBak.wready)	hasData<=true;
-			if(oAlLs.enS&s!=LSUcall)				hasData<=false;
+			if(oAlLs.enS&s==LSUcall&wLsBak.awready)	hasAddr<=1;
+			if(oAlLs.enS&s!=LSUcall)				hasAddr<=0;
+			if(oAlLs.enS&s==LSUcall&wLsBak.wready)	hasData<=1;
+			if(oAlLs.enS&s!=LSUcall)				hasData<=0;
 	end always_comb begin
 			rLsCal.araddr	=oAlLs.enL?oAlLs.addr:'0;
 			rLsCal.arvalid	=oAlLs.enL&(s==LSUcall);

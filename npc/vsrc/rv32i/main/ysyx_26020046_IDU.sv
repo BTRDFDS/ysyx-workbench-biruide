@@ -35,7 +35,7 @@ module ysyx_26020046_IDU(
 			nIdAl.SRop=NCSR_;nIdAl.SRmesg='0;
 			{vIdAl.cR1,vIdAl.cR2,nIdAl.cRd,nIdAl.enJcod,nIdAl.imm}='0;
 			vIdAl.SRaddr='0;
-			error=false;mesg=32'd2;
+			error=0;mesg=32'd2;
 			if(oIfId.valid) begin
 				`ifdef RV32I_DEBUG $fdisplay(logFile,"IDU:op=%x fun3=%x fun7=%x r1=%x r2=%x rd=%x",oIfId.code.op,oIfId.code.fun3,oIfId.code.fun7,oIfId.code.r1,oIfId.code.r2,oIfId.code.rd);`endif
 				unique case(oIfId.code.op)
@@ -84,8 +84,8 @@ module ysyx_26020046_IDU(
 							7'b0100000:begin unique case(oIfId.code.fun3)
 									3'b000:nIdAl.cal=SUB_;
 									3'b101:nIdAl.cal=SRA_;
-									default:begin error=true;`ifndef RV32I_STA $display("R fun7==20 fun3(%x)!=1/5",oIfId.code.fun3);	`endif end endcase end
-							default:		begin error=true;`ifndef RV32I_STA $display("R fun7(%x)!=0/20",oIfId.code.fun7);			`endif end
+									default:begin error=1;`ifndef RV32I_STA $display("R fun7==20 fun3(%x)!=1/5",oIfId.code.fun3);	`endif end endcase end
+							default:		begin error=1;`ifndef RV32I_STA $display("R fun7(%x)!=0/20",oIfId.code.fun7);			`endif end
 						endcase end
 					default	:nIdAl.cal=NCAL;
 				endcase

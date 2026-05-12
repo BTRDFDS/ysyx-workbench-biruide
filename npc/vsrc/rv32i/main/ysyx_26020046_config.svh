@@ -4,8 +4,6 @@
 
 	parameter REG_NUMBER= 5;
 	parameter DATA_WIDTH= 32;
-	parameter false = 0;
-	parameter true = 1;
 
 	parameter CSR_ADDR_MSTAUS	= 12'h300;
 	parameter CSR_ADDR_MTVEC	= 12'h305;

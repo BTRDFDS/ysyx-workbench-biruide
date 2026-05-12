@@ -22,11 +22,14 @@ const char *npcDifftestRegs[32] = {//注意：0号寄存器替代为pc
 
 #endif
 
-void NpcDifftestCheck(uint32_t pc){
+bool NpcDifftestCheck(uint32_t pc){
 #ifdef NPC_DIFFTEST
     dftDebug(printf("NpcDifftestCheck\n"););
 
-    if (difftest_enabled==false||ref_difftest_exec==NULL) return;
+    if (difftest_enabled==false||ref_difftest_exec==NULL){
+        printf("difftest_enabled or ref_difftest_exec is NULL\n");
+        return true;
+    }
     riscv32_CPU_state npc_state;
     // for (int i = 0; i < 32; i++) {
     //     npc_state.gpr[i] = getReg(i);//TODO:处理获取寄存器的逻辑
@@ -52,7 +55,8 @@ void NpcDifftestCheck(uint32_t pc){
             difftest_enabled = false;
         }
     }
-    if(difftest_enabled==false)exit(-1);
+    // if(difftest_enabled==false)exit(-1);
+    return !difftest_enabled;
 #endif
 }
 

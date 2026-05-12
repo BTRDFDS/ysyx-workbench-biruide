@@ -137,6 +137,7 @@ void NpcInitDevice(int argc, char** argv){
     Verilated::traceEverOn(true);
 	tfp = new VerilatedFstC;
 	top->trace(tfp, 99);
+	// top->ysyxSoCFull->asic->cpu->cpu->trace(tfp,99);
 	tfp->open("trace/ysyxSoCFull.fst");
 	NpcSdbInit();
 	NpcTraceInit(argv[1]);
@@ -153,6 +154,14 @@ void NpcReset(){
 	top->clock=0;top->reset=0;top->eval();
 	runStep=0;
 }
+void NpcReturn(int returnCode){
+	NpcTraceClose();
+	tfp->close();
+	delete top;
+	delete contextp;
+	printf("close success\n");
+	exit(returnCode);
+}
 void NpcStep(){
 	pc=getPc();
 	uint32_t nPc=pc;
@@ -168,7 +177,7 @@ void NpcStep(){
 	tfp->dump(contextp->time());
 
 	NpcTraceWrite(nPc,nCode,pc);
-	if(chkDft())NpcDifftestCheck(pc);
+	if(chkDft())if(NpcDifftestCheck(pc))NpcReturn(-1);
 }
 void NpcRun(uint32_t times){
 	if(npcFinishHad){printf("has ebreak.ues 'q' to exit\n");}
@@ -192,13 +201,6 @@ void NpcEbreak(int returnCode){
 #else
 	NpcReturn(returnCode);
 #endif
-}
-void NpcReturn(int returnCode){
-	NpcTraceClose();
-	tfp->close();
-	delete top;
-	delete contextp;
-	exit(returnCode);
 }
 void NpcBegin(){
 	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);

@@ -1,5 +1,5 @@
 `include "ysyx_26020046_config.svh"
-module ysyx_26020046(
+module ysyx_26020046(/* verilator tracing_on */
 	/*verilator lint_off UNUSED*/
 		input	logic 		io_interrupt,
 
@@ -108,9 +108,9 @@ module ysyx_26020046(
 		io_slave_rlast		='0;
 		io_slave_rid		='0;
 	end
-
+	/* verilator tracing_on */
+	
 	// initial $display("%m");
-
 	IfId_t nIfId;upBk_t iAlId;
 	IdAl_t nIdAl;upBk_t iIdIf;valcl_t vIdAl;
 	AlLs_t nAlLs;LsAl_t iLsAl;valcl_t vAlLs;
