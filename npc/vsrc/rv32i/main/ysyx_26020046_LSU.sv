@@ -33,7 +33,7 @@ module ysyx_26020046_LSU(
 	end
 
 	always_comb unique case(s)
-			LSUidle:ns=(oAlLs.enL|oAlLs.enS)	?LSUcall:LSUidle;
+			LSUidle:ns=((oAlLs.enL|oAlLs.enS)&oAlLs.SRop!=ERROR)	?LSUcall:LSUidle;
 			LSUcall:unique case('1)
 				oAlLs.enL:ns=(rLsBak.arready)									?LSUback:LSUcall;
 				oAlLs.enS:ns=((hasAddr|wLsBak.awready)&(hasData|wLsBak.wready))	?LSUback:LSUcall;
@@ -82,8 +82,7 @@ module ysyx_26020046_LSU(
 		nLsRg.SRmesg=oAlLs.SRmesg;
 		nLsRg.SRop	=oAlLs.SRop;
 		LsWbValid	=(~((oAlLs.enL|oAlLs.enS)^(s==LSUsuce)))&oAlLs.valid;
-		nLsRg.valid	=LsWbValid;
-		nLsRg.valid	=LsWbValid;
+		nLsRg.valid	=LsWbValid|oAlLs.SRop==ERROR;
 		iLsAl.ready	=(~((oAlLs.enL|oAlLs.enS)^(s==LSUsuce)))&iRgLs.ready&iRgLs.ready;
 	end
 	always_comb begin

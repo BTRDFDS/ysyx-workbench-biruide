@@ -31,7 +31,7 @@ module ysyx_26020046_ALU(
 		nAlLs.res='0;nAlLs.iCsr='0;nAlLs.addr='0;
 		iAlId.enJfun='0;iAlId.addr='0;enBfun=0;
 		result='0;in1='0;in2='0;
-	 if(oIdAl.valid)begin
+	 if(oIdAl.valid&oIdAl.SRop!=ERROR)begin
 			// $fdisplay(logFile,"val cR1=%x cR2=%x oR1=%x oR2=%x SRaddr=%x oCsr=%x pc=%x",val.cR1,val.cR2,val.oR1,val.oR2,val.SRaddr,val.oCsr,val.pc);
 		unique case(oIdAl.in1)
 			IR1:in1=iLsAl.oR1;
