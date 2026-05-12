@@ -44,7 +44,7 @@ CONFIG_CC_OPT="-O2"
 #
 CONFIG_AUTO_RUN=y
 # CONFIG_TRACE is not set
-CONFIG_LOGTRACE=y
+# CONFIG_LOGTRACE is not set
 CONFIG_DIFFTEST_REF_PATH="none"
 CONFIG_DIFFTEST_REF_NAME="none"
 # end of Testing and Debugging
