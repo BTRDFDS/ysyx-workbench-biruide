@@ -13,6 +13,9 @@
 #include <npcTrace.h>
 #include <npcDifftest.h>
 
+#include "verilated_fst_c.h"
+VerilatedFstC* tfp;//波形文件
+
 VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
 svScope scope;//作用域
@@ -131,6 +134,10 @@ void NpcInitDevice(int argc, char** argv){
 	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu");
 	svSetScope(scope);
 
+    Verilated::traceEverOn(true);
+	tfp = new VerilatedFstC;
+	top->trace(tfp, 99);
+	tfp->open("trace/ysyxSoCFull.fst");
 	NpcSdbInit();
 	NpcTraceInit(argv[1]);
 	NpcDifftestInit8(memSize,mem,addrMROM);
@@ -156,6 +163,9 @@ void NpcStep(){
 	top->clock=0;top->eval();
 
 	runStep++;
+
+	contextp->timeInc(1);
+	tfp->dump(contextp->time());
 
 	NpcTraceWrite(nPc,nCode,pc);
 	if(chkDft())NpcDifftestCheck(pc);
@@ -185,6 +195,7 @@ void NpcEbreak(int returnCode){
 }
 void NpcReturn(int returnCode){
 	NpcTraceClose();
+	tfp->close();
 	delete top;
 	delete contextp;
 	exit(returnCode);

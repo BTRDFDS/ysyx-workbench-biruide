@@ -70,7 +70,9 @@ ifeq ($(t),rv32i)
 	tT=ysyxSoCFull
 	tVd += $(shell find $(NPC_HOME)/vsrc/rv32i/main -type f -name "*.sv")
 # 	tVd += $(shell find $(NPC_HOME)/vsrc/rv32i/main -type f -name "*.svh")
+# 	tVd += $(NPC_HOME)//trace/ysyxsocTrace.vlt
 	VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/rv32i/main/
+	VERILATOR_CFLAGS += --trace-fst --trace-structs
 	tVd += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
 	tVd += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
 	SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/uart16550/rtl

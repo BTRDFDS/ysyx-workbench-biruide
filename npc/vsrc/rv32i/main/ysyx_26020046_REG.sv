@@ -17,12 +17,12 @@ module ysyx_26020046_REG(
 		iRgLs.oR2=(vLsRg.cR2==0)?'0:gpr[vLsRg.cR2];
 	end always_ff@(posedge clock)begin
 		`ifdef RV32I_DEBUG if(~reset)begin
-			if(oLsRg.cRd!=0&oLsRg.SRop!=ERROR)$fdisplay(logFile,"RG:[%d]%x <= %x",oLsRg.cRd,gpr[oLsRg.cRd],oLsRg.iRd);
+			if(oLsRg.cRd!=0)$fdisplay(logFile,"RG:[%d]%x <= %x",oLsRg.cRd,gpr[oLsRg.cRd],oLsRg.iRd);
 			$fdisplay(logFile,"nLsRg:%s",sLsRg(nLsRg));
 			// $fdisplay(logFile,"vLsRg:%s",sValRg(vLsRg));
 			$fdisplay(logFile,"iRgLs:%s",sRgLs(iRgLs));
 			end`endif
-		if(oLsRg.valid)if (oLsRg.cRd!=0) gpr[oLsRg.cRd] <= oLsRg.iRd;
+		if(oLsRg.valid&oLsRg.SRop!=ERROR)if (oLsRg.cRd!=0) gpr[oLsRg.cRd] <= oLsRg.iRd;
 		end
 
 	assign iRgLs.ready=1;

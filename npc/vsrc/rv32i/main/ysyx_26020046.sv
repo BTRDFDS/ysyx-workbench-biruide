@@ -137,6 +137,7 @@ module ysyx_26020046(
 		initial begin
 			logFile = $fopen("log/rv32iDebugLog.txt");
 			$write("\033[1;35m SV_DEBUG \033[0m");
+			$display("%m");
 			// $fstrobe
 		end
 		always @(posedge clock) begin if(~reset)begin
