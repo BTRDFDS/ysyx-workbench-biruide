@@ -39,7 +39,7 @@ paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 static word_t pmem_read(paddr_t addr, int len) {
   // word_t ret = host_read(guest_to_host(addr), len);
   if(addr - CONFIG_MBASE < CONFIG_MSIZE)return host_read(guest_to_host(addr), len);
-  if(CONFIG_SRAM_START<=addr&&addr<CONFIG_SRAM_END)return host_read(SRAM + addr - CONFIG_SRAM_START, len);
+  if(CONFIG_SRAM_START<=addr&&addr<=CONFIG_SRAM_END)return host_read(SRAM + addr - CONFIG_SRAM_START, len);
   // return ret;
   return 0;
 }
@@ -47,7 +47,7 @@ static word_t pmem_read(paddr_t addr, int len) {
 static void pmem_write(paddr_t addr, int len, word_t data) {
   // host_write(guest_to_host(addr), len, data); 
   if(addr - CONFIG_MBASE < CONFIG_MSIZE)host_write(guest_to_host(addr), len, data);
-  else if(CONFIG_SRAM_START<=addr&&addr<CONFIG_SRAM_END)host_write(SRAM + addr - CONFIG_SRAM_START, len, data);
+  else if(CONFIG_SRAM_START<=addr&&addr<=CONFIG_SRAM_END)host_write(SRAM + addr - CONFIG_SRAM_START, len, data);
 }
 
 static void out_of_bound(paddr_t addr) {

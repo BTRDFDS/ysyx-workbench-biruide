@@ -13,8 +13,11 @@
 #include <npcTrace.h>
 #include <npcDifftest.h>
 
-#include "verilated_fst_c.h"
-VerilatedFstC* tfp;//波形文件
+
+#ifdef NPC_WAVE
+	#include "verilated_fst_c.h"
+	VerilatedFstC* tfp;//波形文件
+#endif
 
 VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
@@ -135,11 +138,13 @@ void NpcInitDevice(int argc, char** argv){
 	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu");
 	svSetScope(scope);
 
+#ifdef NPC_WAVE
     Verilated::traceEverOn(true);
 	tfp = new VerilatedFstC;
 	top->trace(tfp, 99);
 	// top->ysyxSoCFull->asic->cpu->cpu->trace(tfp,99);
 	tfp->open("trace/ysyxSoCFull.fst");
+#endif
 	NpcSdbInit();
 	NpcTraceInit(argv[1]);
 	NpcDifftestInit8(memSize,mem,addrMROM);
@@ -157,10 +162,12 @@ void NpcReset(){
 }
 void NpcReturn(int returnCode){
 	NpcTraceClose();
+#ifdef NPC_WAVE
 	tfp->close();
+#endif
 	delete top;
 	delete contextp;
-	printf("close success\n");
+	// printf("close success\n");
 	exit(returnCode);
 }
 void NpcStep(){
@@ -174,8 +181,10 @@ void NpcStep(){
 
 	runStep++;
 
+#ifdef NPC_WAVE
 	contextp->timeInc(1);
 	tfp->dump(contextp->time());
+#endif
 
 	NpcTraceWrite(nPc,nCode,pc);
 	if(chkDft())if(NpcDifftestCheck(pc))NpcReturn(-1);
