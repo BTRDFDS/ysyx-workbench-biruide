@@ -51,6 +51,7 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	// assert(0); 
 	// *data=0x00100073;
 	*data=NpcMemRead(addr-addrMROM);
+	// if(addr==0x20000038)printf("%x\n",*data);
 }
 extern "C" void stop(unsigned char eb){
 	printf("ebreak:");
