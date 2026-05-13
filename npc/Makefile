@@ -71,9 +71,9 @@ ifeq ($(t),rv32i)
 	tT=ysyxSoCFull
 	tVd += $(shell find $(NPC_HOME)/vsrc/rv32i/main -type f -name "*.sv")
 # 	tVd += $(shell find $(NPC_HOME)/vsrc/rv32i/main -type f -name "*.svh")
-# 	tVd += $(NPC_HOME)//trace/ysyxsocTrace.vlt
+	VERILATOR_VLT += $(NPC_HOME)/trace/ysyxsocTrace.vlt
 	VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/rv32i/main/
-	VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params
+	VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
 	tVd += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
 	tVd += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
 	SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/uart16550/rtl
@@ -106,7 +106,7 @@ bin/%: $(tVd) $(tCd) | build/$(tF) bin
 
 	mkdir -p build/$(tF)
 # 	verilator --lint-only -Wall $(tVd) --top-module $(tT) -Wno-DECLFILENAME $(SOC_CFLAGS)
-	verilator $(VERILATOR_CFLAGS) $(ePrintf) $(sort $(tVd)) --exe $(tCd) --Mdir build/$(tF) --build $(NVBOARD_ARCHIVE) \
+	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(tVd)) --exe $(tCd) --Mdir build/$(tF) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(tT) \
 	$(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/include \
