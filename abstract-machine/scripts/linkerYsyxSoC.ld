@@ -21,7 +21,10 @@ SECTIONS{
     PROVIDE(_data_size_ = SIZEOF(.data));
     PROVIDE(_data_begin_ = LOADADDR(.data));
 
-	.bss : {*(.bss*)} > sram AT> sram
+	.bss : {
+		*(.bss*)
+		*(.sbss*)
+	} > sram
     PROVIDE(_bss_start_ = ADDR(.bss));
     PROVIDE(_bss_size_ = SIZEOF(.bss));
 
