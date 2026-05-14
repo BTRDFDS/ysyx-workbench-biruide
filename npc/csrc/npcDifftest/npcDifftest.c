@@ -58,6 +58,7 @@ bool NpcDifftestCheck(uint32_t pc){
     // if(difftest_enabled==false)exit(-1);
     return !difftest_enabled;
 #endif
+    return false;
 }
 
 void NpcDifftestInit8(uint32_t memSize,uint8_t *mem,uint32_t pcReset){

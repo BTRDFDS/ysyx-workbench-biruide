@@ -1,16 +1,29 @@
 ENTRY(_start)
+MEMORY {
+	mrom : ORIGIN = 0x20000000, LENGTH = 4K
+	sram : ORIGIN = 0x0f000000, LENGTH = 8K
+}
+SECTIONS{
+	. = ORIGIN(mrom);
 
-SECTIONS
-{
- . = 0x20000000;
+	.text : {
+		*(entry)
+		*(.text*)
+	} > mrom AT> mrom
+	.rodata : {
+		*(.rodata*)
+	} > mrom AT> mrom
 
-  .text : {
-    *(entry)
-    *(.text*)
-  }
+	.data : {
+		*(.data*)
+	} > sram AT> mrom
+    PROVIDE(_data_start_ = ADDR(.data));
+    PROVIDE(_data_size_ = SIZEOF(.data));
+    PROVIDE(_data_begin_ = LOADADDR(.data));
 
-  .rodata : {
-    *(.rodata*)
-  }
-  _stack_pointer = 0x0f002000;
+	.bss : {*(.bss*)} > sram AT> sram
+    PROVIDE(_bss_start_ = ADDR(.bss));
+    PROVIDE(_bss_size_ = SIZEOF(.bss));
+
+	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 }

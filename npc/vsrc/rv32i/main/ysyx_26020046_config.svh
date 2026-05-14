@@ -1,5 +1,5 @@
 `ifndef _YSYX_26020046_CONFIG_ `define _YSYX_26020046_CONFIG_
-    `define RV32I_DEBUG
+    // `define RV32I_DEBUG
 	// `define RV32I_STA
 
 	parameter REG_NUMBER= 5;
