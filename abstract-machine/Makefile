@@ -82,7 +82,7 @@ mode ?= 0
 
 ARCH_H := arch/$(ARCH).h
 #这里的02把for进行了优化，导致<退化为=，错误，因此修正为O0
-CFLAGS   += -O0 -MMD -Wall -Werror $(INCFLAGS) \
+CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -D__ISA__=\"$(ISA)\" -D__ISA_$(shell echo $(ISA) | tr a-z A-Z)__ \
             -D__ARCH__=$(ARCH) -D__ARCH_$(shell echo $(ARCH) | tr a-z A-Z | tr - _) \
             -D__PLATFORM__=$(PLATFORM) -D__PLATFORM_$(shell echo $(PLATFORM) | tr a-z A-Z | tr - _) \
