@@ -20,6 +20,8 @@ SECTIONS{
     PROVIDE(_data_begin_ = LOADADDR(.data));
 
 	.bss : {*(.bss*)} > sram
+	PROVIDE(_bss_start_ = ADDR(.bss));
+	PROVIDE(_bss_size_ = SIZEOF(.bss));
 
 	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 }
