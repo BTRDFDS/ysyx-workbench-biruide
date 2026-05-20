@@ -223,8 +223,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 }
 
 int sprintf(char *out, const char *fmt, ...){
-  if(out==NULL){panic("out is NULL");}
-  if(fmt==NULL){panic("fmt is NULL");}
+  if(out==NULL||fmt==NULL){panic("sprintfNULL");}
   va_list argp;
   va_start(argp, fmt);
   char *start=out;
