@@ -88,7 +88,6 @@ CFLAGS   += -O2 -MMD -Wall -Werror $(INCFLAGS) \
             -DARCH_H=\"$(ARCH_H)\" \
             -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector \
             -Wno-main -U_FORTIFY_SOURCE -fvisibility=hidden -g
-
 CXXFLAGS +=  $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  += -MMD $(INCFLAGS)
 LDFLAGS  += -z noexecstack $(addprefix -T, $(LDSCRIPTS))
@@ -152,7 +151,7 @@ $(IMAGE).elf: $(LINKAGE) $(LDSCRIPTS)
 ifneq ($(filter $(ARCH),native),)
 	@$(CXX) -o $@ -Wl,--whole-archive $(LINKAGE) -Wl,-no-whole-archive $(LDFLAGS_CXX)
 else
-	@$(LD) $(LDFLAGS) -o $@ --start-group $(LINKAGE) --end-group
+	@$(LD) $(LDFLAGS) -o $@ --start-group $(LINKAGE) --end-group 
 # --print-map
 endif
 
