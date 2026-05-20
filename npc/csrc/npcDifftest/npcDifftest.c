@@ -45,13 +45,13 @@ bool NpcDifftestCheck(uint32_t pc){
 
     bool match = true;
     if (npc_state.pc != ref_state.pc) {
-        printf("[NPC_DIFFTEST] dutPc=0x%08x refPc=0x%08x\n",npc_state.pc, ref_state.pc);
+        printf("[NPC_DIFFTEST] dutPc=0x %08x refPc=0x %08x\n",npc_state.pc, ref_state.pc);
         difftest_enabled = false;
     }
 
     for (int i = 1; i < 32; i++) {
         if (npc_state.gpr[i] != ref_state.gpr[i]) {
-            printf("[NPC_DIFFTEST] pc=0x%08x reg[%d:%s] dut=0x%08x, ref=0x%08x\n",pc,i,npcDifftestRegs[i], npc_state.gpr[i], ref_state.gpr[i]);
+            printf("[NPC_DIFFTEST] pc=0x %08x reg[%d:%s] dut=0x %08x, ref= %08x\n",pc,i,npcDifftestRegs[i], npc_state.gpr[i], ref_state.gpr[i]);
             difftest_enabled = false;
         }
     }

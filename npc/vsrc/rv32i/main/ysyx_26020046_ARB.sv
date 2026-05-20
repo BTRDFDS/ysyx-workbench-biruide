@@ -40,7 +40,13 @@ module ysyx_26020046_ARB(
 			end`endif
 		//FSM切换
 			if(reset)s<=ARBidle;else s<=ns;
-			if(~reset)if((s!=ARBidle)&(addr[31:16]!=16'h2000)&(addr[31:16]!=16'h0f00)&(addr[31:16]!=16'h0200))$stop();
+			if(~reset)if(s!=ARBidle)unique casez(addr[31:16])
+				16'h2000:;
+				16'h0f00:;
+				16'h0200:;
+				16'h1000:;
+				default:begin $error("addr=%x",addr);$stop();end
+			endcase
 	end always_comb begin
 		//默认折叠
 			backvalid='0;

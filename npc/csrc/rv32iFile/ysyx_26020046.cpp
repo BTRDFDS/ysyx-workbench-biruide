@@ -96,7 +96,7 @@ uint32_t NpcMemRead(uint32_t addr){//读取4个字节
 	// if(addr<addrReset|((addr-addrReset+3)>=memSize)){
 	if(addr+3>=memSize){
 		printf("nRead addr=%x@%x %x at T=%d\n",addr,pc,(addr),runStep);
-		// NpcError();//临时解除封闭
+		NpcError();//临时解除封闭
 		return 0;
 	}else{
 		uint32_t temp=

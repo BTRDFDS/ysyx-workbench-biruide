@@ -14,12 +14,19 @@ SECTIONS{
 		*(.rodata*)
 	} > mrom AT> mrom
 
-	.data : {*(.data*)} > sram AT> mrom
+	.data : {
+		*(.data*)
+		*(.sdata*)
+		} > sram AT> mrom
     PROVIDE(_data_start_ = ADDR(.data));
     PROVIDE(_data_size_ = SIZEOF(.data));
     PROVIDE(_data_begin_ = LOADADDR(.data));
 
-	.bss : {*(.bss*)} > sram
+	.bss : {
+		*(.bss*)
+		*(.sbss*)
+		*(.scommon)
+		} > sram
 	PROVIDE(_bss_start_ = ADDR(.bss));
 	PROVIDE(_bss_size_ = SIZEOF(.bss));
 
