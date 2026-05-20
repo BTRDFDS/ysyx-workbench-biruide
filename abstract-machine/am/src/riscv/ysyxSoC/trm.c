@@ -9,19 +9,20 @@ int main(const char *args);
 extern char _data_start_,_data_size_,_data_begin_;
 extern char _bss_start_,_bss_size_;
 void _trm_init() {
+    // *(volatile char *)(0x10000000L) = 'A';
     uint8_t* data=(uint8_t*)&_data_start_;
     while((data-(uint8_t*)&_data_start_)<(size_t)&_data_size_){
         *data = *(&_data_begin_ + (data - (uint8_t*)&_data_start_));
         data++;
     }
-    // *(volatile char *)(0x10000000L) = 'A';
+    // *(volatile char *)(0x10000000L) = 'B';
     // *(volatile char *)(0x10000000L) = '\n';
     uint8_t* bss=(uint8_t*)&_bss_start_;
     while((bss-(uint8_t*)&_bss_start_)<(size_t)&_bss_size_){
         *bss=0;
         bss++;
     }
-    // *(volatile char *)(0x10000000L) = 'B';
+    // *(volatile char *)(0x10000000L) = 'C';
     // *(volatile char *)(0x10000000L) = '\n';
     halt(main(mainargs));
 }
