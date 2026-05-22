@@ -37,7 +37,7 @@ module ysyx_26020046_REG(
 			marchid		<=32'h018D08CE;
 			mvendorid	<=32'h79737978;
 		end else begin
-				// if(mcycle>='d200)$stop;//特殊调试，用于观测死循环
+				if(mcycle>='d20000)$stop;//特殊调试，用于观测死循环
 	`ifdef RV32I_DEBUG
 			// $fdisplay(logFile,"nRgCt:%s",sLsSr(nLsRg));$fdisplay(logFile,"iCtRg:%s",sSrLs(iRgLs));$fdisplay(logFile,"vRgCt:%s",sValSr(vLsRg));
 				if(mcycle>='d10000000)$stop;//特殊调试，用于观测死循环
