@@ -1,6 +1,6 @@
 verilog:build
 # 	make clean
-	mill -i runMain main --target-dir build
+	mill -i runMain main
 build:
 	mkdir build
 clean:

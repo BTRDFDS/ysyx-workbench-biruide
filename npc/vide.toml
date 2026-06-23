@@ -1,0 +1,8 @@
+#:schema https://vide.pascal-lab.net/schemas/v1/vide.schema.json
+sources = []
+
+# include_dirs = ["/vsrc/rv32i/main"]
+# defines = ["SYNTHESIS"]
+# top_modules = ["ysyx_26020046"]
+# libraries = ["../common_cells"]
+# exclude = ["build/**"]
