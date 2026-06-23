@@ -28,3 +28,4 @@ result/*-500MHz*/*_instance.pwr
 log/rv32iDebugLog.txt
 !vsrc/chisel/src/*
 !vsrc/chisel/build.mill
+!vsrc/chisel/Makefile
