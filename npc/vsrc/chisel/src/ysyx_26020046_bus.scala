@@ -2,12 +2,12 @@ import chisel3._
 import chisel3.util._
 import chisel3.Enum._
 
-class WaterIfId(val Width:Int=32) {
+class WaterIfId(val Width:Int=32) extends Bundle{
 	val res		= Output(IfuRes())
 	val pc		= Output(UInt(Width.W))
 	val instr	= Output(UInt(Width.W))
 }
-class WaterLsWb(val Width:Int=32,val RegNumber:Int=32){
+class WaterLsWb(val Width:Int=32,val RegNumber:Int=32) extends Bundle{
 	val RegWidth = log2Ceil(RegNumber)
 
     val valid	= Output(Bool())
@@ -35,9 +35,13 @@ class WaterIdEx(val Width:Int=32,val RegNumber:Int=32) extends WaterExLs(Width,R
 
 	val enJcod=Output(Bool())
 }
-class ImmAfter(val Width:Int=32, val RegNumber:Int=32,val CsrWidth:Int=12){//WB不需要ready
-    val RegWidth= log2Ceil(RegNumber)
+class ImmBefore(val Width:Int=32)extends Bundle{
 	val ready	= Output(Bool())
+	val wash	= Output(Bool())
+	val addr	= Output(UInt(Width.W))
+}
+class ImmAfter(val Width:Int=32, val RegNumber:Int=32,val CsrWidth:Int=12)extends ImmBefore(Width){//WB不需要ready
+    val RegWidth= log2Ceil(RegNumber)
 
 	val r1Addr	= Input(UInt(RegWidth.W))
 	val r2Addr	= Input(UInt(RegWidth.W))
@@ -46,15 +50,6 @@ class ImmAfter(val Width:Int=32, val RegNumber:Int=32,val CsrWidth:Int=12){//WB�
 
 	val csrAddr	= Input(UInt(CsrWidth.W))
 	val csrOut	= Output(UInt(Width.W))
-}
-class ImmThen(val Width:Int=32, val RegNumber:Int=32,val CsrWidth:Int=12) extends ImmAfter(Width,RegNumber,CsrWidth) {
-	val wash	= Output(Bool())
-	val addr	= Output(UInt(Width.W))
-}
-class ImmBefore(val Width:Int=32){
-	val ready	= Output(Bool())
-	val wash	= Output(Bool())
-	val addr	= Output(UInt(Width.W))
 }
 class axi4Master (val Width:Int=32,val Strb:Int=4,val Resp:Int=2) extends Bundle {
 	val arvalid	= Output(Bool())
