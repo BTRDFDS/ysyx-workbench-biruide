@@ -13,15 +13,15 @@ class WaterLsWb(val Width:Int=32,val RegNumber:Int=32){
     val valid	= Output(Bool())
 	val rdAddr	= Output(UInt(RegWidth.W))
 	val result	= Output(UInt(Width.W))
+	val addr	= Output(UInt(Width.W))
 	val csrRes	= Output(UInt(Width.W))
 	val csrOp	= Output(CsrOp())
 	val csrAddr	= Output(UInt(Width.W))
 	val csrMesg	= Output(UInt(Width.W))
 }
-class WaterExLs(val Width:Int=32,val RegNumber:Int=32) extends WaterIdEx(Width,RegNumber){
+class WaterExLs(val Width:Int=32,val RegNumber:Int=32) extends WaterLsWb(Width,RegNumber){
 	val enSave	= Output(Bool())
 	val enLoad	= Output(Bool())
-	val addr	= Output(UInt(Width.W))
 	val lsOp	= Output(LSUop())
 }
 class WaterIdEx(val Width:Int=32,val RegNumber:Int=32) extends WaterExLs(Width,RegNumber){
@@ -47,9 +47,14 @@ class ImmAfter(val Width:Int=32, val RegNumber:Int=32,val CsrWidth:Int=12){//WBä
 	val csrAddr	= Input(UInt(CsrWidth.W))
 	val csrOut	= Output(UInt(Width.W))
 }
-class ImmBefore(val Width:Int=32,val RegNumber:Int=32) extends ImmWbLs(Width,RegNumber){
+class ImmThen(val Width:Int=32, val RegNumber:Int=32,val CsrWidth:Int=12) extends ImmAfter(Width,RegNumber,CsrWidth) {
+	val wash	= Output(Bool())
+	val addr	= Output(UInt(Width.W))
+}
+class ImmBefore(val Width:Int=32){
 	val ready	= Output(Bool())
 	val wash	= Output(Bool())
+	val addr	= Output(UInt(Width.W))
 }
 class axi4Master (val Width:Int=32,val Strb:Int=4,val Resp:Int=2) extends Bundle {
 	val arvalid	= Output(Bool())
