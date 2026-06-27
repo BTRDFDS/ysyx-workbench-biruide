@@ -2,16 +2,16 @@ import chisel3._
 import chisel3.util._
 import chisel3.Enum._
 
-class ysyx_26020046_WBU(val Width:Int=32,val RegNumber:Int=32,val CsrWidth:Int=12,val PcReset:Int=0x80000000) extends Module {
-	val RegWidth = log2Ceil(RegNumber)
+class ysyx_26020046_WBU(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12,val PcReset:Int=0x80000000) extends Module {
+	val RegWidth = log2Ceil(RegNum)
 	val MstatuseReset = 0x1800.U(Width.W)
 	val ErrorMesg = 2.U(Width.W)
 
 	val io = IO(new Bundle {
-		val waterLsWb	= Flipped(new WaterLsWb(Width,RegNumber,CsrWidth))
-		val immWbLs		= new ImmAfter(Width,RegNumber,CsrWidth)
+		val waterLsWb	= Flipped(new WaterLsWb(Width,RegNum,CsrWidth))
+		val immWbLs		= new ImmAfter(Width,RegNum,CsrWidth)
 	})
-	val gpr = Reg(Vec(RegNumber, UInt(Width.W)))
+	val gpr = Reg(Vec(RegNum, UInt(Width.W)))
 
 	val mepc		= RegInit(PcReset.U(Width.W))
 	val mstatuse	= RegInit(MstatuseReset.U)

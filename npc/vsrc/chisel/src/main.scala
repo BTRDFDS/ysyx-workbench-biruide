@@ -19,8 +19,8 @@ import chisel3.util._
 import chisel3.Enum._
 
 
-class ysyx_26020046(val Width:Int=32,val RegNumber:Int=32) extends Module {
-	val RegWidth = log2Ceil(RegNumber)
+class ysyx_26020046(val Width:Int=32,val RegNum:Int=32) extends Module {
+	val RegWidth = log2Ceil(RegNum)
 	val io = IO(new Bundle {
 	})
 }
