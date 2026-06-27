@@ -1,13 +1,12 @@
 import chisel3._
 import chisel3.util._
-import chisel3.Enum._
 
 class WaterIfId(val Width:Int=32) extends Bundle{
 	val res		= Output(IfuRes())
 	val pc		= Output(UInt(Width.W))
 	val instr	= Output(UInt(Width.W))
 }
-class WaterLsWb(val Width:Int=32,val RegNum:Int=32) extends Bundle{
+class WaterLsWb(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12) extends Bundle{
 	val RegWidth = log2Ceil(RegNum)
 
     val valid	= Output(Bool())
@@ -15,33 +14,33 @@ class WaterLsWb(val Width:Int=32,val RegNum:Int=32) extends Bundle{
 	val result	= Output(UInt(Width.W))
 	val pc		= Output(UInt(Width.W))
 	val csrOp	= Output(CsrOp())
-	val csrAddr	= Output(UInt(Width.W))
+	val csrAddr	= Output(UInt(CsrWidth.W))
 	val csrMesg	= Output(UInt(Width.W))
 }
-class WaterExLs(val Width:Int=32,val RegNum:Int=32) extends WaterLsWb(Width,RegNum){
+class WaterExLs(Width:Int=32,RegNum:Int=32,CsrWidth:Int=12) extends WaterLsWb(Width,RegNum,CsrWidth){
 	val enSave	= Output(Bool())
 	val enLoad	= Output(Bool())
-	val lsOp	= Output(LSUop())
+	val lsOp	= Output(LsuOp())
 	val r2		= Output(UInt(Width.W))
 }
-class WaterIdEx(val Width:Int=32,val RegNum:Int=32) extends WaterExLs(Width,RegNum){
-	val alu = Output(ExuCsr())
+class WaterIdEx(Width:Int=32,RegNum:Int=32,CsrWidth:Int=12) extends WaterExLs(Width,RegNum,CsrWidth){
+	val alu = Output(ExuAlu())
 	val bfu = Output(ExuBfu())
 	val csr = Output(ExuCsr())
 	val res = Output(ExuRes())
-	val In1 = Output(In1())
-	val In2 = Output(In2())
+	val In1 = Output(ExuIn1())
+	val In2 = Output(ExuIn2())
 
 	val enJcod	=Output(Bool())
 	val r1		=Output(UInt(Width.W))
-	val csr		=Output(UInt(Width.W))
+	val sr		=Output(UInt(Width.W))
 }
 class ImmBefore(val Width:Int=32)extends Bundle{
 	val ready	= Output(Bool())
 	val wash	= Output(Bool())
 	val addr	= Output(UInt(Width.W))
 }
-class ImmAfter(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)extends ImmBefore(Width){//WB不需要ready
+class ImmAfter(Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)extends ImmBefore(Width){//WB不需要ready
     val RegWidth= log2Ceil(RegNum)
 
 	val r1Addr	= Input(UInt(RegWidth.W))
