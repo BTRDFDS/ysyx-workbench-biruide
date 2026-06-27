@@ -60,5 +60,13 @@ class ysyx_26020046_EXU(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 		is(ExuRes.Snpc)	{io.waterExLs.result := io.waterIdEx.addr+4.U}
 		is(ExuRes.Csr)	{io.waterExLs.result := io.waterIdEx.csr}
 	}
-
+	io.waterExLs.enSave	:= io.waterIdEx.enSave
+	io.waterExLs.enLoad	:= io.waterIdEx.enLoad
+	io.waterExLs.lsOp	:= io.waterIdEx.lsOp
+	io.waterExLs.r2		:= io.waterIdEx.r2
+	io.waterExLs.pc		:= io.waterIdEx.pc
+	io.waterExLs.csrOp	:= io.waterIdEx.csrOp
+	io.waterExLs.csrAddr:= io.waterIdEx.csrAddr
+	io.waterExLs.valid	:= io.waterIdEx.valid
+	io.immExId <> io.immLsEx
 }

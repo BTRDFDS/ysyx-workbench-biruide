@@ -51,6 +51,8 @@ class ImmAfter(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)extends I
 
 	val csrAddr	= Input(UInt(CsrWidth.W))
 	val csrOut	= Output(UInt(Width.W))
+
+	val error	= Output(Bool())
 }
 class axi4Master (val Width:Int=32,val Strb:Int=4,val Resp:Int=2) extends Bundle {
 	val arvalid	= Output(Bool())
