@@ -7,6 +7,28 @@ class ysyx_26020046_idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 		val immIdIf		= new Imbefore()
 		val immIdEx		= Flipped(new ImmAfter(Width,RegNum,CsrWidth))
 	})
+	//默认值
+	io.waterIdEx.valid	:= false.B
+	io.waterIdEx.rdAddr	:= 0.U
+	io.waterIdEx.result	:= 0.U
+	io.waterIdEx.pc		:= 0.U
+	io.waterIdEx.csrOp	:= CsrOp.Null
+	io.waterIdEx.csrAddr:= 0.U
+	io.waterIdEx.csrMesg:= 0.U
+	io.waterIdEx.enSave	:= false.B
+	io.waterIdEx.enLoad	:= false.B
+	io.waterIdEx.lsOp	:= LsuOp.N
+	io.waterIdEx.r2		:= 0.U
+	io.waterIdEx.r1		:= 0.U
+	io.waterIdEx.enJcod	:= false.B
+	io.waterIdEx.sr		:= 0.U
+	io.waterIdEx.alu	:= ExuAlu.Null
+	io.waterIdEx.bfu	:= ExuBfu.Null
+	io.waterIdEx.csr	:= ExuCsr.Null
+	io.waterIdEx.Res	:= ExuRes.Alu
+	io.waterIdEx.In1	:= ExuIn1.R1
+	io.waterIdEx.In2	:= ExuIn2.R2
+
 	when(io.waterIfId.res === IfuRes.Valid){
 		val (opCode,opValid) = Op.safe(io.waterIfId.instr(6,0))
 		when(opValid){
@@ -20,6 +42,8 @@ class ysyx_26020046_idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 				is(Op.Branch)	{io.waterIdEx.res := Cat(Fill(20,io.waterIfId.instr(31)),io.waterIfId.instr(7),io.waterIfId.instr(30,25),io.waterIfId.instr(11,8),0.U(1.W))}
 				is(Op.Jal)		{io.waterIdEx.res := Cat(Fill(12,io.waterIfId.instr(31)),io.waterIfId.instr(19,12),io.waterIfId.instr(20),io.waterIfId.instr(30,21),0.U(1.W))}
 			}
+			
+
 		}
 	}
 }
