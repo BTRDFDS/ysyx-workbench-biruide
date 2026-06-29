@@ -29,7 +29,8 @@ class ysyx_26020046_idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 	io.waterIdEx.In1	:= ExuIn1.R1
 	io.waterIdEx.In2	:= ExuIn2.R2
 
-	val errAlu = WireInit(false.B)
+	val bValid	= WireInit(true.B)
+	val lsValid	= WireInit(true.B)
 
 	when(io.waterIfId.res === IfuRes.Valid){
 		val (opCode,opValid) = Op.safe(io.waterIfId.instr(6,0))
@@ -51,8 +52,8 @@ class ysyx_26020046_idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 				(opCode === Op.Icsr & io.waterIfId.instr(14,12) === 0.U(3.W))
 			){io.waterIdEx.enJcod := true.B}
 			switch(opCode){
-				is(Op.Uauipc)	{io.waterIdEx.alu := ExuAlu.Add}
-				is(Op.Ialu)		{
+				is(Op.Uauipc){io.waterIdEx.alu := ExuAlu.Add}
+				is(Op.Ialu){//后续可优化
 					switch(io.waterIfId.instr(14,12)){
 						is(0b000){io.waterIdEx.alu := ExuAlu.Add}
 						is(0b010){io.waterIdEx.alu := ExuAlu.Slt}
@@ -69,7 +70,7 @@ class ysyx_26020046_idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 						}
 					}
 				}
-				is(Op.Ralu)		{
+				is(Op.Ralu){
 					switch(io.waterIfId.instr(31,25)){
 						is(0b0000000){
 							switch(io.waterIfId.instr(14,12)){
@@ -107,8 +108,22 @@ class ysyx_26020046_idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 				is(Op.Ralu)		{io.waterIdEx.res := ExuRes.Alu}
 				is(Op.Ului)		{io.waterIdEx.res := ExuRes.Alu}
 				is(Op.Branch)	{io.waterIdEx.res := ExuRes.Null}
-				//TODO:地址好像会冲突
+				is(Op.Ijalr)	{io.waterIdEx.res := ExuRes.Snpc}
+				is(Op.Jal)		{io.waterIdEx.res := ExuRes.Snpc}
+				is(Op.Icsr)		{io.waterIdEx.res := ExuRes.Csr}
 			}
+			when(io.waterIfId.instr(6,0) === op.Branch){
+				val (bOp,bValidAll) = ExuBfu.safe(io.waterIfId.instr(14,12))
+				bValid := bValidAll & io.waterIfId.instr(14,12) =/= ExuBfu.Null.asUInt
+				when(bValid){io.waterIdEx.bfu := bOp}
+			}
+			when(io.waterIfId.instr(6,0) === op.Iload | io.waterIfId.instr(6,0) === op.Store){
+				val (lsOp,lsValidAll) = LsuOp.safe(io.waterIfId.instr(14,12))
+				lsValid := lsValidAll & io.waterIfId.instr(14,12) =/= LsuOp.Null.asUInt
+				when(lsValid){io.waterIdEx.lsu := lsOp}
+			}
+			io.waterIdEx.enS := io.waterIfId.instr(6,0) =/= op.Store
+			io.waterIdEx.enL := io.waterIfId.instr(6,0) =/= op.Iload
 		}
 	}
 }
