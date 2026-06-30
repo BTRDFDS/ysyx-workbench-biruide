@@ -3,7 +3,7 @@ import chisel3._
 import chisel3.util._
 
 object IfuRes extends ChiselEnum {val Null,valid,Un4b,Fall=Value}
-object ExuAlu extends ChiselEnum {val Add,Sll,Slt,Sltu,Xor,Srl,Or,And,Sub,Sra,ImR1,ImPc,Csr,Imm,Null,Error = Value(0b111.U)}
+object ExuAlu extends ChiselEnum {val Add,Sll,Slt,Sltu,Xor,Srl,Or,And,Sub,Sra,ImR1,ImPc,Csr,Imm,Null = Value(0b111.U)}
 object ExuBfu extends ChiselEnum {
 	val Beq	= Value(0b000.U)
 	val Bne	= Value(0b001.U)

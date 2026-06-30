@@ -40,7 +40,7 @@ class ImmBefore(val Width:Int=32)extends Bundle{
 	val wash	= Output(Bool())
 	val addr	= Output(UInt(Width.W))
 }
-class ImmAfter(Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)extends ImmBefore(Width){//WB不需要ready
+class ImmAfter(Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)extends ImmBefore(Width){
     val RegWidth= log2Ceil(RegNum)
 
 	val r1Addr	= Input(UInt(RegWidth.W))
@@ -50,8 +50,6 @@ class ImmAfter(Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)extends ImmBe
 
 	val csrAddr	= Input(UInt(CsrWidth.W))
 	val csrOut	= Output(UInt(Width.W))
-
-	val error	= Output(Bool())
 }
 class axi4Master (val Width:Int=32,val Strb:Int=4,val Resp:Int=2) extends Bundle {
 	val arvalid	= Output(Bool())

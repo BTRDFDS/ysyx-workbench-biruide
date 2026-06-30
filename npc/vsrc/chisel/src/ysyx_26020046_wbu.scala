@@ -69,7 +69,7 @@ class ysyx_26020046_WBU(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12,v
 	io.immWbLs.r1Out := Mux(io.immWbLs.r1Addr === 0.U, 0.U, gpr(io.immWbLs.r1Addr))
 	io.immWbLs.r2Out := Mux(io.immWbLs.r2Addr === 0.U, 0.U, gpr(io.immWbLs.r2Addr))
 
-	io.immWbLs.error := false.B
+	io.immWbLs.wash	 := false.B
 	val (csrReadAddr,csrReadValid)=CsrAddr.safe(io.immWbLs.csrAddr)
 	io.immWbLs.csrOut := 0.U
 	when(csrReadValid){
@@ -84,7 +84,7 @@ class ysyx_26020046_WBU(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12,v
 			is(CsrAddr.Mvendorid)	{io.immWbLs.csrOut := mvendorid}
 		}
 	}otherwise{
-		io.immWbLs.error	:= true.B
+		io.immWbLs.wash		:= true.B
 		io.immWbLs.csrOut	:= 0.U
 	}
 }
