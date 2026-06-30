@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 
-class ysyx_26020046_EXU(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12) extends Module {
+class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12) extends Module {
 	val io = IO(new Bundle {
         val waterIdEx	= Flipped(new WaterIdEx(Width))
 		val waterExLs	= new WaterExLs(Width)
@@ -15,7 +15,7 @@ class ysyx_26020046_EXU(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 	
 	io.waterExLs.enSave	:= io.waterIdEx.enSave
 	io.waterExLs.enLoad	:= io.waterIdEx.enLoad
-	io.waterExLs.lsOp	:= io.waterIdEx.lsOp
+	io.waterExLs.lsuOp	:= io.waterIdEx.lsuOp
 	io.waterExLs.r2		:= io.waterIdEx.r2
 	io.waterExLs.pc		:= io.waterIdEx.pc
 	io.waterExLs.csrOp	:= io.waterIdEx.csrOp
@@ -42,7 +42,7 @@ class ysyx_26020046_EXU(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 			is(ExuAlu.Sra)	{result := (input1.asSInt >> input2(4,0)).asUInt}
 			is(ExuAlu.ImR1)	{result := io.waterIdEx.result+io.waterIdEx.r1}
 			is(ExuAlu.ImPc)	{result := io.waterIdEx.result+io.waterIdEx.pc}
-			is(ExuAlu.Csr)	{result := io.waterIdEx.sr}
+			is(ExuAlu.Csr)	{result := io.waterIdEx.csrMesg}
 			is(ExuAlu.Null)	{result := 0.U}
 		}
 		switch(io.waterIdEx.bfu){
@@ -56,15 +56,15 @@ class ysyx_26020046_EXU(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 		}
 		switch(io.waterIdEx.csr){
 			is(ExuCsr.Read)	{io.waterExLs.csrMesg := io.waterIdEx.r1}
-			is(ExuCsr.Write){io.waterExLs.csrMesg := io.waterIdEx.r1|io.waterIdEx.sr}
-			is(ExuCsr.Jump){io.waterExLs.csrMesg := io.waterIdEx.pc}
+			is(ExuCsr.Write){io.waterExLs.csrMesg := io.waterIdEx.r1|io.waterIdEx.csrMesg}
+			is(ExuCsr.Jump)	{io.waterExLs.csrMesg := io.waterIdEx.pc}
 			is(ExuCsr.Null)	{io.waterExLs.csrMesg := 0.U}
 		}
 		switch(io.waterIdEx.res){
 			is(ExuRes.Alu)	{io.waterExLs.result := result}
-			is(ExuRes.Imm)	{io.waterExLs.result := io.waterIdEx.result}
+			is(ExuRes.Null)	{io.waterExLs.result := 0.U}
 			is(ExuRes.Snpc)	{io.waterExLs.result := io.waterIdEx.pc+4.U}
-			is(ExuRes.Csr)	{io.waterExLs.result := io.waterIdEx.sr}
+			is(ExuRes.Csr)	{io.waterExLs.result := io.waterIdEx.csrMesg}
 		}
 	}
 }

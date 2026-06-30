@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 
-class ysyx_26020046_WBU(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12,val PcReset:UInt=0x80000000L.U) extends Module {
+class ysyx_26020046_Wbu(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12,val PcReset:UInt=0x80000000L.U) extends Module {
 	val RegWidth = log2Ceil(RegNum)
 	val MstatuseReset = 0x1800.U(Width.W)
 	val ErrorMesg = 2.U(Width.W)
@@ -32,7 +32,7 @@ class ysyx_26020046_WBU(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12,v
 				mstatus	:= MstatuseReset//简化处理，只考虑M模式
 				mcause	:= 0.U
 			}
-			is(CsrOp.Error){
+			is(CsrOp.Trap){
 				mcycle	:= nextMcycle
 				error 	:= true.B
 				mepc	:= io.waterLsWb.pc

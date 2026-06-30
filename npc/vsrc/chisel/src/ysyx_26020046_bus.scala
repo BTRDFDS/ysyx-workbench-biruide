@@ -20,7 +20,7 @@ class WaterLsWb(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12) extends 
 class WaterExLs(Width:Int=32,RegNum:Int=32,CsrWidth:Int=12) extends WaterLsWb(Width,RegNum,CsrWidth){
 	val enSave	= Output(Bool())
 	val enLoad	= Output(Bool())
-	val lsOp	= Output(LsuOp())
+	val lsuOp	= Output(LsuOp())
 	val r2		= Output(UInt(Width.W))
 }
 class WaterIdEx(Width:Int=32,RegNum:Int=32,CsrWidth:Int=12) extends WaterExLs(Width,RegNum,CsrWidth){
@@ -33,7 +33,6 @@ class WaterIdEx(Width:Int=32,RegNum:Int=32,CsrWidth:Int=12) extends WaterExLs(Wi
 
 	val enJcod	=Output(Bool())
 	val r1		=Output(UInt(Width.W))
-	val sr		=Output(UInt(Width.W))
 }
 class ImmBefore(val Width:Int=32)extends Bundle{
 	val ready	= Output(Bool())
