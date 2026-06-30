@@ -11,7 +11,7 @@ object main extends App {
 			"locationInfoStyle=wrapInAtSquareBracket"
 		).reduce(_ + "," + _)
 	)
-	circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_26020046_Idu(), Array("--target-dir", "build"), firtoolOptions)
+	circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_26020046_Exu(), Array("--target-dir", "build"), firtoolOptions)
 }
 
 import chisel3._
