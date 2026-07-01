@@ -26,6 +26,6 @@ result/*-500MHz/*
 !result/*-500MHz*/*.pwr
 result/*-500MHz*/*_instance.pwr
 log/rv32iDebugLog.txt
-!vsrc/chisel/src/*
-!vsrc/chisel/build.mill
-!vsrc/chisel/Makefile
+!chisel/src/*
+!chisel/build.mill
+!chisel/Makefile
