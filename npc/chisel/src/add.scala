@@ -9,6 +9,6 @@ class add extends Module{
 	})
 	io.y := io.a + io.b
 	val reg = RegInit(0.U(32.W))
-	reg := io.a + io.b
+	reg := reg + 1.U
 	io.x := reg
 }
