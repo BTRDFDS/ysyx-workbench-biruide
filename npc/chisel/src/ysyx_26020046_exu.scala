@@ -3,44 +3,44 @@ import chisel3.util._
 
 class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12) extends Module {
 	val io = IO(new Bundle {
-        val waterIn		= Flipped(new WaterIdEx(Width))
-		val waterOut	= new WaterExLs(Width)
-		val immOut		= new ImmAfter(Width,RegNum,CsrWidth)
-		val immIn		= Flipped(new ImmAfter(Width,RegNum,CsrWidth))
+        val pipeIn		= Flipped(new PipeIdEx(Width))
+		val pipeOut	= new PipeExLs(Width)
+		val immeOut		= new ImmeAfter(Width,RegNum,CsrWidth)
+		val immeIn		= Flipped(new ImmeAfter(Width,RegNum,CsrWidth))
 	})
 	val result = WireInit(0.U(Width.W))
 	val enBfun = WireInit(false.B)
 	
-	io.waterOut.enSave	:= io.waterIn.enSave
-	io.waterOut.enLoad	:= io.waterIn.enLoad
-	io.waterOut.lsuOp	:= io.waterIn.lsuOp
-	io.waterOut.r2		:= io.waterIn.r2
-	io.waterOut.pc		:= io.waterIn.pc
-	io.waterOut.csrOp	:= io.waterIn.csrOp
-	io.waterOut.csrAddr	:= io.waterIn.csrAddr
-	io.waterOut.valid	:= io.waterIn.valid
-	io.waterOut.rdAddr	:= io.waterIn.rdAddr
-	io.waterOut.result 	:= 0.U
-	io.waterOut.csrMesg	:= io.waterIn.csrMesg
+	io.pipeOut.enSave	:= io.pipeIn.enSave
+	io.pipeOut.enLoad	:= io.pipeIn.enLoad
+	io.pipeOut.lsuOp	:= io.pipeIn.lsuOp
+	io.pipeOut.r2		:= io.pipeIn.r2
+	io.pipeOut.pc		:= io.pipeIn.pc
+	io.pipeOut.csrOp	:= io.pipeIn.csrOp
+	io.pipeOut.csrAddr	:= io.pipeIn.csrAddr
+	io.pipeOut.valid	:= io.pipeIn.valid
+	io.pipeOut.rdAddr	:= io.pipeIn.rdAddr
+	io.pipeOut.result 	:= 0.U
+	io.pipeOut.csrMesg	:= io.pipeIn.csrMesg
 	
-	io.immOut.ready		:= io.immIn.ready
-	io.immOut.wash		:= false.B
-	io.immOut.addr		:= 0.U
-	io.immOut.r1Out		:= io.immIn.r1Out
-	io.immOut.r2Out		:= io.immIn.r2Out
-	io.immOut.csrOut	:= io.immIn.csrOut
-	io.immIn.r1Addr		:= io.immOut.r1Addr
-	io.immIn.r2Addr		:= io.immOut.r2Addr
-	io.immIn.csrAddr	:= io.immOut.csrAddr
+	io.immeOut.ready	:= io.immeIn.ready
+	io.immeOut.flush	:= false.B
+	io.immeOut.addr		:= 0.U
+	io.immeOut.r1Out	:= io.immeIn.r1Out
+	io.immeOut.r2Out	:= io.immeIn.r2Out
+	io.immeOut.csrOut	:= io.immeIn.csrOut
+	io.immeIn.r1Addr	:= io.immeOut.r1Addr
+	io.immeIn.r2Addr	:= io.immeOut.r2Addr
+	io.immeIn.csrAddr	:= io.immeOut.csrAddr
 
-	when(io.immIn.wash){
-		io.immOut.wash	:= io.immIn.wash
-		io.immOut.addr	:= io.immIn.addr
+	when(io.immeIn.flush){
+		io.immeOut.flush:= io.immeIn.flush
+		io.immeOut.addr	:= io.immeIn.addr
 	}otherwise{
-		when(io.waterIn.valid){
-			val input1 = Mux(io.waterIn.In1 === ExuIn1.R1, io.waterIn.r1, io.waterIn.pc)
-			val input2 = Mux(io.waterIn.In2 === ExuIn2.R2, io.waterIn.r2, io.waterIn.result)
-			switch(io.waterIn.alu){
+		when(io.pipeIn.valid){
+			val input1 = Mux(io.pipeIn.In1 === ExuIn1.R1, io.pipeIn.r1, io.pipeIn.pc)
+			val input2 = Mux(io.pipeIn.In2 === ExuIn2.R2, io.pipeIn.r2, io.pipeIn.result)
+			switch(io.pipeIn.alu){
 				is(ExuAlu.Add)	{result := input1 + input2}
 				is(ExuAlu.Sll)	{result := input1 << input2(4,0)}
 				is(ExuAlu.Slt)	{result := input1.asSInt < input2.asSInt}
@@ -51,31 +51,32 @@ class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 				is(ExuAlu.And)	{result := input1 & input2}
 				is(ExuAlu.Sub)	{result := input1 - input2}
 				is(ExuAlu.Sra)	{result := (input1.asSInt >> input2(4,0)).asUInt}
-				is(ExuAlu.ImR1)	{result := io.waterIn.result+io.waterIn.r1}
-				is(ExuAlu.ImPc)	{result := io.waterIn.result+io.waterIn.pc}
-				is(ExuAlu.Csr)	{result := io.waterIn.csrMesg}
+				is(ExuAlu.ImR1)	{result := io.pipeIn.result+io.pipeIn.r1}
+				is(ExuAlu.ImPc)	{result := io.pipeIn.result+io.pipeIn.pc}
+				is(ExuAlu.Csr)	{result := io.pipeIn.csrMesg}
+				is(ExuAlu.Imm)	{result := io.pipeIn.result}
 			}
-			switch(io.waterIn.bfu){
-				is(ExuBfu.Beq)	{enBfun := io.waterIn.r1 === io.waterIn.r2}
-				is(ExuBfu.Bne)	{enBfun := io.waterIn.r1 =/= io.waterIn.r2}
-				is(ExuBfu.Blt)	{enBfun := io.waterIn.r1.asSInt < io.waterIn.r2.asSInt}
-				is(ExuBfu.Bge)	{enBfun := io.waterIn.r1.asSInt >= io.waterIn.r2.asSInt}
-				is(ExuBfu.Bltu)	{enBfun := io.waterIn.r1 < io.waterIn.r2}
-				is(ExuBfu.Bgeu)	{enBfun := io.waterIn.r1 >= io.waterIn.r2}
+			switch(io.pipeIn.bfu){
+				is(ExuBfu.Beq)	{enBfun := io.pipeIn.r1 === io.pipeIn.r2}
+				is(ExuBfu.Bne)	{enBfun := io.pipeIn.r1 =/= io.pipeIn.r2}
+				is(ExuBfu.Blt)	{enBfun := io.pipeIn.r1.asSInt < io.pipeIn.r2.asSInt}
+				is(ExuBfu.Bge)	{enBfun := io.pipeIn.r1.asSInt >= io.pipeIn.r2.asSInt}
+				is(ExuBfu.Bltu)	{enBfun := io.pipeIn.r1 < io.pipeIn.r2}
+				is(ExuBfu.Bgeu)	{enBfun := io.pipeIn.r1 >= io.pipeIn.r2}
 			}
-			switch(io.waterIn.csr){
-				is(ExuCsr.Read)	{io.waterOut.csrMesg := io.waterIn.r1}
-				is(ExuCsr.Write){io.waterOut.csrMesg := io.waterIn.r1|io.waterIn.csrMesg}
+			switch(io.pipeIn.csr){
+				is(ExuCsr.Read)	{io.pipeOut.csrMesg := io.pipeIn.r1}
+				is(ExuCsr.Write){io.pipeOut.csrMesg := io.pipeIn.r1|io.pipeIn.csrMesg}
 			}
-			switch(io.waterIn.res){
-				is(ExuRes.Alu)	{io.waterOut.result := result}
-				is(ExuRes.Null)	{io.waterOut.result := 0.U}
-				is(ExuRes.Snpc)	{io.waterOut.result := io.waterIn.pc+4.U}
-				is(ExuRes.Csr)	{io.waterOut.result := io.waterIn.csrMesg}
+			switch(io.pipeIn.res){
+				is(ExuRes.Alu)	{io.pipeOut.result := result}
+				is(ExuRes.Null)	{io.pipeOut.result := 0.U}
+				is(ExuRes.Snpc)	{io.pipeOut.result := io.pipeIn.pc+4.U}
+				is(ExuRes.Csr)	{io.pipeOut.result := io.pipeIn.csrMesg}
 			}
-			val enJfun = io.waterIn.enJcod | enBfun
-			io.immOut.wash	:= enJfun
-			when(enJfun){io.immOut.addr := result}
+			val enJfun = io.pipeIn.enJcod | enBfun
+			io.immeOut.flush	:= enJfun
+			when(enJfun){io.immeOut.addr := result}
 		}
 	}
 }
