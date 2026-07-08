@@ -49,7 +49,7 @@ class ImmeAfter(Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)extends Imme
 	val csrAddr	= Input(UInt(CsrWidth.W))
 	val csrOut	= Output(UInt(Width.W))
 }
-class axi4Master (val Width:Int=32,val Strb:Int=4,val Resp:Int=2) extends Bundle {
+class Axi4Master (val Width:Int=32,val Strb:Int=4,val Resp:Int=2) extends Bundle {
 	val arvalid	= Output(Bool())
 	val rready	= Output(Bool())
     val araddr	= Output(UInt(Width.W))
