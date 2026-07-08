@@ -8,8 +8,6 @@ class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 		val immeOut		= new ImmeAfter(Width,RegNum,CsrWidth)
 		val immeIn		= Flipped(new ImmeAfter(Width,RegNum,CsrWidth))
 	})
-	val result = WireInit(0.U(Width.W))
-	val enBfun = WireInit(false.B)
 	
 	io.pipeOut.enSave	:= io.pipeIn.enSave
 	io.pipeOut.enLoad	:= io.pipeIn.enLoad
@@ -23,8 +21,7 @@ class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 	io.pipeOut.result 	:= 0.U
 	io.pipeOut.csrMesg	:= io.pipeIn.csrMesg
 	
-	io.immeOut.ready	:= io.immeIn.ready
-	io.immeOut.flush	:= false.B
+	io.immeOut.back		:= io.immeIn.back
 	io.immeOut.addr		:= 0.U
 	io.immeOut.r1Out	:= io.immeIn.r1Out
 	io.immeOut.r2Out	:= io.immeIn.r2Out
@@ -33,13 +30,15 @@ class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 	io.immeIn.r2Addr	:= io.immeOut.r2Addr
 	io.immeIn.csrAddr	:= io.immeOut.csrAddr
 
-	when(io.immeIn.flush){
-		io.immeOut.flush:= io.immeIn.flush
-		io.immeOut.addr	:= io.immeIn.addr
-	}otherwise{
-		when(io.pipeIn.valid){
+	switch(io.immeIn.back){
+		is(Back.Error){
+			io.immeOut.back	:= Back.Error
+			io.immeOut.addr	:= io.immeIn.addr
+		}
+		is(Back.Ready){when(io.pipeIn.valid){
 			val input1 = Mux(io.pipeIn.In1 === ExuIn1.R1, io.pipeIn.r1, io.pipeIn.pc)
 			val input2 = Mux(io.pipeIn.In2 === ExuIn2.R2, io.pipeIn.r2, io.pipeIn.result)
+			val result = WireInit(0.U(Width.W))
 			switch(io.pipeIn.alu){
 				is(ExuAlu.Add)	{result := input1 + input2}
 				is(ExuAlu.Sll)	{result := input1 << input2(4,0)}
@@ -56,6 +55,7 @@ class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 				is(ExuAlu.Csr)	{result := io.pipeIn.csrMesg}
 				is(ExuAlu.Imm)	{result := io.pipeIn.result}
 			}
+			val enBfun = WireInit(false.B)
 			switch(io.pipeIn.bfu){
 				is(ExuBfu.Beq)	{enBfun := io.pipeIn.r1 === io.pipeIn.r2}
 				is(ExuBfu.Bne)	{enBfun := io.pipeIn.r1 =/= io.pipeIn.r2}
@@ -74,9 +74,11 @@ class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 				is(ExuRes.Snpc)	{io.pipeOut.result := io.pipeIn.pc+4.U}
 				is(ExuRes.Csr)	{io.pipeOut.result := io.pipeIn.csrMesg}
 			}
-			val enJfun = io.pipeIn.enJcod | enBfun
-			io.immeOut.flush	:= enJfun
-			when(enJfun){io.immeOut.addr := result}
-		}
+			when(io.pipeIn.enJcod | enBfun){
+				io.immeOut.addr := result
+				io.immeOut.back := Back.Jump
+			}otherwise{io.immeOut.back := Back.Ready}
+		}}
+		is(Back.Wait){io.immeOut.back := Back.Wait}
 	}
 }

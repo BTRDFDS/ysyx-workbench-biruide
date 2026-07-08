@@ -28,9 +28,8 @@ class ysyx_26020046_Idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 	io.pipeOut.In1		:= ExuIn1.R1
 	io.pipeOut.In2		:= ExuIn2.R2
 
-	io.immeOut.ready	:= io.immeIn.ready
-	io.immeOut.flush	:= io.immeIn.flush
-	io.immeOut.addr		:= io.immeIn.addr
+	io.immeOut.back	:= io.immeIn.back
+	io.immeOut.addr	:= io.immeIn.addr
 
 	io.immeIn.r1Addr	:= 0.U
 	io.immeIn.r2Addr	:= 0.U
