@@ -14,8 +14,7 @@ class ysyx_26020046_Idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 	io.pipeOut.pc		:= io.pipeIn.pc
 	io.pipeOut.csrOp	:= CsrOp.Trap
 	io.pipeOut.csrAddr	:= 2.U//Illegal Instruction
-	io.pipeOut.enSave	:= false.B
-	io.pipeOut.enLoad	:= false.B
+	io.pipeOut.lsuAddr	:= LsuAddr.B//000
 	io.pipeOut.lsuOp	:= LsuOp.Null
 	io.pipeOut.r2		:= io.immeIn.r2Out
 	io.pipeOut.r1		:= io.immeIn.r1Out
@@ -121,13 +120,15 @@ class ysyx_26020046_Idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 				val (bfuEnum,bfuValidAll) = ExuBfu.safe(funct3)
 				bfuValid := bfuValidAll & funct3 =/= ExuBfu.Null.asUInt
 				when(bfuValid){io.pipeOut.bfu := bfuEnum}
-			}	
-			io.pipeOut.enSave := opEnum === Op.Store
-			io.pipeOut.enLoad := opEnum === Op.Iload
+			}
+			switch(opEnum){
+				is(Op.Store){io.pipeOut.lsuOp := LsuOp.Store}
+				is(Op.Iload){io.pipeOut.lsuOp := LsuOp.Load}
+			}
 			when(opEnum === Op.Iload | opEnum === Op.Store){
-				val (lsuEnum,lsuValidAll) = LsuOp.safe(funct3)
+				val (lsuEnum,lsuValidAll) = LsuAddr.safe(funct3)
 				lsuValid := lsuValidAll & funct3 =/= LsuOp.Null.asUInt
-				when(lsuValid){io.pipeOut.lsuOp := lsuEnum}
+				when(lsuValid){io.pipeOut.lsuAddr := lsuEnum}
 			}
 			io.pipeOut.rdAddr := rdAddr
 			switch(opEnum){

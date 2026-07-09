@@ -18,7 +18,14 @@ object ExuCsr extends ChiselEnum {val Read,Write,Null = Value}
 object ExuRes extends ChiselEnum {val Alu,Snpc,Csr,Null = Value}
 object ExuIn1 extends ChiselEnum {val R1,Pc = Value}
 object ExuIn2 extends ChiselEnum {val R2,Imm = Value}
-object LsuOp extends ChiselEnum {val B,H,W,Null,Bu,Hu = Value}
+object LsuAddr extends ChiselEnum {
+	val B	= Value(0b000.U)
+	val H	= Value(0b001.U)
+	val W	= Value(0b010.U)
+	val Bu	= Value(0b100.U)
+	val Hu	= Value(0b101.U)
+}
+object LsuOp extends ChiselEnum {val Null,Load,Store = Value}
 object CsrOp extends ChiselEnum {val Mret,Trap,Write,Null = Value}
 object CsrAddr extends ChiselEnum {
 	val Mstatus		=Value(0x300.U)

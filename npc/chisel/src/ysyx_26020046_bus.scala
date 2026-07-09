@@ -18,9 +18,8 @@ class PipeLsWb(val Width:Int=32,val RegNum:Int=32,val CsrWidth:Int=12) extends B
 	val csrMesg	= Output(UInt(Width.W))
 }
 class PipeExLs(Width:Int=32,RegNum:Int=32,CsrWidth:Int=12) extends PipeLsWb(Width,RegNum,CsrWidth){
-	val enSave	= Output(Bool())
-	val enLoad	= Output(Bool())
 	val lsuOp	= Output(LsuOp())
+	val lsuAddr	= Output(LsuAddr())
 	val r2		= Output(UInt(Width.W))
 }
 class PipeIdEx(Width:Int=32,RegNum:Int=32,CsrWidth:Int=12) extends PipeExLs(Width,RegNum,CsrWidth){

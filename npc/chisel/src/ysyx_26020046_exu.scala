@@ -9,8 +9,7 @@ class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 		val immeIn		= Flipped(new ImmeAfter(Width,RegNum,CsrWidth))
 	})
 	
-	io.pipeOut.enSave	:= io.pipeIn.enSave
-	io.pipeOut.enLoad	:= io.pipeIn.enLoad
+	io.pipeOut.lsuAddr	:= io.pipeIn.lsuAddr
 	io.pipeOut.lsuOp	:= io.pipeIn.lsuOp
 	io.pipeOut.r2		:= io.pipeIn.r2
 	io.pipeOut.pc		:= io.pipeIn.pc
