@@ -1,11 +1,12 @@
 import chisel3._
 import chisel3.util._
-class ysyx_26020046_Idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12) extends Module{
+import WidthConsts._
+class ysyx_26020046_Idu extends Module{
 	val io = IO(new Bundle{
-		val pipeIn	= Flipped(new PipeIfId(Width))
-		val pipeOut	= new PipeIdEx(Width,RegNum,CsrWidth)
-		val immeOut	= new ImmeBefore(Width)
-		val immeIn	= Flipped(new ImmeAfter(Width,RegNum,CsrWidth))
+		val pipeIn	= Flipped(new PipeIfId())
+		val pipeOut	= new PipeIdEx()
+		val immeOut	= new ImmeBefore()
+		val immeIn	= Flipped(new ImmeAfter())
 	})
 	//默认值
 	io.pipeOut.valid	:= false.B
@@ -48,7 +49,7 @@ class ysyx_26020046_Idu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 		val csrValid = WireInit(true.B)
 
 		val csrOp	= WireInit(CsrOp.Null)
-		val csrMesg = WireInit(0.U(Width.W))
+		val csrMesg = WireInit(0.U(BitWidth.W))
 
 		val (opEnum,opValid) = Op.safe(opCode)
 		when(opValid){

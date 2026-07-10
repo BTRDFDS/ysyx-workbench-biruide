@@ -1,11 +1,13 @@
 import chisel3._
 import chisel3.util._
+import WidthConsts._
 
 object IfuStatus extends ChiselEnum{val Back,Call,Func=Value}
-class ysyx_26020046_Ifu(val Width:Int=32, val RegNum:Int=32,val PcInit:UInt=0x80000000L.U) extends Module{
+class ysyx_26020046_Ifu extends Module{
+	val PcInit:UInt=0x80000000L.U
 	val io = IO(new Bundle{
-		val pipeOut = new PipeIfId(Width)
-		val immeIn  = Flipped(new ImmeBefore(Width))
+		val pipeOut = new PipeIfId()
+		val immeIn  = Flipped(new ImmeBefore())
 		val axi4    = new Axi4Master()
 	})
 	//FSM
@@ -25,7 +27,7 @@ class ysyx_26020046_Ifu(val Width:Int=32, val RegNum:Int=32,val PcInit:UInt=0x80
 		}
 		io.pipeOut.pc	:= pc
 	//输出指令
-		val instr = RegInit(0.U(Width.W))
+		val instr = RegInit(0.U(BitWidth.W))
 		when(status === IfuStatus.Back & io.axi4.rvalid === true.B){instr := io.axi4.rdata}
 		io.pipeOut.instr := instr
 	//输出状态

@@ -1,12 +1,13 @@
 import chisel3._
 import chisel3.util._
+import WidthConsts._
 
-class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12) extends Module {
+class ysyx_26020046_Exu extends Module {
 	val io = IO(new Bundle {
-        val pipeIn		= Flipped(new PipeIdEx(Width))
-		val pipeOut	= new PipeExLs(Width)
-		val immeOut		= new ImmeAfter(Width,RegNum,CsrWidth)
-		val immeIn		= Flipped(new ImmeAfter(Width,RegNum,CsrWidth))
+        val pipeIn	= Flipped(new PipeIdEx())
+		val pipeOut	= new PipeExLs()
+		val immeOut	= new ImmeAfter()
+		val immeIn	= Flipped(new ImmeAfter())
 	})
 	
 	io.pipeOut.lsuAddr	:= io.pipeIn.lsuAddr
@@ -37,7 +38,7 @@ class ysyx_26020046_Exu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 		is(Back.Ready){when(io.pipeIn.valid){
 			val input1 = Mux(io.pipeIn.In1 === ExuIn1.R1, io.pipeIn.r1, io.pipeIn.pc)
 			val input2 = Mux(io.pipeIn.In2 === ExuIn2.R2, io.pipeIn.r2, io.pipeIn.result)
-			val result = WireInit(0.U(Width.W))
+			val result = WireInit(0.U(BitWidth.W))
 			switch(io.pipeIn.alu){
 				is(ExuAlu.Add)	{result := input1 + input2}
 				is(ExuAlu.Sll)	{result := input1 << input2(4,0)}

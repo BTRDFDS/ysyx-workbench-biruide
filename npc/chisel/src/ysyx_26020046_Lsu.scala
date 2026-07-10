@@ -1,14 +1,15 @@
 import chisel3._
 import chisel3.util._
+import WidthConsts._
 
 object LsuStatus extends ChiselEnum{val Back,Call,Idle,Suce=Value}
 
-class ysyx_26020046_Lsu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12) extends Module{
+class ysyx_26020046_Lsu extends Module{
 	val io = IO(new Bundle{
-		val pipeIn  = Flipped(new PipeExLs(Width,RegNum))
-		val pipeOut	= new PipeLsWb(Width,RegNum)
-		val immeIn	= Flipped(new ImmeAfter(Width,RegNum,CsrWidth))
-		val immeOut = new ImmeAfter(Width,RegNum,CsrWidth)
+		val pipeIn  = Flipped(new PipeExLs())
+		val pipeOut	= new PipeLsWb()
+		val immeIn	= Flipped(new ImmeAfter())
+		val immeOut = new ImmeAfter()
 		val axi4	= new Axi4Master()
 	})
 	io.pipeOut.valid	:= false.B
@@ -97,7 +98,7 @@ class ysyx_26020046_Lsu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 				}
 			}
 			is(LsuOp.Load){
-				io.axi4.araddr	:= Cat(io.pipeIn.result(Width-1,2),0.U(2.W))
+				io.axi4.araddr	:= Cat(io.pipeIn.result(BitWidth-1,2),0.U(2.W))
 				io.axi4.arvalid	:= status === LsuStatus.Call
 				io.axi4.rready	:= status === LsuStatus.Back
 			}
@@ -109,14 +110,14 @@ class ysyx_26020046_Lsu(val Width:Int=32, val RegNum:Int=32,val CsrWidth:Int=12)
 			}
 		}
 		when(io.pipeIn.lsuOp === LsuOp.Load){
-			val rdata = RegInit(0.U(Width.W))
+			val rdata = RegInit(0.U(BitWidth.W))
 			when(status === LsuStatus.Back & io.axi4.rvalid){rdata := io.axi4.rdata >> (8.U * io.pipeIn.result(1,0))}
 			switch(io.pipeIn.lsuAddr){
-				is(LsuAddr.B ){io.pipeOut.result := Cat(Fill(Width-8,	io.axi4.rdata(7)),	io.axi4.rdata(7,0))}
-				is(LsuAddr.H ){io.pipeOut.result := Cat(Fill(Width-16,	io.axi4.rdata(15)),	io.axi4.rdata(15,0))}
+				is(LsuAddr.B ){io.pipeOut.result := Cat(Fill(BitWidth-8,	io.axi4.rdata(7)),	io.axi4.rdata(7,0))}
+				is(LsuAddr.H ){io.pipeOut.result := Cat(Fill(BitWidth-16,	io.axi4.rdata(15)),	io.axi4.rdata(15,0))}
 				is(LsuAddr.W ){io.pipeOut.result := rdata}
-				is(LsuAddr.Bu){io.pipeOut.result := Cat(0.U((Width-8).W),	io.axi4.rdata(7,0))}
-				is(LsuAddr.Hu){io.pipeOut.result := Cat(0.U((Width-16).W),	io.axi4.rdata(15,0))}
+				is(LsuAddr.Bu){io.pipeOut.result := Cat(0.U((BitWidth-8).W),	io.axi4.rdata(7,0))}
+				is(LsuAddr.Hu){io.pipeOut.result := Cat(0.U((BitWidth-16).W),	io.axi4.rdata(15,0))}
 			}
 		}
 	}
