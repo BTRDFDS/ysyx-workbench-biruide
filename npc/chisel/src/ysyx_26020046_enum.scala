@@ -37,9 +37,6 @@ object CsrAddr extends ChiselEnum {
 	val Mvendorid	=Value(0xF11.U)
 	val Marchid		=Value(0xF12.U)
 }
-		// parameter OP_CSR_ECALL_	= 32'h00000073;
-		// parameter OP_CSR_EBREAK	= 32'h00100073;
-		// parameter OP_CSR_MRET__	= 32'h30200073;
 object Op extends ChiselEnum {
 	val Iload	= Value(0b0000011.U)
 	val Ialu	= Value(0b0010011.U)

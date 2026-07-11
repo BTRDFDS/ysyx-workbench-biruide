@@ -85,6 +85,7 @@ class ysyx_26020046_Wbu() extends Module {
 	when(error){//返回状态
 		io.immeOut.back := Back.Error
 		io.immeOut.addr	:= mtvec
+		stop()
 	}otherwise{
 		io.immeOut.back := Back.Ready
 		io.immeOut.addr	:= 0.U	

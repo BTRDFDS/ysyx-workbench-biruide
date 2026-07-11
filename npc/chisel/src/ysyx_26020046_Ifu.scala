@@ -33,7 +33,7 @@ class ysyx_26020046_Ifu extends Module{
 	//输出状态
 		io.pipeOut.res	:= IfuRes.Null
 		switch(status){
-			is(IfuStatus.Back){when(io.axi4.rvalid =/= 0.U){io.pipeOut.res := IfuRes.Fall}}
+			is(IfuStatus.Back){when(io.axi4.rresp =/= 0.U){io.pipeOut.res := IfuRes.Fall}}
 			is(IfuStatus.Func){io.pipeOut.res := IfuRes.Valid}
 			is(IfuStatus.Call){when(pc(1,0) =/= 0.U){io.pipeOut.res := IfuRes.Un4b}}
 		}
