@@ -93,6 +93,23 @@ ifeq ($(t),sCpu)
 	tVd+= $(NPC_HOME)/vsrc/chisel/build/Seg.sv
 endif
 # tVd+= $(NPC_HOME)/vsrc/module/ysyx_26020046_Mux.sv
+ifeq ($(t),rv32iChisel)
+	tF=ysyx_26020046
+	tT=ysyxSoCFull
+	tVd += $(shell find $(NPC_HOME)/chisel/build -type f -name "*.sv")
+	VERILATOR_VLT += $(NPC_HOME)/trace/ysyxsocTrace.vlt
+	VERILATOR_CFLAGS += -I$(NPC_HOME)/vsrc/rv32i/main/
+	VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
+	tVd += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
+	tVd += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
+	SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/uart16550/rtl
+	SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
+	SOC_CFLAGS += --timescale "1ns/1ns"
+	SOC_CFLAGS += --no-timing
+	tCd += $(NPC_HOME)/csrc/npcSdb/*
+	tCd += $(NPC_HOME)/csrc/npcTrace/*
+	tCd += $(NPC_HOME)/csrc/npcDifftest/*
+endif
 
 bin/%: $(tVd) $(tCd) | build/$(tF) bin
 
