@@ -1,7 +1,0 @@
-Instance Name,Nominal Voltage,Internal Power,Switch Power,Leakage Power,Total Power
-r1.dout_0__reg_p,1.2,7.928e-07,0.000e+00,6.417e-09,7.993e-07
-r2.dout_0__reg_p,1.2,5.946e-07,0.000e+00,6.203e-09,6.008e-07
-out_reg_p,1.2,3.968e-07,0.000e+00,6.084e-09,4.029e-07
-in_NOR2BX1H7L_AN,1.2,2.444e-07,0.000e+00,1.369e-09,2.458e-07
-r1.dout_0__NOR2BX0P5H7L_AN,1.2,1.443e-07,0.000e+00,1.407e-09,1.457e-07
-r2.dout_0__NOR2BX0P5H7L_AN,1.2,9.618e-08,0.000e+00,1.502e-09,9.768e-08

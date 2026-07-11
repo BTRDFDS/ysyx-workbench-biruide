@@ -1,4 +1,0 @@
-Generate the report at 2026-02-03T19:23:04, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
-+-----------+-------------+----------+-----------+-------------+------+
-| Net / Pin | MaxSlewTime | SlewTime | SlewSlack | LibCellPort | Note |
-+-----------+-------------+----------+-----------+-------------+------+
