@@ -1,13 +1,14 @@
 object Elaborate extends App {
 	val firtoolOptions = Array(
-		"--default-layer-specialization=enable",
+		// "--default-layer-specialization=enable",
 		"--verification-flavor=immediate",
 		// "--disable-all-randomization",//禁用随机化，这样子生成的文件就不会有一大堆宏定义
 		"--lowering-options=" + List(
 			// make yosys happy
 			// see https://github.com/llvm/circt/blob/main/docs/VerilogGeneration.md
 			"disallowLocalVariables",
-			"disallowPackedArrays"
+			"disallowPackedArrays",
+			"locationInfoStyle=wrapInAtSquareBracket"
 		).reduce(_ + "," + _)
 	)
 	circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_26020046, firtoolOptions)
