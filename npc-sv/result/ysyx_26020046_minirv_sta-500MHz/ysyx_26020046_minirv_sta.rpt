@@ -1,0 +1,548 @@
+Generate the report at 2026-02-26T15:46:53, GitVersion: aa25008b3778a76ae1975c839d4cc459f7f7b3b7.
++---------------------------------------+-------------+------------+------------+---------------+-------+-------+-----------+
+| Endpoint                              | Clock Group | Delay Type | Path Delay | Path Required | CPPR  | Slack | Freq(MHz) |
++---------------------------------------+-------------+------------+------------+---------------+-------+-------+-----------+
+| ysyx_26020046_Reg.gpr[6]_29__reg_p:D  | core_clock  | max        | 1.143f     | 1.950         | 0.000 | 0.807 | 838.002   |
+| ysyx_26020046_Reg.gpr[9]_29__reg_p:D  | core_clock  | max        | 1.143f     | 1.950         | 0.000 | 0.807 | 838.002   |
+| ysyx_26020046_Reg.gpr[19]_29__reg_p:D | core_clock  | max        | 1.143f     | 1.950         | 0.000 | 0.807 | 838.002   |
+| ysyx_26020046_Reg.gpr[21]_29__reg_p:D | core_clock  | max        | 1.143f     | 1.950         | 0.000 | 0.807 | 838.002   |
+| ysyx_26020046_Reg.gpr[13]_29__reg_p:D | core_clock  | max        | 1.143f     | 1.950         | 0.000 | 0.807 | 838.002   |
+| pc[2]_reg_p:D                         | core_clock  | min        | 0.138f     | -0.008        | 0.000 | 0.146 | NA        |
+| pc[11]_reg_p:D                        | core_clock  | min        | 0.158f     | -0.008        | 0.000 | 0.166 | NA        |
+| pc[12]_reg_p:D                        | core_clock  | min        | 0.159f     | -0.008        | 0.000 | 0.167 | NA        |
+| pc[7]_reg_p:D                         | core_clock  | min        | 0.160f     | -0.008        | 0.000 | 0.168 | NA        |
+| pc[2]_reg_p:D                         | core_clock  | min        | 0.154r     | -0.018        | 0.000 | 0.171 | NA        |
++---------------------------------------+-------------+------------+------------+---------------+-------+-------+-----------+
++------------+------------+-------+
+| Clock      | Delay Type | TNS   |
++------------+------------+-------+
+| core_clock | max        | 0.000 |
+| core_clock | min        | 0.000 |
++------------+------------+-------+
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                                                                                              | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                                                                                         |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[2]_reg_p:Q (DFFQX1H7L)                                                                                          |        | 0.006       | 0.000      | 0.066      |             | 0.111  | 0.111r          |
+| pc_2_ (net)                                                                                                        | 7      |             |            |            | 0.000       |        |                 |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:A (NAND4X1P4H7L)                                   |        | 0.001       | 0.000      | 0.066      |             | 0.000  | 0.111r          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                                   |        | 0.003       | 0.000      | 0.093      |             | 0.073  | 0.184f          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                             | 4      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:A (NOR3X1P4H7L)                    |        | 0.001       | 0.000      | 0.093      |             | 0.000  | 0.184f          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:Y (NOR3X1P4H7L)                    |        | 0.002       | 0.000      | 0.079      |             | 0.072  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:B (NAND2X0P5H7L)                  |        | 0.001       | 0.000      | 0.079      |             | 0.000  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:Y (NAND2X0P5H7L)                  |        | 0.003       | 0.000      | 0.064      |             | 0.054  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                            | 3      |             |            |            | 0.000       |        |                 |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:B (NOR3BX1P4H7L)                                  |        | 0.001       | 0.000      | 0.064      |             | 0.000  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:Y (NOR3BX1P4H7L)                                  |        | 0.004       | 0.000      | 0.130      |             | 0.097  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:D (NAND4X1P4H7L)                                 |        | 0.001       | 0.000      | 0.130      |             | 0.000  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:Y (NAND4X1P4H7L)                                 |        | 0.004       | 0.000      | 0.107      |             | 0.082  | 0.490f          |
+| pc[20]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XOR2X0P5H7L_Y_B (net)                                            | 4      |             |            |            | 0.000       |        |                 |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:B (NOR3BX1P4H7L) |        | 0.001       | 0.000      | 0.107      |             | 0.000  | 0.490f          |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:Y (NOR3BX1P4H7L) |        | 0.004       | 0.000      | 0.132      |             | 0.108  | 0.598r          |
+| pc[23]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XNOR2X0P5H7L_Y_B (net)                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:D (NAND4X1P4H7L)                  |        | 0.001       | 0.000      | 0.132      |             | 0.000  | 0.598r          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                  |        | 0.002       | 0.000      | 0.081      |             | 0.062  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:B (NOR2BX1P4H7L)                  |        | 0.001       | 0.000      | 0.081      |             | 0.000  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:Z (NOR2BX1P4H7L)                  |        | 0.004       | 0.000      | 0.090      |             | 0.074  | 0.734r          |
+| pc[27]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:C (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.090      |             | 0.000  | 0.734r          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:Y (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.053      |             | 0.042  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                        | 1      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:B (XNOR2X0P5H7L)                               |        | 0.001       | 0.000      | 0.053      |             | 0.000  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:Y (XNOR2X0P5H7L)                               |        | 0.002       | 0.000      | 0.035      |             | 0.079  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1 (net)                                                         | 2      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:B (NOR2X1P4H7L)                                 |        | 0.001       | 0.000      | 0.035      |             | 0.000  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:Y (NOR2X1P4H7L)                                 |        | 0.007       | 0.000      | 0.151      |             | 0.097  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B (net)                                                                               | 9      |             |            |            | 0.000       |        |                 |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:A (BUFX1H7L)                                                             |        | 0.001       | 0.000      | 0.151      |             | 0.000  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:Y (BUFX1H7L)                                                             |        | 0.019       | 0.000      | 0.240      |             | 0.161  | 1.114r          |
+| iRd_29__NOR2X0P5H7L_Y_B (net)                                                                                      | 24     |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[6]_29__reg_p_D_NOR3X0P5H7L_Y:B (NOR3X0P5H7L)                                                 |        | 0.001       | 0.000      | 0.240      |             | 0.000  | 1.114r          |
+| ysyx_26020046_Reg.gpr[6]_29__reg_p_D_NOR3X0P5H7L_Y:Y (NOR3X0P5H7L)                                                 |        | 0.001       | 0.000      | 0.063      |             | 0.030  | 1.143f          |
+| ysyx_26020046_Reg.gpr[6]_29__reg_p_D (net)                                                                         | 1      |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[6]_29__reg_p:D (DFFQX1H7L)                                                                   |        | 0.001       | 0.000      | 0.063      |             | 0.000  | 1.143f          |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| clk (port)                                                                                                         |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[6]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)                                                |        | 0.002       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[6]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L)                                               |        | 0.025       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[6]_0__reg_p_CK (clock net)                                                                   | 32     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[6]_29__reg_p:CK (DFFQX1H7L)                                                                  |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 2      | 2               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 2.000           |
+| ysyx_26020046_Reg.gpr[6]_29__reg_p:CK (DFFQX1H7L)                                                                  |        |             |            |            |             |        | 2.000r          |
+| library setup time                                                                                                 |        |             |            |            |             | -0.050 | 1.950           |
+| clock reconvergence pessimism                                                                                      |        |             |            |            |             | 0.000  | 1.950           |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| path cell delay                                                                                                    |        |             |            |            |             |        | 1.143(100.000%) |
+| path net delay                                                                                                     |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| data require time                                                                                                  |        |             |            |            |             |        | 1.950           |
+| data arrival time                                                                                                  |        |             |            |            |             |        | 1.143           |
+| slack (MET)                                                                                                        |        |             |            |            |             |        | 0.807           |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                                                                                              | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                                                                                         |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[2]_reg_p:Q (DFFQX1H7L)                                                                                          |        | 0.006       | 0.000      | 0.066      |             | 0.111  | 0.111r          |
+| pc_2_ (net)                                                                                                        | 7      |             |            |            | 0.000       |        |                 |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:A (NAND4X1P4H7L)                                   |        | 0.001       | 0.000      | 0.066      |             | 0.000  | 0.111r          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                                   |        | 0.003       | 0.000      | 0.093      |             | 0.073  | 0.184f          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                             | 4      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:A (NOR3X1P4H7L)                    |        | 0.001       | 0.000      | 0.093      |             | 0.000  | 0.184f          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:Y (NOR3X1P4H7L)                    |        | 0.002       | 0.000      | 0.079      |             | 0.072  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:B (NAND2X0P5H7L)                  |        | 0.001       | 0.000      | 0.079      |             | 0.000  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:Y (NAND2X0P5H7L)                  |        | 0.003       | 0.000      | 0.064      |             | 0.054  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                            | 3      |             |            |            | 0.000       |        |                 |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:B (NOR3BX1P4H7L)                                  |        | 0.001       | 0.000      | 0.064      |             | 0.000  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:Y (NOR3BX1P4H7L)                                  |        | 0.004       | 0.000      | 0.130      |             | 0.097  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:D (NAND4X1P4H7L)                                 |        | 0.001       | 0.000      | 0.130      |             | 0.000  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:Y (NAND4X1P4H7L)                                 |        | 0.004       | 0.000      | 0.107      |             | 0.082  | 0.490f          |
+| pc[20]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XOR2X0P5H7L_Y_B (net)                                            | 4      |             |            |            | 0.000       |        |                 |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:B (NOR3BX1P4H7L) |        | 0.001       | 0.000      | 0.107      |             | 0.000  | 0.490f          |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:Y (NOR3BX1P4H7L) |        | 0.004       | 0.000      | 0.132      |             | 0.108  | 0.598r          |
+| pc[23]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XNOR2X0P5H7L_Y_B (net)                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:D (NAND4X1P4H7L)                  |        | 0.001       | 0.000      | 0.132      |             | 0.000  | 0.598r          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                  |        | 0.002       | 0.000      | 0.081      |             | 0.062  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:B (NOR2BX1P4H7L)                  |        | 0.001       | 0.000      | 0.081      |             | 0.000  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:Z (NOR2BX1P4H7L)                  |        | 0.004       | 0.000      | 0.090      |             | 0.074  | 0.734r          |
+| pc[27]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:C (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.090      |             | 0.000  | 0.734r          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:Y (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.053      |             | 0.042  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                        | 1      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:B (XNOR2X0P5H7L)                               |        | 0.001       | 0.000      | 0.053      |             | 0.000  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:Y (XNOR2X0P5H7L)                               |        | 0.002       | 0.000      | 0.035      |             | 0.079  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1 (net)                                                         | 2      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:B (NOR2X1P4H7L)                                 |        | 0.001       | 0.000      | 0.035      |             | 0.000  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:Y (NOR2X1P4H7L)                                 |        | 0.007       | 0.000      | 0.151      |             | 0.097  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B (net)                                                                               | 9      |             |            |            | 0.000       |        |                 |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:A (BUFX1H7L)                                                             |        | 0.001       | 0.000      | 0.151      |             | 0.000  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:Y (BUFX1H7L)                                                             |        | 0.019       | 0.000      | 0.240      |             | 0.161  | 1.114r          |
+| iRd_29__NOR2X0P5H7L_Y_B (net)                                                                                      | 24     |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[9]_29__reg_p_D_NOR3X0P5H7L_Y:B (NOR3X0P5H7L)                                                 |        | 0.001       | 0.000      | 0.240      |             | 0.000  | 1.114r          |
+| ysyx_26020046_Reg.gpr[9]_29__reg_p_D_NOR3X0P5H7L_Y:Y (NOR3X0P5H7L)                                                 |        | 0.001       | 0.000      | 0.063      |             | 0.030  | 1.143f          |
+| ysyx_26020046_Reg.gpr[9]_29__reg_p_D (net)                                                                         | 1      |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[9]_29__reg_p:D (DFFQX1H7L)                                                                   |        | 0.001       | 0.000      | 0.063      |             | 0.000  | 1.143f          |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| clk (port)                                                                                                         |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[9]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)                                                |        | 0.002       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[9]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L)                                               |        | 0.025       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[9]_0__reg_p_CK (clock net)                                                                   | 32     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[9]_29__reg_p:CK (DFFQX1H7L)                                                                  |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 2      | 2               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 2.000           |
+| ysyx_26020046_Reg.gpr[9]_29__reg_p:CK (DFFQX1H7L)                                                                  |        |             |            |            |             |        | 2.000r          |
+| library setup time                                                                                                 |        |             |            |            |             | -0.050 | 1.950           |
+| clock reconvergence pessimism                                                                                      |        |             |            |            |             | 0.000  | 1.950           |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| path cell delay                                                                                                    |        |             |            |            |             |        | 1.143(100.000%) |
+| path net delay                                                                                                     |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| data require time                                                                                                  |        |             |            |            |             |        | 1.950           |
+| data arrival time                                                                                                  |        |             |            |            |             |        | 1.143           |
+| slack (MET)                                                                                                        |        |             |            |            |             |        | 0.807           |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                                                                                              | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                                                                                         |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[2]_reg_p:Q (DFFQX1H7L)                                                                                          |        | 0.006       | 0.000      | 0.066      |             | 0.111  | 0.111r          |
+| pc_2_ (net)                                                                                                        | 7      |             |            |            | 0.000       |        |                 |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:A (NAND4X1P4H7L)                                   |        | 0.001       | 0.000      | 0.066      |             | 0.000  | 0.111r          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                                   |        | 0.003       | 0.000      | 0.093      |             | 0.073  | 0.184f          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                             | 4      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:A (NOR3X1P4H7L)                    |        | 0.001       | 0.000      | 0.093      |             | 0.000  | 0.184f          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:Y (NOR3X1P4H7L)                    |        | 0.002       | 0.000      | 0.079      |             | 0.072  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:B (NAND2X0P5H7L)                  |        | 0.001       | 0.000      | 0.079      |             | 0.000  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:Y (NAND2X0P5H7L)                  |        | 0.003       | 0.000      | 0.064      |             | 0.054  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                            | 3      |             |            |            | 0.000       |        |                 |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:B (NOR3BX1P4H7L)                                  |        | 0.001       | 0.000      | 0.064      |             | 0.000  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:Y (NOR3BX1P4H7L)                                  |        | 0.004       | 0.000      | 0.130      |             | 0.097  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:D (NAND4X1P4H7L)                                 |        | 0.001       | 0.000      | 0.130      |             | 0.000  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:Y (NAND4X1P4H7L)                                 |        | 0.004       | 0.000      | 0.107      |             | 0.082  | 0.490f          |
+| pc[20]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XOR2X0P5H7L_Y_B (net)                                            | 4      |             |            |            | 0.000       |        |                 |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:B (NOR3BX1P4H7L) |        | 0.001       | 0.000      | 0.107      |             | 0.000  | 0.490f          |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:Y (NOR3BX1P4H7L) |        | 0.004       | 0.000      | 0.132      |             | 0.108  | 0.598r          |
+| pc[23]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XNOR2X0P5H7L_Y_B (net)                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:D (NAND4X1P4H7L)                  |        | 0.001       | 0.000      | 0.132      |             | 0.000  | 0.598r          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                  |        | 0.002       | 0.000      | 0.081      |             | 0.062  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:B (NOR2BX1P4H7L)                  |        | 0.001       | 0.000      | 0.081      |             | 0.000  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:Z (NOR2BX1P4H7L)                  |        | 0.004       | 0.000      | 0.090      |             | 0.074  | 0.734r          |
+| pc[27]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:C (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.090      |             | 0.000  | 0.734r          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:Y (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.053      |             | 0.042  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                        | 1      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:B (XNOR2X0P5H7L)                               |        | 0.001       | 0.000      | 0.053      |             | 0.000  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:Y (XNOR2X0P5H7L)                               |        | 0.002       | 0.000      | 0.035      |             | 0.079  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1 (net)                                                         | 2      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:B (NOR2X1P4H7L)                                 |        | 0.001       | 0.000      | 0.035      |             | 0.000  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:Y (NOR2X1P4H7L)                                 |        | 0.007       | 0.000      | 0.151      |             | 0.097  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B (net)                                                                               | 9      |             |            |            | 0.000       |        |                 |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:A (BUFX1H7L)                                                             |        | 0.001       | 0.000      | 0.151      |             | 0.000  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:Y (BUFX1H7L)                                                             |        | 0.019       | 0.000      | 0.240      |             | 0.161  | 1.114r          |
+| iRd_29__NOR2X0P5H7L_Y_B (net)                                                                                      | 24     |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[19]_29__reg_p_D_NOR3X0P5H7L_Y:B (NOR3X0P5H7L)                                                |        | 0.001       | 0.000      | 0.240      |             | 0.000  | 1.114r          |
+| ysyx_26020046_Reg.gpr[19]_29__reg_p_D_NOR3X0P5H7L_Y:Y (NOR3X0P5H7L)                                                |        | 0.001       | 0.000      | 0.063      |             | 0.030  | 1.143f          |
+| ysyx_26020046_Reg.gpr[19]_29__reg_p_D (net)                                                                        | 1      |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[19]_29__reg_p:D (DFFQX1H7L)                                                                  |        | 0.001       | 0.000      | 0.063      |             | 0.000  | 1.143f          |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| clk (port)                                                                                                         |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[19]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)                                               |        | 0.002       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[19]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L)                                              |        | 0.025       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[19]_0__reg_p_CK (clock net)                                                                  | 32     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[19]_29__reg_p:CK (DFFQX1H7L)                                                                 |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 2      | 2               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 2.000           |
+| ysyx_26020046_Reg.gpr[19]_29__reg_p:CK (DFFQX1H7L)                                                                 |        |             |            |            |             |        | 2.000r          |
+| library setup time                                                                                                 |        |             |            |            |             | -0.050 | 1.950           |
+| clock reconvergence pessimism                                                                                      |        |             |            |            |             | 0.000  | 1.950           |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| path cell delay                                                                                                    |        |             |            |            |             |        | 1.143(100.000%) |
+| path net delay                                                                                                     |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| data require time                                                                                                  |        |             |            |            |             |        | 1.950           |
+| data arrival time                                                                                                  |        |             |            |            |             |        | 1.143           |
+| slack (MET)                                                                                                        |        |             |            |            |             |        | 0.807           |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                                                                                              | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                                                                                         |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[2]_reg_p:Q (DFFQX1H7L)                                                                                          |        | 0.006       | 0.000      | 0.066      |             | 0.111  | 0.111r          |
+| pc_2_ (net)                                                                                                        | 7      |             |            |            | 0.000       |        |                 |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:A (NAND4X1P4H7L)                                   |        | 0.001       | 0.000      | 0.066      |             | 0.000  | 0.111r          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                                   |        | 0.003       | 0.000      | 0.093      |             | 0.073  | 0.184f          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                             | 4      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:A (NOR3X1P4H7L)                    |        | 0.001       | 0.000      | 0.093      |             | 0.000  | 0.184f          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:Y (NOR3X1P4H7L)                    |        | 0.002       | 0.000      | 0.079      |             | 0.072  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:B (NAND2X0P5H7L)                  |        | 0.001       | 0.000      | 0.079      |             | 0.000  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:Y (NAND2X0P5H7L)                  |        | 0.003       | 0.000      | 0.064      |             | 0.054  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                            | 3      |             |            |            | 0.000       |        |                 |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:B (NOR3BX1P4H7L)                                  |        | 0.001       | 0.000      | 0.064      |             | 0.000  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:Y (NOR3BX1P4H7L)                                  |        | 0.004       | 0.000      | 0.130      |             | 0.097  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:D (NAND4X1P4H7L)                                 |        | 0.001       | 0.000      | 0.130      |             | 0.000  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:Y (NAND4X1P4H7L)                                 |        | 0.004       | 0.000      | 0.107      |             | 0.082  | 0.490f          |
+| pc[20]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XOR2X0P5H7L_Y_B (net)                                            | 4      |             |            |            | 0.000       |        |                 |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:B (NOR3BX1P4H7L) |        | 0.001       | 0.000      | 0.107      |             | 0.000  | 0.490f          |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:Y (NOR3BX1P4H7L) |        | 0.004       | 0.000      | 0.132      |             | 0.108  | 0.598r          |
+| pc[23]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XNOR2X0P5H7L_Y_B (net)                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:D (NAND4X1P4H7L)                  |        | 0.001       | 0.000      | 0.132      |             | 0.000  | 0.598r          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                  |        | 0.002       | 0.000      | 0.081      |             | 0.062  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:B (NOR2BX1P4H7L)                  |        | 0.001       | 0.000      | 0.081      |             | 0.000  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:Z (NOR2BX1P4H7L)                  |        | 0.004       | 0.000      | 0.090      |             | 0.074  | 0.734r          |
+| pc[27]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:C (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.090      |             | 0.000  | 0.734r          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:Y (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.053      |             | 0.042  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                        | 1      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:B (XNOR2X0P5H7L)                               |        | 0.001       | 0.000      | 0.053      |             | 0.000  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:Y (XNOR2X0P5H7L)                               |        | 0.002       | 0.000      | 0.035      |             | 0.079  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1 (net)                                                         | 2      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:B (NOR2X1P4H7L)                                 |        | 0.001       | 0.000      | 0.035      |             | 0.000  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:Y (NOR2X1P4H7L)                                 |        | 0.007       | 0.000      | 0.151      |             | 0.097  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B (net)                                                                               | 9      |             |            |            | 0.000       |        |                 |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:A (BUFX1H7L)                                                             |        | 0.001       | 0.000      | 0.151      |             | 0.000  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:Y (BUFX1H7L)                                                             |        | 0.019       | 0.000      | 0.240      |             | 0.161  | 1.114r          |
+| iRd_29__NOR2X0P5H7L_Y_B (net)                                                                                      | 24     |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[21]_29__reg_p_D_NOR3X0P5H7L_Y:B (NOR3X0P5H7L)                                                |        | 0.001       | 0.000      | 0.240      |             | 0.000  | 1.114r          |
+| ysyx_26020046_Reg.gpr[21]_29__reg_p_D_NOR3X0P5H7L_Y:Y (NOR3X0P5H7L)                                                |        | 0.001       | 0.000      | 0.063      |             | 0.030  | 1.143f          |
+| ysyx_26020046_Reg.gpr[21]_29__reg_p_D (net)                                                                        | 1      |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[21]_29__reg_p:D (DFFQX1H7L)                                                                  |        | 0.001       | 0.000      | 0.063      |             | 0.000  | 1.143f          |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| clk (port)                                                                                                         |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[21]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)                                               |        | 0.002       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[21]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L)                                              |        | 0.025       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[21]_0__reg_p_CK (clock net)                                                                  | 32     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[21]_29__reg_p:CK (DFFQX1H7L)                                                                 |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 2      | 2               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 2.000           |
+| ysyx_26020046_Reg.gpr[21]_29__reg_p:CK (DFFQX1H7L)                                                                 |        |             |            |            |             |        | 2.000r          |
+| library setup time                                                                                                 |        |             |            |            |             | -0.050 | 1.950           |
+| clock reconvergence pessimism                                                                                      |        |             |            |            |             | 0.000  | 1.950           |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| path cell delay                                                                                                    |        |             |            |            |             |        | 1.143(100.000%) |
+| path net delay                                                                                                     |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| data require time                                                                                                  |        |             |            |            |             |        | 1.950           |
+| data arrival time                                                                                                  |        |             |            |            |             |        | 1.143           |
+| slack (MET)                                                                                                        |        |             |            |            |             |        | 0.807           |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                                                                                              | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                                                                                         |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                                                                                         |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[2]_reg_p:Q (DFFQX1H7L)                                                                                          |        | 0.006       | 0.000      | 0.066      |             | 0.111  | 0.111r          |
+| pc_2_ (net)                                                                                                        | 7      |             |            |            | 0.000       |        |                 |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:A (NAND4X1P4H7L)                                   |        | 0.001       | 0.000      | 0.066      |             | 0.000  | 0.111r          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                                   |        | 0.003       | 0.000      | 0.093      |             | 0.073  | 0.184f          |
+| pc[6]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                             | 4      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:A (NOR3X1P4H7L)                    |        | 0.001       | 0.000      | 0.093      |             | 0.000  | 0.184f          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR3X1P4H7L_Y:Y (NOR3X1P4H7L)                    |        | 0.002       | 0.000      | 0.079      |             | 0.072  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:B (NAND2X0P5H7L)                  |        | 0.001       | 0.000      | 0.079      |             | 0.000  | 0.256r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND2X0P5H7L_B:Y (NAND2X0P5H7L)                  |        | 0.003       | 0.000      | 0.064      |             | 0.054  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B (net)                                                            | 3      |             |            |            | 0.000       |        |                 |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:B (NOR3BX1P4H7L)                                  |        | 0.001       | 0.000      | 0.064      |             | 0.000  | 0.310f          |
+| pc[13]_reg_p_D_AOI211X0P5H7L_Y_A1_XOR2X0P5H7L_Y_B_NOR3BX1P4H7L_B:Y (NOR3BX1P4H7L)                                  |        | 0.004       | 0.000      | 0.130      |             | 0.097  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:D (NAND4X1P4H7L)                                 |        | 0.001       | 0.000      | 0.130      |             | 0.000  | 0.407r          |
+| pc[17]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND4X1P4H7L_D:Y (NAND4X1P4H7L)                                 |        | 0.004       | 0.000      | 0.107      |             | 0.082  | 0.490f          |
+| pc[20]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XOR2X0P5H7L_Y_B (net)                                            | 4      |             |            |            | 0.000       |        |                 |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:B (NOR3BX1P4H7L) |        | 0.001       | 0.000      | 0.107      |             | 0.000  | 0.490f          |
+| pc[22]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2BX1H7L_Z_AN_XNOR2X0P5H7L_Y_B_NOR2X0P5H7L_Y_B_NOR3BX1P4H7L_C:Y (NOR3BX1P4H7L) |        | 0.004       | 0.000      | 0.132      |             | 0.108  | 0.598r          |
+| pc[23]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XNOR2X0P5H7L_Y_B (net)                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:D (NAND4X1P4H7L)                  |        | 0.001       | 0.000      | 0.132      |             | 0.000  | 0.598r          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NAND4X1P4H7L_Y:Y (NAND4X1P4H7L)                  |        | 0.002       | 0.000      | 0.081      |             | 0.062  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B (net)                                            | 2      |             |            |            | 0.000       |        |                 |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:B (NOR2BX1P4H7L)                  |        | 0.001       | 0.000      | 0.081      |             | 0.000  | 0.660f          |
+| pc[26]_reg_p_D_OA211X1P4H7L_Y_B0_NAND2X0P5H7L_Y_B_XOR2X0P5H7L_Y_B_NOR2BX1P4H7L_B:Z (NOR2BX1P4H7L)                  |        | 0.004       | 0.000      | 0.090      |             | 0.074  | 0.734r          |
+| pc[27]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                                           | 4      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:C (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.090      |             | 0.000  | 0.734r          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B_NAND3X0P5H7L_Y:Y (NAND3X0P5H7L)              |        | 0.001       | 0.000      | 0.053      |             | 0.042  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y_B (net)                                        | 1      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:B (XNOR2X0P5H7L)                               |        | 0.001       | 0.000      | 0.053      |             | 0.000  | 0.777f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:Y (XNOR2X0P5H7L)                               |        | 0.002       | 0.000      | 0.035      |             | 0.079  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1 (net)                                                         | 2      |             |            |            | 0.000       |        |                 |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:B (NOR2X1P4H7L)                                 |        | 0.001       | 0.000      | 0.035      |             | 0.000  | 0.856f          |
+| pc[29]_reg_p_D_AOI2BB1X0P5H7L_Y_B0_OAI21X0P5H7L_Y_A1_NOR2X1P4H7L_B:Y (NOR2X1P4H7L)                                 |        | 0.007       | 0.000      | 0.151      |             | 0.097  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B (net)                                                                               | 9      |             |            |            | 0.000       |        |                 |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:A (BUFX1H7L)                                                             |        | 0.001       | 0.000      | 0.151      |             | 0.000  | 0.953r          |
+| a0_29__reg_p_D_NOR3X0P5H7L_Y_B_BUFX1H7L_A:Y (BUFX1H7L)                                                             |        | 0.019       | 0.000      | 0.240      |             | 0.161  | 1.114r          |
+| iRd_29__NOR2X0P5H7L_Y_B (net)                                                                                      | 24     |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[13]_29__reg_p_D_NOR3X0P5H7L_Y:B (NOR3X0P5H7L)                                                |        | 0.001       | 0.000      | 0.240      |             | 0.000  | 1.114r          |
+| ysyx_26020046_Reg.gpr[13]_29__reg_p_D_NOR3X0P5H7L_Y:Y (NOR3X0P5H7L)                                                |        | 0.001       | 0.000      | 0.063      |             | 0.030  | 1.143f          |
+| ysyx_26020046_Reg.gpr[13]_29__reg_p_D (net)                                                                        | 1      |             |            |            | 0.000       |        |                 |
+| ysyx_26020046_Reg.gpr[13]_29__reg_p:D (DFFQX1H7L)                                                                  |        | 0.001       | 0.000      | 0.063      |             | 0.000  | 1.143f          |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| clk (port)                                                                                                         |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                                                    | 63     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[13]_0__reg_p_CK_ICGX0P5H7L_ECK:CK (ICGX0P5H7L)                                               |        | 0.002       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[13]_0__reg_p_CK_ICGX0P5H7L_ECK:ECK (ICGX0P5H7L)                                              |        | 0.025       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| ysyx_26020046_Reg.gpr[13]_0__reg_p_CK (clock net)                                                                  | 32     |             |            |            | NA          |        |                 |
+| ysyx_26020046_Reg.gpr[13]_29__reg_p:CK (DFFQX1H7L)                                                                 |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                                                       |        |             |            |            |             | 2      | 2               |
+| clock network delay (ideal)                                                                                        |        |             |            |            |             | 0.000  | 2.000           |
+| ysyx_26020046_Reg.gpr[13]_29__reg_p:CK (DFFQX1H7L)                                                                 |        |             |            |            |             |        | 2.000r          |
+| library setup time                                                                                                 |        |             |            |            |             | -0.050 | 1.950           |
+| clock reconvergence pessimism                                                                                      |        |             |            |            |             | 0.000  | 1.950           |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| path cell delay                                                                                                    |        |             |            |            |             |        | 1.143(100.000%) |
+| path net delay                                                                                                     |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                                                                                    |        |             |            |            |             |        |                 |
+| data require time                                                                                                  |        |             |            |            |             |        | 1.950           |
+| data arrival time                                                                                                  |        |             |            |            |             |        | 1.143           |
+| slack (MET)                                                                                                        |        |             |            |            |             |        | 0.807           |
++--------------------------------------------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++--------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                            | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++--------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                       |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                  | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                     |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                      |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[2]_reg_p:Q (DFFQX1H7L)                        |        | 0.004       | 0.000      | 0.052      |             | 0.103  | 0.103r          |
+| pc_2_ (net)                                      | 7      |             |            |            | 0.000       |        |                 |
+| pc[2]_reg_p_D_AOI211X0P5H7L_Y:A0 (AOI211X0P5H7L) |        | 0.001       | 0.000      | 0.052      |             | 0.000  | 0.103r          |
+| pc[2]_reg_p_D_AOI211X0P5H7L_Y:Y (AOI211X0P5H7L)  |        | 0.001       | 0.000      | 0.020      |             | 0.035  | 0.138f          |
+| pc[2]_reg_p_D (net)                              | 1      |             |            |            | 0.000       |        |                 |
+| pc[2]_reg_p:D (DFFQX1H7L)                        |        | 0.001       | 0.000      | 0.020      |             | 0.000  | 0.138f          |
+|                                                  |        |             |            |            |             |        |                 |
+| clk (port)                                       |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                  | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                     |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                      |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                       |        |             |            |            |             |        | 0.000r          |
+| library hold time                                |        |             |            |            |             | -0.008 | -0.008          |
+| clock reconvergence pessimism                    |        |             |            |            |             | -0.000 | -0.008          |
+|                                                  |        |             |            |            |             |        |                 |
+| path cell delay                                  |        |             |            |            |             |        | 0.138(100.000%) |
+| path net delay                                   |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                  |        |             |            |            |             |        |                 |
+| data require time                                |        |             |            |            |             |        | -0.008          |
+| data arrival time                                |        |             |            |            |             |        | 0.138           |
+| slack (MET)                                      |        |             |            |            |             |        | 0.146           |
++--------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++-------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                                             | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++-------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                                        |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                   | 63     |             |            |            | NA          |        |                 |
+| pc[11]_reg_p:CK (DFFQX1H7L)                                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                      |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                       |        |             |            |            |             | 0.000  | 0.000           |
+| pc[11]_reg_p:CK (DFFQX1H7L)                                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[11]_reg_p:Q (DFFQX1H7L)                                        |        | 0.002       | 0.000      | 0.029      |             | 0.087  | 0.087r          |
+| pc_11_ (net)                                                      | 3      |             |            |            | 0.000       |        |                 |
+| pc[11]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:A (XNOR2X0P5H7L) |        | 0.002       | 0.000      | 0.029      |             | 0.000  | 0.087r          |
+| pc[11]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:Y (XNOR2X0P5H7L) |        | 0.001       | 0.000      | 0.029      |             | 0.042  | 0.128r          |
+| pc[11]_reg_p_D_AOI211X0P5H7L_Y_A1 (net)                           | 2      |             |            |            | 0.000       |        |                 |
+| pc[11]_reg_p_D_AOI211X0P5H7L_Y:A1 (AOI211X0P5H7L)                 |        | 0.001       | 0.000      | 0.029      |             | 0.000  | 0.128r          |
+| pc[11]_reg_p_D_AOI211X0P5H7L_Y:Y (AOI211X0P5H7L)                  |        | 0.001       | 0.000      | 0.020      |             | 0.030  | 0.158f          |
+| pc[11]_reg_p_D (net)                                              | 1      |             |            |            | 0.000       |        |                 |
+| pc[11]_reg_p:D (DFFQX1H7L)                                        |        | 0.001       | 0.000      | 0.020      |             | 0.000  | 0.158f          |
+|                                                                   |        |             |            |            |             |        |                 |
+| clk (port)                                                        |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                   | 63     |             |            |            | NA          |        |                 |
+| pc[11]_reg_p:CK (DFFQX1H7L)                                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                      |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                       |        |             |            |            |             | 0.000  | 0.000           |
+| pc[11]_reg_p:CK (DFFQX1H7L)                                       |        |             |            |            |             |        | 0.000r          |
+| library hold time                                                 |        |             |            |            |             | -0.008 | -0.008          |
+| clock reconvergence pessimism                                     |        |             |            |            |             | -0.000 | -0.008          |
+|                                                                   |        |             |            |            |             |        |                 |
+| path cell delay                                                   |        |             |            |            |             |        | 0.158(100.000%) |
+| path net delay                                                    |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                                   |        |             |            |            |             |        |                 |
+| data require time                                                 |        |             |            |            |             |        | -0.008          |
+| data arrival time                                                 |        |             |            |            |             |        | 0.158           |
+| slack (MET)                                                       |        |             |            |            |             |        | 0.166           |
++-------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++---------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                                                           | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++---------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                                                      |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                 | 63     |             |            |            | NA          |        |                 |
+| pc[12]_reg_p:CK (DFFQX1H7L)                                                     |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                    |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                                     |        |             |            |            |             | 0.000  | 0.000           |
+| pc[12]_reg_p:CK (DFFQX1H7L)                                                     |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[12]_reg_p:Q (DFFQX1H7L)                                                      |        | 0.002       | 0.000      | 0.028      |             | 0.065  | 0.065f          |
+| pc_12_ (net)                                                                    | 3      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y:A (XOR2X0P5H7L) |        | 0.002       | 0.000      | 0.028      |             | 0.000  | 0.065f          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B_XOR2X0P5H7L_Y:Y (XOR2X0P5H7L) |        | 0.001       | 0.000      | 0.025      |             | 0.046  | 0.111f          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y_B (net)                         | 2      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y:B (NOR2X0P5H7L)                 |        | 0.001       | 0.000      | 0.025      |             | 0.000  | 0.111f          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0_NOR2X0P5H7L_Y:Y (NOR2X0P5H7L)                 |        | 0.001       | 0.000      | 0.032      |             | 0.029  | 0.140r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y_B0 (net)                                         | 1      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y:B0 (AOI211X0P5H7L)                               |        | 0.001       | 0.000      | 0.032      |             | 0.000  | 0.140r          |
+| pc[12]_reg_p_D_AOI211X0P5H7L_Y:Y (AOI211X0P5H7L)                                |        | 0.001       | 0.000      | 0.020      |             | 0.019  | 0.159f          |
+| pc[12]_reg_p_D (net)                                                            | 1      |             |            |            | 0.000       |        |                 |
+| pc[12]_reg_p:D (DFFQX1H7L)                                                      |        | 0.001       | 0.000      | 0.020      |             | 0.000  | 0.159f          |
+|                                                                                 |        |             |            |            |             |        |                 |
+| clk (port)                                                                      |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                                 | 63     |             |            |            | NA          |        |                 |
+| pc[12]_reg_p:CK (DFFQX1H7L)                                                     |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                                    |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                                     |        |             |            |            |             | 0.000  | 0.000           |
+| pc[12]_reg_p:CK (DFFQX1H7L)                                                     |        |             |            |            |             |        | 0.000r          |
+| library hold time                                                               |        |             |            |            |             | -0.008 | -0.008          |
+| clock reconvergence pessimism                                                   |        |             |            |            |             | -0.000 | -0.008          |
+|                                                                                 |        |             |            |            |             |        |                 |
+| path cell delay                                                                 |        |             |            |            |             |        | 0.159(100.000%) |
+| path net delay                                                                  |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                                                 |        |             |            |            |             |        |                 |
+| data require time                                                               |        |             |            |            |             |        | -0.008          |
+| data arrival time                                                               |        |             |            |            |             |        | 0.159           |
+| slack (MET)                                                                     |        |             |            |            |             |        | 0.167           |
++---------------------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                                            | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                                       |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                  | 63     |             |            |            | NA          |        |                 |
+| pc[7]_reg_p:CK (DFFQX1H7L)                                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                     |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                      |        |             |            |            |             | 0.000  | 0.000           |
+| pc[7]_reg_p:CK (DFFQX1H7L)                                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[7]_reg_p:Q (DFFQX1H7L)                                        |        | 0.002       | 0.000      | 0.030      |             | 0.087  | 0.087r          |
+| pc_7_ (net)                                                      | 3      |             |            |            | 0.000       |        |                 |
+| pc[7]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:A (XNOR2X0P5H7L) |        | 0.002       | 0.000      | 0.030      |             | 0.000  | 0.087r          |
+| pc[7]_reg_p_D_AOI211X0P5H7L_Y_A1_XNOR2X0P5H7L_Y:Y (XNOR2X0P5H7L) |        | 0.001       | 0.000      | 0.030      |             | 0.042  | 0.130r          |
+| pc[7]_reg_p_D_AOI211X0P5H7L_Y_A1 (net)                           | 2      |             |            |            | 0.000       |        |                 |
+| pc[7]_reg_p_D_AOI211X0P5H7L_Y:A1 (AOI211X0P5H7L)                 |        | 0.001       | 0.000      | 0.030      |             | 0.000  | 0.130r          |
+| pc[7]_reg_p_D_AOI211X0P5H7L_Y:Y (AOI211X0P5H7L)                  |        | 0.001       | 0.000      | 0.019      |             | 0.030  | 0.160f          |
+| pc[7]_reg_p_D (net)                                              | 1      |             |            |            | 0.000       |        |                 |
+| pc[7]_reg_p:D (DFFQX1H7L)                                        |        | 0.001       | 0.000      | 0.019      |             | 0.000  | 0.160f          |
+|                                                                  |        |             |            |            |             |        |                 |
+| clk (port)                                                       |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                                  | 63     |             |            |            | NA          |        |                 |
+| pc[7]_reg_p:CK (DFFQX1H7L)                                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                                     |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                                      |        |             |            |            |             | 0.000  | 0.000           |
+| pc[7]_reg_p:CK (DFFQX1H7L)                                       |        |             |            |            |             |        | 0.000r          |
+| library hold time                                                |        |             |            |            |             | -0.008 | -0.008          |
+| clock reconvergence pessimism                                    |        |             |            |            |             | -0.000 | -0.008          |
+|                                                                  |        |             |            |            |             |        |                 |
+| path cell delay                                                  |        |             |            |            |             |        | 0.160(100.000%) |
+| path net delay                                                   |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                                  |        |             |            |            |             |        |                 |
+| data require time                                                |        |             |            |            |             |        | -0.008          |
+| data arrival time                                                |        |             |            |            |             |        | 0.160           |
+| slack (MET)                                                      |        |             |            |            |             |        | 0.168           |
++------------------------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
++--------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| Point                                            | Fanout | Capacitance | Resistance | Transition | Delta Delay | Incr   | Path            |
++--------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+
+| clk (port)                                       |        | 0.066       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                  | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                     |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                      |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| pc[2]_reg_p:Q (DFFQX1H7L)                        |        | 0.004       | 0.000      | 0.043      |             | 0.080  | 0.080f          |
+| pc_2_ (net)                                      | 7      |             |            |            | 0.000       |        |                 |
+| pc[2]_reg_p_D_AOI211X0P5H7L_Y:A0 (AOI211X0P5H7L) |        | 0.001       | 0.000      | 0.043      |             | 0.000  | 0.080f          |
+| pc[2]_reg_p_D_AOI211X0P5H7L_Y:Y (AOI211X0P5H7L)  |        | 0.001       | 0.000      | 0.073      |             | 0.074  | 0.154r          |
+| pc[2]_reg_p_D (net)                              | 1      |             |            |            | 0.000       |        |                 |
+| pc[2]_reg_p:D (DFFQX1H7L)                        |        | 0.001       | 0.000      | 0.073      |             | 0.000  | 0.154r          |
+|                                                  |        |             |            |            |             |        |                 |
+| clk (port)                                       |        | 0.089       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clk (clock net)                                  | 63     |             |            |            | NA          |        |                 |
+| pc[2]_reg_p:CK (DFFQX1H7L)                       |        | 0.001       | 0.000      | 0.000      |             | 0.000  | 0.000r          |
+| clock core_clock (rise edge)                     |        |             |            |            |             | 0      | 0               |
+| clock network delay (ideal)                      |        |             |            |            |             | 0.000  | 0.000           |
+| pc[2]_reg_p:CK (DFFQX1H7L)                       |        |             |            |            |             |        | 0.000r          |
+| library hold time                                |        |             |            |            |             | -0.018 | -0.018          |
+| clock reconvergence pessimism                    |        |             |            |            |             | -0.000 | -0.018          |
+|                                                  |        |             |            |            |             |        |                 |
+| path cell delay                                  |        |             |            |            |             |        | 0.154(100.000%) |
+| path net delay                                   |        |             |            |            |             |        | 0.000(0.000%)   |
+|                                                  |        |             |            |            |             |        |                 |
+| data require time                                |        |             |            |            |             |        | -0.018          |
+| data arrival time                                |        |             |            |            |             |        | 0.154           |
+| slack (MET)                                      |        |             |            |            |             |        | 0.171           |
++--------------------------------------------------+--------+-------------+------------+------------+-------------+--------+-----------------+

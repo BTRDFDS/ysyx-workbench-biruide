@@ -1,0 +1,31 @@
+# *.*
+# *
+!*/
+!Makefile
+!*.mk
+!*.[cSh]
+!*.v
+!*.sv
+!*.svh
+!*.cc
+!*.cpp
+!*.vlt
+!.gitignore
+!README.md
+!*.drawio
+!draw/*
+!*.png
+build/
+bin/*
+log/*
+!vsrc/*
+!syn/*
+result/*-500MHz/*
+!result/*-500MHz*/*synth_stat.txt
+!result/*-500MHz*/*.rpt
+!result/*-500MHz*/*.pwr
+result/*-500MHz*/*_instance.pwr
+log/rv32iDebugLog.txt
+!chisel/src/*
+!chisel/build.mill
+!chisel/Makefile

@@ -1,0 +1,67 @@
+
+25. Printing statistics.
+
+=== ysyx_26020046_rv32iALU ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+     2275        - wires
+     2275        - wire bits
+     2275        - public wires
+     2275        - public wire bits
+      435        - ports
+      435        - port bits
+     1937  2386.02 cells
+       47   50.008   AND2_X1
+       14    18.62   AND3_X1
+        2    3.192   AND3_X2
+        2    3.192   AND4_X1
+       60     79.8   AOI211_X1
+        8   19.152   AOI211_X2
+      208  221.312   AOI21_X1
+        2    3.724   AOI21_X2
+       33   52.668   AOI221_X1
+        1    2.926   AOI221_X2
+       10    21.28   AOI222_X1
+       56    74.48   AOI22_X1
+       27   21.546   BUF_X1
+        1     6.65   BUF_X16
+       15    15.96   BUF_X2
+        4    7.448   BUF_X4
+        4   13.832   BUF_X8
+        2     2.66   CLKBUF_X3
+       99   52.668   INV_X1
+        1     1.33   INV_X4
+      292  543.704   MUX2_X1
+      183  146.034   NAND2_X1
+        1     1.33   NAND2_X2
+       75     79.8   NAND3_X1
+        1    1.862   NAND3_X2
+       11    14.63   NAND4_X1
+      236  188.328   NOR2_X1
+       30    31.92   NOR3_X1
+        1    1.862   NOR3_X2
+        9    11.97   NOR4_X1
+        1    4.788   NOR4_X4
+       53    70.49   OAI211_X1
+        3    7.182   OAI211_X2
+      141  150.024   OAI21_X1
+       21   33.516   OAI221_X1
+        4    8.512   OAI222_X1
+       34    45.22   OAI22_X1
+        1    2.394   OAI22_X2
+        4    7.448   OAI33_X1
+       38   40.432   OR2_X1
+        1     1.33   OR2_X2
+        5     6.65   OR3_X1
+        1    1.596   OR3_X2
+        5     7.98   OR4_X1
+        1    1.862   OR4_X2
+      151  240.996   XNOR2_X1
+        1     2.66   XNOR2_X2
+       37   59.052   XOR2_X1
+
+   Chip area for module '\ysyx_26020046_rv32iALU': 2386.020000
+     of which used for sequential elements: 0.000000 (0.00%)
+

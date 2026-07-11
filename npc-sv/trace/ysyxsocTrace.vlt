@@ -1,0 +1,3 @@
+`verilator_config
+tracing_off -scope "ysyxSoCFull"
+tracing_on -scope "ysyxSoCFull.asic.cpu.cpu" -levels 99

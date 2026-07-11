@@ -1,0 +1,77 @@
+object  WidthConsts{//const
+	val BitWidth	= 32
+	val RegNum		= 32
+	val CsrWidth	= 12
+	val RespWidth	= 2
+	val StrbWidth	= 2
+}
+import chisel3._
+import chisel3.util._
+import WidthConsts._
+class PipeIfId extends Bundle{
+	val res		= Output(IfuRes())
+	val pc		= Output(UInt(BitWidth.W))
+	val instr	= Output(UInt(BitWidth.W))
+}
+class PipeLsWb extends Bundle{
+	val RegWidth = log2Ceil(RegNum)
+
+    val valid	= Output(Bool())
+	val rdAddr	= Output(UInt(RegWidth.W))
+	val result	= Output(UInt(BitWidth.W))
+	val pc		= Output(UInt(BitWidth.W))
+	val csrOp	= Output(CsrOp())
+	val csrAddr	= Output(UInt(CsrWidth.W))
+	val csrMesg	= Output(UInt(BitWidth.W))
+}
+class PipeExLs extends PipeLsWb(){
+	val lsuOp	= Output(LsuOp())
+	val lsuAddr	= Output(LsuAddr())
+	val r2		= Output(UInt(BitWidth.W))
+}
+class PipeIdEx extends PipeExLs(){
+	val alu = Output(ExuAlu())
+	val bfu = Output(ExuBfu())
+	val csr = Output(ExuCsr())
+	val res = Output(ExuRes())
+	val In1 = Output(ExuIn1())
+	val In2 = Output(ExuIn2())
+
+	val enJcod	=Output(Bool())
+	val r1		=Output(UInt(BitWidth.W))
+}
+class ImmeBefore extends Bundle{
+	val back	= Output(Back())
+	val addr	= Output(UInt(BitWidth.W))
+}
+class ImmeAfter extends ImmeBefore(){
+    val RegWidth= log2Ceil(RegNum)
+
+	val r1Addr	= Input(UInt(RegWidth.W))
+	val r2Addr	= Input(UInt(RegWidth.W))
+	val r1Out	= Output(UInt(BitWidth.W))
+	val r2Out	= Output(UInt(BitWidth.W))
+
+	val csrAddr	= Input(UInt(CsrWidth.W))
+	val csrOut	= Output(UInt(BitWidth.W))
+}
+class Axi4Master extends Bundle {
+	val arvalid	= Output(Bool())
+	val rready	= Output(Bool())
+    val araddr	= Output(UInt(BitWidth.W))
+	val arready	= Input(Bool())
+	val rdata	= Input(UInt(BitWidth.W))
+	val rresp	= Input(UInt(2.W))
+	val rvalid	= Input(Bool())
+
+	val awvalid	= Output(Bool())
+	val wvalid	= Output(Bool())
+	val bready	= Output(Bool())
+	val awaddr	= Output(UInt(BitWidth.W))
+	val wdata	= Output(UInt(BitWidth.W))
+	val wstrb	= Output(UInt(StrbWidth.W))
+	val awready	= Input(Bool())
+	val wready	= Input(Bool())
+	val bvalid	= Input(Bool())
+	val bresp	= Input(UInt(RespWidth.W))
+}

@@ -1,0 +1,65 @@
+
+25. Printing statistics.
+
+=== ex6 ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+      100        - wires
+      100        - wire bits
+      100        - public wires
+      100        - public wire bits
+       25        - ports
+       25        - port bits
+       98    263.2 cells
+        1     2.24   AO21X1H7L
+        3     5.88   AOAI211X0P5H7L
+        1     1.96   AOAI211X1H7L
+        2     3.92   AOAI211X1P4H7L
+        1     1.96   AOI211X1P4H7L
+        1      1.4   AOI21X0P5H7L
+        1      1.4   AOI21X1P4H7L
+        1     1.96   AOI22X0P5H7L
+        1     5.04   BUFX16H7L
+        6     6.72   BUFX1H7L
+        1     1.12   BUFX1P4H7L
+        2     3.36   BUFX3P5H7L
+        1     1.96   BUFX5H7L
+        1     2.52   BUFX7H7L
+       22   135.52   DFFQX1H7L
+        1     0.84   INVX0P5H7L
+        1     0.84   INVX1H7L
+        1     0.84   INVX1P4H7L
+        1      2.8   MUX2X0P5H7L
+        2      2.8   NAND2BX0P5H7L
+        1      1.4   NAND2BX1P4H7L
+        7     7.84   NAND2X0P5H7L
+        2     2.24   NAND2X1P4H7L
+        2     3.92   NAND3BX1P4H7L
+        3      4.2   NAND3X0P5H7L
+        1      1.4   NAND3X1H7L
+        2     4.48   NAND4BX0P5H7L
+        1     2.52   NAND4BX2H7L
+        3     5.88   NAND4X1P4H7L
+        1     1.68   NOR2BX0P5H7L
+        1      1.4   NOR2BX1P4H7L
+        5      5.6   NOR2X0P5H7L
+        1      1.4   NOR3X0P5H7L
+        1     1.96   NOR4X1P4H7L
+        1     2.52   NOR4X2H7L
+        1     1.68   OAI211X1H7L
+        1     1.68   OAI211X1P4H7L
+        2      2.8   OAI21X0P5H7L
+        2      2.8   OAI21X1P4H7L
+        1     1.96   OAI2BB1X0P5H7L
+        1     1.96   OAI2BB1X1P4H7L
+        2      2.8   OR2X1P4H7L
+        1     1.12   TIEHIH7L
+        2     7.28   XNOR2X4H7L
+        1      2.8   XOR2X0P5H7L
+        1      2.8   XOR2X0P7H7L
+
+   Chip area for module '\ex6': 263.200000
+     of which used for sequential elements: 135.520000 (51.49%)
+
