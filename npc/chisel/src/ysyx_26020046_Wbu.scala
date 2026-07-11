@@ -8,9 +8,11 @@ class ysyx_26020046_Wbu() extends Module {
 	val MstatuseReset = 0x1800.U(BitWidth.W)
 	val ErrorMesg = 2.U(BitWidth.W)
 
-	val io = IO(new Bundle {
-		val pipeIn	= Flipped(new PipeLsWb())
-		val immeOut	= new ImmeAfter()
+	val in = IO(new Bundle {
+		val pipe = Flipped(new PipeLsWb())
+	})
+	val out = IO(new Bundle {
+		val imme = new ImmeAfter()
 	})
 	val gpr = Reg(Vec(RegNum, UInt(BitWidth.W)))
 
@@ -29,65 +31,65 @@ class ysyx_26020046_Wbu() extends Module {
 	nextMcycle	:= mcycle + 1.U
 	nextMcycleh	:= Mux(mcycleh === (Fill(BitWidth,1.U)),mcycleh,mcycleh + 1.U)
 		
-	when(io.pipeIn.valid){//合法寄存器处理
-		switch(io.pipeIn.csrOp){
+	when(in.pipe.valid){//合法寄存器处理
+		switch(in.pipe.csrOp){
 			is(CsrOp.Mret){mstatus	:= MstatuseReset}//TODO
 			is(CsrOp.Trap){
-				mcause	:= io.pipeIn.csrMesg
-				mepc := io.pipeIn.pc
+				mcause	:= in.pipe.csrMesg
+				mepc := in.pipe.pc
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
-				val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(io.pipeIn.csrAddr)
+				val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(in.pipe.csrAddr)
 				when(csrWriteValid){
 					switch(csrWriteAddr){
-						is(CsrAddr.Mcycle)		{nextMcycle	:= io.pipeIn.result}
-						is(CsrAddr.Mcycleh)		{nextMcycleh:= io.pipeIn.result}
-						is(CsrAddr.Mepc)		{mepc		:= io.pipeIn.result}
-						is(CsrAddr.Mtvec)		{mtvec		:= io.pipeIn.result}
-						is(CsrAddr.Mcause)		{mcause		:= io.pipeIn.result}
-						is(CsrAddr.Mstatus)		{mstatus	:= io.pipeIn.result}
-						is(CsrAddr.Marchid)		{marchid	:= io.pipeIn.result}
-						is(CsrAddr.Mvendorid)	{mvendorid	:= io.pipeIn.result}
+						is(CsrAddr.Mcycle)		{nextMcycle	:= in.pipe.result}
+						is(CsrAddr.Mcycleh)		{nextMcycleh:= in.pipe.result}
+						is(CsrAddr.Mepc)		{mepc		:= in.pipe.result}
+						is(CsrAddr.Mtvec)		{mtvec		:= in.pipe.result}
+						is(CsrAddr.Mcause)		{mcause		:= in.pipe.result}
+						is(CsrAddr.Mstatus)		{mstatus	:= in.pipe.result}
+						is(CsrAddr.Marchid)		{marchid	:= in.pipe.result}
+						is(CsrAddr.Mvendorid)	{mvendorid	:= in.pipe.result}
 					}
 				}otherwise{
 					error	:= true.B
 					mcause	:= ErrorMesg
-					mepc	:= io.pipeIn.pc
+					mepc	:= in.pipe.pc
 					//TODO:mstatus
 				}
 			}
 			is(CsrOp.Null){}//空，这里4个全覆盖了
 		}
-		when((io.pipeIn.rdAddr =/= 0.U)&(error === false.B)){gpr(io.pipeIn.rdAddr) := io.pipeIn.result}
+		when((in.pipe.rdAddr =/= 0.U)&(error === false.B)){gpr(in.pipe.rdAddr) := in.pipe.result}
 	}
 	mcycle	:= nextMcycle
 	mcycleh	:= nextMcycleh
 
 	{//提供数据
-		io.immeOut.r1Out := Mux(io.immeOut.r1Addr === 0.U, 0.U, gpr(io.immeOut.r1Addr))
-		io.immeOut.r2Out := Mux(io.immeOut.r2Addr === 0.U, 0.U, gpr(io.immeOut.r2Addr))
-		val (csrReadAddr,csrReadValid)=CsrAddr.safe(io.immeOut.csrAddr)
-		io.immeOut.csrOut := 0.U
+		out.imme.r1Out := Mux(out.imme.r1Addr === 0.U, 0.U, gpr(out.imme.r1Addr))
+		out.imme.r2Out := Mux(out.imme.r2Addr === 0.U, 0.U, gpr(out.imme.r2Addr))
+		val (csrReadAddr,csrReadValid)=CsrAddr.safe(out.imme.csrAddr)
+		out.imme.csrOut := 0.U
 		when(csrReadValid){
 			switch(csrReadAddr){
-				is(CsrAddr.Mcycle)		{io.immeOut.csrOut := mcycle}
-				is(CsrAddr.Mcycleh)		{io.immeOut.csrOut := mcycleh}
-				is(CsrAddr.Mepc)		{io.immeOut.csrOut := mepc}
-				is(CsrAddr.Mtvec)		{io.immeOut.csrOut := mtvec}
-				is(CsrAddr.Mcause)		{io.immeOut.csrOut := mcause}
-				is(CsrAddr.Mstatus)		{io.immeOut.csrOut := mstatus}
-				is(CsrAddr.Marchid)		{io.immeOut.csrOut := marchid}
-				is(CsrAddr.Mvendorid)	{io.immeOut.csrOut := mvendorid}
+				is(CsrAddr.Mcycle)		{out.imme.csrOut := mcycle}
+				is(CsrAddr.Mcycleh)		{out.imme.csrOut := mcycleh}
+				is(CsrAddr.Mepc)		{out.imme.csrOut := mepc}
+				is(CsrAddr.Mtvec)		{out.imme.csrOut := mtvec}
+				is(CsrAddr.Mcause)		{out.imme.csrOut := mcause}
+				is(CsrAddr.Mstatus)		{out.imme.csrOut := mstatus}
+				is(CsrAddr.Marchid)		{out.imme.csrOut := marchid}
+				is(CsrAddr.Mvendorid)	{out.imme.csrOut := mvendorid}
 			}
-		}otherwise{io.immeOut.csrOut := 0.U}
+		}otherwise{out.imme.csrOut := 0.U}
 	}
 	when(error){//返回状态
-		io.immeOut.back := Back.Error
-		io.immeOut.addr	:= mtvec
+		out.imme.back := Back.Error
+		out.imme.addr	:= mtvec
 		stop()
 	}otherwise{
-		io.immeOut.back := Back.Ready
-		io.immeOut.addr	:= 0.U	
+		out.imme.back := Back.Ready
+		out.imme.addr	:= 0.U	
 	}
 }

@@ -3,38 +3,40 @@ import chisel3.util._
 import WidthConsts._
 
 class ysyx_26020046_Exu extends Module {
-	val io = IO(new Bundle {
-        val pipeIn	= Flipped(new PipeIdEx())
-		val pipeOut	= new PipeExLs()
-		val immeOut	= new ImmeAfter()
-		val immeIn	= Flipped(new ImmeAfter())
+	val in = IO(new Bundle {
+		val imme = Flipped(new ImmeAfter())
+		val pipe = Flipped(new PipeIdEx())
+	})
+	val out = IO(new Bundle {
+		val imme = new ImmeAfter()
+		val pipe = new PipeExLs()
 	})
 	
-	io.pipeOut.lsuAddr	:= io.pipeIn.lsuAddr
-	io.pipeOut.lsuOp	:= io.pipeIn.lsuOp
-	io.pipeOut.r2		:= io.pipeIn.r2
-	io.pipeOut.pc		:= io.pipeIn.pc
-	io.pipeOut.csrOp	:= io.pipeIn.csrOp
-	io.pipeOut.csrAddr	:= io.pipeIn.csrAddr
-	io.pipeOut.valid	:= io.pipeIn.valid
-	io.pipeOut.rdAddr	:= io.pipeIn.rdAddr
-	io.pipeOut.result 	:= 0.U
-	io.pipeOut.csrMesg	:= io.pipeIn.csrMesg
+	out.pipe.lsuAddr:= in.pipe.lsuAddr
+	out.pipe.lsuOp	:= in.pipe.lsuOp
+	out.pipe.r2		:= in.pipe.r2
+	out.pipe.pc		:= in.pipe.pc
+	out.pipe.csrOp	:= in.pipe.csrOp
+	out.pipe.csrAddr:= in.pipe.csrAddr
+	out.pipe.valid	:= in.pipe.valid
+	out.pipe.rdAddr	:= in.pipe.rdAddr
+	out.pipe.result := 0.U
+	out.pipe.csrMesg:= in.pipe.csrMesg
 	
-	io.immeOut.back		:= io.immeIn.back
-	io.immeOut.addr		:= 0.U
-	io.immeOut.r1Out	:= io.immeIn.r1Out
-	io.immeOut.r2Out	:= io.immeIn.r2Out
-	io.immeOut.csrOut	:= io.immeIn.csrOut
-	io.immeIn.r1Addr	:= io.immeOut.r1Addr
-	io.immeIn.r2Addr	:= io.immeOut.r2Addr
-	io.immeIn.csrAddr	:= io.immeOut.csrAddr
+	out.imme.back	:= in.imme.back
+	out.imme.addr	:= 0.U
+	out.imme.r1Out	:= in.imme.r1Out
+	out.imme.r2Out	:= in.imme.r2Out
+	out.imme.csrOut	:= in.imme.csrOut
+	in.imme.r1Addr	:= out.imme.r1Addr
+	in.imme.r2Addr	:= out.imme.r2Addr
+	in.imme.csrAddr	:= out.imme.csrAddr
 
-	when(io.pipeIn.valid){
-		val input1 = Mux(io.pipeIn.In1 === ExuIn1.R1, io.pipeIn.r1, io.pipeIn.pc)
-		val input2 = Mux(io.pipeIn.In2 === ExuIn2.R2, io.pipeIn.r2, io.pipeIn.result)
+	when(in.pipe.valid){
+		val input1 = Mux(in.pipe.In1 === ExuIn1.R1, in.pipe.r1, in.pipe.pc)
+		val input2 = Mux(in.pipe.In2 === ExuIn2.R2, in.pipe.r2, in.pipe.result)
 		val result = WireInit(0.U(BitWidth.W))
-		switch(io.pipeIn.alu){
+		switch(in.pipe.alu){
 			is(ExuAlu.Add)	{result := input1 + input2}
 			is(ExuAlu.Sll)	{result := input1 << input2(4,0)}
 			is(ExuAlu.Slt)	{result := input1.asSInt < input2.asSInt}
@@ -45,38 +47,38 @@ class ysyx_26020046_Exu extends Module {
 			is(ExuAlu.And)	{result := input1 & input2}
 			is(ExuAlu.Sub)	{result := input1 - input2}
 			is(ExuAlu.Sra)	{result := (input1.asSInt >> input2(4,0)).asUInt}
-			is(ExuAlu.ImR1)	{result := io.pipeIn.result+io.pipeIn.r1}
-			is(ExuAlu.ImPc)	{result := io.pipeIn.result+io.pipeIn.pc}
-			is(ExuAlu.Csr)	{result := io.pipeIn.csrMesg}
-			is(ExuAlu.Imm)	{result := io.pipeIn.result}
+			is(ExuAlu.ImR1)	{result := in.pipe.result+in.pipe.r1}
+			is(ExuAlu.ImPc)	{result := in.pipe.result+in.pipe.pc}
+			is(ExuAlu.Csr)	{result := in.pipe.csrMesg}
+			is(ExuAlu.Imm)	{result := in.pipe.result}
 		}
 		val enBfun = WireInit(false.B)
-		switch(io.pipeIn.bfu){
-			is(ExuBfu.Beq)	{enBfun := io.pipeIn.r1 === io.pipeIn.r2}
-			is(ExuBfu.Bne)	{enBfun := io.pipeIn.r1 =/= io.pipeIn.r2}
-			is(ExuBfu.Blt)	{enBfun := io.pipeIn.r1.asSInt < io.pipeIn.r2.asSInt}
-			is(ExuBfu.Bge)	{enBfun := io.pipeIn.r1.asSInt >= io.pipeIn.r2.asSInt}
-			is(ExuBfu.Bltu)	{enBfun := io.pipeIn.r1 < io.pipeIn.r2}
-			is(ExuBfu.Bgeu)	{enBfun := io.pipeIn.r1 >= io.pipeIn.r2}
+		switch(in.pipe.bfu){
+			is(ExuBfu.Beq)	{enBfun := in.pipe.r1 === in.pipe.r2}
+			is(ExuBfu.Bne)	{enBfun := in.pipe.r1 =/= in.pipe.r2}
+			is(ExuBfu.Blt)	{enBfun := in.pipe.r1.asSInt < in.pipe.r2.asSInt}
+			is(ExuBfu.Bge)	{enBfun := in.pipe.r1.asSInt >= in.pipe.r2.asSInt}
+			is(ExuBfu.Bltu)	{enBfun := in.pipe.r1 < in.pipe.r2}
+			is(ExuBfu.Bgeu)	{enBfun := in.pipe.r1 >= in.pipe.r2}
 		}
-		switch(io.pipeIn.csr){
-			is(ExuCsr.Read)	{io.pipeOut.csrMesg := io.pipeIn.r1}
-			is(ExuCsr.Write){io.pipeOut.csrMesg := io.pipeIn.r1|io.pipeIn.csrMesg}
+		switch(in.pipe.csr){
+			is(ExuCsr.Read)	{out.pipe.csrMesg := in.pipe.r1}
+			is(ExuCsr.Write){out.pipe.csrMesg := in.pipe.r1|in.pipe.csrMesg}
 		}
-		switch(io.pipeIn.res){
-			is(ExuRes.Alu)	{io.pipeOut.result := result}
-			is(ExuRes.Null)	{io.pipeOut.result := 0.U}
-			is(ExuRes.Snpc)	{io.pipeOut.result := io.pipeIn.pc+4.U}
-			is(ExuRes.Csr)	{io.pipeOut.result := io.pipeIn.csrMesg}
+		switch(in.pipe.res){
+			is(ExuRes.Alu)	{out.pipe.result := result}
+			is(ExuRes.Null)	{out.pipe.result := 0.U}
+			is(ExuRes.Snpc)	{out.pipe.result := in.pipe.pc+4.U}
+			is(ExuRes.Csr)	{out.pipe.result := in.pipe.csrMesg}
 		}
-		when(io.immeIn.back === Back.Error){
-			io.immeOut.back	:= Back.Error
-			io.immeOut.addr	:= io.immeIn.addr
+		when(in.imme.back === Back.Error){
+			out.imme.back	:= Back.Error
+			out.imme.addr	:= in.imme.addr
 		}.otherwise{
-			when(io.pipeIn.enJcod | enBfun){
-				io.immeOut.addr := result
-				io.immeOut.back := Back.Jump
-			}.otherwise{io.immeOut.back := io.immeIn.back}
+			when(in.pipe.enJcod | enBfun){
+				out.imme.addr := result
+				out.imme.back := Back.Jump
+			}.otherwise{out.imme.back := in.imme.back}
 		}
 	}
 }
