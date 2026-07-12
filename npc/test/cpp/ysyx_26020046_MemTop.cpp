@@ -8,6 +8,7 @@
 #include "svdpi.h"
 #include "Vysyx_26020046_MemTop__Dpi.h"
 #include <time.h>
+#include <npcDifftest.h>//我只需要difftest
 
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_MemTop* top;//顶层模块
@@ -87,7 +88,7 @@ extern "C" void stop(){
 	NpcWave();
 	tfp->close();
 	for(int i=0;i<32;i++){
-		printf("reg[%2d]=%8x ",i,getRegPc(i));
+		printf("%2d:%8x ",i,getRegPc(i));
 		if(i%8==7)printf("\n");
 	}
 	bool success = getRegPc(10)==0;
@@ -162,7 +163,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	for(int i=0;i<100000&(!contextp->gotFinish());i++){
+	for(int i=0;i<200&(!contextp->gotFinish());i++){
 		NpcWave();
 		top->clock=1;top->eval();
 		NpcWave();
