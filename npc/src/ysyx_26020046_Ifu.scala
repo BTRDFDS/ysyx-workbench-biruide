@@ -14,7 +14,7 @@ class ysyx_26020046_Ifu extends Module{
 	val axi4 = IO(new Axi4Master())
 	//FSM
 		val status = RegInit(IfuStatus.Call)
-		val ready = in.imme.back	===	Back.Ready
+		val ready = in.imme.back =/= Back.Wait
 		switch(status){
 			is(IfuStatus.Call){when(axi4.arready){status := IfuStatus.Back}}
 			is(IfuStatus.Back){when(axi4.rvalid)	{status := IfuStatus.Func}}
