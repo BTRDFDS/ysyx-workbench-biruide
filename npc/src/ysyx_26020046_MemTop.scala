@@ -57,6 +57,8 @@ class ysyx_26020046_Mem extends ExtModule{
 	val write  = IO(new Bundle{
 		val valid	= Input(Bool())
 		val addr	= Input(UInt(32.W))
+		val strb	= Input(UInt(4.W))
 		val data	= Input(UInt(32.W))
 	})
+	addResource("/resources/ysyx_26020046_Mem.sv")
 }
