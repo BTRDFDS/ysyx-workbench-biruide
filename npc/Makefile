@@ -43,19 +43,11 @@ VERILATOR_VLT =
 srcVerilog = $(shell find $(NPC_HOME)/build -type f -name "*.sv")
 srcCpp = $(NPC_HOME)/test/cpp/ysyx_26020046_MemTop.cpp
 
-bin/% : $(srcVerilog) $(srcCpp) bin
-	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
-	--top-module ysyx_26020046_MemTop \
-	$(SOC_CFLAGS) \
-	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
-	$(addprefix -CFLAGS , $(CXXFLAGS)) \
-	$(addprefix -LDFLAGS , $(LDFLAGS))
-	cp build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop bin/ysyx_26020046_MemTop
 build:
 	mkdir -p build
 wave:
 	mkdir -p wave
-run:$(srcVerilog) $(srcCpp) wave verilog
+run:verilog $(srcVerilog) $(srcCpp) wave
 	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
 	--top-module ysyx_26020046_MemTop \
 	$(SOC_CFLAGS) \
