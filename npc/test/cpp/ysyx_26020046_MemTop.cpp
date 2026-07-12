@@ -129,9 +129,8 @@ void NpcInitMem(int argc, char** argv){
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
 	printf("has open file\n");
-	for(int i=0;i<40;i++){
-		printf("%02x",psRam[i]);
-		if(i%4==3)printf(" ");
+	for(int i=0;i<40;i+=4){
+		printf("%02x%02x%02x%02x ",psRam[i+3],psRam[i+2],psRam[i+1],psRam[i]);
 		if(i%16==15)printf("\n");
 	}
 }
