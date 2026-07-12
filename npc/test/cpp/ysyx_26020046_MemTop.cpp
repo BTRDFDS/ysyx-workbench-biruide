@@ -111,13 +111,24 @@ void NpcInitDevice(int argc, char** argv){
 	tfp->open("./wave/ysyx_26020046_MemTop.fst");
 #endif
 }
-void NpcInitMem(){
-	for(int i=80;i<100;i+=4){//00100073
-		psRam[i+0]=0x73;
-		psRam[i+1]=0x00;
-		psRam[i+2]=0x10;
-		psRam[i+3]=0x00;
+void NpcInitMem(int argc, char** argv){
+    FILE *file;
+	if(argc>1&&argv[1]!=NULL){
+		printf("!!bin:%s ",argv[1]);
+		file = fopen(argv[1],"rb");
+	}else{
+		printf("!!shuould input bin\n");
+		exit(-1);
 	}
+	if(file==NULL){printf("can't open file\n");exit(-1);}
+
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    size_t wordsRead = fread(psRam, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
+	fclose(file);
+	printf("has open file\n");
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
@@ -132,7 +143,7 @@ int main(int argc, char** argv) {
 		runStep=0;
 	}
 	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	for(int i=0;i<100&(!contextp->gotFinish());i++){
+	for(int i=0;i<10000&(!contextp->gotFinish());i++){
 		top->clock=1;top->eval();
 	#ifdef NPC_WAVE
 		contextp->timeInc(1);
