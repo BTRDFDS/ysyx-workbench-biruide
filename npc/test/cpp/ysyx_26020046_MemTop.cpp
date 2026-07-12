@@ -35,6 +35,7 @@ void NpcReturn(int returnCode);
 void NpcRun(uint32_t times);
 ////////////////////////////////////////////////////////////////////////////////////////
 uint32_t NpcMemRead(uint32_t addr);extern "C" int pmem_read(int raddr) {
+	// printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
 	uint32_t raddrX=(uint32_t)raddr;
 	if(raddrX==addrTimer){//返回毫秒数
 		uint32_t time=0;
@@ -44,7 +45,13 @@ uint32_t NpcMemRead(uint32_t addr);extern "C" int pmem_read(int raddr) {
 		return time;
 	}
 	if(raddrX-addrPSRAM>=psRamSize|raddrX<addrPSRAM|raddrX==0){return 0;}
-	return psRam[(raddrX-addrPSRAM) >> 2];
+	uint32_t temp=
+		((uint32_t)psRam[raddrX-addrPSRAM+0]<< 0)|
+		((uint32_t)psRam[raddrX-addrPSRAM+1]<< 8)|
+		((uint32_t)psRam[raddrX-addrPSRAM+2]<<16)|
+		((uint32_t)psRam[raddrX-addrPSRAM+3]<<24);
+	printf("nRead addr=%x@%x at T=%d => %x\n",raddrX,raddrX,runStep,temp);
+	return temp;
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
@@ -86,6 +93,7 @@ uint32_t NpcMemRead(uint32_t addr){//读取4个字节
 		((uint32_t)psRam[addr+1]<< 8)|
 		((uint32_t)psRam[addr+2]<<16)|
 		((uint32_t)psRam[addr+3]<<24);
+		printf("nRead addr=%x@%x at T=%d => %x\n",addr,addr,runStep,temp);
 		return temp;
 	}
 }
@@ -114,6 +122,7 @@ void NpcInitMem(){
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
 	NpcInitDevice(argc, argv);
+	NpcInitMem();
 	{//初始化
 		for(int i=0;i<10;i++){
 			top->clock=0;top->reset=1;top->eval();

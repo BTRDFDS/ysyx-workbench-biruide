@@ -55,7 +55,7 @@ bin:
 	mkdir -p bin
 wave:
 	mkdir -p wave
-run:bin/ysyx_26020046_MemTop wave
+run:bin/ysyx_26020046_MemTop wave verilog
 	./bin/ysyx_26020046_MemTop
 	
 

@@ -37,6 +37,7 @@ class ysyx_26020046_Wbu() extends Module {
 			is(CsrOp.Trap){
 				mcause	:= in.pipe.csrMesg
 				mepc := in.pipe.pc
+				when(in.pipe.csrMesg === 3.U){stop()}
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
