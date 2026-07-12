@@ -33,14 +33,14 @@ class ysyx_26020046_Wbu() extends Module {
 		
 	when(in.pipe.valid){//合法处理
 		switch(in.pipe.csrOp){
-			is(CsrOp.Mret){mstatus	:= MstatuseReset}//TODO
+			is(CsrOp.Mret){mstatus := MstatuseReset}//TODO
 			is(CsrOp.Trap){
 				mcause	:= in.pipe.csrMesg
 				mepc 	:= in.pipe.pc
-				when(in.pipe.csrMesg === 3.U){
-					printf("ebreak,stop!!!\n")
-					stop()
-				}
+				// when(in.pipe.csrMesg === 3.U){
+				// 	printf("ebreak,stop!!!\n")
+				// 	stop()
+				// }
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
@@ -68,11 +68,10 @@ class ysyx_26020046_Wbu() extends Module {
 		when((in.pipe.rdAddr =/= 0.U)&(error === false.B)){gpr(in.pipe.rdAddr) := in.pipe.result}
 	}
 	when((in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) | error){
-		mcause	:= in.pipe.csrMesg
-		mepc 	:= in.pipe.pc
-		out.imme.back := Back.Error
+		mcause			:= in.pipe.csrMesg
+		mepc 			:= in.pipe.pc
+		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
-		assert(false.B)
 		printf("error,stop!!!\n")
 		stop()
 	}otherwise{
@@ -100,4 +99,33 @@ class ysyx_26020046_Wbu() extends Module {
 			}
 		}otherwise{out.imme.csrOut := 0.U}
 	}
+
+	val chk = Module(new ysyx_26020046_Chk)
+	chk.io.reg := gpr
+	chk.io.ebreak := (in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 3.U) | (in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) | error
+	chk.io.pc := in.pipe.pc
+}
+class ysyx_26020046_Chk extends ExtModule{
+	val io = IO(new Bundle{
+		val reg = Input(new Vec(RegNum, UInt(BitWidth.W)))
+		val ebreak = Input(new Bool)
+		val pc = Input(UInt(BitWidth.W))
+	})
+	setInline("ysyx_26020046_Chk.sv",
+	"""
+	module ysyx_26020046_Chk(
+		input logic io_ebreak,
+		input logic [31:0] io_reg [31:0]
+	);
+	import "DPI-C" function void stop(input bit success);
+	always_comb begin
+		if(io_ebreak) stop(io_reg[10] == 32'h1);
+	end
+
+	export "DPI-C" function getRegPc;
+	function int getRegPc(input int addr);return (addr == 0) ? io_pc : io_reg[addr];endfunction
+
+	endmodule
+	"""
+	)
 }

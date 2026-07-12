@@ -33,6 +33,7 @@ void NpcError();
 void NpcEbreak(int returnCode);
 void NpcReturn(int returnCode);
 void NpcRun(uint32_t times);
+void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int pmem_read(int raddr) {
 	// printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
@@ -80,6 +81,16 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	temp&=mask1;
 	temp|=data;
 	psRam[(waddr-addrPSRAM)>>2]=temp;
+}
+extern "C" int getRegPc(int addr);
+extern "C" void stop(unsigned char success){
+	NpcWave();
+	tfp->close();
+	delete top;
+	delete contextp;
+	printf("runStep=%d\n",runStep);
+	if(success)return 0;
+	else return 1;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDevice(int argc, char** argv){
@@ -158,5 +169,5 @@ int main(int argc, char** argv) {
 	delete top;
 	delete contextp;
 	printf("runStep=%d\n",runStep);
-	return 0;
+	return -1;
 }
