@@ -170,7 +170,8 @@ class ysyx_26020046_Idu extends Module{
 			}
 		}
 		when(opValid & aluValid & lsuValid & bfuValid & csrValid){
-			out.pipe.valid	:= csrOp =/= CsrOp.Trap
+			// out.pipe.valid	:= csrOp =/= CsrOp.Trap
+			out.pipe.valid	:= true.B
 			out.pipe.csrOp	:= csrOp
 			out.pipe.csrMesg	:= csrMesg
 		}}
