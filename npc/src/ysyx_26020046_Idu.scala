@@ -52,7 +52,7 @@ class ysyx_26020046_Idu extends Module{
 
 
 	// dontTouch(aluValid)
-	dontTouch(csrValid)
+	// dontTouch(csrValid)
 
 		val csrOp	= WireInit(CsrOp.Null)
 		val csrMesg = WireInit(0.U(BitWidth.W))
