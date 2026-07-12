@@ -107,9 +107,10 @@ class ysyx_26020046_Wbu() extends Module {
 }
 class ysyx_26020046_Chk extends ExtModule{
 	val io = IO(new Bundle{
-		val reg = Input(Vec(RegNum, UInt(BitWidth.W)))
-		val ebreak = Input(Bool())
-		val pc = Input(UInt(BitWidth.W))
+		val reg		= Input(Vec(RegNum, UInt(BitWidth.W)))
+		val ebreak	= Input(Bool())
+		val pc		= Input(UInt(BitWidth.W))
+		val check	= Input(Bool())
 	})
 	setInline("ysyx_26020046_Chk.sv",
 	"""
@@ -119,10 +120,11 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic [31:0]  io_reg_8, io_reg_9,io_reg_10,io_reg_11,io_reg_12,io_reg_13,io_reg_14,io_reg_15,
 		input logic [31:0] io_reg_16,io_reg_17,io_reg_18,io_reg_19,io_reg_20,io_reg_21,io_reg_22,io_reg_23,
 		input logic [31:0] io_reg_24,io_reg_25,io_reg_26,io_reg_27,io_reg_28,io_reg_29,io_reg_30,io_reg_31,
-		input logic [31:0] io_pc
+		input logic [31:0] io_pc,
+		input logic io_check
 	);
-	import "DPI-C" function void stop();
-	always_comb if(io_ebreak)stop();
+	import "DPI-C" function void ebreak();
+	always_comb if(io_ebreak)ebreak();
 	wire [31:0] io_reg [31:0];
     assign io_reg = '{
     	 io_reg_0, io_reg_1, io_reg_2, io_reg_3, io_reg_4, io_reg_5, io_reg_6, io_reg_7,
@@ -133,6 +135,8 @@ class ysyx_26020046_Chk extends ExtModule{
 
 	export "DPI-C" function getRegPc;
 	function int getRegPc(input int addr);return (addr == 0) ? io_pc : io_reg[addr];endfunction
+	import "DPI-C" function void check();
+	always_comb if(io_check)check();
 
 	endmodule
 	"""

@@ -32,8 +32,8 @@ timespec startTime;//开始时间
 
 void NpcError();
 void NpcEbreak(int returnCode);
-void NpcReturn(int returnCode);
 void NpcRun(uint32_t times);
+void NpcReturn(const char const* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int pmem_read(int raddr) {
@@ -84,19 +84,9 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	psRam[(waddr-addrPSRAM)>>2]=temp;
 }
 extern "C" int getRegPc(int addr);
-extern "C" void stop(){
-	NpcWave();
-	tfp->close();
-	for(int i=0;i<32;i++){
-		printf("%2d:%8x ",i,getRegPc(i));
-		if(i%8==7)printf("\n");
-	}
-	bool success = getRegPc(10)==0;
-	delete top;
-	delete contextp;
-	printf("runStep=%d ebreak = %d\n",runStep,success);
-	if(success)exit(0);
-	else exit(1);
+extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0)}
+extern "C" void check(){
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDevice(int argc, char** argv){
@@ -142,6 +132,18 @@ void NpcWave(){
 		tfp->dump(contextp->time());
 	#endif
 }
+void NpcReturn(const char const* msg,int returnCode){
+	NpcWave();
+	tfp->close();
+	printf("%s runStep=%d\n",msg,runStep);
+	for(int i=0;i<32;i++){
+		printf("%2d:%8x ",i,getRegPc(i));
+		if(i%8==7)printf("\n");
+	}
+	delete top;
+	delete contextp;
+	exit(returnCode);
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
 	NpcInitDevice(argc, argv);
@@ -170,14 +172,5 @@ int main(int argc, char** argv) {
 		top->clock=0;top->eval();
 		runStep++;
 	}
-	NpcWave();
-	tfp->close();
-	printf("runStep=%d error when pc= \n",runStep,getRegPc(0));
-	for(int i=0;i<32;i++){
-		printf("%2d:%8x ",i,getRegPc(i));
-		if(i%8==7)printf("\n");
-	}
-	delete top;
-	delete contextp;
-	return -1;
+	NpcReturn("error",-1);
 }
