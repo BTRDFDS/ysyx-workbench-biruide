@@ -168,6 +168,7 @@ int main(int argc, char** argv) {
 	}
 	delete top;
 	delete contextp;
+	tfp->close();
 	printf("runStep=%d\n",runStep);
 	return 0;
 }
