@@ -111,6 +111,7 @@ class ysyx_26020046_Idu extends Module{
 				is(Op.Branch)	{out.pipe.In1 := ExuIn1.Pc}
 			}
 			switch(opEnum){
+				is(Op.Uauipc)	{out.pipe.In2 := ExuIn2.Imm}
 				is(Op.Ului)		{out.pipe.In2 := ExuIn2.Imm}
 				is(Op.Ialu)		{out.pipe.In2 := ExuIn2.Imm}
 				is(Op.Jal)		{out.pipe.In2 := ExuIn2.Imm}
