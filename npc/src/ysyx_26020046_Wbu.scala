@@ -73,6 +73,7 @@ class ysyx_26020046_Wbu() extends Module {
 		out.imme.back := Back.Error
 		out.imme.addr	:= mtvec
 		printf("error,stop!!!\n")
+		assert(false.B)
 		stop()
 	}otherwise{
 		out.imme.back := Back.Ready
