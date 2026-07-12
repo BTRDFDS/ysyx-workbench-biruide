@@ -34,7 +34,7 @@ void NpcEbreak(int returnCode);
 void NpcReturn(int returnCode);
 void NpcRun(uint32_t times);
 ////////////////////////////////////////////////////////////////////////////////////////
-uint32_t NpcMemRead(uint32_t addr);extern "C" int pmem_read(int raddr) {
+extern "C" int pmem_read(int raddr) {
 	// printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
 	uint32_t raddrX=(uint32_t)raddr;
 	if(raddrX==addrTimer){//返回毫秒数
@@ -50,11 +50,12 @@ uint32_t NpcMemRead(uint32_t addr);extern "C" int pmem_read(int raddr) {
 		((uint32_t)psRam[raddrX-addrPSRAM+1]<< 8)|
 		((uint32_t)psRam[raddrX-addrPSRAM+2]<<16)|
 		((uint32_t)psRam[raddrX-addrPSRAM+3]<<24);
-	printf("nRead addr=%x@%x at T=%d => %x\n",raddrX,raddrX,runStep,temp);
+	printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
 	return temp;
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
+	printf("write addr= %x at Times=%d %x => %x\n",raddrX,runStep,wdata,wmask);
 	uint32_t waddrX=(uint32_t)waddr;
 	if(waddrX==0x10000000){
 		printf("%c",wdata);
@@ -81,22 +82,6 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	psRam[(waddr-addrPSRAM)>>2]=temp;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-uint32_t NpcMemRead(uint32_t addr){//读取4个字节
-		printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
-	if(addr+3>=psRamSize){
-		// printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
-		exit(-1);
-		return 0;
-	}else{
-		uint32_t temp=
-		((uint32_t)psRam[addr+0]<< 0)|
-		((uint32_t)psRam[addr+1]<< 8)|
-		((uint32_t)psRam[addr+2]<<16)|
-		((uint32_t)psRam[addr+3]<<24);
-		printf("nRead addr=%x@%x at T=%d => %x\n",addr,addr,runStep,temp);
-		return temp;
-	}
-}
 void NpcInitDevice(int argc, char** argv){
 	if(clock_gettime(CLOCK_MONOTONIC,&startTime)!=0){printf("time err\n");exit(-1);}
 	contextp = new VerilatedContext;
