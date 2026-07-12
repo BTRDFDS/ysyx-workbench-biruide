@@ -96,6 +96,4 @@ class ysyx_26020046_Wbu() extends Module {
 		out.imme.back := Back.Ready
 		out.imme.addr	:= 0.U	
 	}
-	dontTouch(aluValid)
-	dontTouch(csrValid)
 }
