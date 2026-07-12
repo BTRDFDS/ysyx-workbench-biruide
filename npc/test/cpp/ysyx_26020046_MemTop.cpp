@@ -91,9 +91,10 @@ extern "C" void stop(){
 		printf("reg[%2d]=%8x ",i,getRegPc(i));
 		if(i%8==7)printf("\n");
 	}
+	bool success = getRegPc(10)==0
 	delete top;
 	delete contextp;
-	if(getRegPc(10)==0)exit(0);
+	if(success)exit(0);
 	else exit(1);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
