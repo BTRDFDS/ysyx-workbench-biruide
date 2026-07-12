@@ -30,7 +30,6 @@ uint8_t psRam[psRamSize];
 uint32_t runStep;
 timespec startTime;//开始时间
 
-void NpcError();
 void NpcEbreak(int returnCode);
 void NpcRun(uint32_t times);
 void NpcReturn(const char* msg,int returnCode);
@@ -128,7 +127,7 @@ void NpcInitMem(int argc, char** argv){
 	NpcDifftestInit8(psRamSize,psRam,addrPSRAM);
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
-	if(gpr==NULL){NpcError();}
+	if(gpr==NULL){NpcReturn("difftest unable",-1);}
 	for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
 	gpr[0]=0;
 }
