@@ -123,7 +123,8 @@ class ysyx_26020046_Chk extends ExtModule{
 	);
 	import "DPI-C" function void stop(input bit success);
 	always_comb begin
-		if(io_ebreak) stop(io_reg_10 == 32'h0);
+		if(io_ebreak)if(io_reg_10 == 32'h0)stop(1);
+		else stop(0);
 	end
 	wire [31:0] io_reg [31:0];
     assign io_reg = '{

@@ -88,7 +88,7 @@ extern "C" void stop(unsigned char success){
 	tfp->close();
 	printf("runStep=%d ebreak = %d\n",runStep,success);
 	for(int i=0;i<32;i++){
-		printf("reg[%d]=%x ",i,getRegPc(i));
+		printf("reg[%2d]=%8x ",i,getRegPc(i));
 		if(i%8==7)printf("\n");
 	}
 	delete top;
