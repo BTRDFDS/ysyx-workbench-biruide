@@ -133,7 +133,7 @@ void NpcInitMem(int argc, char** argv){
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
 	NpcInitDevice(argc, argv);
-	NpcInitMem();
+	NpcInitMem(argc, argv);
 	{//初始化
 		for(int i=0;i<10;i++){
 			top->clock=0;top->reset=1;top->eval();
