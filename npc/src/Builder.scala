@@ -10,5 +10,5 @@ object Builder extends App {
       "locationInfoStyle=wrapInAtSquareBracket"
     ).reduce(_ + "," + _)
   )
-  circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_26020046, args, firtoolOptions)
+  circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_26020046_MemTop, args, firtoolOptions)
 }

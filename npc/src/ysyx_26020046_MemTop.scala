@@ -1,9 +1,8 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-// import chisel3.experimental.ExtModule
 //TODO:需要BlackBox
-//根据官网，blackbox已经被废弃了，使用import chisel3.experimental.ExtModule
+//根据官网，blackbox已经被废弃了，使用ExtModule
 object MemStatus extends ChiselEnum{val Idle,Read,Write = Value}
 class ysyx_26020046_MemTop extends Module{
 	val cpu = new ysyx_26020046()
