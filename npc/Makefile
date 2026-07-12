@@ -26,10 +26,37 @@ idea:
 clean:
 	-rm -rf $(BUILD_DIR)
 
-.PHONY: test verilog help reformat checkformat clean
+.PHONY: test verilog help reformat checkformat clean run
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	@echo "Write this Makefile by yourself."
-
 -include ../Makefile
+
+
+
+
+include $(NVBOARD_HOME)/scripts/nvboard.mk
+FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic -MMD
+VERILATOR_CFLAGS += $(FLAGS)
+VERILATOR_CFLAGS += --autoflush
+VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
+VERILATOR_VLT = 
+srcVerilog = $(shell find $(NPC_HOME)/build -type f -name "*.sv")
+srcCpp = $(NPC_HOME)/test/cpp/ysyx_26020046_MemTop.cpp
+
+bin/% : $(srcVerilog) $(srcCpp) bin
+	echo $(srcVerilog)
+	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
+	--top-module ysyx_26020046_MemTop \
+	$(SOC_CFLAGS) \
+	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
+	$(addprefix -CFLAGS , $(CXXFLAGS)) \
+	$(addprefix -LDFLAGS , $(LDFLAGS))
+	cp build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop bin/ysyx_26020046_MemTop
+bin:
+	mkdir -p bin
+run:bin/ysyx_26020046_MemTop
+	./bin/ysyx_26020046_MemTop
+	
+

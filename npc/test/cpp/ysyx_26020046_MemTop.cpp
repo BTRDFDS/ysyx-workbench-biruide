@@ -1,0 +1,139 @@
+//ysyx_26020046_MemTop
+#include "Vysyx_26020046_MemTop.h"
+#include "verilated.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdint.h>
+#include "svdpi.h"
+#include "Vysyx_26020046_MemTop__Dpi.h"
+#include <time.h>
+
+VerilatedContext* contextp;//verilator上下文
+Vysyx_26020046_MemTop* top;//顶层模块
+svScope scope;//作用域
+
+const uint32_t addrReset	=0x80000000;
+const uint32_t addrPSRAM	=0x80000000;
+const uint32_t addrTimer	=0x0200BFF8;
+const uint32_t addrSerial	=0x10000000;
+const uint32_t addrInput 	=0x10011000;
+const uint32_t psRamSize	=0xffffff;
+
+uint8_t psRam[psRamSize];
+uint32_t runStep;
+timespec startTime;//开始时间
+
+void NpcError();
+void NpcEbreak(int returnCode);
+void NpcReturn(int returnCode);
+void NpcRun(uint32_t times);
+////////////////////////////////////////////////////////////////////////////////////////
+uint32_t NpcMemRead(uint32_t addr);extern "C" int pmem_read(int raddr) {
+	uint32_t raddrX=(uint32_t)raddr;
+	if(raddrX==addrTimer){//返回毫秒数
+		uint32_t time=0;
+		timespec t;
+		if(clock_gettime(CLOCK_MONOTONIC,&t)!=0){printf("time err\n");exit(-1);}
+		time=(t.tv_sec*1000000+t.tv_nsec/1000)-(startTime.tv_sec*1000000+startTime.tv_nsec/1000);//微秒
+		return time;
+	}
+	if(raddrX-addrPSRAM>=psRamSize|raddrX<addrPSRAM|raddrX==0){return 0;}
+	return psRam[(raddrX-addrPSRAM) >> 2];
+}
+
+extern "C" void pmem_write(int waddr, int wdata, char wmask) {
+	uint32_t waddrX=(uint32_t)waddr;
+	if(waddrX==0x10000000){
+		printf("%c",wdata);
+		return;
+	}
+	if((((waddrX-addrPSRAM)>>2)>psRamSize|waddrX<=addrPSRAM)|(waddrX==0)){
+		return;
+	}
+	uint32_t mask1=0xffffffff;
+	uint32_t data=wdata;
+	switch(wmask&0x0f){
+		case 0b0001:mask1=0xffffff00;data=data&0x00ff;data=data    ;break;
+		case 0b0010:mask1=0xffff00ff;data=data&0x00ff;data=data<< 8;break;
+		case 0b0100:mask1=0xff00ffff;data=data&0x00ff;data=data<<16;break;
+		case 0b1000:mask1=0x00ffffff;data=data&0x00ff;data=data<<24;break;
+		case 0b0011:mask1=0xffff0000;data=data&0xffff;data=data    ;break;
+		case 0b1100:mask1=0x0000ffff;data=data&0xffff;data=data<<16;break;
+		case 0b1111:mask1=0x00000000;data=data       ;data=data    ;break;
+		default    :mask1=0xffffffff;data=data&0x0000;data=       0;break;
+	}
+	uint32_t temp=psRam[(waddr-addrPSRAM)>>2];
+	temp&=mask1;
+	temp|=data;
+	psRam[(waddr-addrPSRAM)>>2]=temp;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+uint32_t NpcMemRead(uint32_t addr){//读取4个字节
+	if(addr+3>=psRamSize){
+		printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
+		exit(-1);
+		return 0;
+	}else{
+		uint32_t temp=
+		((uint32_t)psRam[addr+0]<< 0)|
+		((uint32_t)psRam[addr+1]<< 8)|
+		((uint32_t)psRam[addr+2]<<16)|
+		((uint32_t)psRam[addr+3]<<24);
+		return temp;
+	}
+}
+void NpcInitDevice(int argc, char** argv){
+	if(clock_gettime(CLOCK_MONOTONIC,&startTime)!=0){printf("time err\n");exit(-1);}
+	contextp = new VerilatedContext;
+	contextp->commandArgs(argc, argv);
+	// Verilated::commandArgs(argc, argv);//不确定还要不要加
+	top = new Vysyx_26020046_MemTop{contextp};
+	scope=svGetScopeFromName("TOP.ysyx_26020046_MemTop");
+	// scope=svGetScopeFromName("TOP.ysyx_26020046_MemTop.asic.cpu.cpu");
+	svSetScope(scope);
+#ifdef NPC_WAVE
+    Verilated::traceEverOn(true);
+	tfp = new VerilatedFstC;
+	top->trace(tfp, 99);
+	// top->ysyx_26020046_MemTop->asic->cpu->cpu->trace(tfp,99);
+	tfp->open("ysyx_26020046_MemTop.fst");
+#endif
+}
+void NpcInitMem(){
+	for(int i=0;i<100;i+=4){//00100073
+		psRam[i+0]=0x73;
+		psRam[i+1]=0x00;
+		psRam[i+2]=0x10;
+		psRam[i+3]=0x00;
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////
+int main(int argc, char** argv) {
+	NpcInitDevice(argc, argv);
+	{//初始化
+		for(int i=0;i<10;i++){
+			top->clock=0;top->reset=1;top->eval();
+			top->clock=1;top->reset=1;top->eval();
+		}
+		top->clock=0;top->reset=0;top->eval();
+		runStep=0;
+	}
+	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
+	for(int i=0;i<100&(!contextp->gotFinish());i++){
+		top->clock=1;top->eval();
+		top->clock=0;top->eval();
+		runStep++;
+	#ifdef NPC_WAVE
+		contextp->timeInc(1);
+		tfp->dump(contextp->time());
+	#endif
+	}
+	#ifdef NPC_WAVE
+		tfp->close();
+	#endif
+	delete top;
+	delete contextp;
+	printf("runStep=%d\n",runStep);
+	return 0;
+}
