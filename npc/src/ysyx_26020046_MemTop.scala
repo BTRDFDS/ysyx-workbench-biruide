@@ -47,6 +47,13 @@ class ysyx_26020046_MemTop extends Module{
 		wDataValid := true.B
 	}
 
+	mem.read.valid := status === MemStatus.Read
+	mem.read.addr  := rAddr
+	mem.write.valid := status === MemStatus.Write
+	mem.write.addr  := wAddr
+	mem.write.strb  := wStrb
+	mem.write.data  := wData
+
 }
 class ysyx_26020046_Mem extends ExtModule{
     val read = IO(new Bundle{
