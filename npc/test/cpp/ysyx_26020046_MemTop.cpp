@@ -134,12 +134,12 @@ void NpcInitMem(int argc, char** argv){
 	// 	if(i%16==15)printf("\n");
 	// }
 }
-void NpcWave(){
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#endif
-}
+// void NpcWave(){
+// 	#ifdef NPC_WAVE
+// 		contextp->timeInc(1);
+// 		tfp->dump(contextp->time());
+// 	#endif
+// }
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
 	NpcInitDevice(argc, argv);
@@ -152,19 +152,7 @@ int main(int argc, char** argv) {
 		top->clock=0;top->reset=0;top->eval();
 		runStep=0;
 	}
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#endif
 	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#endif
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#endif
 	for(int i=0;i<10000&(!contextp->gotFinish());i++){
 		top->clock=1;top->eval();
 		top->clock=0;top->eval();
@@ -174,11 +162,6 @@ int main(int argc, char** argv) {
 	#endif
 		runStep++;
 	}
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#endif
-	// NpcWave();
 	delete top;
 	delete contextp;
 	printf("runStep=%d\n",runStep);
