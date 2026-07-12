@@ -129,10 +129,16 @@ void NpcInitMem(int argc, char** argv){
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
 	printf("has open file\n");
-	for(int i=0;i<40;i+=4){
-		printf("%02x%02x%02x%02x ",psRam[i+3],psRam[i+2],psRam[i+1],psRam[i]);
-		if(i%16==15)printf("\n");
-	}
+	// for(int i=0;i<40;i+=4){//小段检查
+	// 	printf("%02x%02x%02x%02x ",psRam[i+3],psRam[i+2],psRam[i+1],psRam[i]);
+	// 	if(i%16==15)printf("\n");
+	// }
+}
+void NpcWave(){
+	#ifdef NPC_WAVE
+		contextp->timeInc(1);
+		tfp->dump(contextp->time());
+	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
@@ -148,21 +154,13 @@ int main(int argc, char** argv) {
 	}
 	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
 	for(int i=0;i<10000&(!contextp->gotFinish());i++){
+		NpcWave();
 		top->clock=1;top->eval();
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#endif
+		NpcWave();
 		top->clock=0;top->eval();
 		runStep++;
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#endif
 	}
-	#ifdef NPC_WAVE
-		tfp->close();
-	#endif
+	NpcWave();
 	delete top;
 	delete contextp;
 	printf("runStep=%d\n",runStep);
