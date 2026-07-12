@@ -36,7 +36,7 @@ class ysyx_26020046_Wbu() extends Module {
 			is(CsrOp.Mret){mstatus	:= MstatuseReset}//TODO
 			is(CsrOp.Trap){
 				mcause	:= in.pipe.csrMesg
-				mepc := in.pipe.pc
+				mepc 	:= in.pipe.pc
 				when(in.pipe.csrMesg === 3.U){
 					printf("Trap,stop!!!\n")
 					stop()

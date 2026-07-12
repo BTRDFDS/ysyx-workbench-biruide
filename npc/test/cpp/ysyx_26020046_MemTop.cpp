@@ -134,6 +134,10 @@ int main(int argc, char** argv) {
 	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
 	for(int i=0;i<100&(!contextp->gotFinish());i++){
 		top->clock=1;top->eval();
+	#ifdef NPC_WAVE
+		contextp->timeInc(1);
+		tfp->dump(contextp->time());
+	#endif
 		top->clock=0;top->eval();
 		runStep++;
 	#ifdef NPC_WAVE
