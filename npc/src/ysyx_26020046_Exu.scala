@@ -47,8 +47,8 @@ class ysyx_26020046_Exu extends Module {
 			is(ExuAlu.And)	{result := input1 & input2}
 			is(ExuAlu.Sub)	{result := input1 - input2}
 			is(ExuAlu.Sra)	{result := (input1.asSInt >> input2(4,0)).asUInt}
-			is(ExuAlu.ImR1)	{result := in.pipe.result+in.pipe.r1}
-			is(ExuAlu.ImPc)	{result := in.pipe.result+in.pipe.pc}
+			// is(ExuAlu.ImR1)	{result := in.pipe.result+in.pipe.r1}
+			// is(ExuAlu.ImPc)	{result := in.pipe.result+in.pipe.pc}
 			is(ExuAlu.Csr)	{result := in.pipe.csrMesg}
 			is(ExuAlu.Imm)	{result := in.pipe.result}
 		}

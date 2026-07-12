@@ -65,8 +65,6 @@ class ysyx_26020046_Idu extends Module{
 				is(Op.Branch)	{out.pipe.result := Cat(Fill(20,in.pipe.instr(31)),in.pipe.instr(7),in.pipe.instr(30,25),in.pipe.instr(11,8),0.U(1.W))}
 				is(Op.Jal)		{out.pipe.result := Cat(Fill(12,in.pipe.instr(31)),in.pipe.instr(19,12),in.pipe.instr(20),in.pipe.instr(30,21),0.U(1.W))}
 			}
-			when(opEnum === Op.Uauipc){out.pipe.In1 := ExuIn1.Pc}
-			when(opEnum === Op.Ului | opEnum === Op.Ialu){out.pipe.In2 := ExuIn2.Imm}
 			when(
 				opEnum === Op.Jal | opEnum === Op.Ijalr	|
 				(opEnum === Op.Icsr & funct3 === 0.U(3.W))
@@ -99,13 +97,27 @@ class ysyx_26020046_Idu extends Module{
 						}
 					}
 				}
-				is(Op.Jal)		{out.pipe.alu := ExuAlu.ImPc}
-				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.ImR1}
-				is(Op.Iload)	{out.pipe.alu := ExuAlu.ImR1}
+				is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
+				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Add}
+				is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Icsr)		{out.pipe.alu := ExuAlu.Csr}
-				is(Op.Branch)	{out.pipe.alu := ExuAlu.ImPc}
-				is(Op.Store)	{out.pipe.alu := ExuAlu.ImR1}
+				is(Op.Branch)	{out.pipe.alu := ExuAlu.Add}
+				is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Ului)		{out.pipe.alu := ExuAlu.Imm}
+			}
+			switch(opEnum){
+				is(Op.Uauipc)	{out.pipe.In1 := ExuIn1.Pc}
+				is(Op.Jal)		{out.pipe.In1 := ExuIn1.Pc}
+				is(Op.Branch)	{out.pipe.In1 := ExuIn1.Pc}
+			}
+			switch(opEnum){
+				is(Op.Ului)		{out.pipe.In2 := ExuIn2.Imm}
+				is(Op.Ialu)		{out.pipe.In2 := ExuIn2.Imm}
+				is(Op.Jal)		{out.pipe.In2 := ExuIn2.Imm}
+				is(Op.Ijalr)	{out.pipe.In2 := ExuIn2.Imm}
+				is(Op.Iload)	{out.pipe.In2 := ExuIn2.Imm}
+				is(Op.Branch)	{out.pipe.In2 := ExuIn2.Imm}
+				is(Op.Store)	{out.pipe.In2 := ExuIn2.Imm}
 			}
 			switch(opEnum){
 				is(Op.Iload)	{out.pipe.res := ExuRes.Alu}
