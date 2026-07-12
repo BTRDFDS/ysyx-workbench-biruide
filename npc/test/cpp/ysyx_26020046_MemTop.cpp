@@ -138,7 +138,7 @@ void NpcWave(){
 		tfp->dump(contextp->time());
 	#endif
 }
-void NpcReturn(const char const* msg,int returnCode){
+void NpcReturn(const char* msg,int returnCode){
 	NpcWave();
 #ifdef NPC_WAVE
 	tfp->close();
