@@ -102,7 +102,7 @@ void NpcInitDevice(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new Vysyx_26020046_MemTop{contextp};
-	scope=svGetScopeFromName("TOP.ysyx_26020046_MemTop.cpu.wbu");
+	scope=svGetScopeFromName("TOP.ysyx_26020046_MemTop.cpu.wbu.chk");
 	svSetScope(scope);
 #ifdef NPC_WAVE
     Verilated::traceEverOn(true);
