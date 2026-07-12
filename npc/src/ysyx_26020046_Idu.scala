@@ -15,7 +15,7 @@ class ysyx_26020046_Idu extends Module{
 	out.pipe.rdAddr	:= 0.U
 	out.pipe.result	:= 0.U
 	out.pipe.pc		:= in.pipe.pc
-	out.pipe.csrOp	:= CsrOp.
+	out.pipe.csrOp	:= CsrOp.Trap
 	out.pipe.csrAddr:= 2.U//Illegal Instruction
 	out.pipe.lsuAddr:= LsuAddr.B//000
 	out.pipe.lsuOp	:= LsuOp.Null
