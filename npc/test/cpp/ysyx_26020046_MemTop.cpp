@@ -88,7 +88,7 @@ extern "C" void stop(unsigned char success){
 	tfp->close();
 	delete top;
 	delete contextp;
-	printf("runStep=%d\n",runStep);
+	printf("runStep=%d ebreak = %d\n",runStep,success);
 	if(success)exit(0);
 	else exit(1);
 }
