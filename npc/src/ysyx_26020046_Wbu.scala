@@ -38,7 +38,7 @@ class ysyx_26020046_Wbu() extends Module {
 				mcause	:= in.pipe.csrMesg
 				mepc 	:= in.pipe.pc
 				when(in.pipe.csrMesg === 3.U){
-					printf("Trap,stop!!!\n")
+					printf("ebreak,stop!!!\n")
 					stop()
 				}
 				//TODO:mstatus
@@ -67,6 +67,16 @@ class ysyx_26020046_Wbu() extends Module {
 		}
 		when((in.pipe.rdAddr =/= 0.U)&(error === false.B)){gpr(in.pipe.rdAddr) := in.pipe.result}
 	}
+	when((in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) | error){
+		mcause	:= in.pipe.csrMesg
+		mepc 	:= in.pipe.pc
+		out.imme.back := Back.Error
+		out.imme.addr	:= mtvec
+		stop()
+	}otherwise{
+		out.imme.back := Back.Ready
+		out.imme.addr	:= 0.U
+	}
 	mcycle	:= nextMcycle
 	mcycleh	:= nextMcycleh
 
@@ -87,13 +97,5 @@ class ysyx_26020046_Wbu() extends Module {
 				is(CsrAddr.Mvendorid)	{out.imme.csrOut := mvendorid}
 			}
 		}otherwise{out.imme.csrOut := 0.U}
-	}
-	when(error){//返回状态
-		out.imme.back := Back.Error
-		out.imme.addr	:= mtvec
-		stop()
-	}otherwise{
-		out.imme.back := Back.Ready
-		out.imme.addr	:= 0.U	
 	}
 }
