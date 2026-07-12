@@ -112,7 +112,7 @@ void NpcInitDevice(int argc, char** argv){
 #endif
 }
 void NpcInitMem(){
-	for(int i=0;i<100;i+=4){//00100073
+	for(int i=80;i<100;i+=4){//00100073
 		psRam[i+0]=0x73;
 		psRam[i+1]=0x00;
 		psRam[i+2]=0x10;

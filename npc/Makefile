@@ -43,8 +43,6 @@ VERILATOR_VLT =
 srcVerilog = $(shell find $(NPC_HOME)/build -type f -name "*.sv")
 srcCpp = $(NPC_HOME)/test/cpp/ysyx_26020046_MemTop.cpp
 
-build:
-	mkdir -p build
 wave:
 	mkdir -p wave
 run:verilog $(srcVerilog) $(srcCpp) wave
