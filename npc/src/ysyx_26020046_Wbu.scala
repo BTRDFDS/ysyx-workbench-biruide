@@ -30,7 +30,9 @@ class ysyx_26020046_Wbu() extends Module {
 	val nextMcycleh	= Wire(UInt(BitWidth.W))
 	nextMcycle	:= mcycle + 1.U
 	nextMcycleh	:= Mux(mcycleh === (Fill(BitWidth,1.U)),mcycleh,mcycleh + 1.U)
-		
+	
+	out.imme.back := Back.Ready
+
 	when(in.pipe.valid){//合法处理
 		switch(in.pipe.csrOp){
 			is(CsrOp.Mret){mstatus := MstatuseReset}//TODO
