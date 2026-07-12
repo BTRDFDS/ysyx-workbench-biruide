@@ -33,7 +33,7 @@ timespec startTime;//开始时间
 void NpcError();
 void NpcEbreak(int returnCode);
 void NpcRun(uint32_t times);
-void NpcReturn(const char const* msg,int returnCode);
+void NpcReturn(const char* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int pmem_read(int raddr) {
@@ -84,9 +84,9 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	psRam[(waddr-addrPSRAM)>>2]=temp;
 }
 extern "C" int getRegPc(int addr);
-extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0)}
+extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0);}
 extern "C" void check(){
-	if(NpcDifftestCheck(pc))NpcReturn("difftest",-1);
+	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDevice(int argc, char** argv){
