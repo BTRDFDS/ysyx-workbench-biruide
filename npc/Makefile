@@ -52,6 +52,6 @@ run:verilog $(srcVerilog) $(srcCpp) wave
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-	./build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop
+	./build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop $(ARG)
 	
 

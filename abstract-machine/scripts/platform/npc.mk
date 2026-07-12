@@ -26,19 +26,5 @@ image: image-dep
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
-	make -C $(NPC_HOME) run t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
-gdb: insert-arg
-	make -C $(NPC_HOME) gdb t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
-sdb: insert-arg
-	make -C $(NPC_HOME) sdb t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
-dft: insert-arg
-	make -C $(NPC_HOME) dft t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
-val: insert-arg
-	make -C $(NPC_HOME) val t=$(TARGET) ARG=$(IMAGE).bin xEb=$(XEB)
-
-# ifeq ($(TEST_AM),1)
-# 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) 
-# else
-# 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) ePrintf=-DDEBUG
-# endif
+	make -C $(NPC_HOME) run ARG=$(IMAGE).bin
 .PHONY: insert-arg
