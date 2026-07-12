@@ -96,5 +96,6 @@ class ysyx_26020046_Arb extends Module{
 		is(ArbStatus.LsuR){backValid := Mux(addrEnum === ArbAddr.Clint,clt.rvalid,out.rvalid)}
 		is(ArbStatus.IfuR){backValid := Mux(addrEnum === ArbAddr.Clint,clt.rvalid,out.rvalid)}
 		is(ArbStatus.LsuW){backValid := Mux(addrEnum === ArbAddr.Clint,clt.bvalid,out.bvalid)}
+		is(ArbStatus.Idle){backValid := false.B}
 	}
 }
