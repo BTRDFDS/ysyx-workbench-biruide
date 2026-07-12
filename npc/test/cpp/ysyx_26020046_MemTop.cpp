@@ -86,7 +86,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0)}
 extern "C" void check(){
-
+	if(NpcDifftestCheck(pc))NpcReturn("difftest",-1);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDevice(int argc, char** argv){
@@ -125,6 +125,12 @@ void NpcInitMem(int argc, char** argv){
 	// 	printf("%02x%02x%02x%02x ",psRam[i+3],psRam[i+2],psRam[i+1],psRam[i]);
 	// 	if(i%16==15)printf("\n");
 	// }
+	NpcDifftestInit8(psRamSize,psRam,addrPSRAM);
+}
+void NpcDifftestGetGpr(uint32_t *gpr){
+	if(gpr==NULL){NpcError();}
+	for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
+	gpr[0]=0;
 }
 void NpcWave(){
 	#ifdef NPC_WAVE
@@ -134,7 +140,9 @@ void NpcWave(){
 }
 void NpcReturn(const char const* msg,int returnCode){
 	NpcWave();
+#ifdef NPC_WAVE
 	tfp->close();
+#endif
 	printf("%s runStep=%d\n",msg,runStep);
 	for(int i=0;i<32;i++){
 		printf("%2d:%8x ",i,getRegPc(i));
