@@ -51,11 +51,17 @@ bin/% : $(srcVerilog) $(srcCpp) bin
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	cp build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop bin/ysyx_26020046_MemTop
-bin:
-	mkdir -p bin
+build:
+	mkdir -p build
 wave:
 	mkdir -p wave
-run:bin/ysyx_26020046_MemTop wave verilog
-	./bin/ysyx_26020046_MemTop
+run:$(srcVerilog) $(srcCpp) wave verilog
+	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
+	--top-module ysyx_26020046_MemTop \
+	$(SOC_CFLAGS) \
+	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
+	$(addprefix -CFLAGS , $(CXXFLAGS)) \
+	$(addprefix -LDFLAGS , $(LDFLAGS))
+	./build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop
 	
 
