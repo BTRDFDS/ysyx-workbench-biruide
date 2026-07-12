@@ -115,15 +115,26 @@ class ysyx_26020046_Chk extends ExtModule{
 	"""
 	module ysyx_26020046_Chk(
 		input logic io_ebreak,
-		input logic [31:0] io_reg [31:0]
+		input logic [31:0]  io_reg_0, io_reg_1, io_reg_2, io_reg_3, io_reg_4, io_reg_5, io_reg_6, io_reg_7,
+		input logic [31:0]  io_reg_8, io_reg_9,io_reg_10,io_reg_11,io_reg_12,io_reg_13,io_reg_14,io_reg_15,
+		input logic [31:0] io_reg_16,io_reg_17,io_reg_18,io_reg_19,io_reg_20,io_reg_21,io_reg_22,io_reg_23,
+		input logic [31:0] io_reg_24,io_reg_25,io_reg_26,io_reg_27,io_reg_28,io_reg_29,io_reg_30,io_reg_31,
+		input logic [31:0] io_pc
 	);
 	import "DPI-C" function void stop(input bit success);
 	always_comb begin
-		if(io_ebreak) stop(io_reg[10] == 32'h1);
+		if(io_ebreak) stop(io_reg_10 == 32'h1);
 	end
+	wire [31:0] reg [31:0];
+    assign reg = '{
+    	 io_reg_0, io_reg_1, io_reg_2, io_reg_3, io_reg_4, io_reg_5, io_reg_6, io_reg_7,
+         io_reg_8, io_reg_9,io_reg_10,io_reg_11,io_reg_12,io_reg_13,io_reg_14,io_reg_15,
+        io_reg_16,io_reg_17,io_reg_18,io_reg_19,io_reg_20,io_reg_21,io_reg_22,io_reg_23,
+        io_reg_24,io_reg_25,io_reg_26,io_reg_27,io_reg_28,io_reg_29,io_reg_30,io_reg_31
+    };
 
 	export "DPI-C" function getRegPc;
-	function int getRegPc(input int addr);return (addr == 0) ? io_pc : io_reg[addr];endfunction
+	function int getRegPc(input int addr);return (addr == 0) ? io_pc : reg[addr];endfunction
 
 	endmodule
 	"""
