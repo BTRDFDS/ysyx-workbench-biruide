@@ -25,7 +25,7 @@ class ysyx_26020046_Ifu extends Module{
 		switch(in.imme.back){
 			is(Back.Jump)	{pc := in.imme.addr}
 			is(Back.Error)	{pc := in.imme.addr}
-			is(Back.Ready)	{when(status === IfuStatus.Back){pc := pc + 4.U}}//TODO:可能有问题
+			is(Back.Ready)	{when(status === IfuStatus.Func){pc := pc + 4.U}}//TODO:可能有问题
 		}
 		out.pipe.pc	:= pc
 	//输出指令
