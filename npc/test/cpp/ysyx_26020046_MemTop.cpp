@@ -36,7 +36,7 @@ void NpcReturn(const char* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int pmem_read(int raddr) {
-	// printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
+	printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
 	uint32_t raddrX=(uint32_t)raddr;
 	if(raddrX==addrTimer){//返回毫秒数
 		uint32_t time=0;
