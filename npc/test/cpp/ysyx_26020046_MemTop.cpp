@@ -168,10 +168,10 @@ int main(int argc, char** argv) {
 		top->clock=0;top->eval();
 		runStep++;
 	}
-	NpcWave()
+	NpcWave();
+	tfp->close();
 	delete top;
 	delete contextp;
-	tfp->close();
 	printf("runStep=%d\n",runStep);
 	return 0;
 }
