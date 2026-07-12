@@ -104,7 +104,9 @@ class ysyx_26020046_Wbu() extends Module {
 	chk.io.reg := gpr
 	chk.io.ebreak := (in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 3.U) | (in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) | error
 	chk.io.pc := in.pipe.pc
-	chk.io.check := in.pipe.valid === true.B
+	val check = Reg(Bool())
+	check := in.pipe.valid === true.B
+	chk.io.check := check
 }
 class ysyx_26020046_Chk extends ExtModule{
 	val io = IO(new Bundle{
