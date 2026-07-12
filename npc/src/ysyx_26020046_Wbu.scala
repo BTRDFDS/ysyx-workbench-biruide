@@ -37,10 +37,10 @@ class ysyx_26020046_Wbu() extends Module {
 			is(CsrOp.Trap){
 				mcause	:= in.pipe.csrMesg
 				mepc 	:= in.pipe.pc
-				when(in.pipe.csrMesg === 3.U){
-					printf("ebreak,stop!!!\n")
-					// stop()
-				}
+				// when(in.pipe.csrMesg === 3.U){
+				// 	printf("ebreak,stop!!!\n")
+				// 	// stop()
+				// }
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
@@ -123,7 +123,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	);
 	import "DPI-C" function void stop(input bit success);
 	always_comb begin
-		if(io_ebreak) stop(io_reg_10 == 32'h1);
+		if(io_ebreak) stop(io_reg_10 == 32'h0);
 	end
 	wire [31:0] io_reg [31:0];
     assign io_reg = '{
