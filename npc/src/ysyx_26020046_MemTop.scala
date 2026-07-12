@@ -60,5 +60,25 @@ class ysyx_26020046_Mem extends ExtModule{
 		val strb	= Input(UInt(4.W))
 		val data	= Input(UInt(32.W))
 	})
-	addResource("/src/resources/ysyx_26020046_Mem.sv")
+	// addResource("/src/resources/ysyx_26020046_Mem.sv")
+	setInline("ysyx_26020046_Mem.sv",
+	"""
+	module ysyx_26020046_Mem(
+		input logic read_valid,
+		input logic[31:0] read_addr,
+		output logic[31:0] read_data,
+		input logic write_valid,
+		input logic[31:0] write_addr,
+		input logic[3:0] write_strb,
+		input logic[31:0] write_data
+	);
+	import "DPI-C" function int pmem_read(input int addr);
+	import "DPI-C" function void pmem_write(input int addr, input int data, input byte mask);
+	assign read_data = read_valid?pmem_read(read_addr):0;
+	always_ff@(posedge write_valid) begin
+			pmem_write(write_addr, write_data, {4'b0,write_strb});
+	end
+	endmodule
+	"""
+	)
 }
