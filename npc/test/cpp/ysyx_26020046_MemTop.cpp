@@ -172,8 +172,12 @@ int main(int argc, char** argv) {
 	}
 	NpcWave();
 	tfp->close();
+	printf("runStep=%d error when pc= \n",runStep,getRegPc(0));
+	for(int i=0;i<32;i++){
+		printf("%2d:%8x ",i,getRegPc(i));
+		if(i%8==7)printf("\n");
+	}
 	delete top;
 	delete contextp;
-	printf("runStep=%d\n",runStep);
 	return -1;
 }
