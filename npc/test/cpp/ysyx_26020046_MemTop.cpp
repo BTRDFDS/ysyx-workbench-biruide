@@ -36,7 +36,6 @@ void NpcReturn(const char* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int pmem_read(int raddr) {
-	printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
 	uint32_t raddrX=(uint32_t)raddr;
 	if(raddrX==addrTimer){//返回毫秒数
 		uint32_t time=0;
@@ -51,7 +50,7 @@ extern "C" int pmem_read(int raddr) {
 		((uint32_t)psRam[raddrX-addrPSRAM+1]<< 8)|
 		((uint32_t)psRam[raddrX-addrPSRAM+2]<<16)|
 		((uint32_t)psRam[raddrX-addrPSRAM+3]<<24);
-	// printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
+	printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
 	return temp;
 }
 
