@@ -86,7 +86,6 @@ extern "C" int getRegPc(int addr);
 extern "C" void stop(){
 	NpcWave();
 	tfp->close();
-	printf("runStep=%d ebreak = %d\n",runStep,success);
 	for(int i=0;i<32;i++){
 		printf("reg[%2d]=%8x ",i,getRegPc(i));
 		if(i%8==7)printf("\n");
@@ -94,6 +93,7 @@ extern "C" void stop(){
 	bool success = getRegPc(10)==0
 	delete top;
 	delete contextp;
+	printf("runStep=%d ebreak = %d\n",runStep,success);
 	if(success)exit(0);
 	else exit(1);
 }
