@@ -41,7 +41,8 @@ VERILATOR_CFLAGS += --autoflush
 VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
 VERILATOR_VLT = 
 srcVerilog = $(shell find $(NPC_HOME)/build -type f -name "*.sv")
-srcCpp = $(NPC_HOME)/test/cpp/ysyx_26020046_MemTop.cpp
+srcCpp += $(NPC_HOME)/test/cpp/ysyx_26020046_MemTop.cpp
+srcCpp += $(NPC_HOME)/test/cpp/npcDifftest/npcDifftest.c
 
 LDFLAGS += -lreadline
 LDFLAGS += -L$(NPC_HOME)/test/cpp/lib
