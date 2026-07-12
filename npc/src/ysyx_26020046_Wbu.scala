@@ -121,11 +121,8 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic [31:0] io_reg_24,io_reg_25,io_reg_26,io_reg_27,io_reg_28,io_reg_29,io_reg_30,io_reg_31,
 		input logic [31:0] io_pc
 	);
-	import "DPI-C" function void stop(input bit success);
-	always_comb begin
-		if(io_ebreak)if(io_reg_10 == 32'h0)stop(1);
-		else stop(0);
-	end
+	import "DPI-C" function void stop();
+	always_comb if(io_ebreak)stop();
 	wire [31:0] io_reg [31:0];
     assign io_reg = '{
     	 io_reg_0, io_reg_1, io_reg_2, io_reg_3, io_reg_4, io_reg_5, io_reg_6, io_reg_7,

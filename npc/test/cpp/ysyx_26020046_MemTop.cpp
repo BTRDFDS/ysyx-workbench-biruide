@@ -83,7 +83,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	psRam[(waddr-addrPSRAM)>>2]=temp;
 }
 extern "C" int getRegPc(int addr);
-extern "C" void stop(unsigned char success){
+extern "C" void stop(){
 	NpcWave();
 	tfp->close();
 	printf("runStep=%d ebreak = %d\n",runStep,success);
@@ -93,7 +93,7 @@ extern "C" void stop(unsigned char success){
 	}
 	delete top;
 	delete contextp;
-	if(success)exit(0);
+	if(getRegPc(10)==0)exit(0);
 	else exit(1);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
