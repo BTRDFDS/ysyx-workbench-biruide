@@ -67,7 +67,6 @@ class ysyx_26020046_Mem extends ExtModule{
 		val strb	= Input(UInt(4.W))
 		val data	= Input(UInt(32.W))
 	})
-	// addResource("/src/resources/ysyx_26020046_Mem.sv")
 	setInline("ysyx_26020046_Mem.sv",
 	"""
 	module ysyx_26020046_Mem(
