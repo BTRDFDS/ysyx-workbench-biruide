@@ -35,7 +35,7 @@ class ysyx_26020046_MemTop extends Module{
 	cpu.io.axi4.bresp	:= 0.U//OKAY
 	cpu.io.axi4.bvalid	:= status === MemStatus.Write
 	when(status === MemStatus.Idle & cpu.io.axi4.awvalid){
-		wAddr := cpu.io.axi4.waddr
+		wAddr := cpu.io.axi4.awaddr
 		wAddrValid := true.B
 	}
 	when(status === MemStatus.Write & cpu.io.axi4.bready){
