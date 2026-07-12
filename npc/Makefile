@@ -6,10 +6,10 @@ test:
 verilog:
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
-	mill -i runMain Elaborate --target-dir $(BUILD_DIR)
+	mill -i runMain Builder --target-dir $(BUILD_DIR)
 
 help:
-	mill -i runMain Elaborate --help
+	mill -i runMain Builder --help
 
 reformat:
 	mill -i __.reformat

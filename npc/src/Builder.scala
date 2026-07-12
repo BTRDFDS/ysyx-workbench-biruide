@@ -1,4 +1,4 @@
-object Elaborate extends App {
+object Builder extends App {
   val firtoolOptions = Array(
     "--default-layer-specialization=enable",
     "--verification-flavor=immediate",

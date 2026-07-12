@@ -15,11 +15,11 @@ class ysyx_26020046_MemTop extends Module{
 	val wStrb = RegInit(0.U(4.W))
 	val wAddrValid = RegInit(false.B)
 	val wDataValid = RegInit(false.B)
-	val writeValid = (wAddrValid|cpu.io.awvalid)&(wDataValid|cpu.io.wvalid)
+	val writeValid = (wAddrValid|cpu.io.axi4.awvalid)&(wDataValid|cpu.io.axi4.wvalid)
 	switch(status){
 		is(MemStatus.Idle){
 			when(cpu.io.axi4.arvalid)	{status := MemStatus.Read}
-			elsewhen(writeValid)		{status := MemStatus.Write}
+			.elsewhen(writeValid)		{status := MemStatus.Write}
 		}
 		is(MemStatus.Read)	{when(cpu.io.axi4.rready){status := MemStatus.Idle}}
 		is(MemStatus.Write)	{when(cpu.io.axi4.bready){status := MemStatus.Idle}}
@@ -30,10 +30,10 @@ class ysyx_26020046_MemTop extends Module{
 	cpu.io.axi4.rvalid	:= status === MemStatus.Read
 	when(status === MemStatus.Idle & cpu.io.axi4.arvalid){rAddr := cpu.io.axi4.araddr}
 
-	cpu.io.awready	:= status === MemStatus.Idle
-	cpu.io.wready	:= status === MemStatus.Idle
-	cpu.io.bresp	:= 0.U//OKAY
-	cpu.io.bvalid	:= status === MemStatus.Write
+	cpu.io.axi4.awready	:= status === MemStatus.Idle
+	cpu.io.axi4.wready	:= status === MemStatus.Idle
+	cpu.io.axi4.bresp	:= 0.U//OKAY
+	cpu.io.axi4.bvalid	:= status === MemStatus.Write
 	when(status === MemStatus.Idle & cpu.io.awvalid){
 		wAddr := cpu.io.axi4.wAddr
 		wAddrValid := true.B
@@ -50,12 +50,12 @@ class ysyx_26020046_MemTop extends Module{
 
 }
 class ysyx_26020046_Mem extends ExtModule{
-    val read = IO(new Boundle{
+    val read = IO(new Bundle{
 		val valid	= Input(Bool())
 		val addr	= Input(UInt(32.W))
 		val data	= Output(UInt(32.W))
 	})
-	val write  = IO(new Boundle{
+	val write  = IO(new Bundle{
 		val valid	= Input(Bool())
 		val addr	= Input(UInt(32.W))
 		val data	= Input(UInt(32.W))
