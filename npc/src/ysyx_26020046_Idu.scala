@@ -174,7 +174,8 @@ class ysyx_26020046_Idu extends Module{
 			out.pipe.valid	:= true.B
 			out.pipe.csrOp	:= csrOp
 			out.pipe.csrMesg	:= csrMesg
-		}otherwire{
+		}
+		.otherwise{
 			out.pipe.csrOp	:= CsrOp.Trap
 		}
 		}
