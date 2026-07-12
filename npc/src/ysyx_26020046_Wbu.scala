@@ -108,7 +108,7 @@ class ysyx_26020046_Wbu() extends Module {
 class ysyx_26020046_Chk extends ExtModule{
 	val io = IO(new Bundle{
 		val reg = Input(Vec(RegNum, UInt(BitWidth.W)))
-		val ebreak = Input(Bool)
+		val ebreak = Input(Bool())
 		val pc = Input(UInt(BitWidth.W))
 	})
 	setInline("ysyx_26020046_Chk.sv",
