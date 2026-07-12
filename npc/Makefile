@@ -48,6 +48,8 @@ LDFLAGS += -lreadline
 LDFLAGS += -L$(NPC_HOME)/test/cpp/lib
 LDFLAGS += -lcapstone
 LDFLAGS += -ldl
+
+CXXFLAGS += -I/$(NEMU_HOME)/include
 wave:
 	mkdir -p wave
 run:verilog $(srcVerilog) $(srcCpp) wave
