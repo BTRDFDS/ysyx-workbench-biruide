@@ -89,8 +89,8 @@ extern "C" void stop(unsigned char success){
 	delete top;
 	delete contextp;
 	printf("runStep=%d\n",runStep);
-	if(success)return 0;
-	else return 1;
+	if(success)exit(0);
+	else exit(1);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDevice(int argc, char** argv){
