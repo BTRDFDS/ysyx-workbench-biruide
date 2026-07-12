@@ -12,6 +12,11 @@
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_MemTop* top;//顶层模块
 svScope scope;//作用域
+#define NPC_WAVE
+#ifdef NPC_WAVE
+	#include "verilated_fst_c.h"
+	VerilatedFstC* tfp;//波形文件
+#endif
 
 const uint32_t addrReset	=0x80000000;
 const uint32_t addrPSRAM	=0x80000000;
@@ -70,8 +75,9 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 uint32_t NpcMemRead(uint32_t addr){//读取4个字节
-	if(addr+3>=psRamSize){
 		printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
+	if(addr+3>=psRamSize){
+		// printf("nRead addr=%x@%x at T=%d\n",addr,addr,runStep);
 		exit(-1);
 		return 0;
 	}else{
@@ -87,17 +93,14 @@ void NpcInitDevice(int argc, char** argv){
 	if(clock_gettime(CLOCK_MONOTONIC,&startTime)!=0){printf("time err\n");exit(-1);}
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
-	// Verilated::commandArgs(argc, argv);//不确定还要不要加
 	top = new Vysyx_26020046_MemTop{contextp};
 	scope=svGetScopeFromName("TOP.ysyx_26020046_MemTop");
-	// scope=svGetScopeFromName("TOP.ysyx_26020046_MemTop.asic.cpu.cpu");
 	svSetScope(scope);
 #ifdef NPC_WAVE
     Verilated::traceEverOn(true);
 	tfp = new VerilatedFstC;
 	top->trace(tfp, 99);
-	// top->ysyx_26020046_MemTop->asic->cpu->cpu->trace(tfp,99);
-	tfp->open("ysyx_26020046_MemTop.fst");
+	tfp->open("./wave/ysyx_26020046_MemTop.fst");
 #endif
 }
 void NpcInitMem(){

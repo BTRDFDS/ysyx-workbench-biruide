@@ -34,8 +34,6 @@ sim:
 -include ../Makefile
 
 
-
-
 include $(NVBOARD_HOME)/scripts/nvboard.mk
 FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic -MMD
 VERILATOR_CFLAGS += $(FLAGS)
@@ -46,7 +44,6 @@ srcVerilog = $(shell find $(NPC_HOME)/build -type f -name "*.sv")
 srcCpp = $(NPC_HOME)/test/cpp/ysyx_26020046_MemTop.cpp
 
 bin/% : $(srcVerilog) $(srcCpp) bin
-	echo $(srcVerilog)
 	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
 	--top-module ysyx_26020046_MemTop \
 	$(SOC_CFLAGS) \
@@ -56,7 +53,9 @@ bin/% : $(srcVerilog) $(srcCpp) bin
 	cp build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop bin/ysyx_26020046_MemTop
 bin:
 	mkdir -p bin
-run:bin/ysyx_26020046_MemTop
+wave:
+	mkdir -p wave
+run:bin/ysyx_26020046_MemTop wave
 	./bin/ysyx_26020046_MemTop
 	
 
