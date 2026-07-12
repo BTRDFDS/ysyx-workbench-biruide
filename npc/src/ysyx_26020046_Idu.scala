@@ -15,7 +15,7 @@ class ysyx_26020046_Idu extends Module{
 	out.pipe.rdAddr	:= 0.U
 	out.pipe.result	:= 0.U
 	out.pipe.pc		:= in.pipe.pc
-	out.pipe.csrOp	:= CsrOp.Trap
+	out.pipe.csrOp	:= CsrOp.Null
 	out.pipe.csrAddr:= 2.U//Illegal Instruction
 	out.pipe.lsuAddr:= LsuAddr.B//000
 	out.pipe.lsuOp	:= LsuOp.Null
@@ -174,7 +174,10 @@ class ysyx_26020046_Idu extends Module{
 			out.pipe.valid	:= true.B
 			out.pipe.csrOp	:= csrOp
 			out.pipe.csrMesg	:= csrMesg
-		}}
+		}otherwire{
+			out.pipe.csrOp	:= CsrOp.Trap
+		}
+		}
 		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U}//Instruction address misaligned
 		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U}//Instruction access fault
 	}
