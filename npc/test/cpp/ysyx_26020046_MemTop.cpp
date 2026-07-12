@@ -51,7 +51,7 @@ extern "C" int pmem_read(int raddr) {
 		((uint32_t)psRam[raddrX-addrPSRAM+1]<< 8)|
 		((uint32_t)psRam[raddrX-addrPSRAM+2]<<16)|
 		((uint32_t)psRam[raddrX-addrPSRAM+3]<<24);
-	printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
+	// printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
 	return temp;
 }
 
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	for(int i=0;i<10000&(!contextp->gotFinish());i++){
+	for(int i=0;i<10000000&(!contextp->gotFinish());i++){
 		NpcWave();
 		top->clock=1;top->eval();
 		NpcWave();
