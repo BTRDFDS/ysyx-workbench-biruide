@@ -64,7 +64,7 @@ extern "C" int pmem_read(int raddr) {
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	uint32_t waddrX=(uint32_t)waddr;
-	printf("write addr= %x at Times=%d %x => %x\n",waddrX,runStep,wdata,wmask);
+	// printf("write addr= %x at Times=%d %x => %x\n",waddrX,runStep,wdata,wmask);
 	if(waddrX==0x10000000){
 		printf("%c",wdata);
 		return;
