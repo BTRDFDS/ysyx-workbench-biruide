@@ -36,7 +36,7 @@ class ysyx_26020046_Wbu() extends Module {
 	when(in.pipe.valid){//合法处理
 		switch(in.pipe.csrOp){
 			is(CsrOp.Mret){mstatus := MstatuseReset}//TODO
-			is(CsrOp.Trap){
+			is(CsrOp.Trap){//TODO:ecall有问题
 				mcause	:= in.pipe.csrMesg
 				mepc 	:= in.pipe.pc
 				// when(in.pipe.csrMesg === 3.U){
