@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <fstream.h>
 #include <stdint.h>
 #include "svdpi.h"
 #include "Vysyx_26020046_MemTop__Dpi.h"
@@ -18,6 +19,12 @@ svScope scope;//作用域
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 #endif
+////////////////////////////////////////////////////////////////////////////////////////
+//输出日志文件：
+std::fstream logFile("ysyx_26020046_MemTop.log");
+
+////////////////////////////////////////////////////////////////////////////////////////
+
 
 const uint32_t addrReset	=0x80000000;
 const uint32_t addrPSRAM	=0x80000000;
@@ -50,7 +57,8 @@ extern "C" int pmem_read(int raddr) {
 		((uint32_t)psRam[raddrX-addrPSRAM+1]<< 8)|
 		((uint32_t)psRam[raddrX-addrPSRAM+2]<<16)|
 		((uint32_t)psRam[raddrX-addrPSRAM+3]<<24);
-	printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
+	// printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
+	logFile<<"Read addr= "<<std::hex<<raddrX<<" at T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
 	return temp;
 }
 

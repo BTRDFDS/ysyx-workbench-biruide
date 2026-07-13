@@ -52,7 +52,9 @@ LDFLAGS += -ldl
 CXXFLAGS += -I/$(NEMU_HOME)/include
 wave:
 	mkdir -p wave
-run:verilog $(srcVerilog) $(srcCpp) wave
+log:
+	mkdir -p log
+run:verilog $(srcVerilog) $(srcCpp) wave log
 	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
 	--top-module ysyx_26020046_MemTop \
 	$(SOC_CFLAGS) \
