@@ -47,7 +47,7 @@ class ysyx_26020046_Exu extends Module {
 			is(ExuAlu.And)	{result := input1 & input2}
 			is(ExuAlu.Sub)	{result := input1 - input2}
 			is(ExuAlu.Sra)	{result := (input1.asSInt >> input2(4,0)).asUInt}
-			is(ExuAlu.Csr)	{result := in.pipe.csrMesg}
+			is(ExuAlu.Csr)	{result := in.pipe.result}//给addr的
 			is(ExuAlu.Imm)	{result := in.pipe.result}
 			is(ExuAlu.Jalr)	{result := Cat((in.pipe.r1 + in.pipe.result)(31,1), 0.U(1.W))}
 		}
@@ -68,7 +68,7 @@ class ysyx_26020046_Exu extends Module {
 			is(ExuRes.Alu)	{out.pipe.result := result}
 			is(ExuRes.Null)	{out.pipe.result := 0.U}
 			is(ExuRes.Snpc)	{out.pipe.result := in.pipe.pc+4.U}
-			is(ExuRes.Csr)	{out.pipe.result := in.pipe.csrMesg}
+			is(ExuRes.Csr)	{out.pipe.result := in.pipe.result}//给rd的
 		}
 		when(in.imme.back === Back.Error){
 			out.imme.back	:= Back.Error
