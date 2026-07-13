@@ -132,7 +132,11 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic clock
 	);
 	import "DPI-C" function void ebreak();
-	always_comb if(io_ebreak)begin
+	// always_comb if(io_ebreak)begin
+	// 	$display("ebreak=%d at pc:%x",io_ebreak,io_pc);
+	// 	ebreak();
+	// end
+	always_ff@(posedge clock) if(io_ebreak)begin
 		$display("ebreak=%d at pc:%x",io_ebreak,io_pc);
 		ebreak();
 	end
