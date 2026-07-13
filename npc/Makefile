@@ -31,7 +31,7 @@ clean:
 
 sim:
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	@echo "Write this Makefile by yourself."
+# 	@echo "Write this Makefile by yourself."
 -include ../Makefile
 
 
@@ -54,7 +54,7 @@ CXXFLAGS += -I/$(NEMU_HOME)/include
 wave:
 	mkdir -p wave
 
-run:verilog $(srcVerilog) $(srcCpp) wave
+run:$(srcVerilog) $(srcCpp) wave
 	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
 	--top-module ysyx_26020046_MemTop \
 	$(SOC_CFLAGS) \
@@ -62,5 +62,6 @@ run:verilog $(srcVerilog) $(srcCpp) wave
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	./build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop $(ARG)
+	make sim
 	
 
