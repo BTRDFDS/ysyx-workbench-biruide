@@ -3,7 +3,7 @@ object  WidthConsts{//const
 	val RegNum		= 32
 	val CsrWidth	= 12
 	val RespWidth	= 2
-	val StrbWidth	= 2
+	val StrbWidth	= 4
 }
 import chisel3._
 import chisel3.util._
