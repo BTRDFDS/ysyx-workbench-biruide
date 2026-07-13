@@ -3,7 +3,8 @@ BUILD_DIR = ./build
 test:
 	mill -i test
 
-verilog:
+SRC_FILES = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
+verilog:$(SRC_FILES)
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
 	mill -i runMain Builder --target-dir $(BUILD_DIR)
@@ -52,7 +53,8 @@ LDFLAGS += -ldl
 CXXFLAGS += -I/$(NEMU_HOME)/include
 wave:
 	mkdir -p wave
-run:verilog $(srcVerilog) $(srcCpp) wave
+
+run:veriog $(srcVerilog) $(srcCpp) wave
 	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
 	--top-module ysyx_26020046_MemTop \
 	$(SOC_CFLAGS) \
