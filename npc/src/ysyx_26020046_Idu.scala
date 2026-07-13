@@ -98,7 +98,7 @@ class ysyx_26020046_Idu extends Module{
 					}
 				}
 				is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
-				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Add}
+				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Jalr}
 				is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Icsr)		{out.pipe.alu := ExuAlu.Csr}
 				is(Op.Branch)	{out.pipe.alu := ExuAlu.Add}

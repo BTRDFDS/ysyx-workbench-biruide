@@ -49,6 +49,7 @@ class ysyx_26020046_Exu extends Module {
 			is(ExuAlu.Sra)	{result := (input1.asSInt >> input2(4,0)).asUInt}
 			is(ExuAlu.Csr)	{result := in.pipe.csrMesg}
 			is(ExuAlu.Imm)	{result := in.pipe.result}
+			is(ExuAlu.Jalr)	{result := (in.pipe.r1 + in.pipe.result)&~1.U}
 		}
 		val enBfun = WireInit(false.B)
 		switch(in.pipe.bfu){
