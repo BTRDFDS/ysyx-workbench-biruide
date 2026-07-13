@@ -73,15 +73,16 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	if((((waddrX-addrPSRAM)>>2)>psRamSize|waddrX<=addrPSRAM)|(waddrX==0)){
 		return;
 	}
-	if(wmask&0b1000)psRam[waddrX-addrPSRAM+3]=(uint8_t)(wdata>>24);
-	if(wmask&0b0100)psRam[waddrX-addrPSRAM+2]=(uint8_t)(wdata>>16);
-	if(wmask&0b0010)psRam[waddrX-addrPSRAM+1]=(uint8_t)(wdata>> 8);
-	if(wmask&0b0001)psRam[waddrX-addrPSRAM+0]=(uint8_t)(wdata    );
+	uint32_t index = (waddrX-addrPSRAM) & 0xfffffffc;
+	if(wmask&0b1000)psRam[index+3]=(uint8_t)(wdata>>24);
+	if(wmask&0b0100)psRam[index+2]=(uint8_t)(wdata>>16);
+	if(wmask&0b0010)psRam[index+1]=(uint8_t)(wdata>> 8);
+	if(wmask&0b0001)psRam[index+0]=(uint8_t)(wdata    );
 	uint32_t temp=
-		((uint32_t)psRam[waddrX-addrPSRAM+0]<< 0)|
-		((uint32_t)psRam[waddrX-addrPSRAM+1]<< 8)|
-		((uint32_t)psRam[waddrX-addrPSRAM+2]<<16)|
-		((uint32_t)psRam[waddrX-addrPSRAM+3]<<24);
+		((uint32_t)psRam[index+0]<< 0)|
+		((uint32_t)psRam[index+1]<< 8)|
+		((uint32_t)psRam[index+2]<<16)|
+		((uint32_t)psRam[index+3]<<24);
 	logFile<<std::hex<<temp<<std::endl;
 }
 extern "C" int getRegPc(int addr);
