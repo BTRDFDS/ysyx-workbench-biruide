@@ -109,6 +109,7 @@ class ysyx_26020046_Wbu() extends Module {
 	val check = Reg(Bool())
 	check := in.pipe.valid === true.B
 	chk.io.check := check
+	chk.clock := clock
 }
 class ysyx_26020046_Chk extends ExtModule{
 	val io = IO(new Bundle{
