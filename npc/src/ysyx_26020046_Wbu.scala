@@ -126,7 +126,8 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic [31:0] io_reg_16,io_reg_17,io_reg_18,io_reg_19,io_reg_20,io_reg_21,io_reg_22,io_reg_23,
 		input logic [31:0] io_reg_24,io_reg_25,io_reg_26,io_reg_27,io_reg_28,io_reg_29,io_reg_30,io_reg_31,
 		input logic [31:0] io_pc,
-		input logic io_check
+		input logic io_check,
+		input logic clock
 	);
 	import "DPI-C" function void ebreak();
 	always_comb if(io_ebreak)ebreak();
@@ -141,7 +142,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	export "DPI-C" function getRegPc;
 	function int getRegPc(input int addr);return (addr == 0) ? io_pc : io_reg[addr];endfunction
 	import "DPI-C" function void check();
-	always_comb if(io_check)check();
+	always_ff@(posedge clock) if(io_check)check();
 
 	endmodule
 	"""
