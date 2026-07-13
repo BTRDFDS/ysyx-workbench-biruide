@@ -104,7 +104,7 @@ class ysyx_26020046_Wbu() extends Module {
 
 	val chk = Module(new ysyx_26020046_Chk)
 	chk.io.reg := gpr//TODO:ebreak里面的csrMesg==3是不对的，应该最高位是1
-	chk.io.ebreak := (in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 80000003.U) | (in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) | error
+	chk.io.ebreak := (in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 0x80000003.U) | (in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) | error
 	chk.io.pc := in.pipe.pc
 	val check = Reg(Bool())
 	check := in.pipe.valid === true.B

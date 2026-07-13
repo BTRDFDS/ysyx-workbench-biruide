@@ -64,6 +64,7 @@ class ysyx_26020046_Idu extends Module{
 				is(Op.Iload)	{out.pipe.result := Cat(Fill(20,in.pipe.instr(31)),in.pipe.instr(31,20))}
 				is(Op.Branch)	{out.pipe.result := Cat(Fill(20,in.pipe.instr(31)),in.pipe.instr(7),in.pipe.instr(30,25),in.pipe.instr(11,8),0.U(1.W))}
 				is(Op.Jal)		{out.pipe.result := Cat(Fill(12,in.pipe.instr(31)),in.pipe.instr(19,12),in.pipe.instr(20),in.pipe.instr(30,21),0.U(1.W))}
+				is(Op.Icsr)		{out.pipe.result := in.imme.csrOut}
 			}
 			when(
 				opEnum === Op.Jal | opEnum === Op.Ijalr	|
@@ -173,8 +174,8 @@ class ysyx_26020046_Idu extends Module{
 				csrValid := false.B
 				switch(funct3){
 					is(0b000.U){
-					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 80000011.U}//ECALL from M-mode
-					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 80000003.U}//Breakpoint
+					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x80000011.U}//ECALL from M-mode
+					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x80000003.U}//Breakpoint
 					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 					}
 					is(0b001.U){out.pipe.csrAddr := Cat(funct7,r2Addr);csrOp := CsrOp.Write;csrValid := true.B}
@@ -186,7 +187,7 @@ class ysyx_26020046_Idu extends Module{
 			// out.pipe.valid	:= csrOp =/= CsrOp.Trap
 			out.pipe.valid	:= true.B
 			out.pipe.csrOp	:= csrOp
-			out.pipe.csrMesg	:= csrMesg
+			out.pipe.csrMesg:= csrMesg
 		}
 		.otherwise{
 			out.pipe.csrOp	:= CsrOp.Trap
