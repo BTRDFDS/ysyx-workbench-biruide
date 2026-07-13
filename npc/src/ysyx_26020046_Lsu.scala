@@ -141,7 +141,7 @@ class ysyx_26020046_Lsu extends Module{
 		is(LsuOp.Store)	{out.pipe.csrMesg := 6.U}//写入地址不对齐
 		}
 	}
-	elsewhen(backError){
+	.elsewhen(backError){
 		switch(in.pipe.lsuOp){
 		is(LsuOp.Load)	{out.pipe.csrMesg := 5.U}//读取故障
 		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U}//写入故障
