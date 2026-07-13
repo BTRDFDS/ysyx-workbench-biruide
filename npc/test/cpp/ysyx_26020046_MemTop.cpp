@@ -108,6 +108,11 @@ void NpcInitDevice(int argc, char** argv){
 	top->trace(tfp, 99);
 	tfp->open("./wave/ysyx_26020046_MemTop.fst");
 #endif
+	if(!logFile.is_open()) {
+    printf("Failed to open log file!\n");
+    exit(-1);
+	}
+
 }
 void NpcInitMem(int argc, char** argv){
     FILE *file;
