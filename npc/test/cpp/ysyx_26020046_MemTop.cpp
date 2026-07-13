@@ -89,7 +89,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	temp&=mask1;
 	temp|=data;
 	psRam[(waddr-addrPSRAM)>>2]=temp;
-	logFile<<psRam[(waddr-addrPSRAM)>>2]<<std::endl;
+	logFile<<std::hex<<(uint32_t)psRam[(waddr-addrPSRAM)>>2]<<std::endl;
 }
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0);}
