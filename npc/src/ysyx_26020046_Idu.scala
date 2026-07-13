@@ -51,7 +51,7 @@ class ysyx_26020046_Idu extends Module{
 		val csrValid = WireInit(true.B)
 
 		val csrOp	= WireInit(CsrOp.Null)
-		val csrMesg = WireInit(0.U(BitWidth.W))
+		val csrMesg = WireInit(in.imme.csrOut)
 
 		val (opEnum,opValid) = Op.safe(opCode)
 		when(opValid){
