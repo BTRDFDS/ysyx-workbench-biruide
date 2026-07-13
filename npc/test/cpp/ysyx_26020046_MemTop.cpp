@@ -73,23 +73,32 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	if((((waddrX-addrPSRAM)>>2)>psRamSize|waddrX<=addrPSRAM)|(waddrX==0)){
 		return;
 	}
-	uint32_t mask1=0xffffffff;
-	uint32_t data=wdata;
-	switch(wmask&0x0f){
-		case 0b0001:mask1=0xffffff00;data=data&0x00ff;data=data    ;break;
-		case 0b0010:mask1=0xffff00ff;data=data&0x00ff;data=data<< 8;break;
-		case 0b0100:mask1=0xff00ffff;data=data&0x00ff;data=data<<16;break;
-		case 0b1000:mask1=0x00ffffff;data=data&0x00ff;data=data<<24;break;
-		case 0b0011:mask1=0xffff0000;data=data&0xffff;data=data    ;break;
-		case 0b1100:mask1=0x0000ffff;data=data&0xffff;data=data<<16;break;
-		case 0b1111:mask1=0x00000000;data=data       ;data=data    ;break;
-		default    :mask1=0xffffffff;data=data&0x0000;data=       0;break;
-	}
-	uint32_t temp=psRam[(waddr-addrPSRAM)>>2];
-	temp&=mask1;
-	temp|=data;
-	psRam[(waddr-addrPSRAM)>>2]=temp;
-	logFile<<std::hex<<(uint32_t)psRam[(waddr-addrPSRAM)>>2]<<std::endl;
+	// uint32_t mask1=0xffffffff;
+	// uint32_t data=wdata;
+	// switch(wmask&0x0f){
+	// 	case 0b0001:mask1=0xffffff00;data=data&0x00ff;data=data    ;break;
+	// 	case 0b0010:mask1=0xffff00ff;data=data&0x00ff;data=data<< 8;break;
+	// 	case 0b0100:mask1=0xff00ffff;data=data&0x00ff;data=data<<16;break;
+	// 	case 0b1000:mask1=0x00ffffff;data=data&0x00ff;data=data<<24;break;
+	// 	case 0b0011:mask1=0xffff0000;data=data&0xffff;data=data    ;break;
+	// 	case 0b1100:mask1=0x0000ffff;data=data&0xffff;data=data<<16;break;
+	// 	case 0b1111:mask1=0x00000000;data=data       ;data=data    ;break;
+	// 	default    :mask1=0xffffffff;data=data&0x0000;data=       0;break;
+	// }
+	// uint32_t temp=psRam[(waddr-addrPSRAM)>>2];
+	// temp&=mask1;
+	// temp|=data;
+	// psRam[(waddr-addrPSRAM)>>2]=temp;
+	if(wmask&0b1000)psRam[waddrX-addrPSRAM+3]=(uint8_t)(wdata>>24);
+	if(wmask&0b0100)psRam[waddrX-addrPSRAM+2]=(uint8_t)(wdata>>16);
+	if(wmask&0b0010)psRam[waddrX-addrPSRAM+1]=(uint8_t)(wdata>> 8);
+	if(wmask&0b0001)psRam[waddrX-addrPSRAM+0]=(uint8_t)(wdata    );
+
+	logFile<<std::hex<<psRam[waddr-addrPSRAM+3];
+	logFile<<std::hex<<psRam[waddr-addrPSRAM+2];
+	logFile<<std::hex<<psRam[waddr-addrPSRAM+1];
+	logFile<<std::hex<<psRam[waddr-addrPSRAM+0];
+	logFile<<std::endl;
 }
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0);}
