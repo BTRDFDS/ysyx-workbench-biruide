@@ -115,11 +115,11 @@ class ysyx_26020046_Lsu extends Module{
 			val rdata = RegInit(0.U(BitWidth.W))
 			when(status === LsuStatus.Back & axi4.rvalid){rdata := axi4.rdata >> (8.U * in.pipe.result(1,0))}
 			switch(in.pipe.lsuAddr){
-				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth-8,	axi4.rdata(7)),	axi4.rdata(7,0))}
-				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,	axi4.rdata(15)),	axi4.rdata(15,0))}
+				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
+				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
 				is(LsuAddr.W ){out.pipe.result := rdata}
-				is(LsuAddr.Bu){out.pipe.result := Cat(0.U((BitWidth-8).W),	axi4.rdata(7,0))}
-				is(LsuAddr.Hu){out.pipe.result := Cat(0.U((BitWidth-16).W),	axi4.rdata(15,0))}
+				is(LsuAddr.Bu){out.pipe.result := Cat(0.U((BitWidth- 8).W),rdata( 7,0))}
+				is(LsuAddr.Hu){out.pipe.result := Cat(0.U((BitWidth-16).W),rdata(15,0))}
 			}
 		}
 	}
