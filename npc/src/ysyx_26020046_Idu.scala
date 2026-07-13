@@ -142,9 +142,9 @@ class ysyx_26020046_Idu extends Module{
 				is(Op.Iload){out.pipe.lsuOp := LsuOp.Load}
 			}
 			when(opEnum === Op.Iload | opEnum === Op.Store){
-				val (lsuEnum,lsuValidAll) = LsuAddr.safe(funct3)
-				lsuValid := lsuValidAll
-				when(lsuValid){out.pipe.lsuAddr := lsuEnum}
+				val (lsuEnum,lsuValidinside) = LsuAddr.safe(funct3)
+				lsuValid := lsuValidinside
+				when(lsuValidinside){out.pipe.lsuAddr := lsuEnum}
 			}
 			out.pipe.rdAddr := rdAddr
 			switch(opEnum){
