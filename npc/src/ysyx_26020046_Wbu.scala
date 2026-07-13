@@ -49,14 +49,14 @@ class ysyx_26020046_Wbu() extends Module {
 				val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(in.pipe.csrAddr)
 				when(csrWriteValid){
 					switch(csrWriteAddr){
-						is(CsrAddr.Mcycle)		{nextMcycle	:= in.pipe.result}
-						is(CsrAddr.Mcycleh)		{nextMcycleh:= in.pipe.result}
-						is(CsrAddr.Mepc)		{mepc		:= in.pipe.result}
-						is(CsrAddr.Mtvec)		{mtvec		:= in.pipe.result}
-						is(CsrAddr.Mcause)		{mcause		:= in.pipe.result}
-						is(CsrAddr.Mstatus)		{mstatus	:= in.pipe.result}
-						is(CsrAddr.Marchid)		{marchid	:= in.pipe.result}
-						is(CsrAddr.Mvendorid)	{mvendorid	:= in.pipe.result}
+						is(CsrAddr.Mcycle)		{nextMcycle	:= in.pipe.csrMesg}
+						is(CsrAddr.Mcycleh)		{nextMcycleh:= in.pipe.csrMesg}
+						is(CsrAddr.Mepc)		{mepc		:= in.pipe.csrMesg}
+						is(CsrAddr.Mtvec)		{mtvec		:= in.pipe.csrMesg}
+						is(CsrAddr.Mcause)		{mcause		:= in.pipe.csrMesg}
+						is(CsrAddr.Mstatus)		{mstatus	:= in.pipe.csrMesg}
+						is(CsrAddr.Marchid)		{marchid	:= in.pipe.csrMesg}
+						is(CsrAddr.Mvendorid)	{mvendorid	:= in.pipe.csrMesg}
 					}
 				}otherwise{
 					error	:= true.B
