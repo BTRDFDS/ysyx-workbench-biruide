@@ -57,7 +57,7 @@ class ysyx_26020046_Lsu extends Module{
 	when(in.pipe.valid & in.pipe.lsuOp =/= LsuOp.Null){
 		switch(in.pipe.lsuAddr){
 			is(LsuAddr.H ){when(in.pipe.result(0)===1.U)	{addrError := true.B}}
-			is(LsuAddr.Hu){when(in.pipe.result(1)===1.U)	{addrError := true.B}}
+			is(LsuAddr.Hu){when(in.pipe.result(0)===1.U)	{addrError := true.B}}
 			is(LsuAddr.W ){when(in.pipe.result(1,0) =/= 0.U){addrError := true.B}}
 		}
 	}
