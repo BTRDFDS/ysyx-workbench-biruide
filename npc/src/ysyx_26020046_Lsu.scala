@@ -65,7 +65,7 @@ class ysyx_26020046_Lsu extends Module{
 		switch(status){
 			is(LsuStatus.Idle){when(in.pipe.lsuOp =/= LsuOp.Null){status := LsuStatus.Call}}
 			is(LsuStatus.Call){switch(in.pipe.lsuOp){
-				is(LsuOp.Load)	{when(axi4.arready)		{status := LsuStatus.Back}}
+				is(LsuOp.Load)	{when(axi4.arready)			{status := LsuStatus.Back}}
 				is(LsuOp.Store)	{when(finishAddr&finishData){status := LsuStatus.Back}}
 			}}
 			is(LsuStatus.Back){switch(in.pipe.lsuOp){
