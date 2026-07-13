@@ -117,6 +117,7 @@ class ysyx_26020046_Chk extends ExtModule{
 		val pc		= Input(UInt(BitWidth.W))
 		val check	= Input(Bool())
 	})
+	val clock = IO(Input(Clock()))
 	setInline("ysyx_26020046_Chk.sv",
 	"""
 	module ysyx_26020046_Chk(
