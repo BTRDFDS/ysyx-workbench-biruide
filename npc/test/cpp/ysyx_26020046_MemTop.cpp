@@ -141,7 +141,7 @@ void NpcReturn(const char* msg,int returnCode){
 #ifdef NPC_WAVE
 	tfp->close();
 #endif
-	printf("%s runStep=%d\n",msg,runStep);
+	printf("%s runStep=%d pc=0x %x\n",msg,runStep,getRegPc(0)-4);//实质上是已经是next pc了
 	for(int i=0;i<32;i++){
 		printf("%2d:%8x ",i,getRegPc(i));
 		if(i%8==7)printf("\n");

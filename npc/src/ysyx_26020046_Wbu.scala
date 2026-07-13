@@ -142,7 +142,10 @@ class ysyx_26020046_Chk extends ExtModule{
     };
 
 	export "DPI-C" function getRegPc;
-	function int getRegPc(input int addr);return (addr == 0) ? io_pc : io_reg[addr];endfunction
+	function int getRegPc(input int addr);
+		logic [4:0] regAddr = addr[4:0];
+		return (regAddr == 0) ? io_pc : io_reg[regAddr];
+	endfunction
 	import "DPI-C" function void check();
 	always_ff@(posedge clock) if(io_check)check();
 
