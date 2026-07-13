@@ -77,12 +77,12 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	if(wmask&0b0100)psRam[waddrX-addrPSRAM+2]=(uint8_t)(wdata>>16);
 	if(wmask&0b0010)psRam[waddrX-addrPSRAM+1]=(uint8_t)(wdata>> 8);
 	if(wmask&0b0001)psRam[waddrX-addrPSRAM+0]=(uint8_t)(wdata    );
-
-	logFile<<std::hex<<psRam[waddr-addrPSRAM+3];
-	logFile<<std::hex<<psRam[waddr-addrPSRAM+2];
-	logFile<<std::hex<<psRam[waddr-addrPSRAM+1];
-	logFile<<std::hex<<psRam[waddr-addrPSRAM+0];
-	logFile<<std::endl;
+	uint32_t temp=
+		((uint32_t)psRam[waddrX-addrPSRAM+0]<< 0)|
+		((uint32_t)psRam[waddrX-addrPSRAM+1]<< 8)|
+		((uint32_t)psRam[waddrX-addrPSRAM+2]<<16)|
+		((uint32_t)psRam[waddrX-addrPSRAM+3]<<24);
+	logFile<<std::hex<<temp<<std::endl;
 }
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0);}
