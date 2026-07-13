@@ -125,6 +125,7 @@ class ysyx_26020046_Lsu extends Module{
 	}
 	when(addrError | backError){
 		out.pipe.valid	:= false.B
+		out.pipe.csrOp	:= CsrOp.Trap
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}otherwise{
@@ -134,4 +135,11 @@ class ysyx_26020046_Lsu extends Module{
 		.elsewhen(ready & in.imme.back === Back.Ready){out.imme.back	:= Back.Ready}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}
+	when(addrError){switch(in.pipe.lsuOp){
+		is(LsuOp.Load)	{out.pipe.csrMesg := 4.U}//读取地址不对齐
+		is(LsuOp.Store)	{out.pipe.csrMesg := 6.U}//写入地址不对齐
+	}}elsewhen(backError){switch(in.pipe.lsuOp){
+		is(LsuOp.Load)	{out.pipe.csrMesg := 5.U}//读取故障
+		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U}//写入故障
+	}}
 }
