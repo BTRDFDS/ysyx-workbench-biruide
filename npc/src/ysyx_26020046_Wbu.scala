@@ -74,7 +74,7 @@ class ysyx_26020046_Wbu() extends Module {
 		mepc 			:= in.pipe.pc
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
-		printf("error,stop!!!\n")
+		printf("error,stop!!! %x\n",in.pipe.csrMesg)
 		stop()
 	}otherwise{
 		out.imme.back := Back.Ready

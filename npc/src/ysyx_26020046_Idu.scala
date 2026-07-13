@@ -173,7 +173,7 @@ class ysyx_26020046_Idu extends Module{
 				csrValid := false.B
 				switch(funct3){
 					is(0b000.U){
-					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 80000011.U}//ECALL from M-mode
+					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 80000011.U}//ECALL from M-mode
 					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 80000003.U}//Breakpoint
 					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 					}
