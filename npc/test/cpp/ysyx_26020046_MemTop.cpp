@@ -156,6 +156,7 @@ void NpcReturn(const char* msg,int returnCode){
 	}
 	delete top;
 	delete contextp;
+	logFile.close();
 	exit(returnCode);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
