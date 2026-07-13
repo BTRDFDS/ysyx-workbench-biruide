@@ -103,7 +103,7 @@ class ysyx_26020046_Wbu() extends Module {
 	}
 
 	val chk = Module(new ysyx_26020046_Chk)
-	chk.io.reg := gpr
+	chk.io.reg := gpr//TODO:ebreak里面的csrMesg==3是不对的，应该最高位是1
 	chk.io.ebreak := (in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 3.U) | (in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) | error
 	chk.io.pc := in.pipe.pc
 	val check = Reg(Bool())
@@ -132,7 +132,10 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic clock
 	);
 	import "DPI-C" function void ebreak();
-	always_comb if(io_ebreak)ebreak();
+	always_comb if(io_ebreak)begin
+		$display("ebreak=%d at pc:%x",io_ebreak,io_pc);
+		ebreak();
+	end
 	export "DPI-C" function getRegPc;
 	function int getRegPc(input int addr);
 		case(addr)
