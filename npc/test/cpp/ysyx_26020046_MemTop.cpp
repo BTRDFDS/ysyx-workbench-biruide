@@ -65,7 +65,7 @@ extern "C" int pmem_read(int raddr) {
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	uint32_t waddrX=(uint32_t)waddr;
 	// printf("write addr= %x at Times=%d %x => %x\n",waddrX,runStep,wdata,wmask);
-	logFile<<"write addr= "<<std::hex<<waddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<wdata<<" :"<<std::dec<<wmask<<std::endl;
+	logFile<<"write addr= "<<std::hex<<waddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<wdata<<" :"<<std::dec<<wmask<<" "<<std::endl;
 	if(waddrX==0x10000000){
 		printf("%c",wdata);
 		return;
