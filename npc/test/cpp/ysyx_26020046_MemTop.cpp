@@ -109,7 +109,7 @@ void NpcInitDevice(int argc, char** argv){
 	top->trace(tfp, 99);
 	tfp->open("./wave/ysyx_26020046_MemTop.fst");
 #endif
-	logFile.open("./ysyx_26020046_MemTop.log",std::ios::out);
+	logFile.open("./log/ysyx_26020046_MemTop.log",std::ios::out);
 	if(!logFile.is_open()) {
     printf("Failed to open log file!\n");
     exit(-1);
