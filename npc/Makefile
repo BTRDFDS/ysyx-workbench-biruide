@@ -42,10 +42,8 @@ VERILATOR_CFLAGS += --autoflush
 VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
 VERILATOR_VLT = 
 
-srcVerilogNpc = $(NPC_HOME)/src/ysyx_26020046_MemTop.scala
 srcVerilog = $(shell find $(NPC_HOME)/build -type f -name "*.sv" -not -name "ysyx_26020046_MemTop.sv")
 
-srcCppNpc += $(NPC_HOME)/test/cpp/ysyx_26020046_MemTop.cpp
 srcCpp += $(NPC_HOME)/test/cpp/npcDifftest/npcDifftest.c
 
 LDFLAGS += -lreadline
@@ -57,16 +55,25 @@ CXXFLAGS += -I/$(NEMU_HOME)/include
 wave:
 	mkdir -p wave
 
+srcNpc =ysyx_26020046_MemTop
+srcVerilogNpc = $(NPC_HOME)/build/$(srcNpc).sv
+srcCppNpc += $(NPC_HOME)/test/cpp/$(srcNpc).cpp
+
 # runNpc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
 runNpc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
 	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(srcVerilog) $(srcVerilogNpc) \
-	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
-	--top-module ysyx_26020046_MemTop \
+	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
+	--top-module $(srcNpc) \
 	$(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-	./build/ysyx_26020046_MemTop/Vysyx_26020046_MemTop $(ARG)
+	./build/$(srcNpc)/V$(srcNpc) $(ARG)
 	make sim
-	
 
+srcYsyxSoc = ysyxSoCFull
+runYsyxSoc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
+# runYsyxSoc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
+	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(srcVerilog) $(srcVerilogYsyxSoc) \
+	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
+	 
