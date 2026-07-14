@@ -166,7 +166,11 @@ class ysyx_26020046_Idu extends Module{
 			}
 			when(opEnum === Op.Icsr){
 				switch(funct3){
-					is(0b000.U){out.pipe.csr := ExuCsr.Null;	in.imme.csrAddr := CsrAddr.Mtvec.asUInt}
+					is(0b000.U){
+						out.pipe.csr := ExuCsr.Null;
+						when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0011000_00010_00000_00000.U){in.imme.csrAddr := CsrAddr.Mepc.asUInt}
+						.otherwise{in.imme.csrAddr := CsrAddr.Mtvec.asUInt}
+						}
 					is(0b001.U){out.pipe.csr := ExuCsr.Write;	in.imme.csrAddr := Cat(funct7,r2Addr)}
 					is(0b010.U){out.pipe.csr := ExuCsr.Read;	in.imme.csrAddr := Cat(funct7,r2Addr)}
 					//TODO:0b010这个地方有待验证，原本是(oIfId.code.r1=='0)?NACSR:RACSR;
