@@ -9,13 +9,13 @@ typedef union {
 static PCB pcb[2], pcb_boot, *current = &pcb_boot;
 static uint8_t cnt = 0;
 static uint8_t nextstatus = 0;
-static void f(void *arg) {
+static void f(void *arg) {while(1){
 	if((uintptr_t)arg == nextstatus){
 		nextstatus = ((uintptr_t)arg == 0 ? 1 : 0);
 		cnt++;
 		yield();
 	}else{halt(0x100|(uintptr_t)arg|(nextstatus<<4));}
-}
+}}
 
 static Context *schedule(Event ev, Context *prev) {
 	if(cnt==10){halt(0);}
