@@ -15,8 +15,7 @@ static void f(void *arg) {
 		cnt++;
 		yield();
 		halt(0x200|(uintptr_t)arg|(nextstatus<<4));
-	}
-	halt(0x100|(uintptr_t)arg|(nextstatus<<4));
+	}else{halt(0x100|(uintptr_t)arg|(nextstatus<<4));}
 }
 
 static Context *schedule(Event ev, Context *prev) {
