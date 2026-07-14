@@ -35,8 +35,8 @@ class ysyx_26020046_Lsu extends Module{
 
 	val hasAddr = RegInit(false.B)
 	val hasData = RegInit(false.B)
-	val finishAddr = hasAddr | axi4.awready
-	val finishData = hasData | axi4.wready
+	val finishAddr = hasAddr || axi4.awready
+	val finishData = hasData || axi4.wready
 
 	val backError = WireInit(false.B)
 	val addrError = WireInit(false.B)
@@ -123,7 +123,7 @@ class ysyx_26020046_Lsu extends Module{
 			}
 		}
 	}
-	when(addrError | backError){
+	when(addrError || backError){
 		out.pipe.valid	:= false.B
 		out.pipe.csrOp	:= CsrOp.Trap
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}

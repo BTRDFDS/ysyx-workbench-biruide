@@ -3,13 +3,7 @@ import chisel3.util._
 import WidthConsts._
 
 object ArbStatus extends ChiselEnum{val Idle,IfuR,LsuR,LsuW=Value}
-object ArbAddr extends ChiselEnum{
-	val Clint	= Value(0x02.U(8.W))
-	val Sram	= Value(0x0f.U(8.W))
-	val Gpio	= Value(0x10.U(8.W))
-	val Mrom	= Value(0x20.U(8.W))
-	val Psram	= Value(0x80.U(8.W))
-}
+object ArbAddr extends ChiselEnum{val Clint,Out,Error=Value}
 class ysyx_26020046_Arb extends Module{
 	val out = IO(new Axi4Master())
 	val clt = IO(new Axi4Master())
@@ -72,7 +66,12 @@ class ysyx_26020046_Arb extends Module{
 		.elsewhen(lsu.awvalid)	{addr := lsu.awaddr(31,24)}
 		.elsewhen(ifu.arvalid)	{addr := ifu.araddr(31,24)}
 	}
-	val (addrEnum,addrValid) = ArbAddr.safe(addr)
+	// val (addrEnum,addrValid) = ArbAddr.safe(addr)
+	val addrValid = 
+		(addr === 0x02.U(8.W)) ||
+		(addr === 0x0f.U(8.W)) ||
+		(addr === 0x20.U(8.W)) ||
+		(addr(7:5)===0b100.U(3.W))
 	when(addrValid){
 		switch(status){
 			is(ArbStatus.LsuR){
@@ -91,7 +90,6 @@ class ysyx_26020046_Arb extends Module{
 			is(ArbStatus.IfuR){ifu.rresp := 1.U}
 		}
 	}
-	// when(addrEnum === ArbAddr.Clint){backValid := clt.}
 	switch(status){
 		is(ArbStatus.LsuR){backValid := Mux(addrEnum === ArbAddr.Clint,clt.rvalid,out.rvalid)}
 		is(ArbStatus.IfuR){backValid := Mux(addrEnum === ArbAddr.Clint,clt.rvalid,out.rvalid)}

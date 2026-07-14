@@ -14,7 +14,7 @@ class ysyx_26020046_MemTop extends Module{
 	val wStrb = RegInit(0.U(4.W))
 	val wAddrValid = RegInit(false.B)
 	val wDataValid = RegInit(false.B)
-	val writeValid = (wAddrValid|cpu.io.axi4.awvalid)&(wDataValid|cpu.io.axi4.wvalid)
+	val writeValid = (wAddrValid||cpu.io.axi4.awvalid)&(wDataValid||cpu.io.axi4.wvalid)
 	switch(status){
 		is(MemStatus.Idle){
 			when(cpu.io.axi4.arvalid)	{status := MemStatus.Read}

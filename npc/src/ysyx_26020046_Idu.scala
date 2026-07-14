@@ -67,7 +67,7 @@ class ysyx_26020046_Idu extends Module{
 				is(Op.Icsr)		{out.pipe.result := in.imme.csrOut}
 			}
 			when(
-				opEnum === Op.Jal | opEnum === Op.Ijalr	|
+				opEnum === Op.Jal || opEnum === Op.Ijalr ||
 				(opEnum === Op.Icsr & funct3 === 0.U(3.W))
 			){out.pipe.enJcod := true.B}
 			switch(opEnum){
@@ -142,7 +142,7 @@ class ysyx_26020046_Idu extends Module{
 				is(Op.Store){out.pipe.lsuOp := LsuOp.Store}
 				is(Op.Iload){out.pipe.lsuOp := LsuOp.Load}
 			}
-			when(opEnum === Op.Iload | opEnum === Op.Store){
+			when(opEnum === Op.Iload || opEnum === Op.Store){
 				val (lsuEnum,lsuValidinside) = LsuAddr.safe(funct3)
 				lsuValid := lsuValidinside
 				when(lsuValidinside){out.pipe.lsuAddr := lsuEnum}
