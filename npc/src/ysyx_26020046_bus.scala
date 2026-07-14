@@ -85,7 +85,7 @@ class Axi4Master extends Bundle {
 class Axi4MasterOut extends Bundle {
 	val arvalid	= Output(Bool())
     val araddr	= Output(UInt(BitWidth.W))
-	val arid	= Output(IdWidth.W)
+	val arid	= Output(UInt(IdWidth.W))
 	val arlen	= Output(UInt(LenWidth.W))
 	val arsize	= Output(UInt(SizeWidth.W))
 	val arburst	= Output(UInt(BurstWidth.W))
@@ -94,13 +94,13 @@ class Axi4MasterOut extends Bundle {
 	val rvalid	= Input(Bool())
 	val rdata	= Input(UInt(BitWidth.W))
 	val rresp	= Input(UInt(2.W))
-	val rid		= Input(IdWidth.W)
+	val rid		= Input(UInt(IdWidth.W))
 	val rlast	= Input(Bool())
 	val rready	= Output(Bool())
 
 	val awvalid	= Output(Bool())
 	val awaddr	= Output(UInt(BitWidth.W))
-	val awid	= Output(IdWidth.W)
+	val awid	= Output(UInt(IdWidth.W))
 	val awlen	= Output(UInt(LenWidth.W))
 	val awsize	= Output(UInt(SizeWidth.W))
 	val awburst	= Output(UInt(BurstWidth.W))
@@ -114,6 +114,6 @@ class Axi4MasterOut extends Bundle {
 
 	val bvalid	= Input(Bool())
 	val bresp	= Input(UInt(RespWidth.W))
-	val bid		= Input(IdWidth.W)
+	val bid		= Input(UInt(IdWidth.W))
 	val bready	= Output(Bool())
 }
