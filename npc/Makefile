@@ -40,7 +40,6 @@ FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic -MM
 VERILATOR_CFLAGS += $(FLAGS)
 VERILATOR_CFLAGS += --autoflush
 VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
-VERILATOR_VLT = 
 
 srcVerilog = $(shell find $(NPC_HOME)/build -type f -name "*.sv" -not -name "ysyx_26020046_MemTop.sv")
 
@@ -57,14 +56,13 @@ wave:
 
 srcNpc =ysyx_26020046_MemTop
 srcVerilogNpc = $(NPC_HOME)/build/$(srcNpc).sv
-srcCppNpc += $(NPC_HOME)/test/cpp/$(srcNpc).cpp
+srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
 # runNpc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
 runNpc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
-	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(srcVerilog) $(srcVerilogNpc) \
+	verilator $(VERILATOR_CFLAGS) $(srcVerilog) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
-	$(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
@@ -72,8 +70,24 @@ runNpc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
 	make sim
 
 srcYsyxSoc = ysyxSoCFull
-runYsyxSoc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
-# runYsyxSoc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
-	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(srcVerilog) $(srcVerilogYsyxSoc) \
+srcVerilogYsyxSoc += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
+srcVerilogYsyxSoc += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
+srcCppYsyxSoc = $(NPC_HOME)/test/cpp/ysyxSoCFull.cpp
+
+YsyxSoc_VLT = $(NPC_HOME)/wave/ysyxsocTrace.vlt
+
+SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/uart16550/rtl
+SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
+SOC_CFLAGS += --timescale "1ns/1ns"
+SOC_CFLAGS += --no-timing
+
+# runYsyxSoc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
+runYsyxSoc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
+	verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilog) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
-	 
+	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
+	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
+	$(addprefix -CFLAGS , $(CXXFLAGS)) \
+	$(addprefix -LDFLAGS , $(LDFLAGS))
+	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
+	make sim	 
