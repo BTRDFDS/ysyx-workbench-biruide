@@ -54,8 +54,8 @@ CXXFLAGS += -I/$(NEMU_HOME)/include
 wave:
 	mkdir -p wave
 
-runNpc:verilog $(srcVerilog) $(srcCpp) wave
-# run:$(srcVerilog) $(srcCpp) wave
+# runNpc:verilog $(srcVerilog) $(srcCpp) wave
+runNpc:$(srcVerilog) $(srcCpp) wave
 	verilator $(VERILATOR_CFLAGS) $(VERILATOR_VLT) $(sort $(srcVerilog)) --exe $(srcCpp) --Mdir build/ysyx_26020046_MemTop --build $(NVBOARD_ARCHIVE) \
 	--top-module ysyx_26020046_MemTop \
 	$(SOC_CFLAGS) \
