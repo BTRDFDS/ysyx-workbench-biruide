@@ -43,7 +43,7 @@ class ysyx_26020046_Exu extends Module {
 			is(ExuAlu.Sltu)	{result := input1 < input2}
 			is(ExuAlu.Xor)	{result := input1 ^ input2}
 			is(ExuAlu.Srl)	{result := input1 >> input2(4,0)}
-			is(ExuAlu.Or)	{result := input1 || input2}
+			is(ExuAlu.Or)	{result := input1 | input2}
 			is(ExuAlu.And)	{result := input1 & input2}
 			is(ExuAlu.Sub)	{result := input1 - input2}
 			is(ExuAlu.Sra)	{result := (input1.asSInt >> input2(4,0)).asUInt}
@@ -61,7 +61,7 @@ class ysyx_26020046_Exu extends Module {
 			is(ExuBfu.Bgeu)	{enBfun := in.pipe.r1 >= in.pipe.r2}
 		}
 		switch(in.pipe.csr){
-			is(ExuCsr.Read)	{out.pipe.csrMesg := in.pipe.r1||in.pipe.csrMesg}
+			is(ExuCsr.Read)	{out.pipe.csrMesg := in.pipe.r1 | in.pipe.csrMesg}
 			is(ExuCsr.Write){out.pipe.csrMesg := in.pipe.r1}
 		}
 		switch(in.pipe.res){

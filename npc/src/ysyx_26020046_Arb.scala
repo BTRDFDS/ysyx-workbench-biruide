@@ -71,7 +71,7 @@ class ysyx_26020046_Arb extends Module{
 		(addr		=== 0x0f.U(8.W))||//sram
 		(addr		=== 0x10.U(8.W))||//UART16550
 		(addr		=== 0x20.U(8.W))||//mrom
-		(addr(7:5)	=== 0b100.U(3.W)))//spram
+		(addr(7,5)	=== 0b100.U(3.W)))//spram
 	val addrIsClint = addr === 0x02.U(8.W)
 	when(addrValid){
 		switch(status){
