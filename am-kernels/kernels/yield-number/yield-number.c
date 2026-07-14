@@ -19,13 +19,14 @@ static void f(void *arg) {
 }
 
 static Context *schedule(Event ev, Context *prev) {
-	if(cnt==0){halt(0);}
+	if(cnt==10){halt(0);}
 	current->cp = prev;
 	current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
 	return current->cp;
 }
 
 int main() {
+	halt(2);
 	cte_init(schedule);
 	pcb[0].cp = kcontext((Area) { pcb[0].stack, &pcb[0] + 1 }, f, (void *)1L);
 	pcb[1].cp = kcontext((Area) { pcb[1].stack, &pcb[1] + 1 }, f, (void *)2L);
