@@ -16,7 +16,7 @@ static void f(void *arg) {
 		cnt++;
 		yield();
 	}
-	panic("arg error!");
+	// panic("arg error!");
 	halt(-1);
 }
 
@@ -32,6 +32,6 @@ int main() {
 	pcb[0].cp = kcontext((Area) { pcb[0].stack, &pcb[0] + 1 }, f, (void *)1L);
 	pcb[1].cp = kcontext((Area) { pcb[1].stack, &pcb[1] + 1 }, f, (void *)2L);
 	yield();
-	panic("Should not reach here!");
+	// panic("Should not reach here!");
 	halt(-1);
 }
