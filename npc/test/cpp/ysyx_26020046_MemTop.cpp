@@ -30,7 +30,7 @@ const uint32_t addrPSRAM	=0x80000000;
 const uint32_t addrTimer	=0x0200BFF8;
 const uint32_t addrSerial	=0x10000000;
 const uint32_t addrInput 	=0x10011000;
-const uint32_t psRamSize	=0xffffff;
+const uint32_t psRamSize	=0xfffffff;//psram极限地址是bfff_ffff
 
 uint8_t psRam[psRamSize];
 uint32_t runStep;
