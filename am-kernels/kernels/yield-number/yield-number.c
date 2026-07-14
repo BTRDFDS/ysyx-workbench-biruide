@@ -14,7 +14,6 @@ static void f(void *arg) {
 		nextstatus = ((uintptr_t)arg == 0 ? 1 : 0);
 		cnt++;
 		yield();
-		halt(0x200|(uintptr_t)arg|(nextstatus<<4));
 	}else{halt(0x100|(uintptr_t)arg|(nextstatus<<4));}
 }
 
