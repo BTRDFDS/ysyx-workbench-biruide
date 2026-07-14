@@ -296,8 +296,8 @@ void test_csrr(){
 	asm volatile("csrr %0, mcycle"  : "=r"(time[8]));
 	asm volatile("csrr %0, mcycle"  : "=r"(time[9]));
 	printf("time: %x %x %x %x %x %x %x %x %x %x\n", time[0], time[1], time[2], time[3], time[4], time[5], time[6], time[7], time[8], time[9]);
-	for(int i=0;i<9;i++){
-		if(time[i+1]-time[i]!=2){//会有压栈，需要2
+	for(int i=0;i<10-2;i++){
+		if(time[i+1]-time[i]!=time[i+2]-time[i+1]){//会有压栈，需要2
 			printf("csrr test maybe \033[1;31mFAIL\033[0m\n");
 			assert(0);
 		}
