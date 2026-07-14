@@ -56,7 +56,7 @@ class ysyx_26020046_MemTop extends Module{
 
 	cpu.io.master.rid	:= 0.U
 	cpu.io.master.rlast	:= false.B
-	cpu.io.master.bid	:= 0.Unit
+	cpu.io.master.bid	:= 0.UInt
 
 	cpu.io.slave.arvalid:= false.B
 	cpu.io.slave.araddr	:= 0.U
