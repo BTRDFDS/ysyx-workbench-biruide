@@ -17,7 +17,7 @@ static void f(void *arg) {
 		yield();
 	}
 	// panic("arg error!");
-	halt(-1);
+	halt(2);
 }
 
 static Context *schedule(Event ev, Context *prev) {
