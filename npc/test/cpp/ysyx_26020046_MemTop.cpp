@@ -58,13 +58,17 @@ extern "C" int pmem_read(int raddr) {
 		((uint32_t)psRam[raddrX-addrPSRAM+2]<<16)|
 		((uint32_t)psRam[raddrX-addrPSRAM+3]<<24);
 	// printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
+#ifdef NPC_WAVE
 	logFile<<"Read addr= "<<std::hex<<raddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
+#endif
 	return temp;
 }
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	uint32_t waddrX=(uint32_t)waddr;
+#ifdef NPC_WAVE
 	logFile<<"write addr= "<<std::hex<<waddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<wdata<<" ="<<std::bitset<4>(wmask)<<"> ";
+#endif
 	if(waddrX==0x10000000){
 		printf("%c",wdata);
 		fflush(stdout);
