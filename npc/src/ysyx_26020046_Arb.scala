@@ -66,16 +66,16 @@ class ysyx_26020046_Arb extends Module{
 		.elsewhen(lsu.awvalid)	{addr := lsu.awaddr(31,24)}
 		.elsewhen(ifu.arvalid)	{addr := ifu.araddr(31,24)}
 	}
-	// val (addrEnum,addrValid) = ArbAddr.safe(addr)
-	val addrValid = 
-		(addr === 0x02.U(8.W)) ||
-		(addr === 0x0f.U(8.W)) ||
-		(addr === 0x20.U(8.W)) ||
-		(addr(7:5)===0b100.U(3.W))
+	val addrValid = (
+		(addr		=== 0x02.U(8.W))||//clint
+		(addr		=== 0x0f.U(8.W))||//sram
+		(addr		=== 0x20.U(8.W))||//mrom
+		(addr(7:5)	=== 0b100.U(3.W)))//spram
+	val addrIsClint = addr === 0x02.U(8.W)
 	when(addrValid){
 		switch(status){
 			is(ArbStatus.LsuR){
-				when(addrEnum === ArbAddr.Clint){lsu <> clt}
+				when(addrIsClint){lsu <> clt}//clint
 				.otherwise{lsu <> out}
 			}
 			is(ArbStatus.LsuW){lsu <> out}
@@ -91,9 +91,9 @@ class ysyx_26020046_Arb extends Module{
 		}
 	}
 	switch(status){
-		is(ArbStatus.LsuR){backValid := Mux(addrEnum === ArbAddr.Clint,clt.rvalid,out.rvalid)}
-		is(ArbStatus.IfuR){backValid := Mux(addrEnum === ArbAddr.Clint,clt.rvalid,out.rvalid)}
-		is(ArbStatus.LsuW){backValid := Mux(addrEnum === ArbAddr.Clint,clt.bvalid,out.bvalid)}
+		is(ArbStatus.LsuR){backValid := Mux(addrIsClint,clt.rvalid,out.rvalid)}
+		is(ArbStatus.IfuR){backValid := Mux(addrIsClint,clt.rvalid,out.rvalid)}
+		is(ArbStatus.LsuW){backValid := Mux(addrIsClint,clt.bvalid,out.bvalid)}
 		is(ArbStatus.Idle){backValid := false.B}
 	}
 }
