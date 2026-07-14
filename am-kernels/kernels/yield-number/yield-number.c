@@ -16,6 +16,7 @@ static void f(void *arg) {
 		cnt++;
 		yield();
 	}
+	panic("arg error!");
 	halt(-1);
 }
 
