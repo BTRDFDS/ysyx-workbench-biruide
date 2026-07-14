@@ -10,18 +10,16 @@ static PCB pcb[2], pcb_boot, *current = &pcb_boot;
 static uint8_t cnt = 0;
 static uint8_t nextstatus = 1;
 static void f(void *arg) {
-	//(uintptr_t)arg
 	if((uintptr_t)arg == nextstatus){
 		nextstatus = ((uintptr_t)arg == 1 ? 2 : 1);
 		cnt++;
 		yield();
 	}
-	// panic("arg error!");
 	halt(2);
 }
 
 static Context *schedule(Event ev, Context *prev) {
-	if(cnt==10){halt(0);}
+	if(cnt==0){halt(0);}
 	current->cp = prev;
 	current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
 	return current->cp;
@@ -32,6 +30,5 @@ int main() {
 	pcb[0].cp = kcontext((Area) { pcb[0].stack, &pcb[0] + 1 }, f, (void *)1L);
 	pcb[1].cp = kcontext((Area) { pcb[1].stack, &pcb[1] + 1 }, f, (void *)2L);
 	yield();
-	// panic("Should not reach here!");
 	halt(-1);
 }
