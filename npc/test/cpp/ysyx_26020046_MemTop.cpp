@@ -67,7 +67,6 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	logFile<<"write addr= "<<std::hex<<waddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<wdata<<" ="<<std::bitset<4>(wmask)<<"> ";
 	if(waddrX==0x10000000){
 		printf("%c",wdata);
-		//刷新
 		fflush(stdout);
 		return;
 	}
