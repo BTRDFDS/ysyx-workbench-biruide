@@ -21,9 +21,4 @@ image: image-dep
 run: insert-arg
 	make -C $(NPC_HOME) runYsyxSoc t=$(TARGET) ARG=$(IMAGE).bin
 
-# ifeq ($(TEST_AM),1)
-# 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) 
-# else
-# 	make -C $(NPC_HOME) run t=ysyx_26020046_minirv ARG=$(IMAGE).bin xEb=$(XEB) ePrintf=-DDEBUG
-# endif
 .PHONY: insert-arg
