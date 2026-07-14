@@ -14,7 +14,7 @@
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_MemTop* top;//顶层模块
 svScope scope;//作用域
-#define NPC_WAVE
+// #define NPC_WAVE
 #ifdef NPC_WAVE
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
