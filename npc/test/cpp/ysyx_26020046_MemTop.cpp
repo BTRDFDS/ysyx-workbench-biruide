@@ -14,8 +14,7 @@
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_MemTop* top;//顶层模块
 svScope scope;//作用域
-// #define NPC_DEBUG
-#ifdef NPC_DEBUG
+#ifdef NPC_WAVE
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 #endif
@@ -58,7 +57,7 @@ extern "C" int pmem_read(int raddr) {
 		((uint32_t)psRam[raddrX-addrPSRAM+2]<<16)|
 		((uint32_t)psRam[raddrX-addrPSRAM+3]<<24);
 	// printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
-#ifdef NPC_DEBUG
+#ifdef NPC_WAVE
 	logFile<<"Read addr= "<<std::hex<<raddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
 #endif
 	return temp;
@@ -66,7 +65,7 @@ extern "C" int pmem_read(int raddr) {
 
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	uint32_t waddrX=(uint32_t)waddr;
-#ifdef NPC_DEBUG
+#ifdef NPC_WAVE
 	logFile<<"write addr= "<<std::hex<<waddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<wdata<<" ="<<std::bitset<4>(wmask)<<"> ";
 #endif
 	if(waddrX==0x10000000){
@@ -87,7 +86,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		((uint32_t)psRam[index+1]<< 8)|
 		((uint32_t)psRam[index+2]<<16)|
 		((uint32_t)psRam[index+3]<<24);
-#ifdef NPC_DEBUG
+#ifdef NPC_WAVE
 	logFile<<std::hex<<temp<<std::endl;
 #endif
 }
@@ -104,7 +103,7 @@ void NpcInitDevice(int argc, char** argv){
 	top = new Vysyx_26020046_MemTop{contextp};
 	scope=svGetScopeFromName("TOP.ysyx_26020046_MemTop.cpu.wbu.chk");
 	svSetScope(scope);
-#ifdef NPC_DEBUG
+#ifdef NPC_WAVE
     Verilated::traceEverOn(true);
 	tfp = new VerilatedFstC;
 	top->trace(tfp, 99);
@@ -147,14 +146,14 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 	gpr[0]=0;
 }
 void NpcWave(){
-	#ifdef NPC_DEBUG
+	#ifdef NPC_WAVE
 		contextp->timeInc(1);
 		tfp->dump(contextp->time());
 	#endif
 }
 void NpcReturn(const char* msg,int returnCode){
 	NpcWave();
-#ifdef NPC_DEBUG
+#ifdef NPC_WAVE
 	tfp->close();
 #endif
 	printf("%s runStep=%d pc=0x %x\n",msg,runStep,getRegPc(0)-4);//实质上是已经是next pc了
