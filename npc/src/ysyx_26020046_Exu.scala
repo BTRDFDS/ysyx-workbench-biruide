@@ -61,8 +61,8 @@ class ysyx_26020046_Exu extends Module {
 			is(ExuBfu.Bgeu)	{enBfun := in.pipe.r1 >= in.pipe.r2}
 		}
 		switch(in.pipe.csr){
-			is(ExuCsr.Read)	{out.pipe.csrMesg := in.pipe.r1}
-			is(ExuCsr.Write){out.pipe.csrMesg := in.pipe.r1|in.pipe.csrMesg}
+			is(ExuCsr.Read)	{out.pipe.csrMesg := in.pipe.r1|in.pipe.csrMesg}
+			is(ExuCsr.Write){out.pipe.csrMesg := in.pipe.r1}
 		}
 		switch(in.pipe.res){
 			is(ExuRes.Alu)	{out.pipe.result := result}
