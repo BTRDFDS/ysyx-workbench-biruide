@@ -54,6 +54,28 @@ class ysyx_26020046_MemTop extends Module{
 	mem.write.strb  := wStrb
 	mem.write.data  := wData
 
+	cpu.io.master.rid	:= 0.U
+	cpu.io.master.rlast	:= false.B
+	cpu.io.master.bid	:= 0.Unit
+
+	cpu.io.slave.arvalid:= false.B
+	cpu.io.slave.araddr	:= 0.U
+	cpu.io.slave.arid	:= 0.U
+	cpu.io.slave.arlen	:= 0.U
+	cpu.io.slave.arsize	:= 0.U
+	cpu.io.slave.arburst:= 0.U
+	cpu.io.slave.rready	:= false.B
+	cpu.io.slave.awvalid:= false.B
+	cpu.io.slave.awaddr	:= 0.U
+	cpu.io.slave.awid	:= 0.U
+	cpu.io.slave.awlen	:= 0.U
+	cpu.io.slave.awsize	:= 0.U
+	cpu.io.slave.awburst:= 0.U
+	cpu.io.slave.wvalid	:= false.B
+	cpu.io.slave.wdata	:= 0.U
+	cpu.io.slave.wstrb	:= 0.U
+	cpu.io.slave.wlast	:= false.B
+	cpu.io.slave.bready	:= false.B
 }
 class ysyx_26020046_Mem extends ExtModule{
     val read = IO(new Bundle{
