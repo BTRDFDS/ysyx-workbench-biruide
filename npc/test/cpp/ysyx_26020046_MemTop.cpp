@@ -87,7 +87,9 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		((uint32_t)psRam[index+1]<< 8)|
 		((uint32_t)psRam[index+2]<<16)|
 		((uint32_t)psRam[index+3]<<24);
+#ifdef NPC_WAVE
 	logFile<<std::hex<<temp<<std::endl;
+#endif
 }
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0);}
