@@ -14,36 +14,36 @@ class ysyx_26020046_MemTop extends Module{
 	val wStrb = RegInit(0.U(4.W))
 	val wAddrValid = RegInit(false.B)
 	val wDataValid = RegInit(false.B)
-	val writeValid = (wAddrValid||cpu.io.axi4.awvalid)&(wDataValid||cpu.io.axi4.wvalid)
+	val writeValid = (wAddrValid||cpu.io.master.awvalid)&(wDataValid||cpu.io.master.wvalid)
 	switch(status){
 		is(MemStatus.Idle){
-			when(cpu.io.axi4.arvalid)	{status := MemStatus.Read}
+			when(cpu.io.master.arvalid)	{status := MemStatus.Read}
 			.elsewhen(writeValid)		{status := MemStatus.Write}
 		}
-		is(MemStatus.Read)	{when(cpu.io.axi4.rready){status := MemStatus.Idle}}
-		is(MemStatus.Write)	{when(cpu.io.axi4.bready){status := MemStatus.Idle}}
+		is(MemStatus.Read)	{when(cpu.io.master.rready){status := MemStatus.Idle}}
+		is(MemStatus.Write)	{when(cpu.io.master.bready){status := MemStatus.Idle}}
 	}
-	cpu.io.axi4.arready := status === MemStatus.Idle
-	cpu.io.axi4.rdata	:= Mux(status === MemStatus.Read,mem.read.data,0.U)
-	cpu.io.axi4.rresp	:= 0.U//OKAY
-	cpu.io.axi4.rvalid	:= status === MemStatus.Read
-	when(status === MemStatus.Idle & cpu.io.axi4.arvalid){rAddr := cpu.io.axi4.araddr}
+	cpu.io.master.arready := status === MemStatus.Idle
+	cpu.io.master.rdata	:= Mux(status === MemStatus.Read,mem.read.data,0.U)
+	cpu.io.master.rresp	:= 0.U//OKAY
+	cpu.io.master.rvalid	:= status === MemStatus.Read
+	when(status === MemStatus.Idle & cpu.io.master.arvalid){rAddr := cpu.io.master.araddr}
 
-	cpu.io.axi4.awready	:= status === MemStatus.Idle
-	cpu.io.axi4.wready	:= status === MemStatus.Idle
-	cpu.io.axi4.bresp	:= 0.U//OKAY
-	cpu.io.axi4.bvalid	:= status === MemStatus.Write
-	when(status === MemStatus.Idle & cpu.io.axi4.awvalid){
-		wAddr := cpu.io.axi4.awaddr
+	cpu.io.master.awready	:= status === MemStatus.Idle
+	cpu.io.master.wready	:= status === MemStatus.Idle
+	cpu.io.master.bresp	:= 0.U//OKAY
+	cpu.io.master.bvalid	:= status === MemStatus.Write
+	when(status === MemStatus.Idle & cpu.io.master.awvalid){
+		wAddr := cpu.io.master.awaddr
 		wAddrValid := true.B
 	}
-	when(status === MemStatus.Write & cpu.io.axi4.bready){
+	when(status === MemStatus.Write & cpu.io.master.bready){
 		wAddrValid := false.B
 		wDataValid := false.B
 	}
-	when(status === MemStatus.Idle & cpu.io.axi4.wvalid){
-		wData := cpu.io.axi4.wdata
-		wStrb := cpu.io.axi4.wstrb
+	when(status === MemStatus.Idle & cpu.io.master.wvalid){
+		wData := cpu.io.master.wdata
+		wStrb := cpu.io.master.wstrb
 		wDataValid := true.B
 	}
 
