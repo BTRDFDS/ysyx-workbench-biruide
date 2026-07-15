@@ -60,7 +60,7 @@ wave:
 	mkdir -p wave
 
 srcNpc =ysyx_26020046_MemTop
-srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv"")
+srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
 runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
