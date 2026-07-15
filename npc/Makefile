@@ -81,8 +81,8 @@ SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
 SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
 
-# runYsyxSoc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
-runYsyxSoc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
+runYsyxSoc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
+# runYsyxSoc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
 	verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilog) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
