@@ -1,16 +1,16 @@
 test:
 	mill -i test
 
-verilog:buildNpc buildYsyxSoc
+verilog:verilogNpc verilogYsyxSoc
 	$(call git_commit, "generate verilog")
 # 	mkdir -p ./build
 # 	mill -i runMain Builder
-buildNpc:
+verilogNpc:
 	$(call git_commit, "generate verilog for Npc")
 	mkdir -p ./build
 	mkdir -p ./build/npc
 	mill -i runMain BuilderNpc
-buildYsyxSoc:
+verilogYsyxSoc:
 	$(call git_commit, "generate verilog for YsyxSoc")
 	mkdir -p ./build
 	mkdir -p ./build/ysyxsoc
@@ -48,8 +48,6 @@ VERILATOR_CFLAGS += $(FLAGS)
 VERILATOR_CFLAGS += --autoflush
 VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
 
-srcVerilog = $(shell find $(NPC_HOME)/build -type f -name "*.sv" -not -name "ysyx_26020046_MemTop.sv")
-
 srcCpp += $(NPC_HOME)/test/cpp/npcDifftest/npcDifftest.c
 
 LDFLAGS += -lreadline
@@ -62,12 +60,12 @@ wave:
 	mkdir -p wave
 
 srcNpc =ysyx_26020046_MemTop
-srcVerilogNpc = $(NPC_HOME)/build/$(srcNpc).sv
+srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv"")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
-runNpc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
-# runNpc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
-	verilator $(VERILATOR_CFLAGS) $(srcVerilog) $(srcVerilogNpc) \
+runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
+# runNpc:$(srcCpp) $(srcCppNpc) wave
+	verilator $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
