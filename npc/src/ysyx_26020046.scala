@@ -2,13 +2,13 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-class ysyx_26020046 extends Module {
+class ysyx_26020046(val PcInit:UInt=0x80000000L.U) extends Module {
 	val io = IO(new Bundle {
 		val interrupt = Input(Bool())
 		val master = new Axi4MasterOut()
 		val slave = Flipped(new Axi4MasterOut())
 	})
-	val ifu = Module(new ysyx_26020046_Ifu)
+	val ifu = Module(new ysyx_26020046_Ifu(PcInit))
 	val idu = Module(new ysyx_26020046_Idu)
 	val exu = Module(new ysyx_26020046_Exu)
 	val lsu = Module(new ysyx_26020046_Lsu)
