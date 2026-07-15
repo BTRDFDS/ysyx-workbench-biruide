@@ -79,5 +79,7 @@ class ysyx_26020046 extends Module {
 	io.slave.bresp	:= 0.U
 	io.slave.bid	:= 0.U
 
-	dontTouch(io)
+	dontTouch(io.master)
+	dontTouch(io.slave)
+	dontTouch(io.interrupt)
 }
