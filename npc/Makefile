@@ -58,8 +58,8 @@ srcNpc =ysyx_26020046_MemTop
 srcVerilogNpc = $(NPC_HOME)/build/$(srcNpc).sv
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
-# runNpc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
-runNpc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
+runNpc:verilog $(srcVerilog) $(srcCpp) $(srcCppNpc) wave
+# runNpc:$(srcVerilog) $(srcCpp) $(srcCppNpc) wave
 	verilator $(VERILATOR_CFLAGS) $(srcVerilog) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
