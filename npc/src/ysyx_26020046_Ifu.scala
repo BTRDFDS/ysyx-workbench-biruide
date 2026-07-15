@@ -3,7 +3,7 @@ import chisel3.util._
 import WidthConsts._
 
 object IfuStatus extends ChiselEnum{val Back,Call,Func=Value}
-class ysyx_26020046_Ifu(val PcInit:UInt=0x80000000L.U) extends Module{
+class ysyx_26020046_Ifu(val PcInit:UInt) extends Module{
 	val in = IO(new Bundle{
 		val imme = Flipped(new ImmeBefore())
 	})

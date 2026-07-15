@@ -5,7 +5,8 @@ import WidthConsts._
 //根据官网，blackbox已经被废弃了，使用ExtModule
 object MemStatus extends ChiselEnum{val Idle,Read,Write = Value}
 class ysyx_26020046_MemTop extends Module{
-	val cpu = Module(new ysyx_26020046())
+	val PcInit:UInt=0x80000000L.U
+	val cpu = Module(new ysyx_26020046(PcInit))
 	val mem = Module(new ysyx_26020046_Mem())
 	val status = RegInit(MemStatus.Idle)
 	val rAddr = RegInit(0.U(32.W))
