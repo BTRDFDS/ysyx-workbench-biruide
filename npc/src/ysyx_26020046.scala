@@ -4,7 +4,7 @@ import WidthConsts._
 
 class ysyx_26020046 extends Module {
 	val io = IO(new Bundle {
-		val interrupt = Input(Bool())
+		val interrupt = Output(Bool())
 		val master = new Axi4MasterOut()
 		val slave = Flipped(new Axi4MasterOut())
 	})
@@ -78,6 +78,8 @@ class ysyx_26020046 extends Module {
 	io.slave.bvalid	:= false.B
 	io.slave.bresp	:= 0.U
 	io.slave.bid	:= 0.U
+
+	io.interrupt := false.B
 
 	dontTouch(io.master)
 	dontTouch(io.slave)
