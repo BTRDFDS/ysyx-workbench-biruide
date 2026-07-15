@@ -76,6 +76,8 @@ class ysyx_26020046_MemTop extends Module{
 	cpu.io.slave.wstrb	:= 0.U
 	cpu.io.slave.wlast	:= false.B
 	cpu.io.slave.bready	:= false.B
+
+	cpu.io.interrupt	:= false.B;
 }
 class ysyx_26020046_Mem extends ExtModule{
     val read = IO(new Bundle{
