@@ -1,4 +1,4 @@
-object Builder extends App {
+object BuilderNpc extends App {
   val firtoolOptions = Array(
     "--default-layer-specialization=enable",
     "--verification-flavor=immediate",
@@ -10,5 +10,19 @@ object Builder extends App {
       "locationInfoStyle=wrapInAtSquareBracket"
     ).reduce(_ + "," + _)
   )
-  circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_26020046_MemTop, args, firtoolOptions)
+  circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_26020046_MemTop, Array("--target-dir", "./build/npc"), firtoolOptions)
+}
+object BuilderYsyxSoc extends App {
+  val firtoolOptions = Array(
+    "--default-layer-specialization=enable",
+    "--verification-flavor=immediate",
+    "--lowering-options=" + List(
+      // make yosys happy
+      // see https://github.com/llvm/circt/blob/main/docs/VerilogGeneration.md
+      "disallowLocalVariables",
+      "disallowPackedArrays",
+      "locationInfoStyle=wrapInAtSquareBracket"
+    ).reduce(_ + "," + _)
+  )
+  circt.stage.ChiselStage.emitSystemVerilogFile(new ysyx_26020046, Array("--target-dir", "./build/ysyxsoc"), firtoolOptions)
 }

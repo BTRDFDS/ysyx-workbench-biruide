@@ -82,5 +82,4 @@ class ysyx_26020046(val PcInit:UInt=0x20000000L.U) extends Module {
 	dontTouch(io.master)
 	dontTouch(io.slave)
 	dontTouch(io.interrupt)
-	dontTouch(PcInit)
 }

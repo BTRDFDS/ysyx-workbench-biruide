@@ -1,13 +1,20 @@
-BUILD_DIR = ./build
-
 test:
 	mill -i test
 
-SRC_FILES = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
-verilog:$(SRC_FILES)
+verilog:buildNpc buildYsyxSoc
 	$(call git_commit, "generate verilog")
-	mkdir -p $(BUILD_DIR)
-	mill -i runMain Builder --target-dir $(BUILD_DIR)
+# 	mkdir -p ./build
+# 	mill -i runMain Builder
+buildNpc:
+	$(call git_commit, "generate verilog for Npc")
+	mkdir -p ./build
+	mkdir -p ./build/npc
+	mill -i runMain BuilderNpc
+buildYsyxSoc:
+	$(call git_commit, "generate verilog for YsyxSoc")
+	mkdir -p ./build
+	mkdir -p ./build/ysyxsoc
+	mill -i runMain BuilderYsyxSoc
 
 help:
 	mill -i runMain Builder --help
@@ -25,7 +32,7 @@ idea:
 	mill -i mill.idea.GenIdea/idea
 
 clean:
-	-rm -rf $(BUILD_DIR)
+	-rm -rf ./build
 
 .PHONY: test verilog help reformat checkformat clean run
 
