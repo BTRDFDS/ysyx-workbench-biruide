@@ -22,11 +22,10 @@ void _trm_init() {
         *bss=0;
         bss++;
     }
-    // *(volatile char *)(0x10000003L)=0b10000011;
-    // *(volatile char *)(0x10000001L)=0x0;
-    // *(volatile char *)(0x10000000L)=0x1;
-    // *(volatile char *)(0x10000003L)=0b00000011;
-    // *(volatile char *)(0x10000004L)=0b00000011;
-    // *(volatile char *)(0x10000002L)=0x7;
+    *(volatile char *)(0x10000003L)=0b10000011;
+    *(volatile char *)(0x10000000L)=0x00;
+    *(volatile char *)(0x10000001L)=0x90;
+    //115200*16==50MHz/36864(0x9000)
+    *(volatile char *)(0x10000003L)=0b00000011;
     halt(main(mainargs));
 }
