@@ -133,7 +133,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	);
 	import "DPI-C" function void ebreak();
 	always_ff@(posedge clock) if(io_ebreak)begin
-		// $display("ebreak=%d at pc:%x",io_ebreak,io_pc);
+		// $display("\nebreak=%d at pc:%x",io_ebreak,io_pc);
 		ebreak();
 	end
 	export "DPI-C" function getRegPc;
