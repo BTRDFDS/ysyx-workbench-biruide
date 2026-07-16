@@ -86,7 +86,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 }
 */
 extern "C" int getRegPc(int addr);
-extern "C" void ebreak(){NpcReturn("ebreak",getRegPc(10)!=0);}
+extern "C" void ebreak(){NpcReturn("\nebreak",getRegPc(10)!=0);}
 extern "C" void check(){
 	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 }
