@@ -23,8 +23,8 @@ void _trm_init() {
         bss++;
     }
     *(volatile char *)(0x10000003L)=0b10000011;
-    *(volatile char *)(0x10000000L)=0x00;
-    *(volatile char *)(0x10000001L)=0x90;
+    *(volatile char *)(0x10000000L)=0x01;
+    *(volatile char *)(0x10000001L)=0x00;
     //115200*16==50MHz/36864(0x9000)
     *(volatile char *)(0x10000003L)=0b00000011;
     halt(main(mainargs));
