@@ -75,6 +75,7 @@ runNpc:$(srcCpp) $(srcCppNpc) wave
 	make sim
 
 srcYsyxSoc = ysyxSoCFull
+srcVerilogYsyxSoc += $(shell find $(NPC_HOME)/build/ysyxsoc -type f -name "*.sv")
 srcVerilogYsyxSoc += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
 srcVerilogYsyxSoc += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
 srcCppYsyxSoc = $(NPC_HOME)/test/cpp/ysyxSoCFull.cpp
