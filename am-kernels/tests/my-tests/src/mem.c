@@ -23,7 +23,7 @@ int main() {
 	for(uint16_t *p=(uint16_t*)start;p<=(uint16_t*)end;p++)if(*p != (uint16_t)((uintptr_t)p&0xFFFF))return ((uint32_t)((uintptr_t)p)|0x000B0000);
 	// for(uint32_t *p=(uint32_t*)start;p<=(uint32_t*)end;p++)*p=(uint32_t)((uintptr_t)p);
 	// for(uint32_t *p=(uint32_t*)start;p<=(uint32_t*)end;p++)if(*p != (uint32_t)((uintptr_t)p))return ((uint32_t)((uintptr_t)p)|0x000C0000);
-	// test1();
+	test1();
 	// test2();
 	// test4();
 	return 0;
