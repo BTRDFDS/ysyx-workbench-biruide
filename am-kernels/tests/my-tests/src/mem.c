@@ -14,6 +14,7 @@ int main() {
 	// return 0;
 	// (*(uint32_t*)start)=0x76543210;
 	(*(uint8_t*)0x0f000000)=0x10;
+	(*(uint8_t*)0x0f000001)=0x32;
 	// return (*(uint8_t*)(0x0f000003));
 	// return (*(uint16_t*)(0x0f000002));
 	return (*(uint32_t*)(0x0f000000));
