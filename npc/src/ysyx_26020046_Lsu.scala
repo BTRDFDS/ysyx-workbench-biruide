@@ -100,8 +100,9 @@ class ysyx_26020046_Lsu extends Module{
 				}
 			}
 			is(LsuOp.Load){
-				axi4.araddr	:= Cat(in.pipe.result(BitWidth-1,2),0.U(2.W))
-				axi4.arvalid	:= status === LsuStatus.Call
+				// axi4.araddr	:= Cat(in.pipe.result(BitWidth-1,2),0.U(2.W))
+				axi4.araddr	:= in.pipe.result
+				axi4.arvalid:= status === LsuStatus.Call
 				axi4.rready	:= status === LsuStatus.Back
 			}
 		}
@@ -113,7 +114,8 @@ class ysyx_26020046_Lsu extends Module{
 		}
 		when(in.pipe.lsuOp === LsuOp.Load){
 			val rdata = RegInit(0.U(BitWidth.W))
-			when(status === LsuStatus.Back & axi4.rvalid){rdata := axi4.rdata >> (8.U * in.pipe.result(1,0))}
+			// when(status === LsuStatus.Back & axi4.rvalid){rdata := axi4.rdata >> (8.U * in.pipe.result(1,0))}
+			when(status === LsuStatus.Back & axi4.rvalid){rdata := axi4.rdata}
 			switch(in.pipe.lsuAddr){
 				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
 				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
