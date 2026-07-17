@@ -6,7 +6,9 @@ int main() {
 	// return a[3];
 	for(uint32_t i = 0; i < 2; i ++) {
         // *(volatile char *)(0x10000000L) = '0'+i;
-		check(a[i]==i);
+		// check(a[i]==i);
+		uint32_t p=a[i];
+		if(p!=i)return p;
 	}
 	return 0;
 }
