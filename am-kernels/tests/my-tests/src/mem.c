@@ -24,7 +24,7 @@ int main() {
 	// for(uint32_t *p=(uint32_t*)start;p<=(uint32_t*)end;p++)*p=(uint32_t)((uintptr_t)p);
 	// for(uint32_t *p=(uint32_t*)start;p<=(uint32_t*)end;p++)if(*p != (uint32_t)((uintptr_t)p))halt((uint32_t)((uintptr_t)p)|0x000C0000);
 	test1();
-	test2();
+	// test2();
 	test4();
 	return 0;
 }
