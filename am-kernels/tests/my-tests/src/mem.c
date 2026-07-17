@@ -12,7 +12,8 @@ int main() {
 	// for(uint8_t *p=(uint8_t*)start;p<=(uint8_t*)end;p++)*p=(uint8_t)((uintptr_t)p&0xFF);
 	// for(uint8_t *p=(uint8_t*)start;p<=(uint8_t*)end;p++)if(*p != (uint8_t)((uintptr_t)p&0xFF))return ((uint32_t)((uintptr_t)p)|0x000A0000);
 	// return 0;
-	(*(uint32_t*)start)=0x76543210;
+	// (*(uint32_t*)start)=0x76543210;
+	(*(uint8_t*)0x0f000000)=0x10;
 	// return (*(uint8_t*)(0x0f000003));
 	// return (*(uint16_t*)(0x0f000002));
 	return (*(uint32_t*)(0x0f000000));
