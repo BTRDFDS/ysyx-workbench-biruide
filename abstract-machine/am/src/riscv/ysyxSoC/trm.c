@@ -22,13 +22,13 @@ void _trm_init() {
 		*bss=0;
 		bss++;
 	}
-	//波特率
-	*(volatile char *)(0x10000003L)=0b10000011;
-	*(volatile char *)(0x10000000L)=0x00;
-	*(volatile char *)(0x10000001L)=0x90;
-	//115200*16==50MHz/36864(0x9000)
-	*(volatile char *)(0x10000003L)=0b00000011;
-	//复位FIFO
-	*(volatile char *)(0x10000002L)=0b11000110;
+	// //波特率
+	// *(volatile char *)(0x10000003L)=0b10000011;
+	// *(volatile char *)(0x10000000L)=0x00;
+	// *(volatile char *)(0x10000001L)=0x90;
+	// //115200*16==50MHz/36864(0x9000)
+	// *(volatile char *)(0x10000003L)=0b00000011;
+	// //复位FIFO
+	// *(volatile char *)(0x10000002L)=0b11000110;
 	halt(main(mainargs));
 }

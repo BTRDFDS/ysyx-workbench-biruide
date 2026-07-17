@@ -19,7 +19,7 @@
 #endif
 
 extern void NpcDifftestInit32(uint32_t memSize,uint32_t *M);
-extern void NpcDifftestInit8 (uint32_t memSize,uint8_t  *M,uint32_t pcReset);
+extern void NpcDifftestInit8 (uint32_t memSize,uint8_t  *M,uint32_t pcReset,const char *nemuLib);
 extern bool NpcDifftestCheck(uint32_t pc);
 
 extern void NpcDifftestGetGpr(uint32_t *gpr);//与PC无关

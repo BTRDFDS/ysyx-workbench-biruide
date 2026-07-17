@@ -145,7 +145,7 @@ void NpcInitMem(int argc, char** argv){
 	// 	printf("%02x%02x%02x%02x ",mrom[i+3],mrom[i+2],mrom[i+1],mrom[i]);
 	// 	if(i%16==15)printf("\n");
 	// }
-	NpcDifftestInit8(mromSize,mrom,addrMrom);
+	NpcDifftestInit8(mromSize,mrom,addrMrom,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-mrom");
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}

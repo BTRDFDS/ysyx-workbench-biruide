@@ -61,7 +61,7 @@ bool NpcDifftestCheck(uint32_t pc){
     return false;
 }
 
-void NpcDifftestInit8(uint32_t memSize,uint8_t *mem,uint32_t pcReset){
+void NpcDifftestInit8(uint32_t memSize,uint8_t *mem,uint32_t pcReset,const char *nemuLib){
 #ifdef NPC_DIFFTEST
     if(mem==NULL){printf("mem==NULL\n");exit(-1);}
     uint32_t *M=NULL;
@@ -69,7 +69,7 @@ void NpcDifftestInit8(uint32_t memSize,uint8_t *mem,uint32_t pcReset){
     if(M==NULL){printf("M==NULL\n");exit(-1);}
     memcpy(M,mem,(memSize/4)*sizeof(uint32_t));
     if(M==NULL){printf("M==NULL\n");exit(-1);}
-    const char *nemuLib = "/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so";
+    // const char *nemuLib = "/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so";
     difftestHandle = dlopen(nemuLib, RTLD_LAZY);
     if (!difftestHandle) {
         printf("[NPC_DIFFTEST] NEMU err: %s\n", dlerror());

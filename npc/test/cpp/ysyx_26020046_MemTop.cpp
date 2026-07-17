@@ -129,7 +129,7 @@ void NpcInitMem(int argc, char** argv){
 	// 	printf("%02x%02x%02x%02x ",psRam[i+3],psRam[i+2],psRam[i+1],psRam[i]);
 	// 	if(i%16==15)printf("\n");
 	// }
-	NpcDifftestInit8(psRamSize,psRam,addrPSRAM);
+	NpcDifftestInit8(psRamSize,psRam,addrPSRAM,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so");
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
