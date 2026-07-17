@@ -20,7 +20,7 @@ void _trm_init() {
 	// }
 	size_t i=0;
 	while(i<((size_t)&_data_size_)){
-		*(((uint8_t*)&_data_start_)+i)=*(((uint8_t*)&_data_begin_)+i+1);
+		*(((uint8_t*)&_data_start_)+i)=*(((uint8_t*)&_data_begin_)+i);
 		i++;
 	}
 	asm volatile("nop");
