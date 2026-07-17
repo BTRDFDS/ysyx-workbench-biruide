@@ -20,7 +20,6 @@ void _trm_init() {
 	}
 	asm volatile("nop");
 	uint8_t* bss=(uint8_t*)&_bss_start_;
-	asm volatile("nop");
 	while((bss-(uint8_t*)&_bss_start_)<(size_t)&_bss_size_){
 		*bss=0;
 		bss++;
