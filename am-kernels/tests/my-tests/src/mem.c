@@ -13,5 +13,5 @@ int main() {
 	// for(uint8_t *p=(uint8_t*)start;p<=(uint8_t*)end;p++)if(*p != (uint8_t)((uintptr_t)p&0xFF))return ((uint32_t)((uintptr_t)p)|0x000A0000);
 	// return 0;
 	(*(uint32_t*)start)=0x76543210;
-	return (*(uint32_t*)start);
+	return (*(uint32_t*)(start+1));
 }
