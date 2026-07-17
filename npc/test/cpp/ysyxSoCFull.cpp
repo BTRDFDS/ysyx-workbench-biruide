@@ -164,8 +164,14 @@ void NpcReturn(const char* msg,int returnCode){
 	tfp->close();
 #endif
 	printf("%s runStep=%d pc=0x %x\n",msg,runStep,getRegPc(0)-4);//实质上是已经是next pc了
+	const char *regsName[] = {
+	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+	"a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
+	};//A=10 B=11
 	for(int i=0;i<32;i++){
-		printf("%2d:%8x ",i,getRegPc(i));
+		printf("%s %2d:%8x ",regsName[i],i,getRegPc(i));
 		if(i%8==7)printf("\n");
 	}
 	delete top;
