@@ -13,10 +13,15 @@ extern char _data_start_,_data_size_,_data_begin_;
 extern char _bss_start_,_bss_size_;
 void _trm_init() {
 	asm volatile("nop");
-	uint8_t* data=(uint8_t*)&_data_start_;
-	while((data-(uint8_t*)&_data_start_)<(size_t)&_data_size_){
-		*data = *(&_data_begin_ + (data - (uint8_t*)&_data_start_));
-		data++;
+	// uint8_t* data=(uint8_t*)&_data_start_;
+	// while((data-(uint8_t*)&_data_start_)<(size_t)&_data_size_){
+	// 	*data = *(&_data_begin_ + (data - (uint8_t*)&_data_start_));
+	// 	data++;
+	// }
+	size_t i=0;
+	while(i<((size_t)&_data_size_)){
+		*(((uint8_t*)&_data_start_)+i)=*(((uint8_t*)&_data_begin_)+i);
+		i++;
 	}
 	asm volatile("nop");
 	uint8_t* bss=(uint8_t*)&_bss_start_;
