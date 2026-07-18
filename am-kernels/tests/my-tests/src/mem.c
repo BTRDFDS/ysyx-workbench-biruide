@@ -20,8 +20,8 @@ int main() {
 	(*(uint8_t*)0x0f000003)=0x76;
 	// (*(uint16_t*)(0x0f000000))=0x3210;
 	// (*(uint16_t*)(0x0f000002))=0x7654;
-	volatile uint32_t p=(*(uint8_t*)(0x0f000001));
-	return p;
+	// volatile uint32_t p=(*(uint8_t*)(0x0f000001));
 	// return (*(uint16_t*)(0x0f000002));
-	// return (*(uint32_t*)(0x0f000000));
+	volatile uint32_t p=(*(uint32_t*)(0x0f000000));
+	return p;
 }
