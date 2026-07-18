@@ -101,8 +101,8 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 	uint32_t temp=
 		((uint32_t)flash[addrX+0]<< 0)|
 		((uint32_t)flash[addrX+1]<< 8)|
-		((uint32_t)flash[addrX+2]<< 8)|
-		((uint32_t)flash[addrX+3]<< 8);
+		((uint32_t)flash[addrX+2]<<16)|
+		((uint32_t)flash[addrX+3]<<24);
 	*data=temp;
 	#ifdef NPC_WAVE
 	logFile<<" => "<<std::hex<<temp<<std::endl;
