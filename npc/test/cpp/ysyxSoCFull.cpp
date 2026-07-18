@@ -99,10 +99,10 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcReturn("flash read error",addrX);}
 	if(addrX>=flashSize)NpcReturn("flash read error",addrX);
 	uint32_t temp=
-		((uint32_t)flash[addrX-flashAddr+0]<< 0)|
-		((uint32_t)flash[addrX-flashAddr+1]<< 8)|
-		((uint32_t)flash[addrX-flashAddr+2]<< 8)|
-		((uint32_t)flash[addrX-flashAddr+3]<< 8);
+		((uint32_t)flash[addrX+0]<< 0)|
+		((uint32_t)flash[addrX+1]<< 8)|
+		((uint32_t)flash[addrX+2]<< 8)|
+		((uint32_t)flash[addrX+3]<< 8);
 	*data=temp;
 	#ifdef NPC_WAVE
 	logFile<<" => "<<std::hex<<temp<<std::endl;
