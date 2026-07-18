@@ -74,16 +74,16 @@ class ysyx_26020046_Wbu() extends Module {
 		mepc 			:= in.pipe.pc
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
-		printf("error,stop!!! %x\n",in.pipe.csrMesg)
-		when(in.pipe.csrMesg===3.U	){printf("ebreak")}
-		when(in.pipe.csrMesg===11.U	){printf("ecall")}
-		when(in.pipe.csrMesg===0.U	){printf("ifuN4")}
-		when(in.pipe.csrMesg===1.U	){printf("ifuErr")}
-		when(in.pipe.csrMesg===2.U	){printf("instr")}
-		when(in.pipe.csrMesg===4.U	){printf("laddr")}
-		when(in.pipe.csrMesg===5.U	){printf("lerror")}
-		when(in.pipe.csrMesg===6.U	){printf("sAddr")}
-		when(in.pipe.csrMesg===7.U	){printf("sError")}
+		printf("error,stop!!! %x ",in.pipe.csrMesg)
+		when(in.pipe.csrMesg===3.U	){printf("ebreak\n")}
+		when(in.pipe.csrMesg===11.U	){printf("ecall\n")}
+		when(in.pipe.csrMesg===0.U	){printf("ifuN4\n")}
+		when(in.pipe.csrMesg===1.U	){printf("ifuErr\n")}
+		when(in.pipe.csrMesg===2.U	){printf("instr\n")}
+		when(in.pipe.csrMesg===4.U	){printf("laddr\n")}
+		when(in.pipe.csrMesg===5.U	){printf("lerror\n")}
+		when(in.pipe.csrMesg===6.U	){printf("sAddr\n")}
+		when(in.pipe.csrMesg===7.U	){printf("sError\n")}
 		stop()
 	}otherwise{
 		out.imme.back := Back.Ready
