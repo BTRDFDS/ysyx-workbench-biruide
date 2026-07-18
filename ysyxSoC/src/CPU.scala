@@ -13,7 +13,7 @@ object CPUAXI4BundleParameters {
   def apply() = AXI4BundleParameters(addrBits = 32, dataBits = 32, idBits = ChipLinkParam.idBits)
 }
 
-class ysyx_00000000 extends BlackBox {
+class ysyx_26020046 extends BlackBox {
   val io = IO(new Bundle {
     val clock = Input(Clock())
     val reset = Input(Reset())
