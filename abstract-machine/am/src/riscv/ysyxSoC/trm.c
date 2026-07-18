@@ -26,9 +26,9 @@ void _trm_init() {
 	}
 	// //波特率
 	*(volatile char *)(0x10000003L)=0b10000011;
-	*(volatile char *)(0x10000000L)=0x01;
+	*(volatile char *)(0x10000000L)=0x1B;
 	*(volatile char *)(0x10000001L)=0x00;
-	//115200*16==50MHz/36864(0x9000)
+	//115200*16==50MHz/27(0x1B)
 	*(volatile char *)(0x10000003L)=0b00000011;
 	//复位FIFO
 	*(volatile char *)(0x10000002L)=0b11000110;
