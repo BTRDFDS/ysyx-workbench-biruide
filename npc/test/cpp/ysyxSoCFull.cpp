@@ -166,6 +166,10 @@ void NpcInitMem(int argc, char** argv){
 	for(uint32_t i=0;i<0x100;i++){
 		flash[i]=i&0xff;
 	}
+	for(uint32_t i=0;i<0x100;i++){
+		// flash[i]=i&0xff;
+		logFile<<std::hex<<i<<" "<<std::hex<<flash[i]<<std::endl;
+	}
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
