@@ -19,7 +19,7 @@ class ysyx_26020046_Wbu() extends Module {
 	val mepc		= RegInit(PcReset)
 	val mstatus		= RegInit(MstatuseReset)
 	val mtvec		= RegInit(PcReset)
-	val mcause		= RegInit(0.U(BitWidth.W))
+	val mcause		= RegInit(0xffffffffL.U(BitWidth.W))
 	val mcycle		= RegInit(0.U(BitWidth.W))
 	val mcycleh		= RegInit(0.U(BitWidth.W))
 	val marchid		= RegInit(0x018D08CE.U(BitWidth.W))
@@ -75,6 +75,15 @@ class ysyx_26020046_Wbu() extends Module {
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
 		printf("error,stop!!! %x\n",in.pipe.csrMesg)
+		when(in.pipe.csrMesg===3.U	){printf("ebreak")}
+		when(in.pipe.csrMesg===11.U	){printf("ecall")}
+		when(in.pipe.csrMesg===0.U	){printf("ifuN4")}
+		when(in.pipe.csrMesg===1.U	){printf("ifuErr")}
+		when(in.pipe.csrMesg===2.U	){printf("instr")}
+		when(in.pipe.csrMesg===4.U	){printf("laddr")}
+		when(in.pipe.csrMesg===5.U	){printf("lerror")}
+		when(in.pipe.csrMesg===6.U	){printf("sAddr")}
+		when(in.pipe.csrMesg===7.U	){printf("sError")}
 		stop()
 	}otherwise{
 		out.imme.back := Back.Ready
@@ -103,8 +112,8 @@ class ysyx_26020046_Wbu() extends Module {
 	}
 
 	val chk = Module(new ysyx_26020046_Chk)
-	chk.io.reg := gpr//TODO:ebreak里面的csrMesg==3是不对的，应该最高位是1
-	chk.io.ebreak := (in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 0x80000003L.U) || (in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) || error
+	chk.io.reg := gpr
+	chk.io.ebreak := (in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 0x3L.U) || (in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) || error
 	chk.io.pc := in.pipe.pc
 	val check = Reg(Bool())
 	check := in.pipe.valid === true.B
