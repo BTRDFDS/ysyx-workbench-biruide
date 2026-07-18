@@ -163,11 +163,8 @@ void NpcInitMem(int argc, char** argv){
 	// 	if(i%16==15)printf("\n");
 	// }
 	NpcDifftestInit8(mromSize,mrom,mromAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-mrom");
-	for(uint32_t i=0;i<0x10;i++){
+	for(uint32_t i=0;i<0x100;i++){
 		flash[i]=i&0xff;
-	}
-	for(uint32_t i=0;i<0x10;i++){
-		logFile<<std::hex<<i<<" "<<std::hex<<(uint32_t)flash[i]<<std::endl;
 	}
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
