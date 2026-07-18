@@ -94,7 +94,7 @@ extern "C" void check(){
 extern "C" void flash_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#ifdef NPC_WAVE
-	logFile<<"flash	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
+	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#endif
 	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcReturn("flash read error",addrX);}
 	if(addrX>=flashSize)NpcReturn("flash read error",addrX);
