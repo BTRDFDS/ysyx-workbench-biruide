@@ -95,6 +95,6 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-# 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
-	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
+	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
+# 	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim	 
