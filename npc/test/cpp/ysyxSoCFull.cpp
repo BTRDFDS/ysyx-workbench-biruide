@@ -23,17 +23,18 @@ std::fstream logFile;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-
-const uint32_t addrSerial	=0x10000000;
-const uint32_t addrInput 	=0x10011000;
-
 // const uint32_t addrPSRAM	=0x80000000;
 // const uint32_t psRamSize	=0xfffffff;//psram极限地址是bfff_ffff
 // uint8_t psRam[psRamSize];
 
-const uint32_t addrMrom	=0x20000000;//mrom起始地址
-const uint32_t mromSize	=0xfff;
+const uint32_t mromAddr		=0x20000000;//mrom起始地址
+const uint32_t mromSize		=0xfff;
 uint8_t mrom[mromSize];
+
+
+const uint32_t flashAddr	=0x30000000;
+const uint32_t flashSize	=0x0ffffff;//flash极限地址是bfff_ffff
+uint8_t flash[flashSize];
 
 uint32_t runStep;
 
@@ -90,15 +91,17 @@ extern "C" void ebreak(){NpcReturn("\nebreak",getRegPc(10)!=0);}
 extern "C" void check(){
 	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 }
-extern "C" void flash_read(int32_t addr, int32_t *data) {assert(0);}
+extern "C" void flash_read(int32_t addr, int32_t *data) {
+	// assert(0);
+}
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
-	if(addrX-addrMrom>=mromSize|addrX<addrMrom){NpcReturn("mrom read",-2);}
+	if(addrX-mromAddr>=mromSize|addrX<mromAddr){NpcReturn("mrom read",-2);}
 	uint32_t temp=
-		((uint32_t)mrom[addrX-addrMrom+0]<< 0)|
-		((uint32_t)mrom[addrX-addrMrom+1]<< 8)|
-		((uint32_t)mrom[addrX-addrMrom+2]<<16)|
-		((uint32_t)mrom[addrX-addrMrom+3]<<24);
+		((uint32_t)mrom[addrX-mromAddr+0]<< 0)|
+		((uint32_t)mrom[addrX-mromAddr+1]<< 8)|
+		((uint32_t)mrom[addrX-mromAddr+2]<<16)|
+		((uint32_t)mrom[addrX-mromAddr+3]<<24);
 	*data=temp;
 	#ifdef NPC_WAVE
 	logFile<<"Read addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
@@ -145,7 +148,10 @@ void NpcInitMem(int argc, char** argv){
 	// 	printf("%02x%02x%02x%02x ",mrom[i+3],mrom[i+2],mrom[i+1],mrom[i]);
 	// 	if(i%16==15)printf("\n");
 	// }
-	NpcDifftestInit8(mromSize,mrom,addrMrom,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-mrom");
+	NpcDifftestInit8(mromSize,mrom,mromAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-mrom");
+	for(uint32_t i=0;i<0x100;i++){
+		flash[i]=i&0xff;
+	}
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
