@@ -92,7 +92,7 @@ extern "C" void check(){
 }
 extern "C" void flash_read(int32_t addr, int32_t *data) {assert(0);}
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
-	uint32_t addrX=(uint32_t)addr;
+	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	if(addrX-addrMrom>=mromSize|addrX<addrMrom){NpcReturn("mrom read",-2);}
 	uint32_t temp=
 		((uint32_t)mrom[addrX-addrMrom+0]<< 0)|
