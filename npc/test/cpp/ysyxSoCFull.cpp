@@ -93,6 +93,17 @@ extern "C" void check(){
 }
 extern "C" void flash_read(int32_t addr, int32_t *data) {
 	// assert(0);
+	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
+	if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcReturn("flash read",-2);}
+	uint32_t temp=
+		((uint32_t)flash[addrX-flashAddr+0]<< 0)|
+		((uint32_t)flash[addrX-flashAddr+1]<< 8)|
+		((uint32_t)flash[addrX-flashAddr+2]<< 8)|
+		((uint32_t)flash[addrX-flashAddr+3]<< 8);
+	*data=temp;
+	#ifdef NPC_WAVE
+	logFile<<"Read addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
+	#endif
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;

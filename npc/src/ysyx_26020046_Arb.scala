@@ -71,6 +71,7 @@ class ysyx_26020046_Arb extends Module{
 		(addr		=== 0x0f.U(8.W))||//sram
 		(addr		=== 0x10.U(8.W))||//UART16550
 		(addr		=== 0x20.U(8.W))||//mrom
+		(addr(7,4))	===	0x3.U(4.W)	||//flash
 		(addr(7,5)	=== 0b100.U(3.W)))//spram
 	val addrIsClint = addr === 0x02.U(8.W)
 	when(addrValid){
@@ -84,7 +85,10 @@ class ysyx_26020046_Arb extends Module{
 		}
 	}
 	.otherwise{
-		when(status =/= ArbStatus.Idle){stop()}
+		when(status =/= ArbStatus.Idle){
+			printf("arb addr error %x\n",addr)
+			stop()
+		}
 		switch(status){
 			is(ArbStatus.LsuR){lsu.rresp := 1.U}
 			is(ArbStatus.LsuW){lsu.bresp := 1.U}
