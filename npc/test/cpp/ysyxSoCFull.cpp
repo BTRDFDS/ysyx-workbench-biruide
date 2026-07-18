@@ -102,7 +102,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 		((uint32_t)flash[addrX-flashAddr+3]<< 8);
 	*data=temp;
 	#ifdef NPC_WAVE
-	logFile<<"Read addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
+	logFile<<"flash	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
@@ -115,7 +115,7 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 		((uint32_t)mrom[addrX-mromAddr+3]<<24);
 	*data=temp;
 	#ifdef NPC_WAVE
-	logFile<<"Read addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
+	logFile<<"mrom	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
