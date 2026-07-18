@@ -31,6 +31,6 @@ void _trm_init() {
 	//115200*16==50MHz/36864(0x9000)
 	*(volatile char *)(0x10000003L)=0b00000011;
 	//复位FIFO
-	*(volatile char *)(0x10000002L)=0b11000110;
+	// *(volatile char *)(0x10000002L)=0b11000110;
 	halt(main(mainargs));
 }
