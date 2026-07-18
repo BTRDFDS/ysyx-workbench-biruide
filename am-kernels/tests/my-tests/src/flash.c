@@ -5,6 +5,13 @@ int main(){
 		uint8_t p=*((uint8_t*)(flashAddr+i));
 		if(p!=(i&0xff))return (p)|((i&0xff)<<16);
 	}
-	// return *(uint32_t*)(flashAddr);
+	for(uint32_t i=0;i+1<0x100;i++){
+		uint16_t p=*((uint16_t*)(flashAddr+i));
+		if(p!=(((i+1)<<8)|i))return p;
+	}
+	for(uint32_t i=0;i+3<0x100;i++){
+		uint32_t p=*((uint32_t*)(flashAddr+i));
+		if(p!=(((i+3)<<24)|((i+2)<<16)|((i+1)<<8)|i))return p;
+	}
 	return 0;
 }
