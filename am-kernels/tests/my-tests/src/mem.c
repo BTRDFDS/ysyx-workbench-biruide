@@ -21,7 +21,7 @@ int main() {
 	// (*(uint16_t*)(0x0f000000))=0x3210;
 	// (*(uint16_t*)(0x0f000002))=0x7654;
 	uint32_t p=(*(uint8_t*)(0x0f000001));
-	return p;
+	if(p==0){return p;}
 	// return (*(uint16_t*)(0x0f000002));
 	// return (*(uint32_t*)(0x0f000000));
 }
