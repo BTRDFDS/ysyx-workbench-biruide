@@ -20,7 +20,7 @@ int main() {
 	(*(uint8_t*)0x0f000003)=0x76;
 	// (*(uint16_t*)(0x0f000000))=0x3210;
 	// (*(uint16_t*)(0x0f000002))=0x7654;
-	// return (*(uint8_t*)(0x0f000003));
+	return (*(uint8_t*)(0x0f000001));
 	// return (*(uint16_t*)(0x0f000002));
-	return (*(uint32_t*)(0x0f000000));
+	// return (*(uint32_t*)(0x0f000000));
 }
