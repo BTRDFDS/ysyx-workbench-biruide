@@ -92,7 +92,7 @@ extern "C" void check(){
 	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 }
 extern "C" void flash_read(int32_t addr, int32_t *data) {
-	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
+	uint32_t addrX=((uint32_t)addr);
 	#ifdef NPC_WAVE
 	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#endif
