@@ -45,7 +45,7 @@ int main(){
 	*(volatile uint32_t*)(Div) = 0;//除数为0，计算结果为主频的1/2
 	*(volatile uint32_t*)(SS) = 0b1;//SS=0 flash
 	// for(uint8_t i=0;i<0xff;i++) checkBitrev(i);
-    *(volatile uint32_t*)(RTx0) = bitrev(0x030000fc);//需要反写
+    *(volatile uint32_t*)(RTx0) = bitrev(0x03000000);//需要反写
 	*(volatile uint32_t*)(Ctrl) = 0b10100101000000;
 	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
 	// return wordrev(*(volatile uint32_t*)(RTx1)>>1);
