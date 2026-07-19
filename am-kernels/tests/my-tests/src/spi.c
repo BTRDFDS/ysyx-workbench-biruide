@@ -1,16 +1,31 @@
 #include "trap.h"
+	const uint32_t Addr = 0x10001000;
+	const uint32_t RTx0	= Addr;
+	const uint32_t Ctrl = Addr+0x10;
+	const uint32_t Div	= Addr+0x14;
+	const uint32_t SS   = Addr+0x18;
 int main(){
 	// return 0;
-	*(volatile uint32_t*)(0x10001000) = 0b01010011;
-	*(volatile uint32_t*)(0x10001010) = 0b10100000010000;//0b10100100010000
-	*(volatile uint32_t*)(0x10001014) = 0;//除数为0，计算结果为主频的1/2
-	*(volatile uint32_t*)(0x10001018) = 0b1<<7;//SS=7
+	*(volatile uint32_t*)(Ctrl) = 0b10100000010000;//0b10100100010000
 	//CHAR_LEN=16
 	//Rx_NEG=0 上升沿
 	//Tx_NEG=0 上升沿
 	//LSB=1
 	//ASS=1
-	*(volatile uint32_t*)(0x10001010) = 0b10100100010000;
-	while(((*(volatile uint32_t*)(0x10001010)>>8)&0b1)==1);
-	return *(volatile uint32_t*)(0x10001000);
+	*(volatile uint32_t*)(Div) = 0;//除数为0，计算结果为主频的1/2
+	*(volatile uint32_t*)(SS) = 0b1<<7;//SS=7
+	for(uint8_t i=0;i<0xff;i++) checkBitrev(i);
+	return 0;
+}
+void checkBitrev(uint8_t x){
+	*(volatile uint32_t*)(Addr) = x;
+	*(volatile uint32_t*)(Ctrl) = 0b10100100010000;
+	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
+	// return *(volatile uint32_t*)(Addr);
+	uint8_t y = *(volatile uint32_t*)(Addr);
+	for(int i=0;i<8;i++){
+		if((y>>i)&0b1!=(x>>(7-i)&0b1)){
+			halt(0xf0000|(y<<8)|x);
+		}
+	}
 }
