@@ -39,5 +39,5 @@ int main(){
     *(volatile uint32_t*)(RTx0) = bitrev(0x03000000);//需要反写
 	*(volatile uint32_t*)(Ctrl) = 0b10101101000000;
 	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
-	return (*(volatile uint32_t*)(RTx1)>>1);
+	return bitrev(*(volatile uint32_t*)(RTx1)>>1);
 }
