@@ -25,10 +25,11 @@ module bitrev (
 	reg [7:0] data;
 	reg [4:0] state;
 	reg out;
-	always @(posedge sck or posedge ss)begin
+	always @(posedge sck or posedge ss)begin//异步复位
 		if(ss | (state==Done)) state<=Idle;
 		else state<=(state>=Done)?Done:state+1;
-		
+	end
+	always @(posedge sck)begin
 		if(state == (Inp0-1)) data[0] <= mosi;
 		if(state == (Inp1-1)) data[1] <= mosi;
 		if(state == (Inp2-1)) data[2] <= mosi;
