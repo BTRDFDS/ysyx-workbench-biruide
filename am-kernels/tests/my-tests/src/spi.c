@@ -36,7 +36,7 @@ uint32_t wordrev(uint32_t x){
     return r;
 }
 int main(){
-	*(volatile uint32_t*)(Ctrl) = 0b10101000111111;
+	*(volatile uint32_t*)(Ctrl) = 0b10101001000000;
 	//CHAR_LEN=64 01000000
 	//Rx_NEG=1
 	//Tx_NEG=0
@@ -46,8 +46,8 @@ int main(){
 	*(volatile uint32_t*)(SS) = 0b1;//SS=0 flash
 	// for(uint8_t i=0;i<0xff;i++) checkBitrev(i);
     *(volatile uint32_t*)(RTx0) = bitrev(0x03000000);//需要反写
-	*(volatile uint32_t*)(Ctrl) = 0b10101100111111;
+	*(volatile uint32_t*)(Ctrl) = 0b10101101000000;
 	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
 	// return wordrev(*(volatile uint32_t*)(RTx1)>>1);
-	return wordrev(bitrev(*(volatile uint32_t*)(RTx0+4))>>1);
+	return wordrev(bitrev(*(volatile uint32_t*)(RTx0+4)));
 }
