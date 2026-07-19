@@ -9,7 +9,7 @@ void checkBitrev(uint8_t x){
 	*(volatile uint32_t*)(Ctrl) = 0b10100100010000;
 	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
 	// return *(volatile uint32_t*)(Addr);
-	uint8_t y = *(volatile uint32_t*)(Addr);
+	uint8_t y = (*(volatile uint32_t*)(Addr)>>8)&0xff;
 	for(int i=0;i<8;i++){
 		if(((y>>i)&0b1)!=((x>>(7-i))&0b1)){
 			halt(0xf0000|(y<<8)|x);
