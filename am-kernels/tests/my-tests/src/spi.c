@@ -29,6 +29,6 @@ int main(){
 	// for(uint8_t i=0;i<0xff;i++) checkBitrev(i);
     *(volatile uint32_t*)(RTx0) = 0x000000c0;//需要反写
 	*(volatile uint32_t*)(Ctrl) = 0b10101101000000;
-	// while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
+	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
 	return *(volatile uint32_t*)(RTx1);
 }
