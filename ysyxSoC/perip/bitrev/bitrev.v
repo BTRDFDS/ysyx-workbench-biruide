@@ -25,7 +25,7 @@ module bitrev (
 	reg [7:0] data;
 	reg [4:0] state;
 	reg out;
-	always @(posedge sck)begin
+	always @(posedge sck or posedge ss)begin
 		if(ss | (state==Done)) state<=Idle;
 		else state<=(state>=Done)?Done:state+1;
 		
