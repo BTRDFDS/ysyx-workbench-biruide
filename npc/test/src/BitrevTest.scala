@@ -10,31 +10,24 @@ class BitrevTest extends AnyFunSuite with ChiselSim{
         dut.io.miso.expect(true.B)
 
         dut.io.sck.poke(false.B)
-		// dut.io.sck.step(1)
 
         dut.io.sck.poke(true.B)
-		// dut.io.sck.step(1)
 
         dut.io.sck.poke(false.B)
-		// dut.io.sck.step(1)
     
         for(i <- 0 until 7){
             dut.io.sck.poke(true.B)
             dut.io.ss.poke(0.U)
-            dut.io.mosi.poke((a >> i) & 1.U)
+            dut.io.mosi.poke((a >> i) & 0b1)
             dut.io.miso.expect(true.B)
-		    // dut.io.sck.step(1)
             dut.io.sck.poke(false.B)
-		    // dut.io.sck.step(1)
         }
         for(i <- 0 until 7){
             dut.io.sck.poke(true.B)
             dut.io.ss.poke(0.U)
             dut.io.mosi.poke(false.B)
-		    // dut.io.sck.step(1)
-            printf(dut.io.miso.peek())
+            println(dut.io.miso.peek())
             dut.io.sck.poke(false.B)
-		    // dut.io.sck.step(1)
         }
 	}}
 }
