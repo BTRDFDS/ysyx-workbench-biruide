@@ -19,10 +19,19 @@
 // }
 uint32_t bitrev(uint32_t x){
     uint32_t r=0;
+    for(int i=0;i<32;i++){
+        r<<=1;
+        r|=(x&1);
+        x>>=1;
+    }
+    return r;
+}
+uint32_t wordrev(uint32_t x){
+    uint32_t r=0;
     for(int i=0;i<4;i++){
-        r<<=16;
+        r<<=8;
         r|=(x&0xff);
-        x>>=16;
+        x>>=8;
     }
     return r;
 }
@@ -39,5 +48,5 @@ int main(){
     *(volatile uint32_t*)(RTx0) = bitrev(0x03000000);//需要反写
 	*(volatile uint32_t*)(Ctrl) = 0b10101101000000;
 	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
-	return bitrev(*(volatile uint32_t*)(RTx1));
+	return wordrev(*(volatile uint32_t*)(RTx1)>>1);
 }
