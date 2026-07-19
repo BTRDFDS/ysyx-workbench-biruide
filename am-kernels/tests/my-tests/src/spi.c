@@ -4,6 +4,18 @@
 	const uint32_t Ctrl = Addr+0x10;
 	const uint32_t Div	= Addr+0x14;
 	const uint32_t SS   = Addr+0x18;
+void checkBitrev(uint8_t x){
+	*(volatile uint32_t*)(Addr) = x;
+	*(volatile uint32_t*)(Ctrl) = 0b10100100010000;
+	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
+	// return *(volatile uint32_t*)(Addr);
+	uint8_t y = *(volatile uint32_t*)(Addr);
+	for(int i=0;i<8;i++){
+		if(((y>>i)&0b1)!=((x>>(7-i))&0b1)){
+			halt(0xf0000|(y<<8)|x);
+		}
+	}
+}
 int main(){
 	// return 0;
 	*(volatile uint32_t*)(Ctrl) = 0b10100000010000;//0b10100100010000
@@ -16,16 +28,4 @@ int main(){
 	*(volatile uint32_t*)(SS) = 0b1<<7;//SS=7
 	for(uint8_t i=0;i<0xff;i++) checkBitrev(i);
 	return 0;
-}
-void checkBitrev(uint8_t x){
-	*(volatile uint32_t*)(Addr) = x;
-	*(volatile uint32_t*)(Ctrl) = 0b10100100010000;
-	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
-	// return *(volatile uint32_t*)(Addr);
-	uint8_t y = *(volatile uint32_t*)(Addr);
-	for(int i=0;i<8;i++){
-		if((y>>i)&0b1!=(x>>(7-i)&0b1)){
-			halt(0xf0000|(y<<8)|x);
-		}
-	}
 }
