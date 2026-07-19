@@ -13,6 +13,5 @@ object FirtoolOptions{
 }
 import FirtoolOptions._
 import circt.stage.ChiselStage.emitSystemVerilogFile
-object BuilderNpc extends App			{emitSystemVerilogFile(new ysyx_26020046_MemTop, 	Array("--target-dir", "./build/npc"),			firtoolOptions)}
-object BuilderYsyxSoc extends App		{emitSystemVerilogFile(new ysyx_26020046,			Array("--target-dir", "./build/ysyxsoc"),		firtoolOptions)}
-object BuilderBitrevChisel extends App	{emitSystemVerilogFile(new bitrevChisel,			Array("--target-dir", "./build/bitrevChisel"),	firtoolOptions)}
+object BuilderNpc extends App		{emitSystemVerilogFile(new ysyx_26020046_MemTop,Array("--target-dir","./build/npc"),	firtoolOptions)}
+object BuilderYsyxSoc extends App	{emitSystemVerilogFile(new ysyx_26020046,		Array("--target-dir","./build/ysyxsoc"),firtoolOptions)}
