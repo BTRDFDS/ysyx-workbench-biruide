@@ -30,14 +30,14 @@ module bitrev (
 		if(ss | (state==Done)) state<=Idle;
 		else state<=(state<Done)?state+1:Done;
 		
-		if(state == Inp0) data[0] <= mosi;
-		if(state == Inp1) data[1] <= mosi;
-		if(state == Inp2) data[2] <= mosi;
-		if(state == Inp3) data[3] <= mosi;
-		if(state == Inp4) data[4] <= mosi;
-		if(state == Inp5) data[5] <= mosi;
-		if(state == Inp6) data[6] <= mosi;
-		if(state == Inp7) data[7] <= mosi;
+		if(state == (Inp0-1)) data[0] <= mosi;
+		if(state == (Inp1-1)) data[1] <= mosi;
+		if(state == (Inp2-1)) data[2] <= mosi;
+		if(state == (Inp3-1)) data[3] <= mosi;
+		if(state == (Inp4-1)) data[4] <= mosi;
+		if(state == (Inp5-1)) data[5] <= mosi;
+		if(state == (Inp6-1)) data[6] <= mosi;
+		if(state == (Inp7-1)) data[7] <= mosi;
 	end
 	assign miso = out;
 	always @(*) case(state)
