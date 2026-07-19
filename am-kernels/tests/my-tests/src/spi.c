@@ -49,5 +49,5 @@ int main(){
 	*(volatile uint32_t*)(Ctrl) = 0b10101101000000;
 	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
 	// return wordrev(*(volatile uint32_t*)(RTx1)>>1);
-	return *(volatile uint32_t*)(RTx0);
+	return *(volatile uint32_t*)(RTx0+1);
 }
