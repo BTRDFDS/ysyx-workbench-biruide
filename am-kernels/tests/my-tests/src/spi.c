@@ -17,6 +17,15 @@
 // 		}
 // 	}
 // }
+uint32_t bitrev(uint32_t x){
+    uint32_t r=0;
+    for(int i=0;i<32;i++){
+        r<<=1;
+        r|=(x&1);
+        x>>=1;
+    }
+    return r;
+}
 int main(){
 	*(volatile uint32_t*)(Ctrl) = 0b10101001000000;
 	//CHAR_LEN=64 01000000
@@ -27,8 +36,8 @@ int main(){
 	*(volatile uint32_t*)(Div) = 0;//除数为0，计算结果为主频的1/2
 	*(volatile uint32_t*)(SS) = 0b1;//SS=0 flash
 	// for(uint8_t i=0;i<0xff;i++) checkBitrev(i);
-    *(volatile uint32_t*)(RTx0) = 0x000000c0;//需要反写
+    *(volatile uint32_t*)(RTx0) = bitrev(0x03000000);//需要反写
 	*(volatile uint32_t*)(Ctrl) = 0b10101101000000;
 	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
-	return *(volatile uint32_t*)(RTx1);
+	return bitrev(*(volatile uint32_t*)(RTx1));
 }
