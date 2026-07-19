@@ -12,17 +12,16 @@ module bitrev (
 				Inp4=5'b00101,
 				Inp5=5'b00110,
 				Inp6=5'b00111,
-				Inp7=5'b01000,
-				Out0=5'b01001,
-				Out1=5'b01010,
-				Out2=5'b01011,
-				Out3=5'b01100,
-				Out4=5'b01101,
-				Out5=5'b01110,
-				Out6=5'b01111,
-				Out7=5'b10000,
-				Done=5'b10001;
-	reg [7:0] data;
+				I7O0=5'b01000,
+				Out1=5'b01001,
+				Out2=5'b01010,
+				Out3=5'b01011,
+				Out4=5'b01100,
+				Out5=5'b01101,
+				Out6=5'b01110,
+				Out7=5'b01111,
+				Done=5'b10000;
+	reg [6:0] data;
 	reg [4:0] state;
 	reg out;
 	always @(posedge sck or posedge ss)begin//异步复位
@@ -37,11 +36,10 @@ module bitrev (
 		if(state == (Inp4-1)) data[4] <= mosi;
 		if(state == (Inp5-1)) data[5] <= mosi;
 		if(state == (Inp6-1)) data[6] <= mosi;
-		if(state == (Inp7-1)) data[7] <= mosi;
 	end
 	assign miso = out;
 	always @(*) case(state)
-		Out0	:out=data[7];
+		I7O0	:out=mosi;
 		Out1	:out=data[6];
 		Out2	:out=data[5];
 		Out3	:out=data[4];
