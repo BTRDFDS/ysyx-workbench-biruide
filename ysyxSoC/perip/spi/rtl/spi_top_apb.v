@@ -137,8 +137,8 @@ spi_top u0_spi_top (
 	.wb_sel_i(in_pstrb),
 	.wb_we_i (in_pwrite),
 	.wb_stb_i(in_psel),
-	.wb_cyc_i(in_penable),//
-	.wb_ack_o(in_pready),//
+	.wb_cyc_i(enable),
+	.wb_ack_o(ready),
 	.wb_err_o(in_pslverr),
 	.wb_int_o(spi_irq_out),
 
