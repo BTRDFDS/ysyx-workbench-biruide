@@ -25,11 +25,11 @@ module bitrev (
 	logic [6:0] data;
 	bitrevEnum state;
 	logic out;
-	always @(posedge sck or posedge ss)begin//异步复位
+	always_ff@(posedge sck or posedge ss)begin//异步复位
 		if(ss | (state==Done)) state<=Idle;
 		else state<=(state>=Done)?Done:bitrevEnum'(state+5'b1);
 	end
-	always @(posedge sck)begin
+	always_ff@(posedge sck)begin
 		if(state == (Inp0-1)) data[0] <= mosi;
 		if(state == (Inp1-1)) data[1] <= mosi;
 		if(state == (Inp2-1)) data[2] <= mosi;
@@ -39,7 +39,7 @@ module bitrev (
 		if(state == (Inp6-1)) data[6] <= mosi;
 	end
 	assign miso = out;
-	always @(*) case(state)
+	always_comb case(state)
 		I7O0	:out=mosi;
 		Out1	:out=data[6];
 		Out2	:out=data[5];
