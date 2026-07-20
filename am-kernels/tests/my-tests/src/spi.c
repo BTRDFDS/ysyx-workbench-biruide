@@ -18,7 +18,7 @@
 // 	return r;
 // }
 uint32_t flash_read(uint32_t addr){
-	if(addr>>24!=0x00)halt(addr);//error,虽然寻址空间是到3f，但是实际上用不了因为就24位
+	if(addr>>24!=0x00)halt(-1);//error,虽然寻址空间是到3f，但是实际上用不了因为就24位
 	const uint32_t Addr = 0x10001000;
 	const uint32_t RTx0	= Addr;
 	const uint32_t RTx1	= Addr+0x04;
