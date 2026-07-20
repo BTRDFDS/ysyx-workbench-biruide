@@ -9,10 +9,10 @@ int main(){
 	// 	uint16_t p=*((uint16_t*)(flashAddr+i));
 	// 	if(p!=(((i+1)<<8)|i))return p;
 	// }
-	// for(uint32_t i=0;i+3<0x100;i+=4){
-	// 	uint32_t p=*((uint32_t*)(flashAddr+i));
-	// 	if(p!=(((i+3)<<24)|((i+2)<<16)|((i+1)<<8)|i))return p;
-	// }
+	for(uint32_t i=0;i+3<0x100;i+=4){
+		uint32_t p=*((uint32_t*)(flashAddr+i));
+		if(p!=(((i+3)<<24)|((i+2)<<16)|((i+1)<<8)|i))return p;
+	}
 	return *((uint32_t*)(flashAddr+4));//目前只有手动测试能过。其它有待检查
 	// return 0;
 }
