@@ -93,8 +93,8 @@ int main(){//仅仅适用于cpp未修改能加载程序的情况
 	// }
 
 	// return flash_read(0x000000);
-	for(uint32_t i=0;i<0x100;i+=4){
-		if(flash_read(i)!=i)return i;
-	}
+	for(uint32_t i=0;i<0x100;i++)	if((flash_read(i)&0xff)!=(i&0xff))return i;
+	for(uint32_t i=0;i+1<0x100;i+=2)if((flash_read(i)&0xffff)!=(i&0xffff))return i;
+	for(uint32_t i=0;i<0x100;i+=4)	if(flash_read(i)!=i)return i;
 	return 0;
 }
