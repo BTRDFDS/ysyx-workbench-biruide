@@ -174,6 +174,9 @@ void NpcInitMem(int argc, char** argv){
     wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
+	for(uint32_t i=0;i<0x100;i+=4){
+		logFile<<std::hex<<flash_read(i)<<std::endl;
+	}
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
