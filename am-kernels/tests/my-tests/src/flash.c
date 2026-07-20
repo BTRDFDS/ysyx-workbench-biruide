@@ -13,6 +13,6 @@ int main(){
 		uint32_t p=*((uint32_t*)(flashAddr+i));
 		if(p!=(((i+3)<<24)|((i+2)<<16)|((i+1)<<8)|i))return p;
 	}
-	// return *((uint32_t*)(flashAddr+4));
+	return *((uint8_t*)(flashAddr+1));
 	return 0;
 }
