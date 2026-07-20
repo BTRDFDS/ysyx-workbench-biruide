@@ -50,12 +50,10 @@ assign in_prdata  = data[31:0];
 	
 typedef enum logic [3:0] {Idle,Wctrl,Wdiv,Wss,Waddr,Wenab,Get,Check,Read,Back}Enum;
 Enum state;
-logic finish;assign finish = ~dat_o[8];
 logic [4:0] adr_i;
-logic [31:0] dat_i;
-logic [31:0] dat_o;
-logic valid;assign valid = in_penable&&in_psel&& !in_pwrite;
-logic isFlash;assign isFlash = (in_paddr[31:24]==8'h30)&&valid;
+logic [31:0] dat_i,dat_o,revIn,revOut;
+logic valid,isFlash,enable,ready,write;
+logic [3:0] strb;
 always_ff @(posedge clock or posedge reset) begin
 	if(reset | (~valid)) state <= Idle;
 	else case(state)
@@ -66,52 +64,52 @@ always_ff @(posedge clock or posedge reset) begin
 		Waddr	:state<=Wenab;
 		Wenab	:state<=Get;
 		Get		:state<=Check;
-		Check	:state<=finish?Read:Get;
+		Check	:state<=(~dat_o[8])?Read:Get;
 		Read	:state<=Back;
 		Back	:state<=Idle;
 		default	:state<=Idle;
 	endcase
 end
-always_comb case(state)
-	Idle	:adr_i=in_paddr[4:0];
-	Wctrl	:adr_i=5'h10;
-	Wdiv	:adr_i=5'h14;
-	Wss		:adr_i=5'h18;
-	Waddr	:adr_i=5'h00;//就是+0
-	Wenab	:adr_i=5'h10;
-	Get		:adr_i=5'h10;
-	Read	:adr_i=5'h04;
-	default	:adr_i=5'h00;
-endcase
-logic [31:0] revIn,revOut;
 generate
     genvar i;
     for (i=0; i<32; i = i+1) begin
         assign revIn[i] = {8'h03,in_paddr[23:0]}[31-i];
     end
 endgenerate
-always_comb case(state)
-	Idle	:dat_i=in_pwdata;
-	Wctrl	:dat_i=32'b101_00_0_01000000;
-	Wdiv	:dat_i=32'h0;//除数为0
-	Wss		:dat_i=32'h1;
-	Waddr	:dat_i=revIn;
-	Wenab	:dat_i=32'b101_00_1_01000000;
-	default	:dat_i=32'h0;
-endcase
 generate
     genvar j;
     for (i=0; i<32; i = i+1) begin
         assign revOut[i] = dat_o[31-i];
     end
 endgenerate
-always_comb case(state)
-	Idle	:in_prdata=dat_o;
-	Back	:in_prdata={revOut[7:0],revOut[15:8],revOut[23:16],revOut[31:24]};
-	default	:in_prdata=32'h0;
-endcase
-logic enable,ready;
 always_comb begin
+	valid = in_penable&&in_psel&& !in_pwrite;
+	isFlash = (in_paddr[31:24]==8'h30)&&valid;
+	case(state)
+		Idle	:dat_i=in_pwdata;
+		Wctrl	:dat_i=32'b101_00_0_01000000;
+		Wdiv	:dat_i=32'h0;//除数为0
+		Wss		:dat_i=32'h1;
+		Waddr	:dat_i=revIn;
+		Wenab	:dat_i=32'b101_00_1_01000000;
+		default	:dat_i=32'h0;
+	endcase
+	case(state)
+		Idle	:in_prdata=dat_o;
+		Back	:in_prdata={revOut[7:0],revOut[15:8],revOut[23:16],revOut[31:24]};
+		default	:in_prdata=32'h0;
+	endcase
+	case(state)
+		Idle	:adr_i=in_paddr[4:0];
+		Wctrl	:adr_i=5'h10;
+		Wdiv	:adr_i=5'h14;
+		Wss		:adr_i=5'h18;
+		Waddr	:adr_i=5'h00;//就是+0
+		Wenab	:adr_i=5'h10;
+		Get		:adr_i=5'h10;
+		Read	:adr_i=5'h04;
+		default	:adr_i=5'h00;
+	endcase
 	case(state)
 		Idle	:enable = isFlash?1'b0:in_penable;
 		Wctrl	:enable = 1'b1;
@@ -124,17 +122,11 @@ always_comb begin
 		Read	:enable = 1'b1;
 		default	:enable = 1'b0;
 	endcase
-end
-always_comb begin
 	case(state)
 		Idle	:in_pready = isFlash?1'b0:ready;
 		Back	:in_pready = 1'b1;
 		default	:in_pready = 1'b0;
 	endcase
-end
-logic [3:0] strb;
-logic write;
-always_comb begin
 	case(state)
 		Idle	:write=in_pwrite;
 		Wctrl	:write=1'b1;
