@@ -50,12 +50,12 @@ assign in_prdata  = data[31:0];
 	
 typedef enum logic [3:0] {Idle,Wctrl,Wdiv,Wss,Waddr,Wenab,Get,Check,Back}Enum;
 Enum state;
-logic finish = dat_o[8];
+logic finish;assign finish = dat_o[8];
 logic [4:0] adr_i;
 logic [31:0] dat_i;
 logic [31:0] dat_o;
-logic valid = in_penable&&in_psel&& !in_pwrite;
-logic isFlash = (in_paddr[31:24]==8'h30)&&valid;
+logic valid;assign valid = in_penable&&in_psel&& !in_pwrite;
+logic isFlash;assign isFlash = (in_paddr[31:24]==8'h30)&&valid;
 always_ff @(posedge clock or posedge reset) begin
 	if(reset | (~valid)) state <= Idle;
 	else case(state)
