@@ -50,7 +50,7 @@ assign in_prdata  = data[31:0];
 	
 typedef enum logic [3:0] {Idle,Wctrl,Wdiv,Wss,Waddr,Wenab,Get,Check,Back}Enum;
 Enum state;
-logic finish;assign finish = dat_o[8];
+logic finish;assign finish = ~dat_o[8];
 logic [4:0] adr_i;
 logic [31:0] dat_i;
 logic [31:0] dat_o;
@@ -76,11 +76,9 @@ always_comb case(state)
 	Wctrl	:adr_i=5'h10;
 	Wdiv	:adr_i=5'h14;
 	Wss		:adr_i=5'h18;
-	Waddr	:adr_i=5'h00;
+	Waddr	:adr_i=5'h00;//就是+0
 	Wenab	:adr_i=5'h10;
 	Get		:adr_i=5'h10;
-	Check	:adr_i=5'h00;
-	Back	:adr_i=5'h00;
 	default	:adr_i=5'h00;
 endcase
 logic [31:0] revIn,revOut;
@@ -93,7 +91,7 @@ endgenerate
 always_comb case(state)
 	Idle	:dat_i=in_pwdata;
 	Wctrl	:dat_i=32'b101_00_0_01000000;
-	Wdiv	:dat_i=32'h0;
+	Wdiv	:dat_i=32'h0;//除数为0
 	Wss		:dat_i=32'h1;
 	Waddr	:dat_i=revIn;
 	Wenab	:dat_i=32'b101_00_1_01000000;
