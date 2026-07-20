@@ -127,6 +127,28 @@ always_comb begin
 		default	:in_pready = 1'b0;
 	endcase
 end
+logic [3:0] strb;
+logic write;
+always_comb begin
+	case(state)
+		Idle	:write=in_pwrite;
+		Wctrl	:write=1'b1;
+		Wdiv	:write=1'b1;
+		Wss		:write=1'b1;
+		Waddr	:write=1'b1;
+		Wenab	:write=1'b1;
+		default	:write=1'b0;
+	endcase
+	case(state)
+		Idle	:strb=in_pstrb;
+		Wctrl	:strb=4'b1111;
+		Wdiv	:strb=4'b1111;
+		Wss		:strb=4'b1111;
+		Waddr	:strb=4'b1111;
+		Wenab	:strb=4'b1111;
+		default	:strb=4'b0;
+	endcase
+end
 
 spi_top u0_spi_top (
 	.wb_clk_i(clock),
