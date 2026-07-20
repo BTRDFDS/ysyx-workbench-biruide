@@ -48,7 +48,7 @@ assign in_prdata  = data[31:0];
 
 `else
 	
-typedef enum logic [3:0] {Idle,Wctrl,Wdiv,Wss,Waddr,Wenab,Get,Check,Back}Enum;
+typedef enum logic [3:0] {Idle,Wctrl,Wdiv,Wss,Waddr,Wenab,Get,Check,Read,Back}Enum;
 Enum state;
 logic finish;assign finish = ~dat_o[8];
 logic [4:0] adr_i;
@@ -66,7 +66,8 @@ always_ff @(posedge clock or posedge reset) begin
 		Waddr	:state<=Wenab;
 		Wenab	:state<=Get;
 		Get		:state<=Check;
-		Check	:state<=finish?Back:Get;
+		Check	:state<=finish?Read:Get;
+		Read	:state<=Back;
 		Back	:state<=Idle;
 		default	:state<=Idle;
 	endcase
@@ -79,6 +80,7 @@ always_comb case(state)
 	Waddr	:adr_i=5'h00;//就是+0
 	Wenab	:adr_i=5'h10;
 	Get		:adr_i=5'h10;
+	Read	:adr_i=5'h04;
 	default	:adr_i=5'h00;
 endcase
 logic [31:0] revIn,revOut;
@@ -119,6 +121,7 @@ always_comb begin
 		Wenab	:enable = 1'b1;
 		Get		:enable = 1'b1;
 		Check	:enable = 1'b1;
+		Read	:enable = 1'b1;
 		default	:enable = 1'b0;
 	endcase
 end
