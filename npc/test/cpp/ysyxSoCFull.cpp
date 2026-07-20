@@ -163,9 +163,17 @@ void NpcInitMem(int argc, char** argv){
 	// 	if(i%16==15)printf("\n");
 	// }
 	NpcDifftestInit8(mromSize,mrom,mromAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-mrom");
-	for(uint32_t i=0;i<0x100;i++){
-		flash[i]=i&0xff;
-	}
+	// for(uint32_t i=0;i<0x100;i++){
+	// 	flash[i]=i&0xff;
+	// }
+	file =fopen("/home/biruide/ysyx-workbench/am-kernels/tests/my-tests/build/myTest_chat-riscv32i-ysyxsoc.bin","rb");
+	if(file==NULL){printf("can't open myTest_chat\n");exit(-1);}
+	fseek(file, 0, SEEK_END);
+    fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
+	fclose(file);
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
