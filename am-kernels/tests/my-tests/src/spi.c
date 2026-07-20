@@ -44,6 +44,7 @@ uint32_t flash_read(uint32_t addr){
 	*(volatile uint32_t*)(Ctrl) = 0b10100101000000;
 	while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
 	code=*(volatile uint32_t*)(RTx1);
+	halt(code);
 	for(int i=0;i<32;i++){
 		rev<<=1;
 		rev|=(rev&1);
