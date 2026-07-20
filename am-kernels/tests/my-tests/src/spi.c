@@ -33,7 +33,7 @@ uint32_t flash_read(uint32_t addr){
 	*(volatile uint32_t*)(Ctrl)	= 0b10100001000000;
 	*(volatile uint32_t*)(Div)	= 0;
 	*(volatile uint32_t*)(SS)	= 0b1;//SS=0 flash
-	uint32_t code = 0x03000000|(addr&0xffffff)
+	uint32_t code = 0x03000000|(addr&0xffffff);
 	uint32_t rev=0;
 	for(int i=0;i<32;i++){
 		rev<<=1;
