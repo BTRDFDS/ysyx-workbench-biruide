@@ -119,7 +119,8 @@ always_comb begin
 		Wss		:enable = 1'b1;
 		Waddr	:enable = 1'b1;
 		Wenab	:enable = 1'b1;
-		Wait	:enable = 1'b1;
+		Get		:enable = 1'b1;
+		Check	:enable = 1'b1;
 		default	:enable = 1'b0;
 	endcase
 end
