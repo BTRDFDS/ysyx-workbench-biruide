@@ -7,24 +7,24 @@ module spi_top_apb #(
 	parameter flash_addr_end   = 32'h3fffffff,
 	parameter spi_ss_num       = 8
 ) (
-	input         clock,
-	input         reset,
-	input  [31:0] in_paddr,
-	input         in_psel,		//wb_stb_i
-	input         in_penable,	//wb_cyc_i
-	input  [2:0]  in_pprot,		//NULL
-	input         in_pwrite,	//wb_we_i
-	input  [31:0] in_pwdata,
-	input  [3:0]  in_pstrb,		//wb_sel_i
-	output        in_pready,	//wb_ack_o
-	output [31:0] in_prdata,
-	output        in_pslverr,	//wb_err_o
+	input  logic        clock,
+	input  logic        reset,
+	input  logic [31:0] in_paddr,
+	input  logic        in_psel,		//wb_stb_i
+	input  logic        in_penable,	//wb_cyc_i
+	input  logic [2:0]  in_pprot,		//NULL
+	input  logic        in_pwrite,	//wb_we_i
+	input  logic [31:0] in_pwdata,
+	input  logic [3:0]  in_pstrb,		//wb_sel_i
+	output logic        in_pready,	//wb_ack_o
+	output logic [31:0] in_prdata,
+	output logic        in_pslverr,	//wb_err_o
 
-	output                  spi_sck,
-	output [spi_ss_num-1:0] spi_ss,
-	output                  spi_mosi,
-	input                   spi_miso,
-	output                  spi_irq_out
+	output logic                  spi_sck,
+	output logic [spi_ss_num-1:0] spi_ss,
+	output logic                  spi_mosi,
+	input  logic                  spi_miso,
+	output logic                  spi_irq_out
 );
 
 `ifdef FAST_FLASH
