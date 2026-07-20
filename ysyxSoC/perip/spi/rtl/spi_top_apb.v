@@ -48,26 +48,27 @@ assign in_prdata  = data[31:0];
 
 `else
 	
-typedef enum logic [2:0] {Idle,Wctrl,Wdiv,Wss,Waddr,Wenab,Wait,Back}Enum;
+typedef enum logic [3:0] {Idle,Wctrl,Wdiv,Wss,Waddr,Wenab,Get,Check,Back}Enum;
 Enum state;
-logic ack_o;
+logic finish = dat_o[8];
 logic [4:0] adr_i;
 logic [31:0] dat_i;
 logic [31:0] dat_o;
-logic valid;assign valid = in_penable&&in_psel&& !in_pwrite;
-logic isFlash;assign isFlash = (in_paddr[31:24]==8'h30)&&valid;
+logic valid = in_penable&&in_psel&& !in_pwrite;
+logic isFlash = (in_paddr[31:24]==8'h30)&&valid;
 always_ff @(posedge clock or posedge reset) begin
 	if(reset | (~valid)) state <= Idle;
 	else case(state)
-		Idle:state<=isFlash?Wctrl:Idle;
-		Wctrl:state<=Wdiv;
-		Wdiv:state<=Wss;
-		Wss:state<=Waddr;
-		Waddr:state<=Wenab;
-		Wenab:state<=Wait;
-		Wait:state<=ack_o?Back:Wait;
-		Back:state<=Idle;
-		default:state<=Idle;
+		Idle	:state<=isFlash?Wctrl:Idle;
+		Wctrl	:state<=Wdiv;
+		Wdiv	:state<=Wss;
+		Wss		:state<=Waddr;
+		Waddr	:state<=Wenab;
+		Wenab	:state<=Get;
+		Get		:state<=Check;
+		Check	:state<=finish?Back:Get;
+		Back	:state<=Idle;
+		default	:state<=Idle;
 	endcase
 end
 always_comb case(state)
@@ -77,7 +78,8 @@ always_comb case(state)
 	Wss		:adr_i=5'h18;
 	Waddr	:adr_i=5'h00;
 	Wenab	:adr_i=5'h10;
-	Wait	:adr_i=5'h00;
+	Get		:adr_i=5'h10;
+	Check	:adr_i=5'h00;
 	Back	:adr_i=5'h00;
 	default	:adr_i=5'h00;
 endcase
