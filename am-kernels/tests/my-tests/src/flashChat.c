@@ -41,7 +41,6 @@ uint32_t flash_read(uint32_t addr){
 }
 int main(){
 	const uint32_t start	=0x0f000000;
-	// const uint32_t end		=0x0f001fff;
 	for(uint32_t i=0;i<0x40;i+=4){
 		*(uint32_t*)(start+i)=flash_read(i);
 	}
