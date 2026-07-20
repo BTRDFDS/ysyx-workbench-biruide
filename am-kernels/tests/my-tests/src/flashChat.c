@@ -42,7 +42,7 @@ uint32_t flash_read(uint32_t addr){
 int main(){
 	const uint32_t start	=0x0f000000;
 	// const uint32_t end		=0x0f001fff;
-	for(uint32_t i=0;i<10;i++){
+	for(uint32_t i=0;i<0x10;i++){
 		*(uint32_t*)(start+i*4)=flash_read(i);
 	}
 	asm volatile("mv t0, %0; jalr t0" : : "r"(start));
