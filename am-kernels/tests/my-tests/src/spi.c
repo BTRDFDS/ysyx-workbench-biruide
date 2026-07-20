@@ -70,7 +70,6 @@ int main(){//仅仅适用于cpp未修改能加载程序的情况
 	// *(volatile uint32_t*)(Ctrl) = 0b10100101000000;
 	// while(((*(volatile uint32_t*)(Ctrl)>>8)&0b1)==1);
 	// return wordrev(bitrev(*(volatile uint32_t*)(RTx1)));//需要字节内和字节分别取反
-	return flash_read(0x000000);
 	// for(uint32_t i=0;i<0x100;i++){
 	// 	*(volatile uint32_t*)(RTx0) = bitrev(0x03000000+i);
 	// 	*(volatile uint32_t*)(Ctrl) = 0b10100101000000;
@@ -93,5 +92,9 @@ int main(){//仅仅适用于cpp未修改能加载程序的情况
 	// 	if(p!=(((i+3)<<24)|((i+2)<<16)|((i+1)<<8)|i))return p;
 	// }
 
+	// return flash_read(0x000000);
+	for(uint32_t i=0;i<0x100;i+=4){
+		if(flash_read(i)!=i)return i;
+	}
 	return 0;
 }
