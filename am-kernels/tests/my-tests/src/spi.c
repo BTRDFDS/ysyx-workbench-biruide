@@ -50,9 +50,9 @@ uint32_t flash_read(uint32_t addr){
 		code>>=1;
 	}
 	for(int i=0;i<4;i++){
-		rev<<=8;
-		rev|=(code&0xff);
-		code>>=8;
+		code<<=8;
+		code|=(rev&0xff);
+		rev>>=8;
 	}
 	return code;
 }
