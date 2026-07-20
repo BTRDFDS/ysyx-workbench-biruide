@@ -4,6 +4,18 @@
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
 void putch(char ch) {
+	static bool init=false;
+	if(!init){
+		// //波特率
+		*(volatile char *)(0x10000003L)=0b10000011;
+		*(volatile char *)(0x10000000L)=0x01;//直接最快
+		*(volatile char *)(0x10000001L)=0x00;
+		//115200*16==50MHz/27(0x1B)
+		*(volatile char *)(0x10000003L)=0b00000011;
+		//复位FIFO
+		// *(volatile char *)(0x10000002L)=0b11000110;//应该不需要，因为手册上写了会自动复位
+		init=true;
+	}
 	while(((*(volatile char *)(0x10000005L))&0b00100000)==0);
 	asm volatile("sb %0, 0(%1)" : : "r"(ch), "r"(0x10000000L));
 }
@@ -24,13 +36,5 @@ void _trm_init() {
 		*bss=0;
 		bss++;
 	}
-	// //波特率
-	*(volatile char *)(0x10000003L)=0b10000011;
-	*(volatile char *)(0x10000000L)=0x01;//直接最快
-	*(volatile char *)(0x10000001L)=0x00;
-	//115200*16==50MHz/27(0x1B)
-	*(volatile char *)(0x10000003L)=0b00000011;
-	//复位FIFO
-	*(volatile char *)(0x10000002L)=0b11000110;
 	halt(main(mainargs));
 }
