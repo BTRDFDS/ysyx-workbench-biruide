@@ -9,7 +9,7 @@ module psram(
 		Idle,
 		Code1,Code2,Code3,Code4,Code5,Code6,Code7,
 		Addr0,Addr1,Addr2,Addr3,Addr4,Addr5,
-		Wait0,Wait1,Wait2,Wait3,Wait4,Wait5,//写没有等待
+		Wait0,Wait1,Wait2,Wait3,Wait4,Wait5,Code0,//写没有等待,Code0是为了填平差额，因为实质上是在Idle读了
 		Data0,Data1,Data2,Data3,Data4,Data5,Data6,Data7,
 		Done
 	}Enum;
@@ -17,66 +17,76 @@ module psram(
 	logic [ 7:0] code;
 	logic [23:0] addr;
 	logic [31:0] data;
-	logic write;
-	always_ff @(posedge sck) begin
+	logic [3:0] dinp,dout;
+	logic read;
+	always_ff @(posedge sck or posedge ce_n) begin
 		if (ce_n) state <= Idle;
 		else begin
 			case(state)
-				Addr5	:state <= write?Data0:Wait0;
+				Addr5	:state <= read?Wait0:Data0;
 				Done	:state <= Done;
 				default	:state <= Enum'(state + 5'h1);
 			endcase
 		end
-		if(state==Idle )code[7] <= dio[0];
-		if(state==Code1)code[6] <= dio[0];
-		if(state==Code2)code[5] <= dio[0];
-		if(state==Code3)code[4] <= dio[0];
-		if(state==Code4)code[3] <= dio[0];
-		if(state==Code5)code[2] <= dio[0];
-		if(state==Code6)code[1] <= dio[0];
-		if(state==Code7)code[0] <= dio[0];
-		if(state==Addr0)addr[23:20] <= dio[3:0];
-		if(state==Addr1)addr[19:16] <= dio[3:0];
-		if(state==Addr2)addr[15:12] <= dio[3:0];
-		if(state==Addr3)addr[11: 8] <= dio[3:0];
-		if(state==Addr4)addr[ 7: 4] <= dio[3:0];
-		if(state==Addr5)addr[ 3: 0] <= dio[3:0];
+		if(state==Idle )code[7] <= dinp[0];
+		if(state==Code1)code[6] <= dinp[0];
+		if(state==Code2)code[5] <= dinp[0];
+		if(state==Code3)code[4] <= dinp[0];
+		if(state==Code4)code[3] <= dinp[0];
+		if(state==Code5)code[2] <= dinp[0];
+		if(state==Code6)code[1] <= dinp[0];
+		if(state==Code7)code[0] <= dinp[0];
+		if(state==Addr0)addr[23:20] <= dinp[3:0];
+		if(state==Addr1)addr[19:16] <= dinp[3:0];
+		if(state==Addr2)addr[15:12] <= dinp[3:0];
+		if(state==Addr3)addr[11: 8] <= dinp[3:0];
+		if(state==Addr4)addr[ 7: 4] <= dinp[3:0];
+		if(state==Addr5)addr[ 3: 0] <= dinp[3:0];
 
-		if(state==Idle)write<=1'b0;
+		if(state==Idle)read<=1'b0;
 		if(state==Addr0)case(code)
-			8'hEB:write<=1'b0;
-			8'h38:write<=1'b1;
+			8'hEB:read<=1'b1;
+			8'h38:read<=1'b0;
 			default:begin
 				$display("psram code error %x",code);
 				$finish();
 		end endcase
 		if(state==Wait0)data <= spram_read({8'h0,addr});
-		if(write)begin
-			if(state==Data0)data[ 7: 4] <= dio;
-			// if(state==Data1)data[ 3: 0] <= dio;
-			if(state==Data1)spram_write({8'h0,addr},{24'h0,data[ 7: 4],dio});
-			if(state==Data2)data[15:12] <= dio;
-			// if(state==Data3)data[11: 8] <= dio;
-			if(state==Data3)spram_write({8'h0,addr},{24'h0,data[15:12],dio});
-			if(state==Data4)data[23:20] <= dio;
-			// if(state==Data5)data[19:16] <= dio;
-			if(state==Data5)spram_write({8'h0,addr},{24'h0,data[23:20],dio});
-			if(state==Data6)data[31:28] <= dio;
-			// if(state==Data7)data[27:24] <= dio;
-			if(state==Data7)spram_write({8'h0,addr},{24'h0,data[31:28],dio});
+		if(~read)begin
+			if(state==Data0)data[ 7: 4] <= dinp;
+			// if(state==Data1)data[ 3: 0] <= dinp;
+			if(state==Data1)spram_write(({8'h0,addr}+32'h0),{24'h0,data[ 7: 4],dinp});
+			if(state==Data2)data[15:12] <= dinp;
+			// if(state==Data3)data[11: 8] <= dinp;
+			if(state==Data3)spram_write(({8'h0,addr}+32'h1),{24'h0,data[15:12],dinp});
+			if(state==Data4)data[23:20] <= dinp;
+			// if(state==Data5)data[19:16] <= dinp;
+			if(state==Data5)spram_write(({8'h0,addr}+32'h2),{24'h0,data[23:20],dinp});
+			if(state==Data6)data[31:28] <= dinp;
+			// if(state==Data7)data[27:24] <= dinp;
+			if(state==Data7)spram_write(({8'h0,addr}+32'h3),{24'h0,data[31:28],dinp});
 			// if(state==Done)spram_write({8'h0,addr},data);
 		end
-	end always_comb if(~write)case(state)
-		Data0	:dio = data[ 7: 4];
-		Data1	:dio = data[ 3: 0];
-		Data2	:dio = data[15:12];
-		Data3	:dio = data[11: 8];
-		Data4	:dio = data[23:20];
-		Data5	:dio = data[19:16];
-		Data6	:dio = data[31:28];
-		Data7	:dio = data[27:24];
-		default	:dio = 4'bz;
-	endcase
+			// if(state==Data0)$display("data=%x dout=%x",data[ 7: 4],dout);
+			// if(state==Data1)$display("data=%x dout=%x",data[ 3: 0],dout);
+			// if(state==Data2)$display("data=%x dout=%x",data[15:12],dout);
+			// if(state==Data3)$display("data=%x dout=%x",data[11: 8],dout);
+			// if(state==Data4)$display("data=%x dout=%x",data[23:20],dout);
+			// if(state==Data5)$display("data=%x dout=%x",data[19:16],dout);
+			// if(state==Data6)$display("data=%x dout=%x",data[31:28],dout);
+			// if(state==Data7)$display("data=%x dout=%x",data[27:24],dout);
+	end always_comb if(read)case(state)
+		Data0	:dout = data[ 7: 4];
+		Data1	:dout = data[ 3: 0];
+		Data2	:dout = data[15:12];
+		Data3	:dout = data[11: 8];
+		Data4	:dout = data[23:20];
+		Data5	:dout = data[19:16];
+		Data6	:dout = data[31:28];
+		Data7	:dout = data[27:24];
+		default	:dout = 4'b0;
+	endcase else dout = 4'b0;
 	initial $display("%m");
-
+	assign dio = read?dout:4'bz;
+	assign dinp = dio;
 endmodule

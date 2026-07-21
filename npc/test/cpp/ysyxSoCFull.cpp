@@ -139,7 +139,7 @@ extern "C" int spram_read(int32_t addr){
 }
 
 extern "C" void spram_write(int addr,int data){
-	uint32_t addrX=(uint32_t)addr&0xfffffffc;
+	uint32_t addrX=(uint32_t)addr;
 	#ifdef NPC_WAVE
 		logFile<<"spram	W addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#endif
