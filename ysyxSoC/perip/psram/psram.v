@@ -48,7 +48,7 @@ module psram(
 		if(state==Addr2)addr[15:12] <= dinp[3:0];
 		if(state==Addr3)addr[11: 8] <= dinp[3:0];
 		if(state==Addr4)addr[ 7: 4] <= dinp[3:0];
-		if(state==Addr5)addr[ 3: 0] <= dinp[3:0];
+		if(state==Addr5)addr[ 3: 0] <= dinp[3:0];//？？？
 
 		if(state==Idle)read<=1'b0;
 		if(state==Addr0)begin
