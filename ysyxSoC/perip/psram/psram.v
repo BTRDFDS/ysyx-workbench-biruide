@@ -18,24 +18,30 @@ module psram(
 	logic [23:0] addr;
 	logic [31:0] data;
 	logic [3:0] dinp,dout;
-	logic read;
+	logic read,qpi;
 	always_ff @(posedge sck or posedge ce_n) begin
 		if (ce_n) state <= Idle;
 		else begin
 			case(state)
-				Addr5	:state <= read?Wait0:Data0;
+				Code1	:state <= qpi	?Addr0:Code2;
+				Addr5	:state <= read	?Wait0:Data0;
 				Done	:state <= Done;
 				default	:state <= Enum'(state + 5'h1);
 			endcase
 		end
-		if(state==Idle )code[7] <= dinp[0];
-		if(state==Code1)code[6] <= dinp[0];
-		if(state==Code2)code[5] <= dinp[0];
-		if(state==Code3)code[4] <= dinp[0];
-		if(state==Code4)code[3] <= dinp[0];
-		if(state==Code5)code[2] <= dinp[0];
-		if(state==Code6)code[1] <= dinp[0];
-		if(state==Code7)code[0] <= dinp[0];
+		if(qpi)begin
+			if(state==Code0)code[7:4] <= dinp;
+			if(state==Code1)code[3:0] <= dinp;
+		end else begin
+			if(state==Idle )code[7] <= dinp[0];
+			if(state==Code1)code[6] <= dinp[0];
+			if(state==Code2)code[5] <= dinp[0];
+			if(state==Code3)code[4] <= dinp[0];
+			if(state==Code4)code[3] <= dinp[0];
+			if(state==Code5)code[2] <= dinp[0];
+			if(state==Code6)code[1] <= dinp[0];
+			if(state==Code7)code[0] <= dinp[0];
+		end
 		if(state==Addr0)addr[23:20] <= dinp[3:0];
 		if(state==Addr1)addr[19:16] <= dinp[3:0];
 		if(state==Addr2)addr[15:12] <= dinp[3:0];
@@ -44,13 +50,26 @@ module psram(
 		if(state==Addr5)addr[ 3: 0] <= dinp[3:0];
 
 		if(state==Idle)read<=1'b0;
-		if(state==Addr0)case(code)
-			8'hEB:read<=1'b1;
-			8'h38:read<=1'b0;
-			default:begin
-				$display("psram code error %x",code);
-				$finish();
-		end endcase
+		if(state==Addr0)begin
+			case(code)
+				8'hEB:read<=1'b1;
+				8'h38:read<=1'b0;
+				8'h35:;
+				8'hF5:;
+				default:begin
+					$display("psram code error %x",code);
+					$finish();
+			end endcase
+			case(code)
+				8'hEB:;
+				8'h38:;
+				8'h35:qpi<=1'b1;
+				8'hF5:qpi<=1'b0;
+				default:begin
+					$display("psram code error %x",code);
+					$finish();
+			end endcase
+		end
 		if(state==Wait0)data <= spram_read({8'h0,addr});
 		if(~read)begin
 			if(state==Data0)data[ 7: 4] <= dinp;
@@ -73,7 +92,8 @@ module psram(
 		Data7	:dout = data[27:24];
 		default	:dout = 4'b0;
 	endcase else dout = 4'b0;
-	initial $display("%m");
+	// initial $display("%m");
+	initial qpi = 1'b1;
 	assign dio = read?dout:4'bz;
 	assign dinp = dio;
 endmodule
