@@ -222,7 +222,7 @@ void NpcWave(){
 	#endif
 }
 void NpcReturn(const char* msg,int returnCode){
-	NpcWave();
+	// NpcWave();//最后一步不记录了
 #ifdef NPC_WAVE
 	tfp->close();
 #endif

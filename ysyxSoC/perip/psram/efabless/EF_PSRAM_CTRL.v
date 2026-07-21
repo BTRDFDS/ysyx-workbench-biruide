@@ -103,7 +103,7 @@ module PSRAM_READER (
             counter <= 8'b0;
         else if(sck & ~done)
             // counter <= counter + 1'b1;
-            if(counter == 8'h7) counter <= qpi?8'h8:8'h6;
+            if(counter == 8'h7) counter <= qpi?8'h8:8'h5;
             else                counter <= counter + 1'b1;
         else if(state == IDLE)
             counter <= qpi?8'h6:8'b0;
@@ -214,7 +214,7 @@ module PSRAM_WRITER (
             counter <= 8'b0;
         else if(sck & ~done)
             // counter <= counter + 1'b1;
-            if(counter == 8'h7) counter <= qpi?8'h8:8'h6;
+            if(counter == 8'h7) counter <= qpi?8'h8:8'h5;
             else                counter <= counter + 1'b1;
         else if(state == IDLE)
             counter <= qpi?8'h6:8'b0;

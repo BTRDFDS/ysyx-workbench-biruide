@@ -19,19 +19,20 @@ module psram(
 	logic [31:0] data;
 	logic [3:0] dinp,dout;
 	logic read,qpi;
+
 	always_ff @(posedge sck or posedge ce_n) begin
-		if (ce_n) state <= Idle;
+		if (ce_n) state <= qpi?Code6:Idle;
 		else begin
 			case(state)
-				Code1	:state <= qpi	?Addr0:Code2;
+				Addr0	:state <= (code==8'h35)?Code6:Addr1;
 				Addr5	:state <= read	?Wait0:Data0;
 				Done	:state <= Done;
 				default	:state <= Enum'(state + 5'h1);
 			endcase
 		end
 		if(qpi)begin
-			if(state==Idle )code[7:4] <= dinp;
-			if(state==Code1)code[3:0] <= dinp;
+			if(state==Code6)code[7:4] <= dinp;
+			if(state==Code7)code[3:0] <= dinp;
 		end else begin
 			if(state==Idle )code[7] <= dinp[0];
 			if(state==Code1)code[6] <= dinp[0];
@@ -55,7 +56,6 @@ module psram(
 				8'hEB:read<=1'b1;
 				8'h38:read<=1'b0;
 				8'h35:;
-				8'hF5:;
 				default:begin
 					$display("psram code error %x",code);
 					$finish();
@@ -64,7 +64,6 @@ module psram(
 				8'hEB:;
 				8'h38:;
 				8'h35:qpi<=1'b1;
-				8'hF5:qpi<=1'b0;
 				default:begin
 					$display("psram code error %x",code);
 					$finish();
@@ -93,7 +92,7 @@ module psram(
 		default	:dout = 4'b0;
 	endcase else dout = 4'b0;
 	// initial $display("%m");
-	initial qpi = 1'b1;
+	initial qpi = 1'b0;
 	assign dio = read?dout:4'bz;
 	assign dinp = dio;
 endmodule
