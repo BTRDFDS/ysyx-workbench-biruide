@@ -7,7 +7,7 @@ module psram(
 );
 	typedef enum logic [4:0] {
 		Idle,
-		Code0,Code1,Code2,Code3,Code4,Code5,Code6,Code7,
+		Code1,Code2,Code3,Code4,Code5,Code6,Code7,
 		Addr0,Addr1,Addr2,Addr3,Addr4,Addr5,
 		Wait0,Wait1,Wait2,Wait3,Wait4,Wait5,//写没有等待
 		Data0,Data1,Data2,Data3,Data4,Data5,Data6,Data7,
@@ -27,20 +27,20 @@ module psram(
 				default	:state <= Enum'(state + 5'h1);
 			endcase
 		end
-		if(state==Idle	)code[7] <= dio[0];
-		if(state==Code0	)code[6] <= dio[0];
-		if(state==Code1	)code[5] <= dio[0];
-		if(state==Code2	)code[4] <= dio[0];
-		if(state==Code3	)code[3] <= dio[0];
-		if(state==Code4	)code[2] <= dio[0];
-		if(state==Code5	)code[1] <= dio[0];
-		if(state==Code6	)code[0] <= dio[0];
-		if(state==Code7)addr[23:20] <= dio[3:0];
-		if(state==Addr0)addr[19:16] <= dio[3:0];
-		if(state==Addr1)addr[15:12] <= dio[3:0];
-		if(state==Addr2)addr[11: 8] <= dio[3:0];
-		if(state==Addr3)addr[ 7: 4] <= dio[3:0];
-		if(state==Addr4)addr[ 3: 0] <= dio[3:0];
+		if(state==Idle )code[7] <= dio[0];
+		if(state==Code1)code[6] <= dio[0];
+		if(state==Code2)code[5] <= dio[0];
+		if(state==Code3)code[4] <= dio[0];
+		if(state==Code4)code[3] <= dio[0];
+		if(state==Code5)code[2] <= dio[0];
+		if(state==Code6)code[1] <= dio[0];
+		if(state==Code7)code[0] <= dio[0];
+		if(state==Addr0)addr[23:20] <= dio[3:0];
+		if(state==Addr1)addr[19:16] <= dio[3:0];
+		if(state==Addr2)addr[15:12] <= dio[3:0];
+		if(state==Addr3)addr[11: 8] <= dio[3:0];
+		if(state==Addr4)addr[ 7: 4] <= dio[3:0];
+		if(state==Addr5)addr[ 3: 0] <= dio[3:0];
 
 		if(state==Idle)write<=1'b0;
 		if(state==Addr0)case(code)
