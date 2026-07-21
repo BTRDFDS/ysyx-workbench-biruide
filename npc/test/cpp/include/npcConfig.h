@@ -8,7 +8,7 @@
 // #define NPC_F_TRACE
 // #define NPC_E_TRACE
 // #define NPC_D_TRACE
-// #define NPC_WAVE
+#define NPC_WAVE
 
 
 #endif

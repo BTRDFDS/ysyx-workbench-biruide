@@ -27,20 +27,20 @@ module psram(
 				default	:state <= Enum'(state + 5'h1);
 			endcase
 		end
-		if(state==Code0)code[7] <= dio[0];
-		if(state==Code1)code[6] <= dio[0];
-		if(state==Code2)code[5] <= dio[0];
-		if(state==Code3)code[4] <= dio[0];
-		if(state==Code4)code[3] <= dio[0];
-		if(state==Code5)code[2] <= dio[0];
-		if(state==Code6)code[1] <= dio[0];
-		if(state==Code7)code[0] <= dio[0];
-		if(state==Addr0)addr[23:20] <= dio[3:0];
-		if(state==Addr1)addr[19:16] <= dio[3:0];
-		if(state==Addr2)addr[15:12] <= dio[3:0];
-		if(state==Addr3)addr[11: 8] <= dio[3:0];
-		if(state==Addr4)addr[ 7: 4] <= dio[3:0];
-		if(state==Addr5)addr[ 3: 0] <= dio[3:0];
+		if(state==Idle	)code[7] <= dio[0];
+		if(state==Code0	)code[6] <= dio[0];
+		if(state==Code1	)code[5] <= dio[0];
+		if(state==Code2	)code[4] <= dio[0];
+		if(state==Code3	)code[3] <= dio[0];
+		if(state==Code4	)code[2] <= dio[0];
+		if(state==Code5	)code[1] <= dio[0];
+		if(state==Code6	)code[0] <= dio[0];
+		if(state==Code7)addr[23:20] <= dio[3:0];
+		if(state==Addr0)addr[19:16] <= dio[3:0];
+		if(state==Addr1)addr[15:12] <= dio[3:0];
+		if(state==Addr2)addr[11: 8] <= dio[3:0];
+		if(state==Addr3)addr[ 7: 4] <= dio[3:0];
+		if(state==Addr4)addr[ 3: 0] <= dio[3:0];
 
 		if(state==Idle)write<=1'b0;
 		if(state==Addr0)case(code)
@@ -77,5 +77,6 @@ module psram(
 		Data7	:dio = data[27:24];
 		default	:dio = 4'bz;
 	endcase
+	initial $display("%m");
 
 endmodule
