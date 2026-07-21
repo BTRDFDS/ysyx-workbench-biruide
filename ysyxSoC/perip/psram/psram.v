@@ -54,16 +54,16 @@ module psram(
 		if(write)begin
 			if(state==Data0)data[ 7: 4] <= dio;
 			// if(state==Data1)data[ 3: 0] <= dio;
-			if(state==Data1)spram_write({8'h0,addr},{24'h0,dio,data[ 3: 0]});
+			if(state==Data1)spram_write({8'h0,addr},{24'h0,data[ 7: 4],dio});
 			if(state==Data2)data[15:12] <= dio;
 			// if(state==Data3)data[11: 8] <= dio;
-			if(state==Data3)spram_write({8'h0,addr},{24'h0,dio,data[11: 8]});
+			if(state==Data3)spram_write({8'h0,addr},{24'h0,data[15:12],dio});
 			if(state==Data4)data[23:20] <= dio;
 			// if(state==Data5)data[19:16] <= dio;
-			if(state==Data5)spram_write({8'h0,addr},{24'h0,dio,data[19:16]});
+			if(state==Data5)spram_write({8'h0,addr},{24'h0,data[23:20],dio});
 			if(state==Data6)data[31:28] <= dio;
 			// if(state==Data7)data[27:24] <= dio;
-			if(state==Data7)spram_write({8'h0,addr},{24'h0,dio,data[27:24]});
+			if(state==Data7)spram_write({8'h0,addr},{24'h0,data[31:28],dio});
 			// if(state==Done)spram_write({8'h0,addr},data);
 		end
 	end always_comb if(~write)case(state)
