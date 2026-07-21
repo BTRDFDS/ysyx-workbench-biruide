@@ -162,7 +162,7 @@ void NpcInitMem(int argc, char** argv){
 	// 	printf("%02x%02x%02x%02x ",mrom[i+3],mrom[i+2],mrom[i+1],mrom[i]);
 	// 	if(i%16==15)printf("\n");
 	// }
-	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-rom"m);
+	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-mrom");
 	// for(uint32_t i=0;i<0x100;i++){
 	// 	flash[i]=i&0xff;
 	// }
