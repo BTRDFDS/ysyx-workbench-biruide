@@ -23,9 +23,9 @@ std::fstream logFile;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-// const uint32_t addrPSRAM	=0x80000000;
-// const uint32_t psRamSize	=0xfffffff;//psram极限地址是bfff_ffff
-// uint8_t psRam[psRamSize];
+const uint32_t addrPSRAM	=0x80000000;
+const uint32_t psramSize	=0xfffffff;//psram极限地址是bfff_ffff
+uint8_t psram[psramSize];
 
 const uint32_t mromAddr		=0x20000000;//mrom起始地址
 const uint32_t mromSize		=0xfff;
@@ -46,12 +46,12 @@ void NpcWave();
 /*
 extern "C" int pmem_read(int raddr) {
 	uint32_t raddrX=(uint32_t)raddr;
-	if(raddrX-addrPSRAM>=psRamSize|raddrX<addrPSRAM|raddrX==0){return 0;}
+	if(raddrX-addrPSRAM>=psramSize|raddrX<addrPSRAM|raddrX==0){return 0;}
 	uint32_t temp=
-		((uint32_t)psRam[raddrX-addrPSRAM+0]<< 0)|
-		((uint32_t)psRam[raddrX-addrPSRAM+1]<< 8)|
-		((uint32_t)psRam[raddrX-addrPSRAM+2]<<16)|
-		((uint32_t)psRam[raddrX-addrPSRAM+3]<<24);
+		((uint32_t)psram[raddrX-addrPSRAM+0]<< 0)|
+		((uint32_t)psram[raddrX-addrPSRAM+1]<< 8)|
+		((uint32_t)psram[raddrX-addrPSRAM+2]<<16)|
+		((uint32_t)psram[raddrX-addrPSRAM+3]<<24);
 	// printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
 	#ifdef NPC_WAVE
 	logFile<<"Read addr= "<<std::hex<<raddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
@@ -59,28 +59,28 @@ extern "C" int pmem_read(int raddr) {
 	return temp;
 }
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
-	uint32_t waddrX=(uint32_t)waddr;
+	uint32_t addrX=(uint32_t)waddr;
 	#ifdef NPC_WAVE
-		logFile<<"write addr= "<<std::hex<<waddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<wdata<<" ="<<std::bitset<4>(wmask)<<"> ";
+		logFile<<"write addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<wdata<<" ="<<std::bitset<4>(wmask)<<"> ";
 	#endif
-	if(waddrX==0x10000000){
+	if(addrX==0x10000000){
 		printf("%c",wdata);
 		fflush(stdout);
 		return;
 	}
-	if((((waddrX-addrPSRAM)>>2)>psRamSize|waddrX<=addrPSRAM)|(waddrX==0)){
+	if((((addrX-addrPSRAM)>>2)>psramSize|addrX<=addrPSRAM)|(addrX==0)){
 		return;
 	}
-	uint32_t index = (waddrX-addrPSRAM) & 0xfffffffc;
-	if(wmask&0b1000)psRam[index+3]=(uint8_t)(wdata>>24);
-	if(wmask&0b0100)psRam[index+2]=(uint8_t)(wdata>>16);
-	if(wmask&0b0010)psRam[index+1]=(uint8_t)(wdata>> 8);
-	if(wmask&0b0001)psRam[index+0]=(uint8_t)(wdata    );
+	uint32_t index = (addrX-addrPSRAM) & 0xfffffffc;
+	if(wmask&0b1000)psram[index+3]=(uint8_t)(wdata>>24);
+	if(wmask&0b0100)psram[index+2]=(uint8_t)(wdata>>16);
+	if(wmask&0b0010)psram[index+1]=(uint8_t)(wdata>> 8);
+	if(wmask&0b0001)psram[index+0]=(uint8_t)(wdata    );
 	uint32_t temp=
-		((uint32_t)psRam[index+0]<< 0)|
-		((uint32_t)psRam[index+1]<< 8)|
-		((uint32_t)psRam[index+2]<<16)|
-		((uint32_t)psRam[index+3]<<24);
+		((uint32_t)psram[index+0]<< 0)|
+		((uint32_t)psram[index+1]<< 8)|
+		((uint32_t)psram[index+2]<<16)|
+		((uint32_t)psram[index+3]<<24);
 	#ifdef NPC_WAVE
 		logFile<<std::hex<<temp<<std::endl;
 	#endif
@@ -119,6 +119,33 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	*data=temp;
 	#ifdef NPC_WAVE
 	logFile<<"mrom	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
+	#endif
+}
+extern "C" int spram_read(int32_t addr){
+	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
+	#ifdef NPC_WAVE
+		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
+	#endif
+	if(addrX>=psramSize)NpcReturn("psram read error",addrX);
+	uint32_t temp=
+		((uint32_t)psram[addrX+0]<< 0)|
+		((uint32_t)psram[addrX+1]<< 8)|
+		((uint32_t)psram[addrX+2]<<16)|
+		((uint32_t)psram[addrX+3]<<24);
+	#ifdef NPC_WAVE
+		logFile<<" => "<<std::hex<<temp<<std::endl;
+	#endif
+	return temp;
+}
+
+extern "C" void spram_write(int addr,int data) {
+	uint32_t addrX=(uint32_t)waddr& 0xfffffffc;
+	#ifdef NPC_WAVE
+		logFile<<"spram	W addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" ="<<std::bitset<4>(wmask)<<"> ";
+	#endi
+	psram[addrX+0]=(uint8_t)(data&0xff);
+	#ifdef NPC_WAVE
+		logFile<<std::hex<<(uint32_t)psram[addrX+0]<<std::endl;
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
