@@ -54,27 +54,14 @@ module psram(
 		if(state==Wait0)data <= spram_read({8'h0,addr});
 		if(~read)begin
 			if(state==Data0)data[ 7: 4] <= dinp;
-			// if(state==Data1)data[ 3: 0] <= dinp;
 			if(state==Data1)spram_write(({8'h0,addr}+32'h0),{24'h0,data[ 7: 4],dinp});
 			if(state==Data2)data[15:12] <= dinp;
-			// if(state==Data3)data[11: 8] <= dinp;
 			if(state==Data3)spram_write(({8'h0,addr}+32'h1),{24'h0,data[15:12],dinp});
 			if(state==Data4)data[23:20] <= dinp;
-			// if(state==Data5)data[19:16] <= dinp;
 			if(state==Data5)spram_write(({8'h0,addr}+32'h2),{24'h0,data[23:20],dinp});
 			if(state==Data6)data[31:28] <= dinp;
-			// if(state==Data7)data[27:24] <= dinp;
 			if(state==Data7)spram_write(({8'h0,addr}+32'h3),{24'h0,data[31:28],dinp});
-			// if(state==Done)spram_write({8'h0,addr},data);
 		end
-			// if(state==Data0)$display("data=%x dout=%x",data[ 7: 4],dout);
-			// if(state==Data1)$display("data=%x dout=%x",data[ 3: 0],dout);
-			// if(state==Data2)$display("data=%x dout=%x",data[15:12],dout);
-			// if(state==Data3)$display("data=%x dout=%x",data[11: 8],dout);
-			// if(state==Data4)$display("data=%x dout=%x",data[23:20],dout);
-			// if(state==Data5)$display("data=%x dout=%x",data[19:16],dout);
-			// if(state==Data6)$display("data=%x dout=%x",data[31:28],dout);
-			// if(state==Data7)$display("data=%x dout=%x",data[27:24],dout);
 	end always_comb if(read)case(state)
 		Data0	:dout = data[ 7: 4];
 		Data1	:dout = data[ 3: 0];
