@@ -87,14 +87,14 @@ SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
 SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
 
-runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
-# runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
+# runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
+runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
 	verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
-# 	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
+# 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
+	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim	 
