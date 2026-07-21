@@ -30,7 +30,7 @@ module psram(
 			endcase
 		end
 		if(qpi)begin
-			if(state==Code0)code[7:4] <= dinp;
+			if(state==Idle )code[7:4] <= dinp;
 			if(state==Code1)code[3:0] <= dinp;
 		end else begin
 			if(state==Idle )code[7] <= dinp[0];
