@@ -16,7 +16,7 @@ module psram(
 	Enum state;
 	logic [ 7:0] code;
 	logic [23:0] addr;
-	logic [31:0] data;
+	logic [31:0] data,temp;
 	logic [3:0] dinp,dout;
 	logic read,qpi;
 
@@ -41,14 +41,29 @@ module psram(
 			if(state==Code4)code[3] <= dinp[0];
 			if(state==Code5)code[2] <= dinp[0];
 			if(state==Code6)code[1] <= dinp[0];
-			if(state==Code7)code[0] <= dinp[0];
+			if(state==Code7)code[0] <= dinp[0];//？？？
 		end
 		if(state==Addr0)addr[23:20] <= dinp[3:0];
 		if(state==Addr1)addr[19:16] <= dinp[3:0];
 		if(state==Addr2)addr[15:12] <= dinp[3:0];
 		if(state==Addr3)addr[11: 8] <= dinp[3:0];
 		if(state==Addr4)addr[ 7: 4] <= dinp[3:0];
-		if(state==Addr5)addr[ 3: 0] <= dinp[3:0];//？？？
+		if(state==Addr5)addr[ 3: 0] <= dinp[3:0];
+
+		if(state==Idle )temp[ 0] <= dinp[0];
+		if(state==Code1)temp[ 1] <= dinp[0];
+		if(state==Code2)temp[ 2] <= dinp[0];
+		if(state==Code3)temp[ 3] <= dinp[0];
+		if(state==Code4)temp[ 4] <= dinp[0];
+		if(state==Code5)temp[ 5] <= dinp[0];
+		if(state==Code6)temp[ 6] <= dinp[0];
+		if(state==Code7)temp[ 7] <= dinp[0];
+		if(state==Addr0)temp[ 8] <= dinp[0];
+		if(state==Addr1)temp[ 9] <= dinp[0];
+		if(state==Addr2)temp[10] <= dinp[0];
+		if(state==Addr3)temp[11] <= dinp[0];
+		if(state==Addr4)temp[12] <= dinp[0];
+		if(state==Addr5)temp[13] <= dinp[0];
 
 		if(state==Idle)read<=1'b0;
 		if(state==Addr0)begin
