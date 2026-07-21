@@ -154,7 +154,7 @@ void NpcInitMem(int argc, char** argv){
     fseek(file, 0, SEEK_END);
     long fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);
-    size_t wordsRead = fread(mrom, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+    size_t wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
 	printf("has open file\n");
@@ -162,26 +162,26 @@ void NpcInitMem(int argc, char** argv){
 	// 	printf("%02x%02x%02x%02x ",mrom[i+3],mrom[i+2],mrom[i+1],mrom[i]);
 	// 	if(i%16==15)printf("\n");
 	// }
-	NpcDifftestInit8(mromSize,mrom,mromAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-mrom");
+	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-rom"m);
 	// for(uint32_t i=0;i<0x100;i++){
 	// 	flash[i]=i&0xff;
 	// }
-	file =fopen("/home/biruide/ysyx-workbench/am-kernels/tests/my-tests/build/myTest_chat-riscv32i-ysyxsoc.bin","rb");
-	if(file==NULL){printf("can't open myTest_chat\n");exit(-1);}
-	fseek(file, 0, SEEK_END);
-    fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
-	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
-	fclose(file);
-	for(uint32_t i=0;i<0x100;i+=4){
-		uint32_t temp=
-		((uint32_t)flash[i+0]<< 0)|
-		((uint32_t)flash[i+1]<< 8)|
-		((uint32_t)flash[i+2]<<16)|
-		((uint32_t)flash[i+3]<<24);
-		logFile<<std::hex<<temp<<std::endl;
-	}
+	// file =fopen("/home/biruide/ysyx-workbench/am-kernels/tests/my-tests/build/myTest_chat-riscv32i-ysyxsoc.bin","rb");
+	// if(file==NULL){printf("can't open myTest_chat\n");exit(-1);}
+	// fseek(file, 0, SEEK_END);
+    // fileSize = ftell(file);
+    // fseek(file, 0, SEEK_SET);
+    // wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+	// if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
+	// fclose(file);
+	// for(uint32_t i=0;i<0x100;i+=4){
+	// 	uint32_t temp=
+	// 	((uint32_t)flash[i+0]<< 0)|
+	// 	((uint32_t)flash[i+1]<< 8)|
+	// 	((uint32_t)flash[i+2]<<16)|
+	// 	((uint32_t)flash[i+3]<<24);
+	// 	logFile<<std::hex<<temp<<std::endl;
+	// }
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
