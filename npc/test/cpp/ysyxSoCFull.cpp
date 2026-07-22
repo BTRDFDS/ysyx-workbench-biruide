@@ -24,7 +24,7 @@ std::fstream logFile;
 ////////////////////////////////////////////////////////////////////////////////////////
 
 const uint32_t addrPSRAM	=0x80000000;
-const uint32_t psramSize	=0xfffffff;//psram极限地址是bfff_ffff
+const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
 uint8_t psram[psramSize];
 
 const uint32_t mromAddr		=0x20000000;//mrom起始地址
@@ -33,7 +33,7 @@ uint8_t mrom[mromSize];
 
 
 const uint32_t flashAddr	=0x30000000;
-const uint32_t flashSize	=0x0ffffff;//flash极限地址是bfff_ffff
+const uint32_t flashSize	=0x00ffffff;//flash极限地址是bfff_ffff
 uint8_t flash[flashSize];
 
 uint32_t runStep;
@@ -155,20 +155,20 @@ void NpcInitDevice(int argc, char** argv){
 	top = new VysyxSoCFull{contextp};
 	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.wbu.chk");
 	svSetScope(scope);
-#ifdef NPC_WAVE
-    Verilated::traceEverOn(true);
-	tfp = new VerilatedFstC;
-	top->trace(tfp, 99);
-	tfp->open("./wave/ysyxSoCFull.fst");
-#endif
+	#ifdef NPC_WAVE
+		Verilated::traceEverOn(true);
+		tfp = new VerilatedFstC;
+		top->trace(tfp, 99);
+		tfp->open("./wave/ysyxSoCFull.fst");
+	#endif
 	logFile.open("./log/ysyxSoCFull.log",std::ios::out);
 	if(!logFile.is_open()) {
-    printf("Failed to open log file!\n");
-    exit(-1);
+	printf("Failed to open log file!\n");
+	exit(-1);
 	}
 }
 void NpcInitMem(int argc, char** argv){
-    FILE *file;
+	FILE *file;
 	if(argc>1&&argv[1]!=NULL){
 		printf("!!bin:%s ",argv[1]);
 		file = fopen(argv[1],"rb");
@@ -178,17 +178,18 @@ void NpcInitMem(int argc, char** argv){
 	}
 	if(file==NULL){printf("can't open file\n");exit(-1);}
 
-    fseek(file, 0, SEEK_END);
-    long fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    size_t wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+	fseek(file, 0, SEEK_END);
+	long fileSize = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	size_t wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
-	printf("has open file\n");
-	// for(int i=0;i<40;i+=4){//小段检查
-	// 	printf("%02x%02x%02x%02x ",mrom[i+3],mrom[i+2],mrom[i+1],mrom[i]);
-	// 	if(i%16==15)printf("\n");
-	// }
+	// printf("fileSize=%lx\n",fileSize);
+	printf("has open.fileSize=%lx\n",fileSize);
+	for(int i=0;i<40;i+=4){//小段检查
+		printf("%02x%02x%02x%02x ",flash[i+3],flash[i+2],flash[i+1],flash[i]);
+		if(i%16==15)printf("\n");
+	}
 	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-psram");
 	// for(uint32_t i=0;i<0x100;i++){
 	// 	flash[i]=i&0xff;
@@ -196,9 +197,9 @@ void NpcInitMem(int argc, char** argv){
 	// file =fopen("/home/biruide/ysyx-workbench/am-kernels/tests/my-tests/build/myTest_chat-riscv32i-ysyxsoc.bin","rb");
 	// if(file==NULL){printf("can't open myTest_chat\n");exit(-1);}
 	// fseek(file, 0, SEEK_END);
-    // fileSize = ftell(file);
-    // fseek(file, 0, SEEK_SET);
-    // wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+	// fileSize = ftell(file);
+	// fseek(file, 0, SEEK_SET);
+	// wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	// if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	// fclose(file);
 	// for(uint32_t i=0;i<0x100;i+=4){

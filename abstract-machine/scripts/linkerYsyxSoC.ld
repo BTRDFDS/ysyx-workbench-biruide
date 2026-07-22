@@ -23,7 +23,7 @@ SECTIONS{
 		*(.rodata*)
 		*(.data*)
 		*(.sdata*)
-		} > sram AT> flash
+		} > psram AT> flash
     PROVIDE(_data_start_ = ADDR(.data));
     PROVIDE(_data_size_ = SIZEOF(.data));
     PROVIDE(_data_begin_ = LOADADDR(.data));
@@ -32,11 +32,11 @@ SECTIONS{
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
-		} > sram
+		} > psram
 	PROVIDE(_bss_start_	= ADDR(.bss));
 	PROVIDE(_bss_size_	= SIZEOF(.bss));
-	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
+	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
 
-	PROVIDE(_heap_start	= ORIGIN(psram) + _text_size_);
+	PROVIDE(_heap_start	= ORIGIN(psram) + _text_size_ + _data_start_ + _bss_size_);
 	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
 }
