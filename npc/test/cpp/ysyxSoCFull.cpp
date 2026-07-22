@@ -141,7 +141,7 @@ extern "C" int spram_read(int32_t addr){
 extern "C" void spram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#ifdef NPC_WAVE
-		logFile<<"spram	W addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
+		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#endif
 	psram[addrX+0]=(uint8_t)(data&0xff);
 	#ifdef NPC_WAVE
@@ -189,7 +189,7 @@ void NpcInitMem(int argc, char** argv){
 	// 	printf("%02x%02x%02x%02x ",mrom[i+3],mrom[i+2],mrom[i+1],mrom[i]);
 	// 	if(i%16==15)printf("\n");
 	// }
-	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-mrom");
+	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-psram");
 	// for(uint32_t i=0;i<0x100;i++){
 	// 	flash[i]=i&0xff;
 	// }

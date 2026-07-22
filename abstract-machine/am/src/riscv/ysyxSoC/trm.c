@@ -33,19 +33,19 @@ extern char _data_start_,_data_size_,_data_begin_;
 extern char _bss_start_,_bss_size_;
 void _trm_init() {
 	uint8_t* text=(uint8_t*)&_text_start_;
-	while((text-(uint8_t*)&_text_start_)<(size_t)&_text_size_){
+	while((text-(uint8_t*)&_text_start_)<=(size_t)&_text_size_){
 		*text = *(&_text_begin_ + (text - (uint8_t*)&_text_start_));
 		text++;
 	}
 	// asm volatile("nop");
 	uint8_t* data=(uint8_t*)&_data_start_;
-	while((data-(uint8_t*)&_data_start_)<(size_t)&_data_size_){
+	while((data-(uint8_t*)&_data_start_)<=(size_t)&_data_size_){
 		*data = *(&_data_begin_ + (data - (uint8_t*)&_data_start_));
 		data++;
 	}
 	// asm volatile("nop");
 	uint8_t* bss=(uint8_t*)&_bss_start_;
-	while((bss-(uint8_t*)&_bss_start_)<(size_t)&_bss_size_){
+	while((bss-(uint8_t*)&_bss_start_)<=(size_t)&_bss_size_){
 		*bss=0;
 		bss++;
 	}
