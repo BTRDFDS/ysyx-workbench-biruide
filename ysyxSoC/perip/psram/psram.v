@@ -21,11 +21,6 @@ module psram(
 	logic read,qpi;
 
 	always_ff @(posedge sck or posedge ce_n) begin
-		if(state==Code7)begin
-			$display("dinp %x",dinp);
-			$strobe("dinp %x",dinp);
-			$finish();
-		end
 
 		if (ce_n) state <= qpi?Code6:Idle;
 		else begin
@@ -47,7 +42,7 @@ module psram(
 			if(state==Code4)code[3] <= dinp[0];
 			if(state==Code5)code[2] <= dinp[0];
 			if(state==Code6)code[1] <= dinp[0];
-			if(state==Code7)code[0] <= dinp[0];//？？？
+			if(state==Code7)code[0] <= dinp[0];
 		end
 		if(state==Addr0)addr[23:20] <= dinp[3:0];
 		if(state==Addr1)addr[19:16] <= dinp[3:0];
