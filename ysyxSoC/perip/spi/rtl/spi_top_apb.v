@@ -51,7 +51,7 @@ assign in_prdata  = data[31:0];
 typedef enum logic [3:0] {Idle,Wctrl,Wdiv,Wss,Waddr,Wenab,Get,Check,Read,Back}Enum;
 Enum state;
 logic [4:0] adr_i;
-logic [31:0] dat_i,dat_o,revIn,revOut;
+logic [31:0] dat_i,dat_o;
 logic valid,isFlash,enable,ready,write;
 logic [3:0] strb;
 always_ff @(posedge clock or posedge reset) begin
@@ -70,18 +70,6 @@ always_ff @(posedge clock or posedge reset) begin
 		default	:state<=Idle;
 	endcase
 end
-generate
-    genvar i;
-    for (i=0; i<32; i = i+1) begin
-        assign revIn[i] = {8'h03,in_paddr[23:0]}[31-i];
-    end
-endgenerate
-generate
-    genvar j;
-    for (i=0; i<32; i = i+1) begin
-        assign revOut[i] = dat_o[31-i];
-    end
-endgenerate
 always_comb begin
 	valid = in_penable&&in_psel&& !in_pwrite;
 	isFlash = (in_paddr[31:24]==8'h30)&&valid;
