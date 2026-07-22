@@ -87,16 +87,16 @@ always_comb begin
 	isFlash = (in_paddr[31:24]==8'h30)&&valid;
 	case(state)
 		Idle	:dat_i=in_pwdata;
-		Wctrl	:dat_i=32'b101_00_0_01000000;
+		Wctrl	:dat_i=32'b100_00_0_01000000;
 		Wdiv	:dat_i=32'h0;//除数为0
 		Wss		:dat_i=32'h1;
-		Waddr	:dat_i=revIn;
-		Wenab	:dat_i=32'b101_00_1_01000000;
+		Waddr	:dat_i={8'h03,in_paddr[23:0]};
+		Wenab	:dat_i=32'b100_00_1_01000000;
 		default	:dat_i=32'h0;
 	endcase
 	case(state)
 		Idle	:in_prdata=dat_o;
-		Back	:in_prdata={revOut[7:0],revOut[15:8],revOut[23:16],revOut[31:24]};
+		Back	:in_prdata={dat_o[7:0],dat_o[15:8],dat_o[23:16],dat_o[31:24]};
 		default	:in_prdata=32'h0;
 	endcase
 	case(state)
@@ -104,7 +104,7 @@ always_comb begin
 		Wctrl	:adr_i=5'h10;
 		Wdiv	:adr_i=5'h14;
 		Wss		:adr_i=5'h18;
-		Waddr	:adr_i=5'h00;//就是+0
+		Waddr	:adr_i=5'h04;//就是+0
 		Wenab	:adr_i=5'h10;
 		Get		:adr_i=5'h10;
 		Read	:adr_i=5'h04;
