@@ -14,19 +14,19 @@ SECTIONS{
 	} > flash AT> flash
 	.text : {
 		*(.text*)
-	} > psram AT> flash
+	} > sram AT> flash
 	PROVIDE(_text_start_ = ADDR(.text));
 	PROVIDE(_text_size_ = SIZEOF(.text));
 	PROVIDE(_text_begin_ = LOADADDR(.text));
 
 	.rodata : {
 		*(.rodata*)
-	} > psram AT> flash
+	} > sram AT> flash
 
 	.data : {
 		*(.data*)
 		*(.sdata*)
-		} > psram AT> flash
+		} > sram AT> flash
     PROVIDE(_data_start_ = ADDR(.data));
     PROVIDE(_data_size_ = SIZEOF(.data));
     PROVIDE(_data_begin_ = LOADADDR(.data));
@@ -35,11 +35,11 @@ SECTIONS{
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
-		} > psram
+		} > sram
 	PROVIDE(_bss_start_	= ADDR(.bss));
 	PROVIDE(_bss_size_	= SIZEOF(.bss));
-	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
+	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
-	PROVIDE(_heap_start	= ORIGIN(psram) + _text_size_ + _data_size_ + _bss_size_);
+	PROVIDE(_heap_start	= ORIGIN(psram));
 	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
 }

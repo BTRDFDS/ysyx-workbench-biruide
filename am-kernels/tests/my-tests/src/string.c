@@ -21,8 +21,7 @@ char *s[] = {
 // char str[20];
 
 int main() {
-	// check(strcmp(s[0], s[1]) == 0);
-	return s[0] != s[1];
+	check(strcmp(s[0], s[1]) == 0);
 	// check(strcmp(s[0], s[2]) == 0);
 	// check(strcmp(s[0], s[1]) < 0);
 	// check(strcmp(s[0] + 1, s[1] + 1) < 0);
