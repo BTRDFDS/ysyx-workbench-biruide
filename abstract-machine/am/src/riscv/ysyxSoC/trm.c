@@ -58,4 +58,5 @@ void _trm_init() {//FSLB
 		*load = *(&_load_begin_ + (load - (uint8_t*)&_load_start_));
 		load++;
 	}
+	_bootloader();
 }

@@ -15,9 +15,9 @@ SECTIONS{
 	.load : {
 		*(.text._bootload)
 	} > psram AT> flash
-	PROVIDE(_LOAD_start_ = ADDR(.load));
-	PROVIDE(_LOAD_size_ = SIZEOF(.load));
-	PROVIDE(_LOAD_begin_ = LOADADDR(.load));
+	PROVIDE(_load_start_ = ADDR(.load));
+	PROVIDE(_load_size_ = SIZEOF(.load));
+	PROVIDE(_load_begin_ = LOADADDR(.load));
 
 	.data : {
 		*(.rodata*)
@@ -38,6 +38,6 @@ SECTIONS{
 	PROVIDE(_bss_size_	= SIZEOF(.bss));
 	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
 
-	PROVIDE(_heap_start	= ORIGIN(psram) + _text_size_ + _data_start_ + _bss_size_);
+	PROVIDE(_heap_start	= ORIGIN(psram) + _load_size_ + _data_start_ + _bss_size_);
 	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
 }
