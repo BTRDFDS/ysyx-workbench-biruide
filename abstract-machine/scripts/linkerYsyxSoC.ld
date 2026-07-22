@@ -19,11 +19,8 @@ SECTIONS{
 	PROVIDE(_text_size_ = SIZEOF(.text));
 	PROVIDE(_text_begin_ = LOADADDR(.text));
 
-	.rodata : {
-		*(.rodata*)
-	} > flash AT> flash
-
 	.data : {
+		*(.rodata*)
 		*(.data*)
 		*(.sdata*)
 		} > psram AT> flash
