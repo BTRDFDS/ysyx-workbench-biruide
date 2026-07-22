@@ -8,13 +8,15 @@ MEMORY {
 SECTIONS{
 	. = ORIGIN(flash);
 
-	.text : {
+	.boot : {
 		*(entry)
-		*(.text*)
 	} > flash AT> flash
+	.text : {
+		*(.text*)
+	} > sram AT> flash
 	.rodata : {
 		*(.rodata*)
-	} > flash AT> flash
+	} > sram AT> flash
 
 	.data : {
 		*(.data*)
