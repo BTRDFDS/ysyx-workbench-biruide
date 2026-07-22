@@ -124,7 +124,7 @@ module PSRAM_READER (
 
     always @ (posedge clk or negedge rst_n)
         if(!rst_n)qpi <= 1'b0;
-        else if(counter == 8'h7 & qpi == 1'b0)qpi <= 1'b1;
+        else if(counter == 8'h7 & qpi == 1'b0 & sck)qpi <= 1'b1;
 
     // assign dout     =   (counter < 8)   ?   {3'b0, CMD_EBH[7 - counter]}:
     assign dout     =   (counter < 6)   ?   {3'b0, CMD_35H[7 - counter]}:
@@ -227,7 +227,7 @@ module PSRAM_WRITER (
 
     always @ (posedge clk or negedge rst_n)
         if(!rst_n)qpi <= 1'b0;
-        else if(counter == 8'h7 & qpi == 1'b0)qpi <= 1'b1;
+        else if(counter == 8'h7 & qpi == 1'b0 & sck)qpi <= 1'b1;
 
     // assign dout     =   (counter < 8)   ?   {3'b0, CMD_38H[7 - counter]}:
     assign dout     =   (counter < 6)   ?   {3'b0, CMD_35H[7 - counter]}:
