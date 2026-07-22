@@ -12,12 +12,12 @@ SECTIONS{
 		*(entry)
 		*(.text._trm_init)
 	} > flash AT> flash
-	.text : {
-		*(.text*)
+	.load : {
+		*(.text._bootload)
 	} > psram AT> flash
-	PROVIDE(_text_start_ = ADDR(.text));
-	PROVIDE(_text_size_ = SIZEOF(.text));
-	PROVIDE(_text_begin_ = LOADADDR(.text));
+	PROVIDE(_LOAD_start_ = ADDR(.load));
+	PROVIDE(_LOAD_size_ = SIZEOF(.load));
+	PROVIDE(_LOAD_begin_ = LOADADDR(.load));
 
 	.data : {
 		*(.rodata*)
@@ -29,6 +29,7 @@ SECTIONS{
     PROVIDE(_data_begin_ = LOADADDR(.data));
 
 	.bss : {
+		*(.text*)
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)

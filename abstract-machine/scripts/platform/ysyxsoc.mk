@@ -20,7 +20,7 @@ image: image-dep
 #.boot .text.data
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary \
 	--only-section=.boot \
-	--only-section=.text \
+	--only-section=.load \
 	--only-section=.data \
 	$(IMAGE).elf $(IMAGE).bin 
 
