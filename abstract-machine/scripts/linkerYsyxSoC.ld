@@ -36,8 +36,10 @@ SECTIONS{
 		} > psram
 	PROVIDE(_bss_start_	= ADDR(.bss));
 	PROVIDE(_bss_size_	= SIZEOF(.bss));
-	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
 
-	PROVIDE(_heap_start	= ORIGIN(sram));
-	PROVIDE(_heap_end	= ORIGIN(sram) + LENGTH(sram));
+	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
+	_stack_size = 0x1000;
+
+	PROVIDE(_heap_start	= ORIGIN(psram) + _load_size_ + _data_start_ + _bss_size_);
+	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram) - _stack_size);
 }
