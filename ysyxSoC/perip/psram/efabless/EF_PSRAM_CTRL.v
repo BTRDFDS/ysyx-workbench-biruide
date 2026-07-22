@@ -123,7 +123,7 @@ module PSRAM_READER (
                 data[byte_index] <= {data[byte_index][3:0], din}; // Optimize!
 
     always @ (posedge clk or negedge rst_n)
-        if(!rst_n)qpi <= 1'b0;
+        if(!rst_n)qpi <= 1'b1;
         else if(counter == 8'h7 & qpi == 1'b0 & sck)qpi <= 1'b1;
 
     // assign dout     =   (counter < 8)   ?   {3'b0, CMD_EBH[7 - counter]}:
