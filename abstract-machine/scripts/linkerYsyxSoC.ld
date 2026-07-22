@@ -14,7 +14,7 @@ SECTIONS{
 	} > flash AT> flash
 	.text : {
 		*(.text*)
-	} > sram AT> flash
+	} > psram AT> flash
 	PROVIDE(_text_start_ = ADDR(.text));
 	PROVIDE(_text_size_ = SIZEOF(.text));
 	PROVIDE(_text_begin_ = LOADADDR(.text));
@@ -40,6 +40,6 @@ SECTIONS{
 	PROVIDE(_bss_size_	= SIZEOF(.bss));
 	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
-	PROVIDE(_heap_start	= ORIGIN(psram));
+	PROVIDE(_heap_start	= ORIGIN(psram) + _text_size_);
 	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
 }
