@@ -104,10 +104,10 @@ always_comb begin
 		Wctrl	:adr_i=5'h10;
 		Wdiv	:adr_i=5'h14;
 		Wss		:adr_i=5'h18;
-		Waddr	:adr_i=5'h04;//就是+0
+		Waddr	:adr_i=5'h04;
 		Wenab	:adr_i=5'h10;
 		Get		:adr_i=5'h10;
-		Read	:adr_i=5'h04;
+		Read	:adr_i=5'h00;//就是+0
 		default	:adr_i=5'h00;
 	endcase
 	case(state)

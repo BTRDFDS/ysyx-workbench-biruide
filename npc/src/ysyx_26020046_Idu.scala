@@ -195,6 +195,7 @@ class ysyx_26020046_Idu extends Module{
 		}
 		.otherwise{
 			out.pipe.csrOp	:= CsrOp.Trap
+			out.pipe.csrMesg:= 2.U//非法指令
 		}
 		}
 		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U}//Instruction address misaligned
