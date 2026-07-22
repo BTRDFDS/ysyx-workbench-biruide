@@ -3,6 +3,13 @@
 
 static const char mainargs[MAINARGS_MAX_LEN] = TOSTRING(MAINARGS_PLACEHOLDER); // defined in CFLAGS
 
+extern char _heap_start,_heap_end;
+Area heap = RANGE(&_heap_start, &_heap_end);
+
+
+
+
+
 void putch(char ch) {
 	static bool init=false;
 	if(!init){
