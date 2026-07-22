@@ -28,9 +28,15 @@ void putch(char ch) {
 }
 void halt(int code) {asm volatile("mv a0, %0; ebreak" : :"r"(code));while (1);}
 int main(const char *args);
+extern char _text_start_,_text_size_,_text_begin_;
 extern char _data_start_,_data_size_,_data_begin_;
 extern char _bss_start_,_bss_size_;
 void _trm_init() {
+	uint8_t* text=(uint8_t*)&_text_start_;
+	while((text-(uint8_t*)&_text_start_)<(size_t)&_text_size_){
+		*text = *(&_text_begin_ + (text - (uint8_t*)&_text_start_));
+		text++;
+	}
 	// asm volatile("nop");
 	uint8_t* data=(uint8_t*)&_data_start_;
 	while((data-(uint8_t*)&_data_start_)<(size_t)&_data_size_){

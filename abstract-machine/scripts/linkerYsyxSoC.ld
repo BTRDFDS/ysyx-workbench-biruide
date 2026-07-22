@@ -14,6 +14,10 @@ SECTIONS{
 	.text : {
 		*(.text*)
 	} > sram AT> flash
+	PROVIDE(_text_start_ = ADDR(.text));
+	PROVIDE(_text_size_ = SIZEOF(.text));
+	PROVIDE(_text_begin_ = LOADADDR(.text));
+
 	.rodata : {
 		*(.rodata*)
 	} > sram AT> flash
