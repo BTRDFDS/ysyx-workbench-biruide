@@ -10,6 +10,7 @@ SECTIONS{
 
 	.boot : {
 		*(entry)
+		*(.text._trm_init)
 	} > flash AT> flash
 	.text : {
 		*(.text*)
