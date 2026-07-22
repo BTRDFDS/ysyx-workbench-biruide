@@ -16,12 +16,12 @@ class ysyx_26020046_Idu extends Module{
 	out.pipe.result	:= 0.U
 	out.pipe.pc		:= in.pipe.pc
 	out.pipe.csrOp	:= CsrOp.Null
-	out.pipe.csrAddr:= 0.U
+	out.pipe.csrAddr:= 0.U//Illegal Instruction
 	out.pipe.lsuAddr:= LsuAddr.B//000
 	out.pipe.lsuOp	:= LsuOp.Null
 	out.pipe.r2		:= in.imme.r2Out
 	out.pipe.r1		:= in.imme.r1Out
-	out.pipe.csrMesg:= 2.U//Illegal Instruction
+	out.pipe.csrMesg:= in.imme.csrOut
 	out.pipe.enJcod	:= false.B
 	out.pipe.alu	:= ExuAlu.Null
 	out.pipe.bfu	:= ExuBfu.Null
@@ -180,10 +180,10 @@ class ysyx_26020046_Idu extends Module{
 					is(0b000.U){
 					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0xbL.U}//ECALL from M-mode
 					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}//Breakpoint
-					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;csrMesg := in.imme.csrOut}
+					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 					}
-					is(0b001.U){out.pipe.csrAddr := Cat(funct7,r2Addr);csrOp := CsrOp.Write;									csrValid := true.B;csrMesg := in.imme.csrOut}
-					is(0b010.U){out.pipe.csrAddr := Cat(funct7,r2Addr);csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B;csrMesg := in.imme.csrOut}
+					is(0b001.U){out.pipe.csrAddr := Cat(funct7,r2Addr);csrOp := CsrOp.Write;csrValid := true.B}
+					is(0b010.U){out.pipe.csrAddr := Cat(funct7,r2Addr);csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
 				}
 			}
 		}
