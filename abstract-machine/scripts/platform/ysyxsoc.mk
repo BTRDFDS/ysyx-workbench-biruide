@@ -17,13 +17,11 @@ image: image-dep
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 # 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
-#.boot .text.data
+#.boot  .load  .data
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary \
 	--only-section=.boot \
 	--only-section=.load \
 	--only-section=.data \
-	--only-section=.data.extra \
-	--only-section=.bss.extra \
 	$(IMAGE).elf $(IMAGE).bin 
 
 run: insert-arg

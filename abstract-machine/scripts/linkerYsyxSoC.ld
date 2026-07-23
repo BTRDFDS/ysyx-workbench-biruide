@@ -40,11 +40,9 @@ SECTIONS{
 
 	. = ALIGN(0x4);
 	.bss : {
-		. = ALIGN(0x4);
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
-		. = ALIGN(0x4);
 	} > psram
 
 	PROVIDE(_bss_start_	= ADDR(.bss));

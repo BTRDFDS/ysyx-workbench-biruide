@@ -1,5 +1,5 @@
 SECTIONS {
-  .data.extra : {
+  .data : {
     /* section information for finsh shell */
     __fsymtab_start = .;
     KEEP(*(FSymTab))
@@ -32,7 +32,7 @@ SECTIONS {
 INSERT BEFORE .data;
 
 SECTIONS {
-  .bss.extra : {
+  .bss : {
     . = ALIGN(8);
     __am_apps_bss_start = .;
     *(__am_apps.bss*)
