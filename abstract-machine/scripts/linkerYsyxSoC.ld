@@ -13,12 +13,14 @@ SECTIONS{
 		. = ALIGN(0x4);
 		*(entry)
 		*(.text._trm_init)
+		. = ALIGN(0x4);
 	} > flash AT> flash
 
 	. = ALIGN(0x4);
 	.load : {
 		. = ALIGN(0x4);
 		*(.text._bootloader)
+		. = ALIGN(0x4);
 	} > psram AT> flash
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load));
@@ -31,6 +33,7 @@ SECTIONS{
 		*(.rodata*)
 		*(.data*)
 		*(.sdata*)
+		. = ALIGN(0x4);
 		} > psram AT> flash
     PROVIDE(_data_start_ = ADDR(.data));
     PROVIDE(_data_size_ = SIZEOF(.data));
@@ -42,6 +45,7 @@ SECTIONS{
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
+		. = ALIGN(0x4);
 	} > psram
 
 	PROVIDE(_bss_start_	= ADDR(.bss));
