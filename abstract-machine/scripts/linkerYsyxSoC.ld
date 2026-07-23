@@ -10,12 +10,14 @@ SECTIONS{
 
 	. = ALIGN(0x4);
 	.boot : {
+		. = ALIGN(0x4);
 		*(entry)
 		*(.text._trm_init)
 	} > flash AT> flash
 
 	. = ALIGN(0x4);
 	.load : {
+		. = ALIGN(0x4);
 		*(.text._bootloader)
 	} > psram AT> flash
 	PROVIDE(_load_start_ = ADDR(.load));
@@ -24,6 +26,7 @@ SECTIONS{
 
 	. = ALIGN(0x4);
 	.data : {
+		. = ALIGN(0x4);
 		*(.text*)
 		*(.rodata*)
 		*(.data*)
@@ -35,6 +38,7 @@ SECTIONS{
 	
 	. = ALIGN(0x4);
 	.bss : {
+		. = ALIGN(0x4);
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
