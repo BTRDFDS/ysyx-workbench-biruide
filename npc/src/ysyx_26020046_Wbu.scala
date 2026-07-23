@@ -74,7 +74,7 @@ class ysyx_26020046_Wbu() extends Module {
 		mepc 			:= in.pipe.pc
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
-		printf("error,stop!!! %x tval: %x ",in.pipe.csrMesg,in.pipe.csrAdde)//tval
+		printf("error,stop!!! %x tval: %x ",in.pipe.csrMesg,in.pipe.csrAddr)//tval
 		when(in.pipe.csrMesg===3.U	){printf("ebreak\n")}
 		when(in.pipe.csrMesg===11.U	){printf("ecall\n")}
 		when(in.pipe.csrMesg===0.U	){printf("ifuN4\n")}
