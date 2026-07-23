@@ -6,38 +6,39 @@ MEMORY {
 	psram	: ORIGIN = 0x80000000, LENGTH = 16M
 }
 SECTIONS{
-	_flash_lma = ORIGIN(flash);
-	.boot : AT(_flash_lma){
+	. = ORIGIN(flash);
+
+	. = ALIGN(0x4);
+	.boot : {
 		. = ALIGN(0x4);
 		*(entry)
 		*(.text._trm_init)
 		. = ALIGN(0x4);
-	} > flash 
-	_flash_lma = _flash_lma + SIZEOF(.boot);
-	_flash_lma = ALIGN(_flash_lma, 0x4);
+	} > flash AT> flash
 
-	.load : AT(_flash_lma){
+	. = ALIGN(0x4);
+	.load : {
+		. = ALIGN(0x4);
 		*(.text._bootloader)
-	} > psram 
+		. = ALIGN(0x4);
+	} > psram AT> flash
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load));
 	PROVIDE(_load_begin_ = LOADADDR(.load));
-	_flash_lma = _flash_lma + SIZEOF(.load);
-	_flash_lma = ALIGN(_flash_lma, 0x4);
 
-	.data : AT(_flash_lma){
+	. = ALIGN(0x4);
+	.data : {
+		. = ALIGN(0x4);
 		*(.text*)
 		*(.rodata*)
-		*(.srodata*)
 		*(.data*)
 		*(.sdata*)
-		} > psram 
+		. = ALIGN(0x4);
+		} > psram AT> flash
     PROVIDE(_data_start_ = ADDR(.data));
     PROVIDE(_data_size_ = SIZEOF(.data));
     PROVIDE(_data_begin_ = LOADADDR(.data));
-	_flash_lma = _flash_lma + SIZEOF(.data);
-	_flash_lma = ALIGN(_flash_lma, 0x4);
-
+	
 	. = ALIGN(0x4);
 	.bss : {
 		. = ALIGN(0x4);
