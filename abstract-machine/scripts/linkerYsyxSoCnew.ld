@@ -6,28 +6,32 @@ MEMORY {
 	psram	: ORIGIN = 0x80000000, LENGTH = 16M
 }
 SECTIONS{
-	. = ORIGIN(flash);
-
-	. = ALIGN(0x4);
-	.boot : {
+	_flash_lma = ORIGIN(flash);
+	.boot : AT(_flash_lma){
+		. = ALIGN(0x4);
 		*(entry)
 		*(.text._trm_init)
-	} > flash AT> flash
+		. = ALIGN(0x4);
+	} > flash 
+	_flash_lma = _flash_lma + SIZEOF(.boot);
+	_flash_lma = ALIGN(_flash_lma, 0x4);
 
-	. = ALIGN(0x4);
-	.load : {
+	.load : AT(_flash_lma){
 		*(.text._bootloader)
-	} > psram AT> flash
+	} > psram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load));
 	PROVIDE(_load_begin_ = LOADADDR(.load));
+	_flash_lma = _flash_lma + SIZEOF(.load);
+	_flash_lma = ALIGN(_flash_lma, 0x4);
 
-	. = ALIGN(0x4);
-	.data : {
+	.data : AT(_flash_lma){
 		*(.text*)
 		*(.rodata*)
+		*(.srodata*)
 		*(.data*)
 		*(.sdata*)
+		
 		/* rt-thread */
 			. = ALIGN(8);
 			__fsymtab_start = .;
@@ -54,14 +58,15 @@ SECTIONS{
 			__am_apps_data_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-		} > psram AT> flash
-    PROVIDE(_data_start_ = ADDR(.data));
-    PROVIDE(_data_size_ = SIZEOF(.data));
-    PROVIDE(_data_begin_ = LOADADDR(.data));
-	
+		} > psram 
+	PROVIDE(_data_start_ = ADDR(.data));
+	PROVIDE(_data_size_ = SIZEOF(.data));
+	PROVIDE(_data_begin_ = LOADADDR(.data));
+	_flash_lma = _flash_lma + SIZEOF(.data);
+	_flash_lma = ALIGN(_flash_lma, 0x4);
+
 	. = ALIGN(0x4);
 	.bss : {
-		. = ALIGN(0x4);
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
@@ -79,7 +84,7 @@ SECTIONS{
 	PROVIDE(_bss_start_	= ADDR(.bss));
 	PROVIDE(_bss_size_	= SIZEOF(.bss));
 
-	. = ALIGN(0x4);
+	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
 	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
 
