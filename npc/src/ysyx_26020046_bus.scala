@@ -25,7 +25,7 @@ class PipeLsWb extends Bundle{
 	val result	= Output(UInt(BitWidth.W))
 	val pc		= Output(UInt(BitWidth.W))
 	val csrOp	= Output(CsrOp())
-	val csrAddr	= Output(UInt(CsrWidth.W))
+	val csrAddr	= Output(UInt(BitWidth.W))
 	val csrMesg	= Output(UInt(BitWidth.W))
 }
 class PipeExLs extends PipeLsWb(){
