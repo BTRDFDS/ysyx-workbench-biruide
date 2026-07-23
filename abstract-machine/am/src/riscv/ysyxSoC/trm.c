@@ -39,24 +39,24 @@ void _bootloader() {//SSLB
 	// 	load++;
 	// }
 	// asm volatile("nop");
-	uint8_t* data=(uint8_t*)&_data_start_;
-	while((data-(uint8_t*)&_data_start_)<=(size_t)&_data_size_){
-		*data = *(&_data_begin_ + (data - (uint8_t*)&_data_start_));
-		data++;
+	uint32_t* data=(uint32_t*)&_data_start_;
+	while((data-(uint32_t*)&_data_start_)<=(size_t)&_data_size_){
+		*data = *(&_data_begin_ + (data - (uint32_t*)&_data_start_));
+		data+=4;
 	}
 	// asm volatile("nop");
-	uint8_t* bss=(uint8_t*)&_bss_start_;
-	while((bss-(uint8_t*)&_bss_start_)<=(size_t)&_bss_size_){
+	uint32_t* bss=(uint32_t*)&_bss_start_;
+	while((bss-(uint32_t*)&_bss_start_)<=(size_t)&_bss_size_){
 		*bss=0;
-		bss++;
+		bss+=4;
 	}
 	halt(main(mainargs));
 }
 void _trm_init() {//FSLB
-	uint8_t* load=(uint8_t*)&_load_start_;
-	while((load-(uint8_t*)&_load_start_)<=(size_t)&_load_size_){
-		*load = *(&_load_begin_ + (load - (uint8_t*)&_load_start_));
-		load++;
+	uint32_t* load=(uint32_t*)&_load_start_;
+	while((load-(uint32_t*)&_load_start_)<=(size_t)&_load_size_){
+		*load = *(&_load_begin_ + (load - (uint32_t*)&_load_start_));
+		load+=4;
 	}
 	_bootloader();
 }
