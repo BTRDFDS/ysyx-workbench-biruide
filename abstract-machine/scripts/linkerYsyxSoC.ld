@@ -12,6 +12,7 @@ SECTIONS{
 		*(entry)
 		*(.text._trm_init)
 	} > flash AT> flash
+
 	.load : {
 		*(.text._bootloader)
 	} > psram AT> flash
@@ -28,18 +29,21 @@ SECTIONS{
     PROVIDE(_data_start_ = ADDR(.data));
     PROVIDE(_data_size_ = SIZEOF(.data));
     PROVIDE(_data_begin_ = LOADADDR(.data));
-
 	.bss : {
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
-		} > psram
+	} > psram
+
 	PROVIDE(_bss_start_	= ADDR(.bss));
 	PROVIDE(_bss_size_	= SIZEOF(.bss));
 
-	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
 	_stack_size = 0x1000;
+	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
 
-	PROVIDE(_heap_start	= ORIGIN(sram));
-	PROVIDE(_heap_end	= ORIGIN(sram) + LENGTH(sram));
+	. = ALIGN(0x1000);
+	PROVIDE(_heap_start	= .);
+	PROVIDE(_heap_end	= _stack_pointer - _stack_size);
+
+
 }
