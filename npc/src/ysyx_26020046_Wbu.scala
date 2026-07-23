@@ -46,7 +46,7 @@ class ysyx_26020046_Wbu() extends Module {
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
-				val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(in.pipe.csrAddr)
+				val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(in.pipe.csrAddr(CsrWidth-1,0))
 				when(csrWriteValid){
 					switch(csrWriteAddr){
 						is(CsrAddr.Mcycle)		{nextMcycle	:= in.pipe.csrMesg}
