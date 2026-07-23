@@ -13,7 +13,7 @@
 VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
 svScope scope;//作用域
-#ifdef NPC_WAVE
+#if defined(NPC_WAVE) || defined(NPC_MIN_TRACE)
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 #endif
@@ -125,6 +125,8 @@ extern "C" int spram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#ifdef NPC_WAVE
 		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
+	#elif NPC_MIN_TRACE
+		logFile<<std::hex<<getRegPc(0)<<endl;
 	#endif
 	if(addrX>=psramSize)NpcReturn("psram read error",addrX);
 	uint32_t temp=
