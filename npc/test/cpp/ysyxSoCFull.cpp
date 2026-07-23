@@ -36,7 +36,7 @@ const uint32_t flashAddr	=0x30000000;
 const uint32_t flashSize	=0x00ffffff;//flash极限地址是bfff_ffff
 uint8_t flash[flashSize];
 
-uint32_t runStep;
+uint64_t runStep;
 
 void NpcEbreak(int returnCode);
 void NpcRun(uint32_t times);
@@ -105,7 +105,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 		((uint32_t)flash[addrX+3]<<24);
 	*data=temp;
 	#ifdef NPC_WAVE
-	logFile<<" => "<<std::hex<<temp<<std::endl;
+		if(runStep >= NpcMinTraceBegin)logFile<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
@@ -126,7 +126,7 @@ extern "C" int spram_read(int32_t addr){
 	#ifdef NPC_WAVE
 		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#elif NPC_MIN_TRACE
-		logFile<<std::hex<<getRegPc(0)<<endl;
+		logFile<<std::hex<<getRegPc(0)<<"\n";
 	#endif
 	if(addrX>=psramSize)NpcReturn("psram read error",addrX);
 	uint32_t temp=
@@ -229,7 +229,7 @@ void NpcReturn(const char* msg,int returnCode){
 #ifdef NPC_WAVE
 	tfp->close();
 #endif
-	printf("%s runStep=%d pc=0x %x\n",msg,runStep,getRegPc(0)-4);//实质上是已经是next pc了
+	printf("%s runStep=%ld pc=0x %x\n",msg,runStep,getRegPc(0)-4);//实质上是已经是next pc了
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
 	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
