@@ -13,14 +13,15 @@
 VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
 svScope scope;//作用域
-#if defined(NPC_WAVE) || defined(NPC_MIN_TRACE)
+#if defined(NPC_WAVE)
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
-//输出日志文件：
-std::fstream logFile;
-
+#if defined(NPC_MIN_TRACE) || defined(NPC_M_TRACE)
+	//输出日志文件：
+	std::fstream logFile;
+#endif
 ////////////////////////////////////////////////////////////////////////////////////////
 
 const uint32_t addrPSRAM	=0x80000000;
@@ -60,7 +61,7 @@ extern "C" int pmem_read(int raddr) {
 }
 extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 	uint32_t addrX=(uint32_t)waddr;
-	#ifdef NPC_WAVE
+	#ifdef NPC_M_TRACE
 		logFile<<"write addr= "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<wdata<<" ="<<std::bitset<4>(wmask)<<"> ";
 	#endif
 	if(addrX==0x10000000){
@@ -81,7 +82,7 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		((uint32_t)psram[index+1]<< 8)|
 		((uint32_t)psram[index+2]<<16)|
 		((uint32_t)psram[index+3]<<24);
-	#ifdef NPC_WAVE
+	#ifdef NPC_M_TRACE
 		logFile<<std::hex<<temp<<std::endl;
 	#endif
 }
@@ -93,7 +94,7 @@ extern "C" void check(){
 }
 extern "C" void flash_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
-	#ifdef NPC_WAVE
+	#ifdef NPC_M_TRACE
 	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#endif
 	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcReturn("flash read error",addrX);}
@@ -104,7 +105,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 		((uint32_t)flash[addrX+2]<<16)|
 		((uint32_t)flash[addrX+3]<<24);
 	*data=temp;
-	#ifdef NPC_WAVE
+	#ifdef NPC_M_TRACE
 		logFile<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 }
@@ -117,16 +118,17 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 		((uint32_t)mrom[addrX-mromAddr+2]<<16)|
 		((uint32_t)mrom[addrX-mromAddr+3]<<24);
 	*data=temp;
-	#ifdef NPC_WAVE
+	#ifdef NPC_M_TRACE
 	logFile<<"mrom	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 }
 extern "C" int spram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
-	#if defined(NPC_WAVE)
+	#if defined(NPC_M_TRACE)
 		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#elif defined(NPC_MIN_TRACE)
 		if(runStep >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
+		if(addr&0xfffffffc == 0x800001f4)logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#endif
 	if(addrX>=psramSize)NpcReturn("psram read error",addrX);
 	uint32_t temp=
@@ -134,7 +136,7 @@ extern "C" int spram_read(int32_t addr){
 		((uint32_t)psram[addrX+1]<< 8)|
 		((uint32_t)psram[addrX+2]<<16)|
 		((uint32_t)psram[addrX+3]<<24);
-	#ifdef NPC_WAVE
+	#ifdef NPC_M_TRACE
 		logFile<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 	return temp;
@@ -142,12 +144,16 @@ extern "C" int spram_read(int32_t addr){
 
 extern "C" void spram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
-	#ifdef NPC_WAVE
+	#if defined(NPC_M_TRACE)
 		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
+	#elif defined(NPC_MIN_TRACE)
+		if(addr&0xfffffffc == 0x800001f4)logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#endif
 	psram[addrX+0]=(uint8_t)(data&0xff);
-	#ifdef NPC_WAVE
+	#if defined(NPC_M_TRACE)
 		logFile<<std::hex<<(uint32_t)psram[addrX+0]<<std::endl;
+	#elif defined(NPC_MIN_TRACE)
+		if(addr&0xfffffffc == 0x800001f4)logFile<<std::hex<<(uint32_t)psram[addrX+0]<<"\n";
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -163,11 +169,13 @@ void NpcInitDevice(int argc, char** argv){
 		top->trace(tfp, 99);
 		tfp->open("./wave/ysyxSoCFull.fst");
 	#endif
-	logFile.open("./log/ysyxSoCFull.log",std::ios::out);
-	if(!logFile.is_open()) {
-	printf("Failed to open log file!\n");
-	exit(-1);
+	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
+		logFile.open("./log/ysyxSoCFull.log",std::ios::out);
+		if(!logFile.is_open()) {
+		printf("Failed to open log file!\n");
+		exit(-1);
 	}
+	#endif
 }
 void NpcInitMem(int argc, char** argv){
 	FILE *file;
@@ -242,7 +250,9 @@ void NpcReturn(const char* msg,int returnCode){
 	}
 	delete top;
 	delete contextp;
-	logFile.close();
+	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
+		logFile.close();
+	#endif
 	exit(returnCode);
 }
 ////////////////////////////////////////////////////////////////////////////////////////

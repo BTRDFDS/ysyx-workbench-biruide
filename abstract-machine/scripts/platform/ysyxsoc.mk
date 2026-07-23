@@ -22,6 +22,8 @@ image: image-dep
 	--only-section=.boot \
 	--only-section=.load \
 	--only-section=.data \
+	--only-section=.data.extra \
+	--only-section=.bss.extra \
 	$(IMAGE).elf $(IMAGE).bin 
 
 run: insert-arg
