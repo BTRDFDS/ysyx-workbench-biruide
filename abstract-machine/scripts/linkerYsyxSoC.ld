@@ -8,11 +8,13 @@ MEMORY {
 SECTIONS{
 	. = ORIGIN(flash);
 
+	. = ALIGN(0x4);
 	.boot : {
 		*(entry)
 		*(.text._trm_init)
 	} > flash AT> flash
 
+	. = ALIGN(0x4);
 	.load : {
 		*(.text._bootloader)
 	} > psram AT> flash
@@ -20,6 +22,7 @@ SECTIONS{
 	PROVIDE(_load_size_ = SIZEOF(.load));
 	PROVIDE(_load_begin_ = LOADADDR(.load));
 
+	. = ALIGN(0x4);
 	.data : {
 		*(.text*)
 		*(.rodata*)
@@ -29,6 +32,8 @@ SECTIONS{
     PROVIDE(_data_start_ = ADDR(.data));
     PROVIDE(_data_size_ = SIZEOF(.data));
     PROVIDE(_data_begin_ = LOADADDR(.data));
+	
+	. = ALIGN(0x4);
 	.bss : {
 		*(.bss*)
 		*(.sbss*)
