@@ -235,7 +235,7 @@ void NpcReturn(const char* msg,int returnCode){
 	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
 	};//A=10 B=11
 	for(int i=0;i<32;i++){
-		printf("%s %2d:%8x ",regsName[i],i,getRegPc(i));
+		printf("[%2d %s]%8x ",i,regsName[i],getRegPc(i));
 		if(i%8==7)printf("\n");
 	}
 	delete top;
