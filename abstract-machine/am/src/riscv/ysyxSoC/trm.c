@@ -57,7 +57,7 @@ void _trm_init() {//FSLB
 	while((load-(uint32_t*)&_load_start_)<=(size_t)&_load_size_){
 		// uint32_t temp = 
 		*load = *(uint32_t*)(&_load_begin_ + (load - (uint32_t*)&_load_start_));
-		load+=4;
+		load++;
 	}
 	_bootloader();
 }
