@@ -105,7 +105,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 		((uint32_t)flash[addrX+3]<<24);
 	*data=temp;
 	#ifdef NPC_WAVE
-		if(runStep >= NpcMinTraceBegin)logFile<<" => "<<std::hex<<temp<<std::endl;
+		logFile<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 }
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
@@ -126,7 +126,7 @@ extern "C" int spram_read(int32_t addr){
 	#if defined(NPC_WAVE)
 		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#elif defined(NPC_MIN_TRACE)
-		logFile<<std::hex<<getRegPc(0)<<"\n";
+		if(runStep >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
 	#endif
 	if(addrX>=psramSize)NpcReturn("psram read error",addrX);
 	uint32_t temp=
