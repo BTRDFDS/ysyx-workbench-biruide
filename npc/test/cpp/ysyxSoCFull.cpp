@@ -185,11 +185,11 @@ void NpcInitMem(int argc, char** argv){
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
 	// printf("fileSize=%lx\n",fileSize);
-	printf("has open.fileSize=%lx\n",fileSize);
-	for(int i=0;i<0x100;i+=4){//小段检查
-		printf("%02x%02x%02x%02x ",flash[i+3],flash[i+2],flash[i+1],flash[i]);
-		if(i%16==15)printf("\n");
-	}
+	// printf("has open.fileSize=%lx\n",fileSize);
+	// for(int i=0;i<0x100;i+=4){//小段检查
+	// 	printf("%02x%02x%02x%02x ",flash[i+3],flash[i+2],flash[i+1],flash[i]);
+	// 	if(i%16==15)printf("\n");
+	// }
 	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-psram");
 	// for(uint32_t i=0;i<0x100;i++){
 	// 	flash[i]=i&0xff;
