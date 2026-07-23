@@ -38,12 +38,10 @@ SECTIONS{
 	PROVIDE(_bss_start_	= ADDR(.bss));
 	PROVIDE(_bss_size_	= SIZEOF(.bss));
 
-	_stack_size = 0x1000;
-	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
-
 	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
-	PROVIDE(_heap_end	= _stack_pointer - _stack_size);
+	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
 
+	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
 }
