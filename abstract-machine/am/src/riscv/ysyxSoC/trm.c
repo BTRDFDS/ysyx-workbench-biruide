@@ -55,7 +55,8 @@ void _bootloader() {//SSLB
 void _trm_init() {//FSLB
 	uint32_t* load=(uint32_t*)&_load_start_;
 	while((load-(uint32_t*)&_load_start_)<=(size_t)&_load_size_){
-		*load = *(&_load_begin_ + (load - (uint32_t*)&_load_start_));
+		uint32_t temp = *(uint32_t*)(&_load_begin_ + (load - (uint32_t*)&_load_start_));
+		*load = temp;
 		load+=4;
 	}
 	_bootloader();
