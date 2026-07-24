@@ -4,6 +4,7 @@ MEMORY {
 	mrom	: ORIGIN = 0x20000000, LENGTH = 4K
 	sram	: ORIGIN = 0x0f000000, LENGTH = 8K
 	psram	: ORIGIN = 0x80000000, LENGTH = 16M
+	sdram	: ORIGIN = 0x80000000, LENGTH = 32M
 }
 SECTIONS{
 	_flash_lma = ORIGIN(flash);
@@ -18,7 +19,7 @@ SECTIONS{
 
 	.load : AT(_flash_lma){
 		*(.text._bootloader)
-	} > sram 
+	} > sdram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load));
 	PROVIDE(_load_begin_ = LOADADDR(.load));
@@ -58,7 +59,7 @@ SECTIONS{
 			__am_apps_data_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-		} > sram 
+		} > sdram 
 	PROVIDE(_imag_start_ = ADDR(.imag));
 	PROVIDE(_imag_size_	 = SIZEOF(.imag));
 	PROVIDE(_imag_begin_ = LOADADDR(.imag));
@@ -79,14 +80,14 @@ SECTIONS{
 			__am_apps_bss_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-	} > sram
+	} > sdram
 
 	PROVIDE(_base_start_ = ADDR(.base));
 	PROVIDE(_base_size_	 = SIZEOF(.base));
 
 	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
-	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
+	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
 
 	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
