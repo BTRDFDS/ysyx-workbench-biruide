@@ -65,7 +65,7 @@ module sdram(
 				if(~dqm[0])sdram_write({7'b0,addr[24:10],a[8:0],1'b0},{24'b0,dai[ 7:0]});
 				if(~dqm[1])sdram_write({7'b0,addr[24:10],a[8:0],1'b1},{24'b0,dai[15:8]});
 			end
-			if(state==Burst && write==1'b1)begin
+			if(state==Burst && write==1'b1 && cnt!=burstLen)begin
 				if(~dqm[0])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1,1'b0},{24'b0,dai[ 7:0]});
 				if(~dqm[1])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1,1'b1},{24'b0,dai[15:8]});
 			end
