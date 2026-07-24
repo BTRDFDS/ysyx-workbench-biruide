@@ -70,16 +70,16 @@ module psram(
 					$finish();
 			end endcase
 		end
-		if(state==Wait0)data <= spram_read({8'h0,addr});
+		if(state==Wait0)data <= psram_read({8'h0,addr});
 		if(~read)begin
 			if(state==Data0)data[ 7: 4] <= dinp;
-			if(state==Data1)spram_write(({8'h0,addr}+32'h0),{24'h0,data[ 7: 4],dinp});
+			if(state==Data1)psram_write(({8'h0,addr}+32'h0),{24'h0,data[ 7: 4],dinp});
 			if(state==Data2)data[15:12] <= dinp;
-			if(state==Data3)spram_write(({8'h0,addr}+32'h1),{24'h0,data[15:12],dinp});
+			if(state==Data3)psram_write(({8'h0,addr}+32'h1),{24'h0,data[15:12],dinp});
 			if(state==Data4)data[23:20] <= dinp;
-			if(state==Data5)spram_write(({8'h0,addr}+32'h2),{24'h0,data[23:20],dinp});
+			if(state==Data5)psram_write(({8'h0,addr}+32'h2),{24'h0,data[23:20],dinp});
 			if(state==Data6)data[31:28] <= dinp;
-			if(state==Data7)spram_write(({8'h0,addr}+32'h3),{24'h0,data[31:28],dinp});
+			if(state==Data7)psram_write(({8'h0,addr}+32'h3),{24'h0,data[31:28],dinp});
 		end
 	end always_comb if(read)case(state)
 		Data0	:dout = data[ 7: 4];

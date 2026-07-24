@@ -30,7 +30,7 @@ uint8_t psram[psramSize];
 
 const uint32_t sdramAddr	=0xa0000000;
 const uint32_t sdramSize	=0x01ffffff;//2+12+10+1
-uint8_t psram[sdramSize];
+uint8_t sdram[sdramSize];
 
 const uint32_t mromAddr		=0x20000000;//mrom起始地址
 const uint32_t mromSize		=0xfff;
