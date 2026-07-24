@@ -89,6 +89,6 @@ SECTIONS{
 	PROVIDE(_heap_start	= .);
 	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
 
-	_stack_pointer = ORIGIN(sdram) + LENGTH(psdram);
+	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
 
 }
