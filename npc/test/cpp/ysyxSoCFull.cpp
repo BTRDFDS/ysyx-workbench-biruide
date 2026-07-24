@@ -214,7 +214,7 @@ void NpcInitDevice(int argc, char** argv){
 void NpcInitMem(int argc, char** argv){
 	FILE *file;
 	if(argc>1&&argv[1]!=NULL){
-		printf("!!bin:%s ",argv[1]);
+		printf("!!bin:%s\n",argv[1]);
 		file = fopen(argv[1],"rb");
 	}else{
 		printf("!!shuould input bin\n");
