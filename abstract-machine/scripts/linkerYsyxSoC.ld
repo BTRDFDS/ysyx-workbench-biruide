@@ -19,7 +19,7 @@ SECTIONS{
 
 	.load : AT(_lma){
 		*(.text._bootloader)
-	} > psram 
+	} > sdram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load));
 	PROVIDE(_load_begin_ = LOADADDR(.load));
