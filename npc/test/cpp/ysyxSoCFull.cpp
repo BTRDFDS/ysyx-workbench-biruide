@@ -24,9 +24,13 @@ svScope scope;//作用域
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
 
-const uint32_t addrPSRAM	=0x80000000;
+const uint32_t psramAddr	=0x80000000;
 const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
 uint8_t psram[psramSize];
+
+const uint32_t sdramAddr	=0x80000000;
+const uint32_t sdramSize	=0x01ffffff;//2+12+10+1
+uint8_t psram[sdramSize];
 
 const uint32_t mromAddr		=0x20000000;//mrom起始地址
 const uint32_t mromSize		=0xfff;
@@ -47,12 +51,12 @@ void NpcWave();
 /*
 extern "C" int pmem_read(int raddr) {
 	uint32_t raddrX=(uint32_t)raddr;
-	if(raddrX-addrPSRAM>=psramSize|raddrX<addrPSRAM|raddrX==0){return 0;}
+	if(raddrX-psramAddr>=psramSize|raddrX<psramAddr|raddrX==0){return 0;}
 	uint32_t temp=
-		((uint32_t)psram[raddrX-addrPSRAM+0]<< 0)|
-		((uint32_t)psram[raddrX-addrPSRAM+1]<< 8)|
-		((uint32_t)psram[raddrX-addrPSRAM+2]<<16)|
-		((uint32_t)psram[raddrX-addrPSRAM+3]<<24);
+		((uint32_t)psram[raddrX-psramAddr+0]<< 0)|
+		((uint32_t)psram[raddrX-psramAddr+1]<< 8)|
+		((uint32_t)psram[raddrX-psramAddr+2]<<16)|
+		((uint32_t)psram[raddrX-psramAddr+3]<<24);
 	// printf("Read addr= %x at T=%d => %x\n",raddrX,runStep,temp);
 	#ifdef NPC_WAVE
 	logFile<<"Read addr= "<<std::hex<<raddrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
@@ -69,10 +73,10 @@ extern "C" void pmem_write(int waddr, int wdata, char wmask) {
 		fflush(stdout);
 		return;
 	}
-	if((((addrX-addrPSRAM)>>2)>psramSize|addrX<=addrPSRAM)|(addrX==0)){
+	if((((addrX-psramAddr)>>2)>psramSize|addrX<=psramAddr)|(addrX==0)){
 		return;
 	}
-	uint32_t index = (addrX-addrPSRAM) & 0xfffffffc;
+	uint32_t index = (addrX-psramAddr) & 0xfffffffc;
 	if(wmask&0b1000)psram[index+3]=(uint8_t)(wdata>>24);
 	if(wmask&0b0100)psram[index+2]=(uint8_t)(wdata>>16);
 	if(wmask&0b0010)psram[index+1]=(uint8_t)(wdata>> 8);
@@ -154,6 +158,36 @@ extern "C" void psram_write(int addr,int data){
 		logFile<<std::hex<<(uint32_t)psram[addrX+0]<<std::endl;
 	#elif defined(NPC_MIN_TRACE)
 		if(addr&0xfffffffc == 0x800001f4)logFile<<std::hex<<(uint32_t)psram[addrX+0]<<"\n";
+	#endif
+}
+extern "C" int sdram_read(int32_t addr){
+	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
+	#if defined(NPC_M_TRACE)
+		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
+	#elif defined(NPC_MIN_TRACE)
+		if(runStep >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
+		if(addr&0xfffffffc == 0x800001f4)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
+	#endif
+	if(addrX>=sdramSize)NpcReturn("sdram read error",addrX);
+	uint32_t temp=
+		((uint32_t)sdram[addrX+0]<< 0)|
+		((uint32_t)sdram[addrX+1]<< 8)|
+		((uint32_t)sdram[addrX+2]<<16)|
+		((uint32_t)sdram[addrX+3]<<24);
+	#ifdef NPC_M_TRACE
+		logFile<<" => "<<std::hex<<temp<<std::endl;
+	#endif
+	return temp;
+}
+
+extern "C" void sdram_write(int addr,int data){
+	uint32_t addrX=(uint32_t)addr;
+	#if defined(NPC_M_TRACE)
+		logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
+		#endif
+	sdram[addrX+0]=(uint8_t)(data&0xff);
+	#if defined(NPC_M_TRACE)
+		logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
