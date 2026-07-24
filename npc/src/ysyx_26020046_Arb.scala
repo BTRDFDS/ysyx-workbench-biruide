@@ -67,12 +67,13 @@ class ysyx_26020046_Arb extends Module{
 		.elsewhen(ifu.arvalid)	{addr := ifu.araddr(31,24)}
 	}
 	val addrValid = (
-		(addr		=== 0x02.U(8.W))||//clint
-		(addr		=== 0x0f.U(8.W))||//sram
-		(addr		=== 0x10.U(8.W))||//UART16550 or SPI
-		(addr		=== 0x20.U(8.W))||//mrom
-		(addr(7,4))	===	0x3.U(4.W)	||//flash
-		(addr(7,5)	=== 0b100.U(3.W)))//spram
+		(addr		=== 0x02.U(8.W))	||//clint
+		(addr		=== 0x0f.U(8.W))	||//sram
+		(addr		=== 0x10.U(8.W))	||//UART16550 or SPI
+		(addr		=== 0x20.U(8.W))	||//mrom
+		(addr(7,4))	===	0x3.U(4.W)		||//flash
+		(addr(7,5)	=== 0b100.U(3.W))	||//psram
+		(addr(7,5)	=== 0b101.U(3.W))	 )//sdram
 	val addrIsClint = addr === 0x02.U(8.W)
 	when(addrValid){
 		switch(status){

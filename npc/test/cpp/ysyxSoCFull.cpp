@@ -122,7 +122,7 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	logFile<<"mrom	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 }
-extern "C" int spram_read(int32_t addr){
+extern "C" int psram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#if defined(NPC_M_TRACE)
 		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
@@ -142,7 +142,7 @@ extern "C" int spram_read(int32_t addr){
 	return temp;
 }
 
-extern "C" void spram_write(int addr,int data){
+extern "C" void psram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#if defined(NPC_M_TRACE)
 		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
