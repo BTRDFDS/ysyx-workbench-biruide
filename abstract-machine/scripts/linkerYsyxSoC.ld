@@ -25,7 +25,7 @@ SECTIONS{
 	_flash_lma = _flash_lma + SIZEOF(.load);
 	_flash_lma = ALIGN(_flash_lma, 0x4);
 
-	.data : AT(_flash_lma){
+	.imag : AT(_flash_lma){/*image*/
 		*(.text*)
 		*(.rodata*)
 		*(.srodata*)
@@ -59,14 +59,14 @@ SECTIONS{
 			. = ALIGN(8);
 		/* rt-thread */
 		} > psram 
-	PROVIDE(_data_start_ = ADDR(.data));
-	PROVIDE(_data_size_ = SIZEOF(.data));
-	PROVIDE(_data_begin_ = LOADADDR(.data));
-	_flash_lma = _flash_lma + SIZEOF(.data);
+	PROVIDE(_imag_start_ = ADDR(.imag));
+	PROVIDE(_imag_size_	 = SIZEOF(.imag));
+	PROVIDE(_imag_begin_ = LOADADDR(.imag));
+	_flash_lma = _flash_lma + SIZEOF(.imag);
 	_flash_lma = ALIGN(_flash_lma, 0x4);
 
 	. = ALIGN(0x4);
-	.bss : {
+	.base : {
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
@@ -81,8 +81,8 @@ SECTIONS{
 		/* rt-thread */
 	} > psram
 
-	PROVIDE(_bss_start_	= ADDR(.bss));
-	PROVIDE(_bss_size_	= SIZEOF(.bss));
+	PROVIDE(_base_start_ = ADDR(.base));
+	PROVIDE(_base_size_	 = SIZEOF(.base));
 
 	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
