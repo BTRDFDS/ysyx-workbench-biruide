@@ -87,8 +87,8 @@ SECTIONS{
 
 	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
-	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
+	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
 
-	_stack_pointer = ORIGIN(psram) + LENGTH(psram);
+	_stack_pointer = ORIGIN(sdram) + LENGTH(psdram);
 
 }
