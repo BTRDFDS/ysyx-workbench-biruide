@@ -161,7 +161,7 @@ extern "C" void psram_write(int addr,int data){
 	#endif
 }
 extern "C" int sdram_read(int32_t addr){
-	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
+	uint32_t addrX=((uint32_t)addr);
 	#if defined(NPC_M_TRACE)
 		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#elif defined(NPC_MIN_TRACE)
