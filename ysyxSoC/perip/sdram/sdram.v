@@ -33,8 +33,8 @@ module sdram(
 
 	logic write;
 
-	logic [15:0] dai,dao,data;
-	assign dq = (code==Read) ? dao : 16'bz;
+	logic [15:0] dai,dao;
+	assign dq = (state==Burst && write==1'b0) ? dao : 16'bz;
 	assign dai = dq;
 
 	logic [2:0] burstLen;
