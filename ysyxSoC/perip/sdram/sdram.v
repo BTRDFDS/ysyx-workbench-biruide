@@ -55,7 +55,7 @@ module sdram(
 			endcase
 			if(state==Idle)begin
 				if(code==Mode)	mode<=a;
-				if(code==Activ)	addr[23:10]<={ba,a[11:0]};
+				if(code==Activ)	addr[23:10]<={a[11:0],ba};
 				if(code==Write)	addr[9:0]<=a[9:0];
 				if(code==Read)	addr[9:0]<=a[9:0];
 				if(code==Write)	write <= 1'b1;
