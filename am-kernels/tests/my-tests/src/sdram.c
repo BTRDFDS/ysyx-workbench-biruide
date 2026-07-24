@@ -11,13 +11,13 @@ int main(){
 	
 	for(uint32_t i = 0; i < size; i++){
 		*(volatile uint8_t*)(addr+i) = i&0xff;
-		if(*(volatile uint8_t*)(addr+i) != (i&0xff))return i;
 		if((i&0b1)==0){
 			if(*(volatile uint16_t*)(addr+i) != (((i+1)&0xff)<<8|(i&0xff)))return i;
 			if((i&0b11)==0){
 				if(*(volatile uint32_t*)(addr+i) != (((i+3)&0xff)<<24|((i+2)&0xff)<<16|((i+1)&0xff)<<8|(i&0xff)))return i;
 			}
 		}
+		if(*(volatile uint8_t*)(addr+i) != (i&0xff))return i;
 	}
 	return 0;
 }
