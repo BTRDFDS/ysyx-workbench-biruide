@@ -42,13 +42,13 @@ module sdram(
 	always_ff @(posedge clk) begin
 		if(cke & ~cs)begin
 			case(state)
-				Idle	:state <= (code==Read)?Wait:(code==Write?Burst:Idle);
+				Idle	:state <= (code==Read)?(mode.Latency[2:0]==1?Burst:Wait):(code==Write?Burst:Idle);
 				Wait	:state <= (cnt<mode.Latency[2:0]) ? Wait : Burst;
 				Burst	:state <= (code==BurstStop || cnt==burstLen) ? Idle : Burst;
 				Done	:state <= Idle;
 			endcase
 			case(state)
-				Idle	:cnt <= code==Write?3'b0:3'b1;
+				Idle	:cnt <= code==Write?3'b0:3'd2;
 				Wait	:cnt <= (cnt<mode.Latency[2:0]) ? cnt+3'b1 : 3'b0;
 				Burst	:cnt <= cnt+3'b1;
 				Done	:cnt <= 3'b1;
