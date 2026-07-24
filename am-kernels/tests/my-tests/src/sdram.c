@@ -2,7 +2,7 @@
 int main(){
 	// *(volatile uint32_t*)0xa0000000 = 0x76543210;
 	// return *(volatile uint32_t*)0xa0000000;
-	const uint32_t size = 0x100000;
+	const uint32_t size = 0x1000;
 	const uint32_t addr = 0xa0000000;
 	// for(uint32_t i = 0; i < size; i++)		*(volatile uint8_t*)	(addr+i)  = i&0xff;
 	// for(uint32_t i = 0; i < size; i+=1)if(	*(volatile uint8_t*)	(addr+i) != (i&0xff))return i;
