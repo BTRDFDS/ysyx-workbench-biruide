@@ -70,7 +70,7 @@ module sdram(
 				if(~dqm[1])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1,1'b1},{24'b0,dai[15:8]});
 			end
 			if(state==Wait && cnt==mode.Latency[2:0])dao <= sdram_read({7'b0,addr,1'b0})[15:0];
-			if(state==Burst) dao <= sdram_read({7'b0,{addr+{21'b0,cnt}+24'b1},1'b0})[15:0];
+			if(state==Burst && write==1'b0) dao <= sdram_read({7'b0,{addr+{21'b0,cnt}+24'b1},1'b0})[15:0];
 		end else begin
 			state	<= Idle;
 			cnt		<= 3'b1;
