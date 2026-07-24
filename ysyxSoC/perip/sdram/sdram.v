@@ -28,7 +28,7 @@ module sdram(
 		logic [2:0] Length;
 	} mode_t;
 	mode_t mode;
-	logic [23:0] addr;
+	logic [24:1] addr;
 	logic [2:0] cnt;
 
 	logic write;
@@ -55,15 +55,15 @@ module sdram(
 			endcase
 			if(state==Idle)begin
 				if(code==Mode)	mode<=a;
-				if(code==Activ)	addr[23:10]<={a[11:0],ba};
-				if(code==Write)	addr[9:0]<=a[9:0];
-				if(code==Read)	addr[9:0]<=a[9:0];
+				if(code==Activ)	addr[24:10]<={a,ba};
+				if(code==Write)	addr[9:1]<=a[8:0];
+				if(code==Read)	addr[9:1]<=a[8:0];
 				if(code==Write)	write <= 1'b1;
 				if(code==Read)	write <= 1'b0;
 			end
 			if(state==Idle && code == Write)begin
-				if(~dqm[0])sdram_write({7'b0,addr[23:10],a[9:0],1'b0},{24'b0,dai[ 7:0]});
-				if(~dqm[1])sdram_write({7'b0,addr[23:10],a[9:0],1'b1},{24'b0,dai[15:8]});
+				if(~dqm[0])sdram_write({7'b0,addr[24:10],a[8:0],1'b0},{24'b0,dai[ 7:0]});
+				if(~dqm[1])sdram_write({7'b0,addr[24:10],a[8:0],1'b1},{24'b0,dai[15:8]});
 			end
 			if(state==Burst && write==1'b1)begin
 				if(~dqm[0])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1,1'b0},{24'b0,dai[ 7:0]});
