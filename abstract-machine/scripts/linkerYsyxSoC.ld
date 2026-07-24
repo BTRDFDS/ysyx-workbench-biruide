@@ -7,26 +7,26 @@ MEMORY {
 	sdram	: ORIGIN = 0x80000000, LENGTH = 32M
 }
 SECTIONS{
-	_flash_lma = ORIGIN(flash);
-	.boot : AT(_flash_lma){
+	_lma = ORIGIN(flash);
+	.boot : AT(_lma){
 		. = ALIGN(0x4);
 		*(entry)
 		*(.text._trm_init)
 		. = ALIGN(0x4);
 	} > flash 
-	_flash_lma = _flash_lma + SIZEOF(.boot);
-	_flash_lma = ALIGN(_flash_lma, 0x4);
+	_lma = _lma + SIZEOF(.boot);
+	_lma = ALIGN(_lma, 0x4);
 
-	.load : AT(_flash_lma){
+	.load : AT(_lma){
 		*(.text._bootloader)
-	} > sdram 
+	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load));
 	PROVIDE(_load_begin_ = LOADADDR(.load));
-	_flash_lma = _flash_lma + SIZEOF(.load);
-	_flash_lma = ALIGN(_flash_lma, 0x4);
+	_lma = _lma + SIZEOF(.load);
+	_lma = ALIGN(_lma, 0x4);
 
-	.imag : AT(_flash_lma){/*image*/
+	.imag : AT(_lma){/*image*/
 		*(.text*)
 		*(.rodata*)
 		*(.srodata*)
@@ -63,8 +63,8 @@ SECTIONS{
 	PROVIDE(_imag_start_ = ADDR(.imag));
 	PROVIDE(_imag_size_	 = SIZEOF(.imag));
 	PROVIDE(_imag_begin_ = LOADADDR(.imag));
-	_flash_lma = _flash_lma + SIZEOF(.imag);
-	_flash_lma = ALIGN(_flash_lma, 0x4);
+	_lma = _lma + SIZEOF(.imag);
+	_lma = ALIGN(_lma, 0x4);
 
 	. = ALIGN(0x4);
 	.base : {
