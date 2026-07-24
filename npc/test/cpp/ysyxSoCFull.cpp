@@ -28,7 +28,7 @@ const uint32_t psramAddr	=0x80000000;
 const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
 uint8_t psram[psramSize];
 
-const uint32_t sdramAddr	=0x80000000;
+const uint32_t sdramAddr	=0xa0000000;
 const uint32_t sdramSize	=0x01ffffff;//2+12+10+1
 uint8_t psram[sdramSize];
 
