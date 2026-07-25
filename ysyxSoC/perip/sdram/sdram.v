@@ -40,7 +40,7 @@ module sdram(
 
 	always_comb begin
 		if(state==Burst && write==1'b0)dao = data;
-		else dao = 16'b0;
+		else dao = 16'hfff;
 	end
 
 	logic [2:0] burstLen;
