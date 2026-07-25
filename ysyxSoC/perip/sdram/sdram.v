@@ -30,6 +30,7 @@ module sdram(
 	mode_t mode;
 	logic [24:1] addr;
 	logic [2:0] cnt;
+	logic [12:0] row [1:0];
 
 	logic write;
 
@@ -55,9 +56,13 @@ module sdram(
 			endcase
 			if(state==Idle)begin
 				if(code==Mode)	mode<=a;
-				if(code==Activ)	addr[24:10]<={a,ba};
-				if(code==Write)	addr[9:1]<=a[8:0];
-				if(code==Read)	addr[9:1]<=a[8:0];
+				// if(code==Activ)	addr[24:10]<={a,ba};
+				if(code==Activ)	row[ba] <= a;
+				if(code==Write||code==Read)begin
+					addr[24:12]<=row[ba];
+					addr[11:10]<=ba;
+					addr[ 9: 1]<={a[8:0]};
+				end
 				if(code==Write)	write <= 1'b1;
 				if(code==Read)	write <= 1'b0;
 			end
