@@ -34,9 +34,10 @@ module sdram(
 
 	logic write;
 
-	logic [15:0] dai,dao;
-	assign dq = (state==Burst && write==1'b0) ? dao : 16'bz;
-	assign dai = dq;
+	logic [15:0] dai,dao,data;
+	assign dao	= (state==Burst && write==1'b0) ? data	: 16'b0;
+	assign dq	= (state==Burst && write==1'b0) ? dao	: 16'bz;
+	assign dai	= dq;
 
 	logic [2:0] burstLen;
 
@@ -69,8 +70,8 @@ module sdram(
 				if(~dqm[0])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1,1'b0},{24'b0,dai[ 7:0]});
 				if(~dqm[1])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1,1'b1},{24'b0,dai[15:8]});
 			end
-			if(state==Wait && cnt==mode.Latency[2:0])dao <= sdram_read({7'b0,addr,1'b0})[15:0];
-			if(state==Burst && write==1'b0 && cnt!=burstLen) dao <= sdram_read({7'b0,{addr+{21'b0,cnt}+24'b1},1'b0})[15:0];
+			if(state==Wait && cnt==mode.Latency[2:0])data <= sdram_read({7'b0,addr,1'b0})[15:0];
+			if(state==Burst && write==1'b0 && cnt!=burstLen) data <= sdram_read({7'b0,{addr+{21'b0,cnt}+24'b1},1'b0})[15:0];
 		end else begin
 			state	<= Idle;
 			cnt		<= 3'b1;
