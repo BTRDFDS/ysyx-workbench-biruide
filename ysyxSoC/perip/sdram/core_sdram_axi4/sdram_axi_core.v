@@ -94,7 +94,7 @@ localparam CMD_REFRESH       = 4'b0001;
 localparam CMD_LOAD_MODE     = 4'b0000;
 
 // Mode: Burst Length = 4 bytes, CAS=2
-localparam MODE_REG          = {3'b000,1'b0,2'b00,3'b010,1'b0,3'b001};
+localparam MODE_REG          = {3'b000,1'b0,2'b00,3'b001,1'b0,3'b001};
 
 // SM states
 localparam STATE_W           = 4;
@@ -177,7 +177,7 @@ reg  [STATE_W-1:0]     target_state_q;
 reg  [STATE_W-1:0]     delay_state_q;
 
 // Address bits
-wire [SDRAM_ROW_W-1:0]  addr_col_w  = {{(SDRAM_ROW_W-SDRAM_COL_W){1'b0}}, ram_addr_w[SDRAM_COL_W:2], 1'b0};
+wire [SDRAM_ROW_W-1:0]  addr_col_w  = {{(SDRAM_ROW_W-SDRAM_COL_W){1'b0}}, ram_addr_w[SDRAM_COL_W+1:2]};
 wire [SDRAM_ROW_W-1:0]  addr_row_w  = ram_addr_w[SDRAM_ADDR_W:SDRAM_COL_W+2+1];
 wire [SDRAM_BANK_W-1:0] addr_bank_w = ram_addr_w[SDRAM_COL_W+2:SDRAM_COL_W+2-1];
 
@@ -623,7 +623,7 @@ begin
 
         // Write mask
         dqm_q           <= ~ram_wr_w;
-        dqm_buffer_q    <= ~ram_wr_w;
+        dqm_buffer_q    <= {SDRAM_DQM_W{1'b1}};//用不到了
 
         data_rd_en_q    <= 1'b0;
     end
@@ -666,8 +666,8 @@ else
 always @ (posedge clk_i or posedge rst_i)
 if (rst_i)
     data_buffer_q <= 32'b0;
-else if (state_q == STATE_WRITE0)
-    data_buffer_q <= ram_write_data_w;
+// else if (state_q == STATE_WRITE0)//不用缓存了，来的就是32
+//     data_buffer_q <= ram_write_data_w[31:16];
 else if (rd_q[SDRAM_READ_LATENCY+1])
     data_buffer_q <= sample_data_q;
 
