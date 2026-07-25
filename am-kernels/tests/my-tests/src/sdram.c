@@ -2,9 +2,9 @@
 int main(){
 	const uint32_t size = 0x40F;
 	const uint32_t addr = 0xa0000000;
-	*(volatile uint32_t*)(addr+size) = 0x76543210;
-	return *(volatile uint32_t*)(addr+size);
-	// for(uint32_t i = 0; i < size; i+=4)	*(volatile uint32_t*)(addr+i) = i;
+	// *(volatile uint32_t*)(addr+size) = 0x76543210;
+	// return *(volatile uint32_t*)(addr+size);
+	for(uint32_t i = 0; i < size; i+=4)	*(volatile uint32_t*)(addr+i) = i;
 
 	// for(uint32_t i = 0; i < size; i++)		*(volatile uint8_t*)	(addr+i)  = i&0xff;
 	// for(uint32_t i = 0; i < size; i+=1)if(	*(volatile uint8_t*)	(addr+i) != (i&0xff))return i;
