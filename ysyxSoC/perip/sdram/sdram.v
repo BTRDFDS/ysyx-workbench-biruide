@@ -35,9 +35,13 @@ module sdram(
 	logic write;
 
 	logic [15:0] dai,dao,data;
-	assign dao	= (state==Burst && write==1'b0) ? data	: 16'b0;
 	assign dq	= (state==Burst && write==1'b0) ? dao	: 16'bz;
 	assign dai	= dq;
+
+	always_comb begin
+		if(state==Burst && write==1'b0)dao = data;
+		else dao = 16'b0;
+	end
 
 	logic [2:0] burstLen;
 
