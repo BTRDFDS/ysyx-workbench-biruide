@@ -88,5 +88,5 @@ module sdram(
 		3'b011:burstLen=3'd7;
 		default:burstLen=3'd0;
 	endcase
-	initial $display("%m");
+	// initial $display("%m");
 endmodule
