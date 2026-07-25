@@ -77,7 +77,7 @@ module sdram_axi_pmem
     ,output [ 31:0]  ram_write_data_o
 );
 
-initial $display("%m");
+// initial $display("%m");
 
 //-------------------------------------------------------------
 // calculate_addr_next

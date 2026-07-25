@@ -686,7 +686,7 @@ else
 begin
     if (state_q == STATE_WRITE1)
         ack_q <= 1'b1;
-    else if (rd_q[SDRAM_READ_LATENCY+1])
+    else if (rd_q[SDRAM_READ_LATENCY])//不用+1了
         ack_q <= 1'b1;
     else
         ack_q <= 1'b0;
