@@ -62,8 +62,8 @@ module sdram(
 				if(code==Read)	write <= 1'b0;
 			end
 			if(state==Idle && code == Write)begin
-				if(~dqm[0])sdram_write({7'b0,row[ba],addr[11:10],a[8:0],1'b0},{24'b0,dai[ 7:0]});
-				if(~dqm[1])sdram_write({7'b0,row[ba],addr[11:10],a[8:0],1'b1},{24'b0,dai[15:8]});
+				if(~dqm[0])sdram_write({7'b0,row[ba],ba,a[8:0],1'b0},{24'b0,dai[ 7:0]});
+				if(~dqm[1])sdram_write({7'b0,row[ba],ba,a[8:0],1'b1},{24'b0,dai[15:8]});
 			end
 			if(state==Burst && write==1'b1 && cnt!=burstLen)begin
 				if(~dqm[0])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1,1'b0},{24'b0,dai[ 7:0]});
