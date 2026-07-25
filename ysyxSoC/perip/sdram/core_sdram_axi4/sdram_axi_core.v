@@ -62,7 +62,7 @@ module sdram_axi_core
     ,output          sdram_data_out_en_o
 );
 
-
+initial $display("%m");
 
 //-----------------------------------------------------------------
 // Key Params
