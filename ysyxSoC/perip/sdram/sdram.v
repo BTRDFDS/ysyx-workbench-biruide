@@ -30,7 +30,7 @@ module sdram(
 	mode_t mode;
 	logic [24:1] addr;
 	logic [2:0] cnt;
-	logic [12:0] row [1:0];
+	logic [12:0] row [3:0];
 
 	logic write;
 
