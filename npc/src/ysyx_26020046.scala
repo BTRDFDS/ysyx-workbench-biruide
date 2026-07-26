@@ -37,7 +37,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U) extends Module {
 	io.master.arid		:= 0.U
 	io.master.arlen		:= 0.U
 	io.master.arsize	:= 0.U
-	io.master.barurst	:= 0.U
+	io.master.arburst	:= 0.U
 	io.master.arready	<> bar.out.arready
 
 	io.master.rvalid	<> bar.out.rvalid
