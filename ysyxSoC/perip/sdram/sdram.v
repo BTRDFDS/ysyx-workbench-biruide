@@ -14,7 +14,7 @@ module sdram(
 	inout logic [31:0] dq
 );
 	logic choose,hight;
-	always_ff@(posedge clk)if(~cke)hight <= a[13];
+	always_ff@(posedge clk)if(cke && Enum'({ras,cas,we}) == Activ)hight <= a[13];
 	assign choose = (Enum'({ras,cas,we}) == Activ)?a[13]:hight;
 	sdramCore #(.Index(2'b0),.Hight(1'b0)) sdramCore0 (
 		.clk(clk),
@@ -107,7 +107,7 @@ module sdramCore(
 
 	logic [2:0] burstLen;
 
-	logic [31:0] addrChk;assign addrChk={5'b0,Hight,{row[ba],ba,a[8:0]},2'd0|Index};
+	// logic [31:0] addrChk;assign addrChk={5'b0,Hight,{row[ba],ba,a[8:0]},2'd0|Index};
 
 	always_ff @(posedge clk) begin
 		if(cke & ~cs)begin

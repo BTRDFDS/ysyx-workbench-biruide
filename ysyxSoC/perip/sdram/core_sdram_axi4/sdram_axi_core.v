@@ -177,13 +177,13 @@ reg  [STATE_W-1:0]     target_state_q;
 reg  [STATE_W-1:0]     delay_state_q;
 
 // Address bits
-localparam My0 = SDRAM_ROW_W-SDRAM_COL_W;
-localparam My1 = SDRAM_COL_W+1;
-localparam My2 = SDRAM_ADDR_W+1;
-localparam My3 = SDRAM_COL_W+2+2;
-localparam My4 = SDRAM_COL_W+2+1;
-localparam My5 = SDRAM_COL_W+2;
-wire [31:0] Myaddr0 = {5'b0,addr_row_w,addr_bank_w,addr_col_w[8:0],2'b0};
+// localparam My0 = SDRAM_ROW_W-SDRAM_COL_W;
+// localparam My1 = SDRAM_COL_W+1;
+// localparam My2 = SDRAM_ADDR_W+1;
+// localparam My3 = SDRAM_COL_W+2+2;
+// localparam My4 = SDRAM_COL_W+2+1;
+// localparam My5 = SDRAM_COL_W+2;
+// wire [31:0] Myaddr0 = {5'b0,addr_row_w,addr_bank_w,addr_col_w[8:0],2'b0};
 wire [SDRAM_ROW_W-1:0]  addr_col_w  = {{(SDRAM_ROW_W-SDRAM_COL_W){1'b0}}, ram_addr_w[SDRAM_COL_W+1:2]};
 wire [SDRAM_ROW_W-1:0]  addr_row_w  = ram_addr_w[SDRAM_ADDR_W+1:SDRAM_COL_W+2+2];
 wire [SDRAM_BANK_W-1:0] addr_bank_w = ram_addr_w[SDRAM_COL_W+2+1:SDRAM_COL_W+2];
