@@ -6,7 +6,7 @@ int main(){
 	uint32_t water = 0x00ff00ff;
 	while(1){
 		for(int i=0;i<2000000;i++);
-		if(*(volatile uint32_t*)(addr+0x4) == 0b0001011011101111){
+		if(*(volatile uint32_t*)(addr+0x4) == 0b1){
 			*(volatile uint32_t*)(addr+0x0) = water;
 			uint32_t temp = water>>31;
 			water = water << 1;
