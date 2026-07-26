@@ -1,10 +1,10 @@
 #include "trap.h"
 int main(){
-	const uint32_t size = 0x07000000;
+	const uint32_t size = 0x00000100;
 	const uint32_t addr = 0xa0000000;
 
-	*(volatile uint32_t*)(addr+size) = 0x76543210;
-	return *(volatile uint32_t*)(addr+size);
+	// *(volatile uint32_t*)(addr+size) = 0x76543210;
+	// return *(volatile uint32_t*)(addr+size);
 
 	// for(uint32_t i = 0; i < size; i+=4){
 	// 	*(volatile uint8_t*)(addr+i+0) = i&0xff;

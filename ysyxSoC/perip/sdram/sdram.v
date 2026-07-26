@@ -107,7 +107,7 @@ module sdramCore(
 
 	logic [2:0] burstLen;
 
-	// logic [31:0] addrChk;assign addrChk={5'b0,Hight,{row[ba],ba,a[8:0]},2'd0|Index};
+	logic [31:0] addrChk;assign addrChk={5'b0,Hight,{row[ba],ba,a[8:0]},2'd0|Index};
 
 	always_ff @(posedge clk) begin
 		if(cke & ~cs)begin
@@ -118,7 +118,7 @@ module sdramCore(
 				Done	:state <= Idle;
 			endcase
 			case(state)
-				Idle	:cnt <= code==Write?3'b0:3'd2;
+				Idle	:cnt <= code==Write?3'b0:mode.Latency[2:0];
 				Wait	:cnt <= (cnt<mode.Latency[2:0]) ? cnt+3'b1 : 3'b0;
 				Burst	:cnt <= cnt+3'b1;
 				Done	:cnt <= 3'b1;
