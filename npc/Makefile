@@ -57,6 +57,8 @@ LDFLAGS += -lcapstone
 LDFLAGS += -ldl
 
 CXXFLAGS += -I/$(NEMU_HOME)/include
+CXXFLAGS += -I/$(NVBOARD_HOME)/usr/include
+
 wave:
 	mkdir -p wave
 
