@@ -43,6 +43,7 @@ sim:
 
 
 include $(NVBOARD_HOME)/scripts/nvboard.mk
+
 FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic -MMD
 VERILATOR_CFLAGS += $(FLAGS)
 VERILATOR_CFLAGS += --autoflush
