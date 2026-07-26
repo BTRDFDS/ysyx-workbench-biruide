@@ -4,7 +4,7 @@ import WidthConsts._
 
 object ArbStatus extends ChiselEnum{val Idle,IfuR,LsuR,LsuW=Value}
 object ArbAddr extends ChiselEnum{val Clint,Out,Error=Value}
-class ysyx_26020046_Arb extends Module{
+class ysyx_26020046_Bar extends Module{
 	val out = IO(new Axi4Master())
 	val clt = IO(new Axi4Master())
 	val ifu = IO(Flipped(new Axi4Master()))
@@ -69,7 +69,7 @@ class ysyx_26020046_Arb extends Module{
 	val addrValid = (
 		(addr		=== 0x02.U(8.W))	||//clint
 		(addr		=== 0x0f.U(8.W))	||//sram
-		(addr		=== 0x10.U(8.W))	||//UART16550 or SPI
+		(addr		=== 0x10.U(8.W))	||//UART16550 or SPI or GPIO or PS2
 		(addr		=== 0x20.U(8.W))	||//mrom
 		(addr(7,4))	===	0x3.U(4.W)		||//flash
 		(addr(7,5)	=== 0b100.U(3.W))	||//psram
