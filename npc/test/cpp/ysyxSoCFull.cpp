@@ -29,7 +29,7 @@ const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
 uint8_t psram[psramSize];
 
 const uint32_t sdramAddr	=0xa0000000;
-const uint32_t sdramSize	=0x03ffffff;//2+12+10+2
+const uint32_t sdramSize	=0x07ffffff;//2+12+10+2
 uint8_t sdram[sdramSize];
 
 const uint32_t mromAddr		=0x20000000;//mrom起始地址

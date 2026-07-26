@@ -1,5 +1,6 @@
 import "DPI-C" function int sdram_read(input int addr);
 import "DPI-C" function void sdram_write(input int addr, input int data);
+typedef enum logic [2:0] {Mode,AutoFresh,Precharge,Activ,Write,Read,BurstStop,Nop} Enum;
 module sdram(
 	input logic        clk,
 	input logic        cke,
@@ -12,10 +13,13 @@ module sdram(
 	input logic [ 3:0] dqm,
 	inout logic [31:0] dq
 );
+	logic choose,hight;
+	always_ff@(posedge clk)if(~cke)hight <= a[13];
+	assign choose = (Enum'({ras,cas,we}) == Activ)?a[13]:hight;
 	sdramCore #(.Index(2'b0),.Hight(1'b0)) sdramCore0 (
 		.clk(clk),
 		.cke(cke),
-		.cs(cs|a[13]),
+		.cs(cs|choose),
 		.ras(ras),
 		.cas(cas),
 		.we(we),
@@ -27,7 +31,7 @@ module sdram(
 	sdramCore #(.Index(2'b10),.Hight(1'b0)) sdramCore1(
 		.clk(clk),
 		.cke(cke),
-		.cs(cs|a[13]),
+		.cs(cs|choose),
 		.ras(ras),
 		.cas(cas),
 		.we(we),
@@ -39,7 +43,7 @@ module sdram(
 	sdramCore #(.Index(2'b0),.Hight(1'b1)) sdramCore2 (
 		.clk(clk),
 		.cke(cke),
-		.cs(cs|(~a[13])),
+		.cs(cs|(~choose)),
 		.ras(ras),
 		.cas(cas),
 		.we(we),
@@ -51,7 +55,7 @@ module sdram(
 	sdramCore #(.Index(2'b10),.Hight(1'b1)) sdramCore3(
 		.clk(clk),
 		.cke(cke),
-		.cs(cs|(~a[13])),
+		.cs(cs|(~choose)),
 		.ras(ras),
 		.cas(cas),
 		.we(we),
@@ -77,7 +81,6 @@ module sdramCore(
 	parameter Hight = 1'b0;
 
 
-	typedef enum logic [2:0] {Mode,AutoFresh,Precharge,Activ,Write,Read,BurstStop,Nop} Enum;
 	Enum code;assign code = Enum'({ras,cas,we});
 
 	typedef enum logic [1:0] {Idle,Wait,Burst,Done} State;
@@ -103,6 +106,8 @@ module sdramCore(
 	assign dai	= dq;
 
 	logic [2:0] burstLen;
+
+	logic [31:0] addrChk;assign addrChk={5'b0,Hight,{row[ba],ba,a[8:0]},2'd0|Index};
 
 	always_ff @(posedge clk) begin
 		if(cke & ~cs)begin
