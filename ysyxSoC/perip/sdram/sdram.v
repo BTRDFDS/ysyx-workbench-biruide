@@ -12,6 +12,45 @@ module sdram(
 	input logic [ 3:0] dqm,
 	inout logic [31:0] dq
 );
+	sdramCore #(.index(24'd0)) sdramCore0 (
+		.clk(clk),
+		.cke(cke),
+		.cs(cs),
+		.ras(ras),
+		.cas(cas),
+		.we(we),
+		.a(a),
+		.ba(ba),
+		.dqm(dqm[1:0]),
+		.dq(dq[15:0])
+	);
+	sdramCore #(.index(24'd1)) sdramCore1(
+		.clk(clk),
+		.cke(cke),
+		.cs(cs),
+		.ras(ras),
+		.cas(cas),
+		.we(we),
+		.a(a),
+		.ba(ba),
+		.dqm(dqm[3:2]),
+		.dq(dq[31:16])
+	);
+endmodule
+module sdramCore(
+	input logic        clk,
+	input logic        cke,
+	input logic        cs,
+	input logic        ras,
+	input logic        cas,
+	input logic        we,
+	input logic [12:0] a,
+	input logic [ 1:0] ba,
+	input logic [ 1:0] dqm,
+	inout logic [15:0] dq
+);
+	parameter index = 24'd0;
+
 
 	typedef enum logic [2:0] {Mode,AutoFresh,Precharge,Activ,Write,Read,BurstStop,Nop} Enum;
 	Enum code;assign code = Enum'({ras,cas,we});
@@ -34,8 +73,8 @@ module sdram(
 
 	logic write;
 
-	logic [31:0] dai,dao;
-	assign dq	= (state==Burst && write==1'b0) ? dao	: 32'bz;
+	logic [15:0] dai,dao;
+	assign dq	= (state==Burst && write==1'b0) ? dao	: 16'bz;
 	assign dai	= dq;
 
 	logic [2:0] burstLen;
@@ -62,19 +101,15 @@ module sdram(
 				if(code==Read)	write <= 1'b0;
 			end
 			if(state==Idle && code == Write)begin
-				if(~dqm[0])sdram_write({6'b0,row[ba],ba,a[8:0],2'd0},{24'b0,dai[ 7: 0]});
-				if(~dqm[1])sdram_write({6'b0,row[ba],ba,a[8:0],2'd1},{24'b0,dai[15: 8]});
-				if(~dqm[2])sdram_write({6'b0,row[ba],ba,a[8:0],2'd2},{24'b0,dai[23:16]});
-				if(~dqm[3])sdram_write({6'b0,row[ba],ba,a[8:0],2'd3},{24'b0,dai[31:24]});
+				if(~dqm[0])sdram_write({7'b0,{row[ba],ba,a[8:0]}+index,1'd0},{24'b0,dai[ 7: 0]});
+				if(~dqm[1])sdram_write({7'b0,{row[ba],ba,a[8:0]}+index,1'd1},{24'b0,dai[15: 8]});
 			end
 			if(state==Burst && write==1'b1 && cnt!=burstLen)begin
-				if(~dqm[0])sdram_write({6'b0,addr+{21'b0,cnt}+24'b1,2'd0},{24'b0,dai[ 7: 0]});
-				if(~dqm[1])sdram_write({6'b0,addr+{21'b0,cnt}+24'b1,2'd1},{24'b0,dai[15: 8]});
-				if(~dqm[2])sdram_write({6'b0,addr+{21'b0,cnt}+24'b1,2'd2},{24'b0,dai[23:16]});
-				if(~dqm[3])sdram_write({6'b0,addr+{21'b0,cnt}+24'b1,2'd3},{24'b0,dai[31:24]});
+				if(~dqm[0])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1+index,1'd0},{24'b0,dai[ 7: 0]});
+				if(~dqm[1])sdram_write({7'b0,addr+{21'b0,cnt}+24'b1+index,1'd1},{24'b0,dai[15: 8]});
 			end
-			if(state==Wait && cnt==mode.Latency[2:0])		dao <= sdram_read({6'b0,addr,2'd0});
-			if(state==Burst && write==1'b0 && cnt!=burstLen)dao <= sdram_read({6'b0,{addr+{21'b0,cnt}+24'b1},2'd0});
+			if(state==Wait && cnt==mode.Latency[2:0])		dao <= sdram_read({7'b0,addr+index,1'd0})[15:0];
+			if(state==Burst && write==1'b0 && cnt!=burstLen)dao <= sdram_read({7'b0,{addr+{21'b0,cnt}+24'b1+index},1'd0})[15:0];
 		end else begin
 			state	<= Idle;
 			cnt		<= 3'b1;
