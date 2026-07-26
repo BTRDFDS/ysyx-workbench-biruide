@@ -7,7 +7,9 @@ int main(){
 	while(1){
 		for(int i=0;i<2000;i++);
 		*(volatile uint32_t*)(addr+0x0) = water;
+		uint32_t temp = water>>31;
 		water = water << 1;
+		water = water | (temp & 0b1);
 	}
 	return 0;
 }
