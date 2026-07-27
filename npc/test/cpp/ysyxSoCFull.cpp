@@ -17,7 +17,7 @@
 VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
 svScope scope;//作用域
-#if defined(NPC_WAVE)
+#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 #endif
@@ -135,8 +135,8 @@ extern "C" int psram_read(int32_t addr){
 	#if defined(NPC_M_TRACE)
 		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#elif defined(NPC_MIN_TRACE)
-		if(runStep >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
-		if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
+		// if(runStep >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
+		// if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#endif
 	if(addrX>=psramSize)NpcReturn("psram read error",addrX);
 	uint32_t temp=
@@ -155,13 +155,13 @@ extern "C" void psram_write(int addr,int data){
 	#if defined(NPC_M_TRACE)
 		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
+		// if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#endif
 	psram[addrX+0]=(uint8_t)(data&0xff);
 	#if defined(NPC_M_TRACE)
 		logFile<<std::hex<<(uint32_t)psram[addrX+0]<<std::endl;
 	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<std::hex<<(uint32_t)psram[addrX+0]<<"\n";
+		// if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<std::hex<<(uint32_t)psram[addrX+0]<<"\n";
 	#endif
 }
 extern "C" int sdram_read(int32_t addr){
@@ -170,7 +170,7 @@ extern "C" int sdram_read(int32_t addr){
 		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#elif defined(NPC_MIN_TRACE)
 		if(runStep >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<getRegPc(0)<<"\n";
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || runStep >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#endif
 	if(addrX>=sdramSize)NpcReturn("sdram read error",addrX);
 	uint32_t temp=
@@ -181,7 +181,7 @@ extern "C" int sdram_read(int32_t addr){
 	#ifdef NPC_M_TRACE
 		logFile<<" => "<<std::hex<<temp<<std::endl;
 	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<" => "<<std::hex<<temp<<std::endl;
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || runStep >= NpcMinTraceBegin)logFile<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 	return temp;
 }
@@ -190,13 +190,13 @@ extern "C" void sdram_write(int addr,int data){
 	#if defined(NPC_M_TRACE)
 		logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || runStep >= NpcMinTraceBegin)logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#endif
 	sdram[addrX+0]=(uint8_t)(data&0xff);
 	#if defined(NPC_M_TRACE)
 		logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
 	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || runStep >= NpcMinTraceBegin)logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -289,11 +289,16 @@ void NpcWave(){
 	#ifdef NPC_WAVE
 		contextp->timeInc(1);
 		tfp->dump(contextp->time());
+	#elif defined(NPC_MIN_TRACE)
+	if(runStep >= NpcMinTraceBegin){
+		contextp->timeInc(1);
+		tfp->dump(contextp->time());
+	}
 	#endif
 }
 void NpcReturn(const char* msg,int returnCode){
 	NpcWave();
-	#ifdef NPC_WAVE
+	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		tfp->close();
 	#endif
 	#ifdef NPC_NVBroad
