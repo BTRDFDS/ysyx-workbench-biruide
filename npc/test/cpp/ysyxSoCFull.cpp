@@ -155,13 +155,13 @@ extern "C" void psram_write(int addr,int data){
 	#if defined(NPC_M_TRACE)
 		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#elif defined(NPC_MIN_TRACE)
-		if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
 	#endif
 	psram[addrX+0]=(uint8_t)(data&0xff);
 	#if defined(NPC_M_TRACE)
 		logFile<<std::hex<<(uint32_t)psram[addrX+0]<<std::endl;
 	#elif defined(NPC_MIN_TRACE)
-		if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<std::hex<<(uint32_t)psram[addrX+0]<<"\n";
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<std::hex<<(uint32_t)psram[addrX+0]<<"\n";
 	#endif
 }
 extern "C" int sdram_read(int32_t addr){
@@ -169,8 +169,8 @@ extern "C" int sdram_read(int32_t addr){
 	#if defined(NPC_M_TRACE)
 		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#elif defined(NPC_MIN_TRACE)
-		if(runStep >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
-		if(addr&0xfffffffc == 0x800001f4)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
+		if(runStep >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<getRegPc(0)<<"\n";
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep;
 	#endif
 	if(addrX>=sdramSize)NpcReturn("sdram read error",addrX);
 	uint32_t temp=
@@ -180,6 +180,8 @@ extern "C" int sdram_read(int32_t addr){
 		((uint32_t)sdram[addrX+3]<<24);
 	#ifdef NPC_M_TRACE
 		logFile<<" => "<<std::hex<<temp<<std::endl;
+	#elif defined(NPC_MIN_TRACE)
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 	return temp;
 }
@@ -187,10 +189,14 @@ extern "C" void sdram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#if defined(NPC_M_TRACE)
 		logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
-		#endif
+	#elif defined(NPC_MIN_TRACE)
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<runStep<<" "<<std::hex<<data<<" => ";
+	#endif
 	sdram[addrX+0]=(uint8_t)(data&0xff);
 	#if defined(NPC_M_TRACE)
 		logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
+	#elif defined(NPC_MIN_TRACE)
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
