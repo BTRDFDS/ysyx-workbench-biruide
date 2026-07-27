@@ -59,7 +59,7 @@ SECTIONS{
 			__am_apps_data_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-	} > psram 
+	} > sdram 
 	PROVIDE(_imag_start_ = ADDR(.imag));
 	PROVIDE(_imag_size_	 = SIZEOF(.imag));
 	PROVIDE(_imag_begin_ = LOADADDR(.imag));
@@ -80,7 +80,7 @@ SECTIONS{
 			__am_apps_bss_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-	} > sdram
+	} > psram
 
 	PROVIDE(_base_start_ = ADDR(.base));
 	PROVIDE(_base_size_	 = SIZEOF(.base));

@@ -7,10 +7,10 @@
 // #define NPC_E_TRACE
 // #define NPC_D_TRACE
 #define NPC_NVBroad
-// #define NPC_MIN_TRACE
+#define NPC_MIN_TRACE
 // #define NPC_DIFFTEST
 // #define NPC_M_TRACE
 // #define NPC_WAVE
-const uint64_t NpcMinTraceBegin = 1352578000L;
+const uint64_t NpcMinTraceBegin = 464529400L;
 
 #endif
