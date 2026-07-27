@@ -85,8 +85,9 @@ SECTIONS{
 	PROVIDE(_base_start_ = ADDR(.base));
 	PROVIDE(_base_size_	 = SIZEOF(.base));
 
-	_lma = ALIGN(_lma, 0x1000);
-	PROVIDE(_heap_start	= _lma);
+	_lma = ALIGN(_lma, 0x4);
+	. = ALIGN(0x1000);
+	PROVIDE(_heap_start	= .);
 	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
 
 	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
