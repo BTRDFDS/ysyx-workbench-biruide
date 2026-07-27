@@ -15,7 +15,6 @@ void __am_uart_tx(AM_UART_TX_T *uart) {
 
 void __am_uart_rx(AM_UART_RX_T *uart) {
 	if(((*(volatile char *)(0x10000005L))&0b00000001)==1){
-    // halt(0xABC);
     uart->data =  (*(volatile char *)(0x10000000L))&0xff;
   }
 	else uart->data =  0xff;
