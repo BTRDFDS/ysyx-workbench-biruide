@@ -8,11 +8,12 @@ int main(){
 	*(volatile uint32_t*)(addr+0x8) = id;
 	uint32_t water = 0x00ff00ff;
 
-	const char *fmt ="Hello, AbstractMachine!\n";
-	for(const char *p = fmt; *p; p++){
-		for(int i=0;i<20000;i++);
-		putch(*p);
-	}
+	// const char *fmt ="Hello, AbstractMachine!\n";
+	// for(const char *p = fmt; *p; p++){
+	// 	for(int i=0;i<20000;i++);
+	// 	putch(*p);
+	// }
+	putch('A');
 
 	while(1){
 		if(*(volatile uint32_t*)(addr+0x4) == 0b1){
