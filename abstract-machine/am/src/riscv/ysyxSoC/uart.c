@@ -9,13 +9,14 @@ void __am_uart_init() {
 		*(volatile char *)(0x10000003L)=0b00000011;
 }
 
-void __am_uart_config(AM_UART_CONFIG_T *cfg) {cfg->present = true;}
-
 void __am_uart_tx(AM_UART_TX_T *uart) {
   putch(uart->data);
 }
 
 void __am_uart_rx(AM_UART_RX_T *uart) {
-	if(((*(volatile char *)(0x10000005L))&0b00000001)==1) uart->data =  (*(volatile char *)(0x10000000L))&0xff;
-	uart->data =  0xff;
+	if(((*(volatile char *)(0x10000005L))&0b00000001)==1){
+    halt(0xABC);
+    uart->data =  (*(volatile char *)(0x10000000L))&0xff;
+  }
+	else uart->data =  0xff;
 }
