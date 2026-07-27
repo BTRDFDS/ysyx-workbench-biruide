@@ -4,7 +4,7 @@ MEMORY {
 	mrom	: ORIGIN = 0x20000000, LENGTH = 4K
 	sram	: ORIGIN = 0x0f000000, LENGTH = 8K
 	psram	: ORIGIN = 0x80000000, LENGTH = 16M
-	sdram	: ORIGIN = 0xa0000000, LENGTH = 64M
+	sdram	: ORIGIN = 0xa0000000, LENGTH = 128M
 }
 SECTIONS{
 	_lma = ORIGIN(flash);
@@ -59,7 +59,7 @@ SECTIONS{
 			__am_apps_data_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-	} > sram 
+	} > sdram 
 	PROVIDE(_imag_start_ = ADDR(.imag));
 	PROVIDE(_imag_size_	 = SIZEOF(.imag));
 	PROVIDE(_imag_begin_ = LOADADDR(.imag));
@@ -80,14 +80,14 @@ SECTIONS{
 			__am_apps_bss_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-	} > sram
+	} > sdram
 
 	PROVIDE(_base_start_ = ADDR(.base));
 	PROVIDE(_base_size_	 = SIZEOF(.base));
 
 	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
-	PROVIDE(_heap_end	= ORIGIN(sram) + LENGTH(sram));
+	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
 
 	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
