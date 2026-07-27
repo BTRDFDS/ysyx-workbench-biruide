@@ -1,5 +1,7 @@
 AM_SRCS := riscv/npc/start.S \
-           riscv/ysyxSoC/trm.c
+           riscv/ysyxSoC/trm.c \
+           riscv/ysyxSoC/ioe.c \
+           riscv/ysyxSoC/uart.c
 
 CFLAGS    += -fdata-sections -ffunction-sections
 LDSCRIPTS += $(AM_HOME)/scripts/linkerYsyxSoC.ld

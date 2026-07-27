@@ -26,6 +26,10 @@ void putch(char ch) {
 	while(((*(volatile char *)(0x10000005L))&0b00100000)==0);
 	asm volatile("sb %0, 0(%1)" : : "r"(ch), "r"(0x10000000L));
 }
+char getch(){
+	if(((*(volatile char *)(0x10000005L))&0b00000001)==1)return (*(volatile char *)(0x10000000L))&0xff;
+	return 0xff;
+}
 void halt(int code) {asm volatile("mv a0, %0; ebreak" : :"r"(code));while (1);}
 int main(const char *args);
 extern char _load_start_,_load_size_,_load_begin_[];
