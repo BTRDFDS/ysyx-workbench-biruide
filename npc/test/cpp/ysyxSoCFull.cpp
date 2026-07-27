@@ -50,7 +50,7 @@ uint64_t runStep;
 void NpcEbreak(int returnCode);
 void NpcRun(uint32_t times);
 void NpcReturn(const char* msg,int returnCode);
-void NpcAddition();
+void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 /*
 extern "C" int pmem_read(int raddr) {
@@ -279,17 +279,14 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 	for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
 	gpr[0]=0;
 }
-void NpcAddition(){
+void NpcWave(){
 	#ifdef NPC_WAVE
 		contextp->timeInc(1);
 		tfp->dump(contextp->time());
 	#endif
-	#ifdef NPC_NVBroad
-		nvboard_update();
-	#endif
 }
 void NpcReturn(const char* msg,int returnCode){
-	NpcAddition();
+	NpcWave();
 	#ifdef NPC_WAVE
 		tfp->close();
 	#endif
@@ -333,9 +330,12 @@ int main(int argc, char** argv) {
 	printf("\033[1;32m Welcome to NPC[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
 	for(int i=0;(!contextp->gotFinish());i++){
 	// for(int i=0;i<100000000L&(!contextp->gotFinish());i++){
-		NpcAddition();
+		#ifdef NPC_NVBroad
+			nvboard_update();
+		#endif
+		NpcWave();
 		top->clock=1;top->eval();
-		NpcAddition();
+		NpcWave();
 		top->clock=0;top->eval();
 		runStep++;
 	}
