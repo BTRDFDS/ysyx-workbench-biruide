@@ -59,15 +59,15 @@ SECTIONS{
 			__am_apps_data_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-	} > sdram 
+	} > psram 
 	PROVIDE(_imag_start_ = ADDR(.imag));
 	PROVIDE(_imag_size_	 = SIZEOF(.imag));
 	PROVIDE(_imag_begin_ = LOADADDR(.imag));
 	_lma = _lma + SIZEOF(.imag);
 	_lma = ALIGN(_lma, 0x4);
 
+	. = ALIGN(0x4);
 	.base : {
-		. = ALIGN(0x4);
 		*(.bss*)
 		*(.sbss*)
 		*(.scommon)
@@ -80,15 +80,14 @@ SECTIONS{
 			__am_apps_bss_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-	} > sdram
+	} > psram
 
 	PROVIDE(_base_start_ = ADDR(.base));
 	PROVIDE(_base_size_	 = SIZEOF(.base));
 
-	_lma = ALIGN(_lma, 0x4);
 	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
-	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
+	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
 
 	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
