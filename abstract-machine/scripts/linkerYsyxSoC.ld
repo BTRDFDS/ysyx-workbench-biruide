@@ -80,14 +80,14 @@ SECTIONS{
 			__am_apps_bss_end = .;
 			. = ALIGN(8);
 		/* rt-thread */
-	} > psram
+	} > sdram
 
 	PROVIDE(_base_start_ = ADDR(.base));
 	PROVIDE(_base_size_	 = SIZEOF(.base));
 
 	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
-	PROVIDE(_heap_end	= ORIGIN(psram) + LENGTH(psram));
+	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
 
 	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
