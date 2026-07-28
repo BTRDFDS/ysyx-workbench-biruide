@@ -29,7 +29,7 @@ logic sampling = ps2_clk_sync[2] & ~ps2_clk_sync[1];
 //交互读取
 always_ff@(posedge clock)
 	if(ready&&in_psel&&in_penable)begin//读新数据
-		$display("r_ptr:%h r_fifo:%h w_ptr:%h w_fifo:%h buffer:%h over:%b",r_ptr,fifo[r_ptr],w_ptr,fifo[w_ptr],buffer[8:1],over);
+		// $display("r_ptr:%h r_fifo:%h w_ptr:%h w_fifo:%h buffer:%h over:%b",r_ptr,fifo[r_ptr],w_ptr,fifo[w_ptr],buffer[8:1],over);
 		r_ptr <= r_ptr + 3'b1;
 		if(w_ptr==r_ptr+1'b1)ready <= 1'b0;//空
 	end
@@ -40,7 +40,7 @@ assign in_prdata = (in_psel&&in_penable)?{24'b0,fifo[r_ptr]}:32'h00;
 always_ff @(posedge clock)if(sampling)begin
 	if (count == 4'd10) begin
 		if ((buffer[0] == 0) && (ps2_data) && (^buffer[9:1]))begin
-			$display("r_ptr:%h r_fifo:%h w_ptr:%h w_fifo:%h buffer:%h over:%b",r_ptr,fifo[r_ptr],w_ptr,fifo[w_ptr],buffer[8:1],over);
+			// $display("r_ptr:%h r_fifo:%h w_ptr:%h w_fifo:%h buffer:%h over:%b",r_ptr,fifo[r_ptr],w_ptr,fifo[w_ptr],buffer[8:1],over);
 			fifo[w_ptr] <= buffer[8:1];
 			w_ptr		<= w_ptr+3'b1;
 			ready		<= 1'b1;

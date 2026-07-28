@@ -9,7 +9,7 @@ void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
   if(data == 0xF0) {
     kbd->keydown = 0;
     keycode = *(volatile uint8_t *)(0x10011000);
-    halt(keycode);
+    // halt(keycode);
   } else {
     kbd->keydown = 1;
   }
