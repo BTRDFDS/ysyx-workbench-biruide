@@ -3,9 +3,8 @@ int main(){
 	const uint32_t size = 0x000164b0;
 	const uint32_t addr = 0xa0000000;
 
-	*(volatile uint32_t*)(addr+size+0x0) = 0x76543210;
-	*(volatile uint32_t*)(addr+size+0x4) = 0x76543210;
-	*(volatile uint32_t*)(addr+size+0x8) = 0x76543210;
+	*(volatile uint32_t*)(addr+0x7fffff0) = 0x76543210;
+	*(volatile uint32_t*)(addr+size) = 0x76543210;
 	return *(volatile uint32_t*)(addr+size+0x4);
 
 	// for(uint32_t i = 0; i < size; i+=4){
