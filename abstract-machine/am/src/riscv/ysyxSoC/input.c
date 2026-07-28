@@ -9,6 +9,7 @@ void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
   if(data == 0xF0) {
     kbd->keydown = 0;
     keycode = *(volatile uint8_t *)(0x10011000);
+    halt(keycode);
   } else {
     kbd->keydown = 1;
   }
@@ -51,17 +52,4 @@ void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
       case 0x45:kbd->keycode = AM_KEY_0;    break;
       default:  kbd->keycode = AM_KEY_NONE; break;
     }
-  
-  // if (keycode == AM_KEY_NONE) {
-  //   kbd->keydown = 0;
-  //   kbd->keycode = AM_KEY_NONE;
-  //   return;
-  // }
-  // kbd->keydown = (data != 0xF0);
-  // if (keycode > AM_KEY_PAGEDOWN) {
-  //   kbd->keycode = AM_KEY_NONE;
-  //   kbd->keydown = 0;
-  // } else {
-  //   kbd->keycode = keycode;
-  // }
 }
