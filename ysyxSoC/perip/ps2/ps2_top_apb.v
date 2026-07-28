@@ -49,7 +49,7 @@ always_ff@(posedge clock) begin
 					ready <= 1'b1;
 
 					if(over==1)begin//上i一个是不是F0
-						// $strobe("key:%h over:%b",buffer[8:1],over);
+						$strobe("key:%h over:%b",buffer[8:1],over);
 						over<=0;
 						fifo[w_ptr] <= 8'b0;
 					end else begin
