@@ -21,7 +21,7 @@ logic [9:0] buffer;		// ps2_data bits
 logic [7:0] fifo[7:0];	// data fifo
 logic [2:0] w_ptr,r_ptr;// fifo write and read pointers
 logic [3:0] count;		// count ps2_data bits
-logic ready;
+logic ready,over;
 // detect falling edge of ps2_clk
 logic [2:0] ps2_clk_sync;
 always_ff@(posedge clock)ps2_clk_sync <=  {ps2_clk_sync[1:0],ps2_clk};
@@ -43,10 +43,24 @@ always_ff@(posedge clock) begin
 		if(sampling)begin
 			if (count == 4'd10) begin
 				if ((buffer[0] == 0) && (ps2_data) && (^buffer[9:1])) begin // start bit,stop bit,odd parity
-					if(fifo[w_ptr-1]==8'hf0)fifo[w_ptr] <= 8'b0;
-					else					fifo[w_ptr] <= buffer[8:1];
+					// if(fifo[w_ptr-1]==8'hf0)fifo[w_ptr] <= 8'b0;
+					// else					fifo[w_ptr] <= buffer[8:1];
 					w_ptr <= w_ptr+3'b1;
 					ready <= 1'b1;
+
+					if(over==1)begin//上i一个是不是F0
+						over<=0;
+						fifo[w_ptr] <= 8'b0;
+					end else begin
+						fifo[w_ptr] <= buffer[8:1];  // kbd键盘 scan code
+						if(buffer[8:1]==8'hf0)begin
+							over<=1;
+						end
+					end
+					// $strobe("key: %b %h over:%b",fifo[w_ptr-1],fifo[w_ptr-1],over);
+					// $strobe("fifo",fifo[w_ptr-1]," ",fifo[r_ptr]," w_ptr:",w_ptr," r_ptr:",r_ptr," overflow:",overflow);
+
+
 				end
 				count <= 0;
 			end else begin
