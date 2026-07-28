@@ -8,14 +8,14 @@ module sdram(
 	input logic        ras,
 	input logic        cas,
 	input logic        we,
-	input logic [13:0] a,
-	input logic [ 1:0] ba,
+	input logic [12:0] a,
+	input logic [ 2:0] ba,
 	input logic [ 3:0] dqm,
 	inout logic [31:0] dq
 );
 	logic choose,hight;
-	always_ff@(posedge clk)if(cke && Enum'({ras,cas,we}) == Activ)hight <= a[13];
-	assign choose = (Enum'({ras,cas,we}) == Activ)?a[13]:hight;
+	always_ff@(posedge clk)if(cke && Enum'({ras,cas,we}) == Activ)hight <= ba[2];
+	assign choose = (Enum'({ras,cas,we}) == Activ)?ba[2]:hight;
 	sdramCore #(.Index(2'b0),.Hight(1'b0)) sdramCore0 (
 		.clk(clk),
 		.cke(cke),
@@ -23,8 +23,8 @@ module sdram(
 		.ras(ras),
 		.cas(cas),
 		.we(we),
-		.a(a[12:0]),
-		.ba(ba),
+		.a(a),
+		.ba(ba[1:0]),
 		.dqm(dqm[1:0]),
 		.dq(dq[15:0])
 	);
@@ -35,8 +35,8 @@ module sdram(
 		.ras(ras),
 		.cas(cas),
 		.we(we),
-		.a(a[12:0]),
-		.ba(ba),
+		.a(a),
+		.ba(ba[1:0]),
 		.dqm(dqm[3:2]),
 		.dq(dq[31:16])
 	);
@@ -47,8 +47,8 @@ module sdram(
 		.ras(ras),
 		.cas(cas),
 		.we(we),
-		.a(a[12:0]),
-		.ba(ba),
+		.a(a),
+		.ba(ba[1:0]),
 		.dqm(dqm[1:0]),
 		.dq(dq[15:0])
 	);
@@ -59,8 +59,8 @@ module sdram(
 		.ras(ras),
 		.cas(cas),
 		.we(we),
-		.a(a[12:0]),
-		.ba(ba),
+		.a(a),
+		.ba(ba[1:0]),
 		.dqm(dqm[3:2]),
 		.dq(dq[31:16])
 	);
