@@ -22,7 +22,7 @@ svScope scope;//作用域
 	VerilatedFstC* tfp;//波形文件
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
-#if defined(NPC_MIN_TRACE) || defined(NPC_M_TRACE)
+#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
 	//输出日志文件：
 	std::fstream logFile;
 #endif
@@ -206,7 +206,7 @@ void NpcInitDevice(int argc, char** argv){
 	top = new VysyxSoCFull{contextp};
 	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.wbu.chk");
 	svSetScope(scope);
-	#ifdef NPC_WAVE
+	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		Verilated::traceEverOn(true);
 		tfp = new VerilatedFstC;
 		top->trace(tfp, 99);
@@ -317,7 +317,7 @@ void NpcReturn(const char* msg,int returnCode){
 	}
 	delete top;
 	delete contextp;
-	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
+	#if defined(NPC_M_TRACE)// || defined(NPC_MIN_TRACE)
 		logFile.close();
 	#endif
 	exit(returnCode);
