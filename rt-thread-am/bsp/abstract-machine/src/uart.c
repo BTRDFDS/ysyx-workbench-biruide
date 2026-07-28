@@ -11,6 +11,7 @@
 #include <rtthread.h>
 #include <am.h>
 #include <klib.h>
+#include <klib-macros.h>
 
 #define UART_DEFAULT_BAUDRATE 115200
 
@@ -38,7 +39,6 @@ static int _uart_putc(struct rt_serial_device *serial, char c) {
 
 static int _uart_getc(struct rt_serial_device *serial) {
   static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\n";
-  // return (*p != '\0' ? *(p ++) : (io_read(AM_UART_RX)-1));
   if( *p != '\0') return *(p++);
   else{
     char ch = io_read(AM_UART_RX).data;
