@@ -48,13 +48,12 @@ always_ff@(posedge clock) begin
 					w_ptr <= w_ptr+3'b1;
 					ready <= 1'b1;
 
+					$strobe("r_ptr:%h r_fifo:%h w_ptr:%h w_fifo:%h buffer:%h over:%b",r_ptr,fifo[r_ptr],w_ptr,fifo[w_ptr],buffer[8:1],over);
 					if(over==1)begin//上i一个是不是F0
-						$strobe("key:%h over:%b",buffer[8:1],over);
 						over<=0;
 						fifo[w_ptr] <= 8'b0;
 					end else begin
 						fifo[w_ptr] <= buffer[8:1];  // kbd键盘 scan code
-							$strobe("key:%h over:%b",fifo[w_ptr-1],over);
 						if(buffer[8:1]==8'hf0)begin
 							// $strobe("key:%h over:%b",fifo[w_ptr-1],over);
 							over<=1;
