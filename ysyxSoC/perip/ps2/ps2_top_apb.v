@@ -29,10 +29,10 @@ logic sampling = ps2_clk_sync[2] & ~ps2_clk_sync[1];
 
 always_ff@(posedge clock) begin
 	if(reset)begin // reset
-		count		<= 0;
-		w_ptr		<= 0;
-		r_ptr		<= 0;
-		ready	<= 0;
+		count <= 'b0;
+		w_ptr <= 'b0;
+		r_ptr <= 'b0;
+		ready <= 'b0;
 	end else begin
 		if(ready)begin
 				if(in_psel&&in_penable)	begin//读新数据
