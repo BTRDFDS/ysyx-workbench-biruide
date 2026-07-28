@@ -54,8 +54,9 @@ always_ff@(posedge clock) begin
 						fifo[w_ptr] <= 8'b0;
 					end else begin
 						fifo[w_ptr] <= buffer[8:1];  // kbd键盘 scan code
-						if(buffer[8:1]==8'hf0)begin
 							$strobe("key:%h over:%b",fifo[w_ptr-1],over);
+						if(buffer[8:1]==8'hf0)begin
+							// $strobe("key:%h over:%b",fifo[w_ptr-1],over);
 							over<=1;
 						end
 					end
