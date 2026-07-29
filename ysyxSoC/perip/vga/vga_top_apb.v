@@ -50,12 +50,12 @@ logic [9:0]		vAddr;	assign vAddr	= vValid?(y-10'd36) :10'd0;
 logic [9:0]		hAddr;	assign hAddr	= hValid?(x-10'd145):10'd0;
 logic [18:0]	locate;	assign locate	= {vAddr,9'b0}+{2'b0,vAddr,7'b0}+{9'b0,hAddr};
 //vga接口
-// assign vga_r = vga_valid?ramRed		[locate]:8'd0;
-// assign vga_g = vga_valid?ramGreen	[locate]:8'd0;
-// assign vga_b = vga_valid?ramBlue	[locate]:8'd0;
-assign vga_r = vga_valid?8'h00:8'd0;
-assign vga_g = vga_valid?8'h00:8'd0;
-assign vga_b = vga_valid?8'hff:8'd0;
+assign vga_r = vga_valid?ramRed		[locate]:8'd0;
+assign vga_g = vga_valid?ramGreen	[locate]:8'd0;
+assign vga_b = vga_valid?ramBlue	[locate]:8'd0;
+// assign vga_r = vga_valid?8'h00:8'd0;
+// assign vga_g = vga_valid?8'h00:8'd0;
+// assign vga_b = vga_valid?8'hff:8'd0;
 assign vga_hsync = (x>hFrontporch);
 assign vga_vsync = (y>vFrontporch);
 assign vga_valid = (hValid&&vValid);
@@ -71,7 +71,5 @@ always_ff @(posedge clock) begin
 		in_pready <= 1;
 	end else in_pready <= 0;
 end
-always_ff@(posedge clock)
-	// if(x=='d150)$strobe("xy",x,y," hv",hAddr,vAddr," ",locate, " %x%x%x",vga_r, vga_g, vga_b," hsync:",vga_hsync," vsync:",vga_vsync," valid:",vga_valid);
-	if(x=='d150)$strobe("x:%d y:%d h:%d v:%d l:%x %x%x%x hsync:%x vsync:%x valid:%x hValid:%b, vValid:%b",x,y,hAddr,vAddr,locate,vga_r, vga_g, vga_b,vga_hsync,vga_vsync,vga_valid,hValid,vValid);
+// always_ff@(posedge clock)if(x=='d150)$strobe("x:%d y:%d h:%d v:%d l:%x %x%x%x hsync:%x vsync:%x valid:%x hValid:%b, vValid:%b",x,y,hAddr,vAddr,locate,vga_r, vga_g, vga_b,vga_hsync,vga_vsync,vga_valid,hValid,vValid);
 endmodule
