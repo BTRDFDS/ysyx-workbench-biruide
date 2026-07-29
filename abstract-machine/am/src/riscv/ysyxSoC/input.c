@@ -24,11 +24,11 @@ void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
 			case 0x6b:kbd->keycode = AM_KEY_LEFT;		break;
 			case 0x74:kbd->keycode = AM_KEY_RIGHT;		break;
 			case 0x70:kbd->keycode = AM_KEY_INSERT;		break;
-			case 0x71:kbd->keycode = AM_KEY_DEL;		break;
+			// case 0x71:kbd->keycode = AM_KEY_DEL;		break;
 			case 0x6c:kbd->keycode = AM_KEY_HOME;		break;
 			case 0x69:kbd->keycode = AM_KEY_END;		break;
-			case 0x7d:kbd->keycode = AM_KEY_PGUP;		break;
-			case 0x7a:kbd->keycode = AM_KEY_PGDN;		break;
+			case 0x7d:kbd->keycode = AM_KEY_PAGEUP;		break;
+			case 0x7a:kbd->keycode = AM_KEY_PAGEDN;		break;
 			default:  kbd->keycode = AM_KEY_NONE;		break;
 		}
 	}else{
@@ -81,17 +81,17 @@ void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
 			case 0x09:kbd->keycode = AM_KEY_F10;			break;
 			case 0x78:kbd->keycode = AM_KEY_F11;			break;
 			case 0x07:kbd->keycode = AM_KEY_F12;			break;
-			case 0x76:kbd->keycode = AM_KEY_ESC;			break;
+			case 0x76:kbd->keycode = AM_KEY_ESCAPE;			break;
 			case 0x0e:kbd->keycode = AM_KEY_GRAVE;			break;
 			case 0x0d:kbd->keycode = AM_KEY_TAB;			break;
 			case 0x58:kbd->keycode = AM_KEY_CAPSLOCK;		break;
 			case 0x12:kbd->keycode = AM_KEY_LSHIFT;			break;
 			case 0x29:kbd->keycode = AM_KEY_SPACE;			break;
 			case 0x4e:kbd->keycode = AM_KEY_MINUS;			break;
-			case 0x55:kbd->keycode = AM_KEY_EQUAL;			break;
+			case 0x55:kbd->keycode = AM_KEY_EQUALS;			break;
 			case 0x66:kbd->keycode = AM_KEY_BACKSPACE;		break;
-			case 0X54:kbd->keycode = AM_KEY_LEFT_BRACKET;	break;
-			case 0x5b:kbd->keycode = AM_KEY_RIGHT_BRACKET;	break;
+			case 0X54:kbd->keycode = AM_KEY_LEFTBRACKET;	break;
+			case 0x5b:kbd->keycode = AM_KEY_RIGHTBRACKET;	break;
 			case 0x5d:kbd->keycode = AM_KEY_BACKSLASH;		break;
 			case 0x4c:kbd->keycode = AM_KEY_SEMICOLON;		break;
 			case 0x52:kbd->keycode = AM_KEY_APOSTROPHE;		break;
