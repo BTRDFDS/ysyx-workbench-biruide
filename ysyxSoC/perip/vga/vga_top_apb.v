@@ -63,7 +63,7 @@ assign vga_valid = (hValid&vValid);
 always_ff @(posedge clock) begin
 	if(in_psel & in_penable) begin
 		if(in_pwrite) begin
-			$display("vga %x %x %b",in_paddr,in_pwdata,in_pstrb);
+			// $display("vga %x %x %b",in_paddr,in_pwdata,in_pstrb);
 			if(in_pstrb[0]) ramBlue	[in_paddr[20:2]] <= in_pwdata[ 7: 0];
 			if(in_pstrb[1]) ramGreen[in_paddr[20:2]] <= in_pwdata[15: 8];
 			if(in_pstrb[2]) ramRed	[in_paddr[20:2]] <= in_pwdata[23:16];
@@ -71,4 +71,7 @@ always_ff @(posedge clock) begin
 		in_pready <= 1;
 	end else in_pready <= 0;
 end
+always_ff@(posedge clock)
+	if(((vga_valid)|(x==hActive&vValid))&(x <= hBackporch))
+	$strobe("xy",x,y," hv",hAddr,vAddr," ",locate," %x%x%x",vga_r, vga_g, vga_b);
 endmodule
