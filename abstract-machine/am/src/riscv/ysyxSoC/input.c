@@ -28,7 +28,7 @@ void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
 			case 0x6c:kbd->keycode = AM_KEY_HOME;		break;
 			case 0x69:kbd->keycode = AM_KEY_END;		break;
 			case 0x7d:kbd->keycode = AM_KEY_PAGEUP;		break;
-			case 0x7a:kbd->keycode = AM_KEY_PAGEDN;		break;
+			case 0x7a:kbd->keycode = AM_KEY_PAGEDOWN;	break;
 			default:  kbd->keycode = AM_KEY_NONE;		break;
 		}
 	}else{
