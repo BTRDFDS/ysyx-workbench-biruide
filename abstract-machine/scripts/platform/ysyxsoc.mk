@@ -3,7 +3,8 @@ AM_SRCS := riscv/npc/start.S \
            riscv/ysyxSoC/ioe.c \
            riscv/npc/timer.c \
            riscv/ysyxSoC/uart.c \
-           riscv/ysyxSoC/input.c
+           riscv/ysyxSoC/input.c \
+           riscv/ysyxSoC/gpu.c
 
 CFLAGS    += -fdata-sections -ffunction-sections
 LDSCRIPTS += $(AM_HOME)/scripts/linkerYsyxSoC.ld
