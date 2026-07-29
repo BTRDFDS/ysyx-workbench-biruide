@@ -50,12 +50,12 @@ logic [9:0]		vAddr	= vValid?(y-10'd36) :10'd0;
 logic [9:0]		hAddr	= hValid?(x-10'd145):10'd0;
 logic [18:0]	locate	= {vAddr,9'b0}+{2'b0,vAddr,7'b0}+{9'b0,hAddr};
 //vga接口
-assign vga_r = vga_valid?ramRed		[locate]:8'd0;
-assign vga_g = vga_valid?ramGreen	[locate]:8'd0;
-assign vga_b = vga_valid?ramBlue	[locate]:8'd0;
-// assign vga_r = vga_valid?8'h0f:8'd0;
-// assign vga_g = vga_valid?8'h0f:8'd0;
-// assign vga_b = vga_valid?8'h0f:8'd0;
+// assign vga_r = vga_valid?ramRed		[locate]:8'd0;
+// assign vga_g = vga_valid?ramGreen	[locate]:8'd0;
+// assign vga_b = vga_valid?ramBlue	[locate]:8'd0;
+assign vga_r = vga_valid?8'h00:8'd0;
+assign vga_g = vga_valid?8'h00:8'd0;
+assign vga_b = vga_valid?8'hff:8'd0;
 assign vga_hsync = (x>hFrontporch);
 assign vga_vsync = (y>vFrontporch);
 assign vga_valid = (hValid&vValid);
@@ -63,9 +63,10 @@ assign vga_valid = (hValid&vValid);
 always_ff @(posedge clock) begin
 	if(in_psel & in_penable) begin
 		if(in_pwrite) begin
-			if(in_pstrb[0]) ramBlue	[in_paddr[20:2]] <= in_pwdata[7:0];
-			if(in_pstrb[1]) ramGreen[in_paddr[20:2]] <= in_pwdata[7:0];
-			if(in_pstrb[2]) ramRed	[in_paddr[20:2]] <= in_pwdata[7:0];
+			$display("vga %x %x %b",in_paddr,in_pwdata,in_pstrb);
+			if(in_pstrb[0]) ramBlue	[in_paddr[20:2]] <= in_pwdata[ 7: 0];
+			if(in_pstrb[1]) ramGreen[in_paddr[20:2]] <= in_pwdata[15: 8];
+			if(in_pstrb[2]) ramRed	[in_paddr[20:2]] <= in_pwdata[23:16];
 		end
 		in_pready <= 1;
 	end else in_pready <= 0;
