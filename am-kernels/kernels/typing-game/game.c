@@ -159,7 +159,7 @@ int main() {
   uint64_t t0 = io_read(AM_TIMER_UPTIME).us;
   // for(int i=0;i<10;i++){
   while (1) {
-    int frames = (io_read(AM_TIMER_UPTIME).us - t0) / (1000000 / FPS);
+    int frames = (io_read(AM_TIMER_UPTIME).us - t0) / (100 / FPS);
 
     for (; current < frames; current++) {//实际<理论
       game_logic_update(current);
