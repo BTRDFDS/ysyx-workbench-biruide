@@ -58,7 +58,7 @@ assign vga_g = vga_valid?8'h00:8'd0;
 assign vga_b = vga_valid?8'hff:8'd0;
 assign vga_hsync = (x>hFrontporch);
 assign vga_vsync = (y>vFrontporch);
-assign vga_valid = (hValid&vValid);
+assign vga_valid = (hValid&&vValid);
 //apb接口
 always_ff @(posedge clock) begin
 	if(in_psel & in_penable) begin
@@ -72,5 +72,5 @@ always_ff @(posedge clock) begin
 	end else in_pready <= 0;
 end
 always_ff@(posedge clock)
-	if(x=='d100)$strobe("xy",x,y," hv",hAddr,vAddr," ",locate, " %x%x%x",vga_r, vga_g, vga_b," hsync:",vga_hsync," vsync:",vga_vsync," valid:",vga_valid);
+	if(x=='d150)$strobe("xy",x,y," hv",hAddr,vAddr," ",locate, " %x%x%x",vga_r, vga_g, vga_b," hsync:",vga_hsync," vsync:",vga_vsync," valid:",vga_valid);
 endmodule
