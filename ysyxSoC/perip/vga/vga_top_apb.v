@@ -72,6 +72,5 @@ always_ff @(posedge clock) begin
 	end else in_pready <= 0;
 end
 always_ff@(posedge clock)
-	if(vga_valid)
-	$strobe("xy",x,y," hv",hAddr,vAddr," ",locate," %x%x%x",vga_r, vga_g, vga_b);
+	if(reset)$strobe("xy",x,y," hv",hAddr,vAddr," ",locate," %x%x%x",vga_r, vga_g, vga_b);
 endmodule
