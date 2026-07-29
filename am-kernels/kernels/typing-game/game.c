@@ -171,12 +171,13 @@ int main() {
       if (ev.keydown && lut[ev.keycode]) {
         check_hit(lut[ev.keycode]);
       }
+      printf("keycode: %x\n", ev.keycode);
     };
+      // 
 
     if (current > rendered) {
       render();
       rendered = current;
     }
-      halt(-1);
   }
 }
