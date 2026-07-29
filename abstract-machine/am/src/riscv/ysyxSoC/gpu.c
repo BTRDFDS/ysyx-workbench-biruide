@@ -7,9 +7,9 @@ const uint32_t vgaAddr = 0x21000000;
 
 void __am_gpu_init() {
 	uint32_t *fb = (uint32_t *)vgaAddr;
-	// for (i = 0; i < Width * Hight; i ++) fb[i] = i;
-	for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = 0x0002a67c;
-	// for (i = 0; i < Width * Hight; i ++) fb[i] = 0x00000000;
+	for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = i;
+	// for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = 0x0002a67c;
+	// for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = 0x00000000;
 	// halt(0xa);
 }
 
