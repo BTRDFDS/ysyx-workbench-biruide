@@ -19,7 +19,7 @@ module vga_top_apb(
 	output logic        vga_vsync,
 	output logic        vga_valid
 );
-
+logic finish;
 logic [9:0] x;	//行像素计数
 parameter hFrontporch	= 96;
 parameter hActive		= 144;
@@ -28,7 +28,7 @@ parameter hTotal		= 800;
 always_ff@(posedge clock)
 	if(reset)				x <= 1;
 	else if (x == hTotal)	x <= 1;
-	else					x <= x + 10'd1;
+	else if(~finish)		x <= x + 10'd1;
 
 logic [9:0] y;	//列像素计数
 parameter vFrontporch	= 2;
@@ -38,7 +38,7 @@ parameter vTotal		= 525;
 always_ff@(posedge clock)
 	if(reset)							y <= 1;
 	else if(y == vTotal && x == hTotal)	y <= 1;
-	else if(x == hTotal)				y <= y + 10'd1;
+	else if(~finish && x == hTotal)		y <= y + 10'd1;
 
 logic [7:0] ramRed		[307199:0];
 logic [7:0] ramGreen	[307199:0];
@@ -50,15 +50,15 @@ logic [9:0]		vAddr;	assign vAddr	= vValid?(y-10'd36) :10'd0;
 logic [9:0]		hAddr;	assign hAddr	= hValid?(x-10'd145):10'd0;
 logic [18:0]	locate;	assign locate	= {vAddr,9'b0}+{2'b0,vAddr,7'b0}+{9'b0,hAddr};
 //vga接口
-assign vga_r = vga_valid?ramRed		[locate]:8'd0;
-assign vga_g = vga_valid?ramGreen	[locate]:8'd0;
-assign vga_b = vga_valid?ramBlue	[locate]:8'd0;
+assign vga_r = vga_valid?ramRed	 [locate]:8'd0;
+assign vga_g = vga_valid?ramGreen[locate]:8'd0;
+assign vga_b = vga_valid?ramBlue [locate]:8'd0;
 assign vga_hsync = (x>hFrontporch);
 assign vga_vsync = (y>vFrontporch);
 assign vga_valid = (hValid&&vValid);
 //apb接口
 always_ff @(posedge clock) begin
-	if(in_psel & in_penable) begin
+	if(in_psel && in_penable) begin
 		if(in_pwrite) begin
 			// $display("vga %x %x %b",in_paddr,in_pwdata,in_pstrb);
 			if(in_pstrb[0]) ramBlue	[in_paddr[20:2]] <= in_pwdata[ 7: 0];
@@ -67,6 +67,9 @@ always_ff @(posedge clock) begin
 		end
 		in_pready <= 1;
 	end else in_pready <= 0;
+
+	if(in_psel && in_penable && in_pwrite)	finish <= 0;
+	else if(y == vTotal && x == hTotal)		finish <= 1;
 end
 // always_ff@(posedge clock)if(x=='d150)$strobe("x:%d y:%d h:%d v:%d l:%x %x%x%x hsync:%x vsync:%x valid:%x hValid:%b, vValid:%b",x,y,hAddr,vAddr,locate,vga_r, vga_g, vga_b,vga_hsync,vga_vsync,vga_valid,hValid,vValid);
 endmodule
