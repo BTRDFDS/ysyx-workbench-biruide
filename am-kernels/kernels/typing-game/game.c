@@ -172,7 +172,6 @@ int main() {
         check_hit(lut[ev.keycode]);
       }
     };
-    halt(-1);
 
     if (current > rendered) {
       render();
