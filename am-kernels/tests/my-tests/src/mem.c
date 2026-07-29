@@ -1,27 +1,24 @@
-#include <trap.h>
-#include <klib.h>
+#include "trap.h"
+int main(){
+	const uint32_t size = 0x40000000;
+	const uint32_t addr = 0xc0000000;
 
-#include <limits.h>
-const uintptr_t start =0x0f000000;
-const uintptr_t end   =0x0f001fff;
-int main() {
-	for(uint8_t *p=(uint8_t*)start;p<=(uint8_t*)end;p++)*p=(uint8_t)((uintptr_t)p&0xFF);
-	for(uint8_t *p=(uint8_t*)start;p<=(uint8_t*)end;p++)if(*p != (uint8_t)((uintptr_t)p&0xFF))return ((uint32_t)((uintptr_t)p)|0x000A0000);
-	for(uint16_t *p=(uint16_t*)start;p<=(uint16_t*)end;p++)*p=(uint16_t)((uintptr_t)p&0xFFFF);
-	for(uint16_t *p=(uint16_t*)start;p<=(uint16_t*)end;p++)if(*p != (uint16_t)((uintptr_t)p&0xFFFF))return ((uint32_t)((uintptr_t)p)|0x000B0000);
-	for(uint32_t *p=(uint32_t*)start;p<=(uint32_t*)end;p++)*p=(uint32_t)((uintptr_t)p);
-	for(uint32_t *p=(uint32_t*)start;p<=(uint32_t*)end;p++)if(*p != (uint32_t)((uintptr_t)p))return ((uint32_t)((uintptr_t)p)|0x000C0000);
+	// *(volatile uint32_t*)(addr+0x7fffff0) = 0x76543210;
+	// *(volatile uint32_t*)(addr+size) = 0x76543210;
+	// return *(volatile uint32_t*)(addr+size);
+
+	for(uint32_t i = 0; i < size; i+=4){
+		*(volatile uint8_t*)(addr+i+0) = i&0xff;
+		*(volatile uint8_t*)(addr+i+1) = (i+1)&0xff;
+		*(volatile uint8_t*)(addr+i+2) = (i+2)&0xff;
+		*(volatile uint8_t*)(addr+i+3) = (i+3)&0xff;
+		if(*(volatile uint32_t*)(addr+i) != (((i+3)&0xff)<<24|((i+2)&0xff)<<16|((i+1)&0xff)<<8|(i&0xff)))return 1;
+		if(*(volatile uint16_t*)(addr+i+0) != (((i+1)&0xff)<<8|((i+0)&0xff)))return 2;
+		if(*(volatile uint16_t*)(addr+i+2) != (((i+3)&0xff)<<8|((i+2)&0xff)))return 3;
+		if(*(volatile uint8_t*)(addr+i+0) != ((i+0)&0xff))return 4;
+		if(*(volatile uint8_t*)(addr+i+1) != ((i+1)&0xff))return 5;
+		if(*(volatile uint8_t*)(addr+i+2) != ((i+2)&0xff))return 6;
+		if(*(volatile uint8_t*)(addr+i+3) != ((i+3)&0xff))return 7;
+	}
 	return 0;
-	//手动测试
-	// (*(uint32_t*)start)=0x76543210;
-	// (*(uint8_t*)0x0f000000)=0x10;
-	// (*(uint8_t*)0x0f000001)=0x32;
-	// (*(uint8_t*)0x0f000002)=0x54;
-	// (*(uint8_t*)0x0f000003)=0x76;
-	// (*(uint16_t*)(0x0f000000))=0x3210;
-	// (*(uint16_t*)(0x0f000002))=0x7654;
-	// volatile uint8_t	p=(*(uint8_t*)(0x0f000001));
-	// volatile uint16_t	p=(*(uint16_t*)(0x0f000002));
-	// volatile uint32_t p=(*(uint32_t*)(0x0f000000));
-	// return p;
 }

@@ -74,7 +74,8 @@ class ysyx_26020046_Bar extends Module{
 		(addr		=== 0x21.U(8.W))	||//vga
 		(addr(7,4))	===	0x3.U(4.W)		||//flash
 		(addr(7,5)	=== 0b100.U(3.W))	||//psram
-		(addr(7,5)	=== 0b101.U(3.W))	 )//sdram
+		(addr(7,5)	=== 0b101.U(3.W))	||//sdram
+		(addr(7,6)	=== 0b11.U(2.W)))	  //ChipLink
 	val addrIsClint = addr === 0x02.U(8.W)
 	when(addrValid){
 		switch(status){
