@@ -30,9 +30,9 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
 			*(volatile uint32_t *)(vgaAddr + ((i+ctl->y)*Width+(j+ctl->x))*4) = pixels[(i)*ctl->w+(j)];
 		}
 	}
+	*(volatile uint8_t *)(vgaAddr+0b11) = 0b10000000;
 }
 
 void __am_gpu_status(AM_GPU_STATUS_T *status) {
-	*(volatile uint8_t *)(vgaAddr+0b11) = 0b10000000;
 	status->ready = true;
 }
