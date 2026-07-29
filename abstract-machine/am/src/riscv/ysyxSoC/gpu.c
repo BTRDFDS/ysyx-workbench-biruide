@@ -6,11 +6,7 @@ const uint32_t Hight = 480;
 const uint32_t vgaAddr = 0x21000000;
 
 void __am_gpu_init() {
-	uint32_t *fb = (uint32_t *)vgaAddr;
-	for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = i;
-	// for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = 0x0002a67c;
-	// for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = 0x00000000;
-	// halt(0xa);
+	for (uint32_t i = 0; i < Width * Hight; i ++)*(volatile uint32_t *)(vgaAddr + i<<2) = i;
 	*(volatile uint8_t *)(vgaAddr+0b11) = 0b10000000;
 }
 
