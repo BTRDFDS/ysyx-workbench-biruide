@@ -97,7 +97,7 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
-	$(addprefix -LDFLAGS , $(LDFLAGS))
+	$(addprefix -LDFLAGS , $(LDFLAGS)) -Wno-UNOPTFLAT
 # 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim	 
