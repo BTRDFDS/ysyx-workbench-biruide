@@ -71,6 +71,7 @@ class ysyx_26020046_Bar extends Module{
 		(addr		=== 0x0f.U(8.W))	||//sram
 		(addr		=== 0x10.U(8.W))	||//UART16550 or SPI or GPIO or PS2
 		(addr		=== 0x20.U(8.W))	||//mrom
+		(addr		=== 0x21.U(8.W))	||//vga
 		(addr(7,4))	===	0x3.U(4.W)		||//flash
 		(addr(7,5)	=== 0b100.U(3.W))	||//psram
 		(addr(7,5)	=== 0b101.U(3.W))	 )//sdram
