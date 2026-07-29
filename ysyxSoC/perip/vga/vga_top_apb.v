@@ -73,5 +73,5 @@ always_ff @(posedge clock) begin
 end
 always_ff@(posedge clock)
 	// if(x=='d150)$strobe("xy",x,y," hv",hAddr,vAddr," ",locate, " %x%x%x",vga_r, vga_g, vga_b," hsync:",vga_hsync," vsync:",vga_vsync," valid:",vga_valid);
-	if(x=='d150)$strobe("x:%x y:%x h:%x v:%x l:%x %x%x%x hsync:%x vsync:%x valid:%x hValid:%b, vValid:%b",x,y,hAddr,vAddr,locate,vga_r, vga_g, vga_b,vga_hsync,vga_vsync,vga_valid,hValid,vValid);
+	if(x=='d150)$strobe("x:%d y:%d h:%d v:%d l:%x %x%x%x hsync:%x vsync:%x valid:%x hValid:%b, vValid:%b",x,y,hAddr,vAddr,locate,vga_r, vga_g, vga_b,vga_hsync,vga_vsync,vga_valid,hValid,vValid);
 endmodule
