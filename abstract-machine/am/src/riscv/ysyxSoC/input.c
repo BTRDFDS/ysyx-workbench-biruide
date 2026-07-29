@@ -5,17 +5,15 @@
 
 void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
 	uint8_t data = *(volatile uint8_t *)(0x10011000);
-	uint8_t keycode = data;
 	if(data == 0xF0) {
 		kbd->keydown = 0;
-		keycode = *(volatile uint8_t *)(0x10011000);
-		// halt(keycode);
+		data = *(volatile uint8_t *)(0x10011000);
 	} else {
 		kbd->keydown = 1;
-		if(data == 0xE0)keycode = *(volatile uint8_t *)(0x10011000);
 	}
 	if(data == 0xE0){
-		switch(keycode){
+		data = *(volatile uint8_t *)(0x10011000);
+		switch(data){
 			case 0x2f:kbd->keycode = AM_KEY_APPLICATION;break;
 			case 0x14:kbd->keycode = AM_KEY_LCTRL;		break;
 			case 0x11:kbd->keycode = AM_KEY_RALT ;		break;
@@ -32,7 +30,7 @@ void __am_input_keybrd(AM_INPUT_KEYBRD_T *kbd) {
 			default:  kbd->keycode = AM_KEY_NONE;		break;
 		}
 	}else{
-		switch(keycode){
+		switch(data){
 			case 0x1c:kbd->keycode = AM_KEY_A;				break;
 			case 0x32:kbd->keycode = AM_KEY_B;				break;
 			case 0x21:kbd->keycode = AM_KEY_C;				break;
