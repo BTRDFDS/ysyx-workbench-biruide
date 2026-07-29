@@ -44,11 +44,11 @@ logic [7:0] ramRed		[307199:0];
 logic [7:0] ramGreen	[307199:0];
 logic [7:0] ramBlue		[307199:0];
 
-logic 			hValid	= (x>hActive)&(x <= hBackporch);
-logic 			vValid	= (y>vActive)&(y <= vBackporch);
-logic [9:0]		vAddr	= vValid?(y-10'd36) :10'd0;
-logic [9:0]		hAddr	= hValid?(x-10'd145):10'd0;
-logic [18:0]	locate	= {vAddr,9'b0}+{2'b0,vAddr,7'b0}+{9'b0,hAddr};
+logic 			hValid;	assign hValid	= (x>hActive)&(x <= hBackporch);
+logic 			vValid;	assign vValid	= (y>vActive)&(y <= vBackporch);
+logic [9:0]		vAddr;	assign vAddr	= vValid?(y-10'd36) :10'd0;
+logic [9:0]		hAddr;	assign hAddr	= hValid?(x-10'd145):10'd0;
+logic [18:0]	locate;	assign locate	= {vAddr,9'b0}+{2'b0,vAddr,7'b0}+{9'b0,hAddr};
 //vga接口
 // assign vga_r = vga_valid?ramRed		[locate]:8'd0;
 // assign vga_g = vga_valid?ramGreen	[locate]:8'd0;
