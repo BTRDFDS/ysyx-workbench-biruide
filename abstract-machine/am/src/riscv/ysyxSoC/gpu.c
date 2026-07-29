@@ -10,7 +10,7 @@ void __am_gpu_init() {
 	// for (i = 0; i < Width * Hight; i ++) fb[i] = i;
 	for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = 0x0002a67c;
 	// for (i = 0; i < Width * Hight; i ++) fb[i] = 0x00000000;
-	halt(0xa);
+	// halt(0xa);
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
