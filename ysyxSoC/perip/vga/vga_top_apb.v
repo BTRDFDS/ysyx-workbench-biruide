@@ -68,8 +68,8 @@ always_ff @(posedge clock) begin
 		in_pready <= 1;
 	end else in_pready <= 0;
 
-	if(in_psel && in_penable && in_pwrite)	finish <= 0;
-	else if(y == vTotal && x == hTotal)		finish <= 1;
+	if(in_psel && in_penable && in_pwrite && in_pwdata[31])	finish <= 0;
+	else if(y == vTotal && x == hTotal)						finish <= 1;
 end
 // always_ff@(posedge clock)if(x=='d150)$strobe("x:%d y:%d h:%d v:%d l:%x %x%x%x hsync:%x vsync:%x valid:%x hValid:%b, vValid:%b",x,y,hAddr,vAddr,locate,vga_r, vga_g, vga_b,vga_hsync,vga_vsync,vga_valid,hValid,vValid);
 endmodule

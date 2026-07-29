@@ -11,6 +11,7 @@ void __am_gpu_init() {
 	// for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = 0x0002a67c;
 	// for (uint32_t i = 0; i < Width * Hight; i ++) fb[i] = 0x00000000;
 	// halt(0xa);
+	*(volatile uint8_t *)(vgaAddr+0b11) = 0b10000000;
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
@@ -32,5 +33,6 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
 }
 
 void __am_gpu_status(AM_GPU_STATUS_T *status) {
+	*(volatile uint8_t *)(vgaAddr+0b11) = 0b10000000;
 	status->ready = true;
 }
