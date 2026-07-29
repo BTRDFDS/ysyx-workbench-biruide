@@ -66,8 +66,8 @@ srcNpc =ysyx_26020046_MemTop
 srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
-# runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
-runNpc:$(srcCpp) $(srcCppNpc) wave
+runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
+# runNpc:$(srcCpp) $(srcCppNpc) wave
 	verilator $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
@@ -90,8 +90,8 @@ SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
 SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
 
-runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
-# runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
+# runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
+runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
 	verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
