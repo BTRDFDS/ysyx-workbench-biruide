@@ -176,6 +176,13 @@ reg  [STATE_W-1:0]     target_state_r;
 reg  [STATE_W-1:0]     target_state_q;
 reg  [STATE_W-1:0]     delay_state_q;
 
+typedef enum logic [3:0] {INIT,DELAY,IDLE,ACTIVATE,READ,READ_WAIT,WRITE0,WRITE1,PRECHARGE,REFRESH} State;
+State myState,myStateNext,myStateTarget,myStateDelay;
+assign myState      = State'(state_q);
+assign myStateNext  = State'(next_state_r);
+assign myStateTarget= State'(target_state_q);
+assign myStateDelay = State'(delay_state_q);
+
 // Address bits
 // localparam My0 = SDRAM_ROW_W-SDRAM_COL_W;
 // localparam My1 = SDRAM_COL_W+1;
