@@ -59,16 +59,12 @@ assign vga_valid = (hValid&&vValid);
 //apb接口
 assign in_pready = in_psel && in_penable;
 always_ff @(posedge clock) begin
-	if(in_psel && in_penable) begin
-		if(in_pwrite) begin
+	if(in_psel && in_penable && in_pwrite) begin
 			// $display("vga %x %x %b",in_paddr,in_pwdata,in_pstrb);
 			if(in_pstrb[0]) ramBlue	[in_paddr[20:2]] <= in_pwdata[ 7: 0];
 			if(in_pstrb[1]) ramGreen[in_paddr[20:2]] <= in_pwdata[15: 8];
 			if(in_pstrb[2]) ramRed	[in_paddr[20:2]] <= in_pwdata[23:16];
-		end
-		in_pready <= 1;
-	end else in_pready <= 0;
-
+	end
 	if(in_psel && in_penable && in_pwrite && in_pwdata[31])	finish <= 0;
 	else if(y == vTotal && x == hTotal)						finish <= 1;
 end
