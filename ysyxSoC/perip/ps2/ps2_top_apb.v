@@ -33,9 +33,9 @@ always_ff@(posedge clock)
 		r_ptr <= r_ptr + 3'b1;
 		if(w_ptr==r_ptr+1'b1)ready <= 1'b0;//空
 	end
-assign in_pready = (in_psel&&in_penable)?ready:1'b0;
+assign in_pready = (in_psel&&in_penable)?1'b1:1'b0;
 assign in_pslverr = 1'b0;
-assign in_prdata = (in_psel&&in_penable)?{24'b0,fifo[r_ptr]}:32'h00;
+assign in_prdata = (in_psel&&in_penable&&ready)?{24'b0,fifo[r_ptr]}:32'h00;
 //内部状态机
 always_ff @(posedge clock)if(sampling)begin
 	if (count == 4'd10) begin
