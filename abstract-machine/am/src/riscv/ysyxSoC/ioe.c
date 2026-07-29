@@ -18,6 +18,7 @@ void __am_uart_rx(AM_UART_RX_T *);
 static void __am_input_config(AM_INPUT_CONFIG_T *cfg){ cfg->present = true;}
 void __am_input_keybrd(AM_INPUT_KEYBRD_T *);
 
+void __am_gpu_init();
 void __am_gpu_config(AM_GPU_CONFIG_T *);
 void __am_gpu_status(AM_GPU_STATUS_T *);
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *);
@@ -51,6 +52,7 @@ void __am_ioe_init() {
     if (!lut[i]) lut[i] = fail;
   __am_timer_init();
   __am_uart_init();
+  __am_gpu_init();
   ioe_init_done = true;
 }
 
