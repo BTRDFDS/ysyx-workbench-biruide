@@ -57,6 +57,7 @@ assign vga_hsync = (x>hFrontporch);
 assign vga_vsync = (y>vFrontporch);
 assign vga_valid = (hValid&&vValid);
 //apb接口
+assign in_pready = in_psel && in_penable;
 always_ff @(posedge clock) begin
 	if(in_psel && in_penable) begin
 		if(in_pwrite) begin
