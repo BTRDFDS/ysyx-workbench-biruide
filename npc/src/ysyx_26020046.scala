@@ -58,7 +58,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U) extends Module {
 	io.master.wvalid	<> bar.out.wvalid
 	io.master.wdata		<> bar.out.wdata
 	io.master.wstrb		<> bar.out.wstrb
-	io.master.wlast		:= false.B
+	io.master.wlast		:= true.B
 	io.master.wready	<> bar.out.wready
 
 	io.master.bvalid	<> bar.out.bvalid
