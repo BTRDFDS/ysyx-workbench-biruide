@@ -14,7 +14,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	val lsu = Module(new ysyx_26020046_Lsu(Yosys))
 	val wbu = Module(new ysyx_26020046_Wbu(Yosys))
 	val clt = Module(new ysyx_26020046_Clt)
-	val bar = Module(new ysyx_26020046_Bar)
+	val bar = Module(new ysyx_26020046_Bar(Yosys))
 	//流水线
 	ifu.out.pipe <> idu.in.pipe
 	idu.out.pipe <> exu.in.pipe

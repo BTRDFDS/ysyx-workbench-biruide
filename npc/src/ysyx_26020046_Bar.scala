@@ -4,7 +4,7 @@ import WidthConsts._
 
 object ArbStatus extends ChiselEnum{val Idle,IfuR,LsuR,LsuW=Value}
 object ArbAddr extends ChiselEnum{val Clint,Out,Error=Value}
-class ysyx_26020046_Bar extends Module{
+class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	val out = IO(new Axi4Master())
 	val clt = IO(new Axi4Master())
 	val ifu = IO(Flipped(new Axi4Master()))
