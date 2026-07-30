@@ -80,7 +80,7 @@ extern "C" void exuDone()	{numExuDone++;	}
 extern "C" void lsuLoad()	{numLsuLoad++;	}
 
 extern "C" int getRegPc(int addr);
-extern "C" void ebreak(){	numInst++;NpcReturn("\nebreak",getRegPc(10)!=0);					}
+extern "C" void ebreak(){	numInst++;numIduCsr++;NpcReturn("\nebreak",getRegPc(10)!=0);}
 extern "C" void wbuCheck(){	numInst++;if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);}
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void flash_read(int32_t addr, int32_t *data) {
