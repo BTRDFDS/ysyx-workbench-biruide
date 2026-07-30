@@ -41,15 +41,15 @@ always_ff @(posedge clock) begin
 end
 assign done = has & (cnt[31:6] == '0);
 
-	assign out_paddr   = in_paddr;
-	assign out_psel    = in_psel;
-	assign out_penable = in_penable;
-	assign out_pprot   = in_pprot;
-	assign out_pwrite  = in_pwrite;
-	assign out_pwdata  = in_pwdata;
-	assign out_pstrb   = in_pstrb;
+	assign out_paddr   = has?'d0:in_paddr;
+	assign out_psel    = has?'d0:in_psel;
+	assign out_penable = has?'d0:in_penable;
+	assign out_pprot   = has?'d0:in_pprot;
+	assign out_pwrite  = has?'d0:in_pwrite;
+	assign out_pwdata  = has?'d0:in_pwdata;
+	assign out_pstrb   = has?'d0:in_pstrb;
 	assign in_pready   = done?1		:'0;
 	assign in_prdata   = done?data	:'0;
 	assign in_pslverr  = done?err	:'0;
-
+initial $display("%m");
 endmodule
