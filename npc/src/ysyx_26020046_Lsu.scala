@@ -145,4 +145,25 @@ class ysyx_26020046_Lsu extends Module{
 		is(LsuOp.Load)	{out.pipe.csrMesg := 5.U;out.pipe.csrAddr := in.pipe.result}//读取故障
 		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U;out.pipe.csrAddr := in.pipe.result}//写入故障
 	}}
+
+	val lsuChk = Module(new ysyx_26020046_LsuChk)
+	lsuChk.io.load	:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Load && axi4.rvalid
+	lsuChk.clock	:= clock
+}
+class ysyx_26020046_LsuChk extends ExtModule{
+	val io = IO(new Bundle{
+		val load	= Input(Bool())
+	})
+	val clock = IO(Input(Clock()))
+	setInline("ysyx_26020046_LsuChk.sv",
+	"""
+	module ysyx_26020046_LsuChk(
+		input logic io_load,
+		input logic clock
+	);
+	import "DPI-C" function void lsuLoad();
+	always_ff@(posedge clock) if(io_load)lsuLoad();
+	endmodule
+	"""
+	)
 }

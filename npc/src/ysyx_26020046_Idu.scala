@@ -202,4 +202,53 @@ class ysyx_26020046_Idu extends Module{
 		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U;out.pipe.csrAddr := in.pipe.pc}//Instruction address misaligned
 		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;out.pipe.csrAddr := in.pipe.pc}//Instruction access fault
 	}
+
+	val iduChk = Module(new ysyx_26020046_IduChk)
+	iduChk.clock := clock
+	iduChk.io.cal	:= in.pipe.res === IfuRes.Valid && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
+	iduChk.io.jump	:= in.pipe.res === IfuRes.Valid && (opEnum === Op.Jal	|| opEnum === Op.Ijalr	)
+	iduChk.io.imm	:= in.pipe.res === IfuRes.Valid && (opEnum === Op.Uauipc|| opEnum === Op.Ului	)
+	iduChk.io.ls	:= in.pipe.res === IfuRes.Valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
+	iduChk.io.csr	:= in.pipe.res === IfuRes.Valid && (opEnum === Op.Icsr)
+	iduChk.io.br	:= in.pipe.res === IfuRes.Valid && (opEnum === Op.Branch)
+
+}
+class ysyx_26020046_IduChk extends ExtModule{
+	val io = IO(new Bundle{
+		val cal	= Input(Bool())
+		val jump= Input(Bool())
+		val imm	= Input(Bool())
+		val ls	= Input(Bool())
+		val csr	= Input(Bool())
+		val br	= Input(Bool())
+	})
+	val clock = IO(Input(Clock()))
+	setInline("ysyx_26020046_IduChk.sv",
+	"""
+	module ysyx_26020046_IduChk(
+		input logic io_cal,
+		input logic io_jump,
+		input logic io_imm,
+		input logic io_ls,
+		input logic io_csr,
+		input logic io_br,
+		input logic clock
+	);
+	import "DPI-C" function void iduCal();
+	import "DPI-C" function void iduJump();
+	import "DPI-C" function void iduImm();
+	import "DPI-C" function void iduLs();
+	import "DPI-C" function void iduCsr();
+	import "DPI-C" function void iduBr();
+	always_ff@(posedge clock)begin
+		if(io_cal)	iduCal();
+		if(io_jump)	iduJump();
+		if(io_imm)	iduImm();
+		if(io_ls)	iduLs();
+		if(io_csr)	iduCsr();
+		if(io_br)	iduBr();
+	end
+	endmodule
+	"""
+	)
 }

@@ -45,21 +45,39 @@ const uint32_t flashAddr	=0x30000000;
 const uint32_t flashSize	=0x00ffffff;//flash极限地址是bfff_ffff
 uint8_t flash[flashSize];
 
-uint64_t numCycle;
-uint64_t numInst;
-uint64_t numIfuInst;
+uint64_t numCycle	=0;
+uint64_t numInst	=0;
+
+uint64_t numIfuInst	=0;
+
+uint64_t numIduCal	=0;
+uint64_t numIduJump	=0;
+uint64_t numIduImm	=0;
+uint64_t numIduLs	=0;
+uint64_t numIduCsr	=0;
+uint64_t numIduBr	=0;
+
+uint64_t numExuDone	=0;
+
+uint64_t numLsuLoad	=0;
 
 void NpcEbreak(int returnCode);
 void NpcRun(uint32_t times);
 void NpcReturn(const char* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
-extern "C" void ifuCheck(){numIfuInst++;}
+extern "C" void ifuInst()	{numIfuInst++;	}
 
+extern "C" void iduCal()	{numIduCal++;	}
+extern "C" void iduJump()	{numIduJump++;	}
+extern "C" void iduImm()	{numIduImm++;	}
+extern "C" void iduLs()		{numIduLs++;	}
+extern "C" void iduCsr()	{numIduCsr++;	}
+extern "C" void iduBr()		{numIduBr++;	}
 
+extern "C" void exuDone()	{numExuDone++;	}
 
-
-
+extern "C" void lsuLoad()	{numLsuLoad++;	}
 
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){	numInst++;NpcReturn("\nebreak",getRegPc(10)!=0);					}
@@ -114,7 +132,6 @@ extern "C" int psram_read(int32_t addr){
 	#endif
 	return temp;
 }
-
 extern "C" void psram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#if defined(NPC_M_TRACE)
@@ -280,7 +297,10 @@ void NpcReturn(const char* msg,int returnCode){
 	#endif
 	printf("%s cycle=%ld inst=%ld IPC=%f pc=0x %x\n",msg,numCycle,numInst,(float)(((float)numInst)/((float)numCycle)),getRegPc(0)-4);//实质上是已经是next pc了
 	printf("ifu inst = %ld\n",numIfuInst);
-	
+	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld\n",numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr);
+	printf("exu done= %ld\n",numExuDone);
+	printf("lsu load= %ld\n",numLsuLoad);
+
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
 	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
