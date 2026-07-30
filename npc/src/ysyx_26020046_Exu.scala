@@ -82,7 +82,7 @@ class ysyx_26020046_Exu extends Module {
 	}
 
 	val exuChk = Module(new ysyx_26020046_ExuChk)
-	exuChk.io.clock := clock
+	exuChk.clock := clock
 	exuChk.io.done := out.pipe.valid && ~(
 		in.pipe.alu === ExuAlu.Null &&
 		in.pipe.bfu === ExuBfu.Null &&

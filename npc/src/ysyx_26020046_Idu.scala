@@ -37,6 +37,7 @@ class ysyx_26020046_Idu extends Module{
 	in.imme.r2Addr	:= 0.U
 	in.imme.csrAddr	:= 0.U
 
+	val (opEnum,opValid) = Op.safe(opCode)
 	switch(in.pipe.res){is(IfuRes.Valid){
 		val opCode	= in.pipe.instr( 6, 0)
 		val rdAddr	= in.pipe.instr(11, 7)
@@ -53,7 +54,6 @@ class ysyx_26020046_Idu extends Module{
 		val csrOp	= WireInit(CsrOp.Null)
 		val csrMesg = WireInit(in.imme.csrOut)
 
-		val (opEnum,opValid) = Op.safe(opCode)
 		when(opValid){
 			switch(opEnum){
 				is(Op.Ului)		{out.pipe.result := Cat(in.pipe.instr(31,12),0.U(12.W))}
