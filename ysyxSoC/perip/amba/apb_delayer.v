@@ -51,5 +51,5 @@ assign done = has & (cnt[31:6] == '0);
 	assign in_pready   = done?1		:'0;
 	assign in_prdata   = done?data	:'0;
 	assign in_pslverr  = done?err	:'0;
-initial $display("%m");
+// initial $display("%m");
 endmodule
