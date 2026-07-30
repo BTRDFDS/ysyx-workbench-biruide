@@ -88,7 +88,7 @@ class ysyx_26020046_Bar extends Module{
 		}
 	}
 	.otherwise{
-		if(Yosys === false.B){
+		if(Yosys == false){
 			when(status =/= ArbStatus.Idle){
 				printf("arb addr error %x\n",addr)
 				stop()
