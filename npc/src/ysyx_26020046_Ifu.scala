@@ -51,7 +51,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt) extends Module{
 		axi4.wstrb	:= 0.U
 		
 	val ifuChk = Module(new ysyx_26020046_IfuChk)
-	ifuChk.io.success	:= (status == IfuStatus.Back && axi4.rvalid == true.B)
+	ifuChk.io.success	:= (status === IfuStatus.Back && axi4.rvalid)
 	ifuChk.clock		:= clock
 }
 
