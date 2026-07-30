@@ -51,7 +51,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U) extends Module {
 	io.master.awaddr	<> bar.out.awaddr
 	io.master.awid		:= 0.U
 	io.master.awlen		:= 0.U
-	io.master.awsize	:= 0.U
+	io.master.awsize	:= 2.U
 	io.master.awburst	:= 0.U
 	io.master.awready	<> bar.out.awready
 
