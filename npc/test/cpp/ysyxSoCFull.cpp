@@ -272,7 +272,7 @@ void NpcReturn(const char* msg,int returnCode){
 	#ifdef NPC_NVBroad
 		nvboard_quit();
 	#endif
-	printf("%s cycle=%ld inst=%ld IPC=%f pc=0x %x\n",msg,numCycle,numInst,(float)(numInst/numCycle),getRegPc(0)-4);//实质上是已经是next pc了
+	printf("%s cycle=%ld inst=%ld IPC=%f pc=0x %x\n",msg,numCycle,numInst,(float)(((float)numInst)/((float)numCycle)),getRegPc(0)-4);//实质上是已经是next pc了
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
 	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
