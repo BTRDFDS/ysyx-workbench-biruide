@@ -3,7 +3,7 @@ import chisel3.util._
 import WidthConsts._
 
 object IfuStatus extends ChiselEnum{val Back,Call,Func=Value}
-class ysyx_26020046_Ifu(val PcInit:UInt) extends Module{
+class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Bool=false.B) extends Module{
 	val in = IO(new Bundle{
 		val imme = Flipped(new ImmeBefore())
 	})
@@ -50,10 +50,12 @@ class ysyx_26020046_Ifu(val PcInit:UInt) extends Module{
 		axi4.wdata	:= 0.U
 		axi4.wstrb	:= 0.U
 		
-	val ifuChk = Module(new ysyx_26020046_IfuChk)
-	ifuChk.clock		:= clock
-	ifuChk.io.inst	:= (status === IfuStatus.Back && axi4.rvalid)
-	ifuChk.io.stall	:= (status =/= IfuStatus.Func)
+	if(Yosys === false.B){
+		val ifuChk = Module(new ysyx_26020046_IfuChk)
+		ifuChk.clock		:= clock
+		ifuChk.io.inst	:= (status === IfuStatus.Back && axi4.rvalid)
+		ifuChk.io.stall	:= (status =/= IfuStatus.Func)
+	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
 	val io = IO(new Bundle{

@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-class ysyx_26020046_Idu extends Module{
+class ysyx_26020046_Idu(val Yosys:Bool=false.B) extends Module{
 	val in = IO(new Bundle{
 		val pipe	= Flipped(new PipeIfId())
 		val imme	= Flipped(new ImmeAfter())
@@ -203,15 +203,17 @@ class ysyx_26020046_Idu extends Module{
 		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U;out.pipe.csrAddr := in.pipe.pc}//Instruction address misaligned
 		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;out.pipe.csrAddr := in.pipe.pc}//Instruction access fault
 	}
+	if(Yosys === false.B){
+		val iduChk = Module(new ysyx_26020046_IduChk)
+		iduChk.clock := clock
+		iduChk.io.cal	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
+		iduChk.io.jump	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Jal		|| opEnum === Op.Ijalr	)
+		iduChk.io.imm	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Uauipc	|| opEnum === Op.Ului	)
+		iduChk.io.ls	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Store	|| opEnum === Op.Iload	)
+		iduChk.io.csr	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Icsr)
+		iduChk.io.br	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Branch)
 
-	val iduChk = Module(new ysyx_26020046_IduChk)
-	iduChk.clock := clock
-	iduChk.io.cal	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
-	iduChk.io.jump	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Jal	|| opEnum === Op.Ijalr	)
-	iduChk.io.imm	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Uauipc|| opEnum === Op.Ului	)
-	iduChk.io.ls	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Store	|| opEnum === Op.Iload	)
-	iduChk.io.csr	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Icsr)
-	iduChk.io.br	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Branch)
+	}
 
 }
 class ysyx_26020046_IduChk extends ExtModule{

@@ -2,7 +2,7 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-class ysyx_26020046_Wbu() extends Module {
+class ysyx_26020046_Wbu(val Yosys:Bool=false.B) extends Module {
 	val PcReset:UInt=0x80000000L.U(BitWidth.W)
 	val RegWidth = log2Ceil(RegNum)
 	val MstatuseReset = 0x1800.U(BitWidth.W)
@@ -39,10 +39,6 @@ class ysyx_26020046_Wbu() extends Module {
 			is(CsrOp.Trap){//TODO:ecall有问题
 				mcause	:= in.pipe.csrMesg
 				mepc 	:= in.pipe.pc
-				// when(in.pipe.csrMesg === 3.U){
-				// 	printf("ebreak,stop!!!\n")
-				// 	// stop()
-				// }
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
@@ -74,17 +70,19 @@ class ysyx_26020046_Wbu() extends Module {
 		mepc 			:= in.pipe.pc
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
-		printf("error,stop!!! %x tval: %x ",in.pipe.csrMesg,in.pipe.csrAddr)//tval
-		when(in.pipe.csrMesg===3.U	){printf("ebreak\n")}
-		when(in.pipe.csrMesg===11.U	){printf("ecall\n")}
-		when(in.pipe.csrMesg===0.U	){printf("ifuN4\n")}
-		when(in.pipe.csrMesg===1.U	){printf("ifuErr\n")}
-		when(in.pipe.csrMesg===2.U	){printf("instr\n")}
-		when(in.pipe.csrMesg===4.U	){printf("laddr\n")}
-		when(in.pipe.csrMesg===5.U	){printf("lerror\n")}
-		when(in.pipe.csrMesg===6.U	){printf("sAddr\n")}
-		when(in.pipe.csrMesg===7.U	){printf("sError\n")}
-		stop()
+		if(Yosys === false.B){
+			printf("error,stop!!! %x tval: %x ",in.pipe.csrMesg,in.pipe.csrAddr)//tval
+			when(in.pipe.csrMesg===3.U	){printf("ebreak\n")}
+			when(in.pipe.csrMesg===11.U	){printf("ecall\n")}
+			when(in.pipe.csrMesg===0.U	){printf("ifuN4\n")}
+			when(in.pipe.csrMesg===1.U	){printf("ifuErr\n")}
+			when(in.pipe.csrMesg===2.U	){printf("instr\n")}
+			when(in.pipe.csrMesg===4.U	){printf("laddr\n")}
+			when(in.pipe.csrMesg===5.U	){printf("lerror\n")}
+			when(in.pipe.csrMesg===6.U	){printf("sAddr\n")}
+			when(in.pipe.csrMesg===7.U	){printf("sError\n")}
+			stop()
+		}
 	}otherwise{
 		out.imme.back := Back.Ready
 		out.imme.addr	:= 0.U
@@ -111,17 +109,19 @@ class ysyx_26020046_Wbu() extends Module {
 		}otherwise{out.imme.csrOut := 0.U}
 	}
 
-	val wbuChk = Module(new ysyx_26020046_WbuChk)
-	wbuChk.io.reg := gpr
-	wbuChk.io.ebreak := 
-		(in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 0x3L.U) ||
-		(in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) ||
-		error
-	wbuChk.io.pc := in.pipe.pc
-	val check = Reg(Bool())
-	check := in.pipe.valid === true.B
-	wbuChk.io.check := check
-	wbuChk.clock := clock
+	if(Yosys === false.B){
+		val wbuChk = Module(new ysyx_26020046_WbuChk)
+		wbuChk.io.reg := gpr
+		wbuChk.io.ebreak := 
+			(in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 0x3L.U) ||
+			(in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) ||
+			error
+		wbuChk.io.pc := in.pipe.pc
+		val check = Reg(Bool())
+		check := in.pipe.valid === true.B
+		wbuChk.io.check := check
+		wbuChk.clock := clock
+	}
 }
 class ysyx_26020046_WbuChk extends ExtModule{
 	val io = IO(new Bundle{

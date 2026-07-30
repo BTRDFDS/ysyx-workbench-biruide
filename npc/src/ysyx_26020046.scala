@@ -2,17 +2,17 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-class ysyx_26020046(val PcInit:UInt=0x30000000L.U) extends Module {
+class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Bool=false.B) extends Module {
 	val io = IO(new Bundle {
 		val interrupt = Input(Bool())
 		val master = new Axi4MasterOut()
 		val slave = Flipped(new Axi4MasterOut())
 	})
-	val ifu = Module(new ysyx_26020046_Ifu(PcInit))
-	val idu = Module(new ysyx_26020046_Idu)
-	val exu = Module(new ysyx_26020046_Exu)
-	val lsu = Module(new ysyx_26020046_Lsu)
-	val wbu = Module(new ysyx_26020046_Wbu)
+	val ifu = Module(new ysyx_26020046_Ifu(PcInit,Yosys))
+	val idu = Module(new ysyx_26020046_Idu(Yosys))
+	val exu = Module(new ysyx_26020046_Exu(Yosys))
+	val lsu = Module(new ysyx_26020046_Lsu(Yosys))
+	val wbu = Module(new ysyx_26020046_Wbu(Yosys))
 	val clt = Module(new ysyx_26020046_Clt)
 	val bar = Module(new ysyx_26020046_Bar)
 	//流水线

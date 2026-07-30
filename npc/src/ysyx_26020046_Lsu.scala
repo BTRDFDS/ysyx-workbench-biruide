@@ -4,7 +4,7 @@ import WidthConsts._
 
 object LsuStatus extends ChiselEnum{val Back,Call,Idle,Suce=Value}
 
-class ysyx_26020046_Lsu extends Module{
+class ysyx_26020046_Lsu(val Yosys:Bool=false.B) extends Module{
 	val in = IO(new Bundle{
 		val pipe = Flipped(new PipeExLs())
 		val imme = Flipped(new ImmeAfter())
@@ -146,12 +146,14 @@ class ysyx_26020046_Lsu extends Module{
 		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U;out.pipe.csrAddr := in.pipe.result}//写入故障
 	}}
 
-	val lsuChk = Module(new ysyx_26020046_LsuChk)
-	lsuChk.clock		:= clock
-	lsuChk.io.load		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Load && axi4.rvalid
-	lsuChk.io.loadWait	:= (status === LsuStatus.Back || status === LsuStatus.Call) && in.pipe.lsuOp === LsuOp.Load
-	lsuChk.io.store		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Store && axi4.bvalid
-	lsuChk.io.storeWait	:= (status === LsuStatus.Back || status === LsuStatus.Call) && in.pipe.lsuOp === LsuOp.Store
+	if(Yosys === false.B){
+		val lsuChk = Module(new ysyx_26020046_LsuChk)
+		lsuChk.clock		:= clock
+		lsuChk.io.load		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Load && axi4.rvalid
+		lsuChk.io.loadWait	:= (status === LsuStatus.Back || status === LsuStatus.Call) && in.pipe.lsuOp === LsuOp.Load
+		lsuChk.io.store		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Store && axi4.bvalid
+		lsuChk.io.storeWait	:= (status === LsuStatus.Back || status === LsuStatus.Call) && in.pipe.lsuOp === LsuOp.Store
+	}
 }
 class ysyx_26020046_LsuChk extends ExtModule{
 	val io = IO(new Bundle{

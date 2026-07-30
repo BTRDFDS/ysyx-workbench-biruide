@@ -1,7 +1,7 @@
 test:
 	mill -i test
 
-verilog:verilogNpc verilogYsyxSoc
+verilog:verilogNpc verilogYsyxSoc verilogYosys
 	$(call git_commit, "generate verilog")
 # 	mkdir -p ./build
 # 	mill -i runMain Builder
@@ -15,6 +15,11 @@ verilogYsyxSoc:
 	mkdir -p ./build
 	mkdir -p ./build/ysyxsoc
 	mill -i runMain BuilderYsyxSoc
+verilogYosys:
+	$(call git_commit, "generate verilog for Yosys")
+	mkdir -p ./build
+	mkdir -p ./build/yosys
+	mill -i runMain BuilderYosys
 
 help:
 	mill -i runMain Builder --help
@@ -102,3 +107,8 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
 # 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim	 
+
+srcVerilogYosys += $(shell find $(NPC_HOME)/build/yosys -type f -name "*.sv")
+sta:verilogYosys srcVerilogYosys
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogYosys)"
+# 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
