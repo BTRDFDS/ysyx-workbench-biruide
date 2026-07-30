@@ -297,7 +297,9 @@ void NpcReturn(const char* msg,int returnCode){
 	#endif
 	printf("%s cycle=%ld inst=%ld IPC=%f pc=0x %x\n",msg,numCycle,numInst,(float)(((float)numInst)/((float)numCycle)),getRegPc(0)-4);//实质上是已经是next pc了
 	printf("ifu inst = %ld\n",numIfuInst);
-	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld\n",numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr);
+	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld\n",
+		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
+		numIduCal+numIduJump+numIduImm+numIduLs+numIduCsr+numIduBr);
 	printf("exu done= %ld\n",numExuDone);
 	printf("lsu load= %ld\n",numLsuLoad);
 
