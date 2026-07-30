@@ -48,7 +48,7 @@ uint8_t flash[flashSize];
 uint64_t numCycle		=0;
 uint64_t numInst		=0;
 uint64_t numIfuInst		=0;
-uint64_t numIfuWait 	=0;
+uint64_t numIfuStall 	=0;
 uint64_t numIduCal		=0;
 uint64_t numIduJump		=0;
 uint64_t numIduImm		=0;
@@ -67,7 +67,7 @@ void NpcReturn(const char* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void ifuInst()		{numIfuInst++;		}
-extern "C" void ifuWait()		{numIfuWait++;		}
+extern "C" void ifuStall()		{numIfuStall++;		}
 extern "C" void iduCal()		{numIduCal++;		}
 extern "C" void iduJump()		{numIduJump++;		}
 extern "C" void iduImm()		{numIduImm++;		}
@@ -297,7 +297,7 @@ void NpcReturn(const char* msg,int returnCode){
 		nvboard_quit();
 	#endif
 	printf("%s cycle=%ld inst=%ld IPC=%f pc=0x %x\n",msg,numCycle,numInst,(float)(((float)numInst)/((float)numCycle)),getRegPc(0)-4);//实质上是已经是next pc了
-	printf("ifu inst = %ld wait= %ld WpI= %f\n",numIfuInst,numIfuWait,(float)((float)numIfuWait)/((float)numIfuInst));
+	printf("ifu inst = %ld wait= %ld WpI= %f\n",numIfuInst,numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst));
 	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld\n",
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
 		numIduCal+numIduJump+numIduImm+numIduLs+numIduCsr+numIduBr);
