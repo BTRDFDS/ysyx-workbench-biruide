@@ -62,8 +62,8 @@ extern "C" void ifuCheck(){numIfuInst++;}
 
 
 extern "C" int getRegPc(int addr);
-extern "C" void ebreak(){	numIfuInst++;	NpcReturn("\nebreak",getRegPc(10)!=0);						}
-extern "C" void wbuCheck(){	numInst++;		if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);	}
+extern "C" void ebreak(){	numInst++;NpcReturn("\nebreak",getRegPc(10)!=0);					}
+extern "C" void wbuCheck(){	numInst++;if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);}
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void flash_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
