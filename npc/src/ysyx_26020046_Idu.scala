@@ -210,7 +210,7 @@ class ysyx_26020046_Idu extends Module{
 	iduChk.io.jump	:= in.pipe.res === IfuRes.Valid && in.imme.back === Back.Ready && (opEnum === Op.Jal	|| opEnum === Op.Ijalr	)
 	iduChk.io.imm	:= in.pipe.res === IfuRes.Valid && in.imme.back === Back.Ready && (opEnum === Op.Uauipc|| opEnum === Op.Ului	)
 	iduChk.io.ls	:= in.pipe.res === IfuRes.Valid && in.imme.back === Back.Ready && (opEnum === Op.Store	|| opEnum === Op.Iload	)
-	iduChk.io.csr	:= in.pipe.res === IfuRes.Valid && in.imme.back === Back.Ready && (opEnum === Op.Icsr)
+	iduChk.io.csr	:= in.pipe.res === IfuRes.Valid && in.imme.back === Back.Ready// && (opEnum === Op.Icsr)
 	iduChk.io.br	:= in.pipe.res === IfuRes.Valid && in.imme.back === Back.Ready && (opEnum === Op.Branch)
 
 }
