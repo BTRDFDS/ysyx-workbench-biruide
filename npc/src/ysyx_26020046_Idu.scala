@@ -206,12 +206,12 @@ class ysyx_26020046_Idu extends Module{
 
 	val iduChk = Module(new ysyx_26020046_IduChk)
 	iduChk.clock := clock
-	iduChk.io.cal	:= in.pipe.res === IfuRes.Valid && in.imme.back =\= Back.Wait && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
-	iduChk.io.jump	:= in.pipe.res === IfuRes.Valid && in.imme.back =\= Back.Wait && (opEnum === Op.Jal	|| opEnum === Op.Ijalr	)
-	iduChk.io.imm	:= in.pipe.res === IfuRes.Valid && in.imme.back =\= Back.Wait && (opEnum === Op.Uauipc|| opEnum === Op.Ului	)
-	iduChk.io.ls	:= in.pipe.res === IfuRes.Valid && in.imme.back =\= Back.Wait && (opEnum === Op.Store	|| opEnum === Op.Iload	)
-	iduChk.io.csr	:= in.pipe.res === IfuRes.Valid && in.imme.back =\= Back.Wait && (opEnum === Op.Icsr)
-	iduChk.io.br	:= in.pipe.res === IfuRes.Valid && in.imme.back =\= Back.Wait && (opEnum === Op.Branch)
+	iduChk.io.cal	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
+	iduChk.io.jump	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Jal	|| opEnum === Op.Ijalr	)
+	iduChk.io.imm	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Uauipc|| opEnum === Op.Ului	)
+	iduChk.io.ls	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Store	|| opEnum === Op.Iload	)
+	iduChk.io.csr	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Icsr)
+	iduChk.io.br	:= in.pipe.res === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Branch)
 
 }
 class ysyx_26020046_IduChk extends ExtModule{
