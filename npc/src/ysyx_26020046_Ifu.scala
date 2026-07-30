@@ -49,4 +49,26 @@ class ysyx_26020046_Ifu(val PcInit:UInt) extends Module{
 		axi4.awaddr	:= 0.U
 		axi4.wdata	:= 0.U
 		axi4.wstrb	:= 0.U
+		
+	val ifuChk = Module(new ysyx_26020046_IfuChk)
+	ifuChk.io.success	:= (status == IfuStatus.Back && axi4.rvalid)
+	ifuChk.clock		:= clock
+}
+
+class ysyx_26020046_IfuChk extends ExtModule{
+	val io = IO(new Bundle{
+		val success	= Input(Bool())
+	})
+	val clock = IO(Input(Clock()))
+	setInline("ysyx_26020046_IfuChk.sv",
+	"""
+	module ysyx_26020046_IfuChk(
+		input logic io_success,
+		input logic clock
+	);
+	import "DPI-C" function void ifuCheck();
+	always_ff@(posedge clock) if(io_success)ifuCheck();
+	endmodule
+	"""
+	)
 }

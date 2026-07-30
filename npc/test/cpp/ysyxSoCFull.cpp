@@ -47,18 +47,27 @@ uint8_t flash[flashSize];
 
 uint64_t numCycle;
 uint64_t numInst;
+uint64_t numIfuInst;
 
 void NpcEbreak(int returnCode);
 void NpcRun(uint32_t times);
 void NpcReturn(const char* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
+extern "C" void ifuCheck(){numIfuInst++;}
+
+
+
+
+
+
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){NpcReturn("\nebreak",getRegPc(10)!=0);}
-extern "C" void check(){
+extern "C" void wbuCheck(){
 	numInst++;
 	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 }
+////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void flash_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#ifdef NPC_M_TRACE
@@ -163,7 +172,7 @@ void NpcInitDevice(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new VysyxSoCFull{contextp};
-	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.wbu.chk");
+	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.wbu.wbuChk");
 	svSetScope(scope);
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		Verilated::traceEverOn(true);
@@ -273,6 +282,8 @@ void NpcReturn(const char* msg,int returnCode){
 		nvboard_quit();
 	#endif
 	printf("%s cycle=%ld inst=%ld IPC=%f pc=0x %x\n",msg,numCycle,numInst,(float)(((float)numInst)/((float)numCycle)),getRegPc(0)-4);//实质上是已经是next pc了
+	printf("ifu inst = %ld\n",numInst_ifu);
+	
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
 	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",

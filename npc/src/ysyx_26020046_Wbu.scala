@@ -111,16 +111,19 @@ class ysyx_26020046_Wbu() extends Module {
 		}otherwise{out.imme.csrOut := 0.U}
 	}
 
-	val chk = Module(new ysyx_26020046_Chk)
-	chk.io.reg := gpr
-	chk.io.ebreak := (in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 0x3L.U) || (in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) || error
-	chk.io.pc := in.pipe.pc
+	val wbuChk = Module(new ysyx_26020046_WbuChk)
+	wbuChk.io.reg := gpr
+	wbuChk.io.ebreak := 
+		(in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 0x3L.U) ||
+		(in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) ||
+		error
+	wbuChk.io.pc := in.pipe.pc
 	val check = Reg(Bool())
 	check := in.pipe.valid === true.B
-	chk.io.check := check
-	chk.clock := clock
+	wbuChk.io.check := check
+	wbuChk.clock := clock
 }
-class ysyx_26020046_Chk extends ExtModule{
+class ysyx_26020046_WbuChk extends ExtModule{
 	val io = IO(new Bundle{
 		val reg		= Input(Vec(RegNum, UInt(BitWidth.W)))
 		val ebreak	= Input(Bool())
@@ -128,9 +131,9 @@ class ysyx_26020046_Chk extends ExtModule{
 		val check	= Input(Bool())
 	})
 	val clock = IO(Input(Clock()))
-	setInline("ysyx_26020046_Chk.sv",
+	setInline("ysyx_26020046_WbuChk.sv",
 	"""
-	module ysyx_26020046_Chk(
+	module ysyx_26020046_WbuChk(
 		input logic io_ebreak,
 		input logic [31:0]  io_reg_0, io_reg_1, io_reg_2, io_reg_3, io_reg_4, io_reg_5, io_reg_6, io_reg_7,
 		input logic [31:0]  io_reg_8, io_reg_9,io_reg_10,io_reg_11,io_reg_12,io_reg_13,io_reg_14,io_reg_15,
@@ -141,10 +144,7 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic clock
 	);
 	import "DPI-C" function void ebreak();
-	always_ff@(posedge clock) if(io_ebreak)begin
-		// $display("\nebreak=%d at pc:%x",io_ebreak,io_pc);
-		ebreak();
-	end
+	always_ff@(posedge clock) if(io_ebreak)ebreak();
 	export "DPI-C" function getRegPc;
 	function int getRegPc(input int addr);
 		case(addr)
@@ -183,8 +183,8 @@ class ysyx_26020046_Chk extends ExtModule{
 			default: return 0;
 		endcase
 	endfunction
-	import "DPI-C" function void check();
-	always_ff@(posedge clock) if(io_check)check();
+	import "DPI-C" function void wbuCheck();
+	always_ff@(posedge clock) if(io_check)wbuCheck();
 
 	endmodule
 	"""
