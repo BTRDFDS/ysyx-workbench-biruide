@@ -25,7 +25,7 @@ module apb_delayer(
 );
 logic [31:0] cnt,data;
 logic has,done,err;
-localparam rs = 263;//(5.1118-1)*64//TODO
+localparam rs = 1052;//(5.1118-1)*64//TODO
 // localparam s = 6;//2^6
 always_ff @(posedge clock) begin
 	if(reset | ~in_psel | ~in_penable)has <= 0;
@@ -36,8 +36,8 @@ always_ff @(posedge clock) begin
 	end
 
 	if(reset | ~in_psel | ~in_penable)cnt <= 'd0;
-	else if(has)cnt[31:6] <= (cnt[31:6] == 'd0)?'d0:(cnt[31:6] - 'd1);
-	else if(~in_pready)cnt <= cnt + rs;
+	else if(has | in_pready)cnt[31:6] <= (cnt[31:6] == 'd0)?'d0:(cnt[31:6] - 'd1);
+	else cnt <= cnt + rs;
 end
 assign done = has & (cnt[31:6] == '0);
 
