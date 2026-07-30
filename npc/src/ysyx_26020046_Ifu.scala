@@ -51,22 +51,30 @@ class ysyx_26020046_Ifu(val PcInit:UInt) extends Module{
 		axi4.wstrb	:= 0.U
 		
 	val ifuChk = Module(new ysyx_26020046_IfuChk)
-	ifuChk.io.inst	:= (status === IfuStatus.Back && axi4.rvalid)
 	ifuChk.clock		:= clock
+	ifuChk.io.inst	:= (status === IfuStatus.Back && axi4.rvalid)
+	ifuChk.io.wait	:= (status =/= IfuStatus.Func)
 }
 class ysyx_26020046_IfuChk extends ExtModule{
 	val io = IO(new Bundle{
 		val inst	= Input(Bool())
+		val wait	= Input(Bool())
 	})
 	val clock = IO(Input(Clock()))
 	setInline("ysyx_26020046_IfuChk.sv",
 	"""
 	module ysyx_26020046_IfuChk(
 		input logic io_inst,
+		input logic io_wait,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
-	always_ff@(posedge clock) if(io_inst)ifuInst();
+	import "DPI-C" function void ifuWait();
+
+	always_ff@(posedge clock)begin
+		if(io_wait)ifuWait();
+		if(io_inst)ifuInst();
+	end
 	endmodule
 	"""
 	)

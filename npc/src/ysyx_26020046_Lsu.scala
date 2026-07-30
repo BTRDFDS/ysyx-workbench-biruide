@@ -147,22 +147,39 @@ class ysyx_26020046_Lsu extends Module{
 	}}
 
 	val lsuChk = Module(new ysyx_26020046_LsuChk)
-	lsuChk.io.load	:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Load && axi4.rvalid
-	lsuChk.clock	:= clock
+	lsuChk.clock		:= clock
+	lsuChk.io.load		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Load && axi4.rvalid
+	lsuChk.io.loadWait	:= (status === LsuStatus.Back || status === LsuStatus.Call) && in.pipe.lsuOp === LsuOp.Load
+	lsuChk.io.store		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Store && axi4.bvalid
+	lsuChk.io.storeWait	:= (status === LsuStatus.Back || status === LsuStatus.Call) && in.pipe.lsuOp === LsuOp.Store
 }
 class ysyx_26020046_LsuChk extends ExtModule{
 	val io = IO(new Bundle{
-		val load	= Input(Bool())
+		val load		= Input(Bool())
+		val loadWait	= Input(Bool())
+		val store		= Input(Bool())
+		val storeWait	= Input(Bool())
 	})
 	val clock = IO(Input(Clock()))
 	setInline("ysyx_26020046_LsuChk.sv",
 	"""
 	module ysyx_26020046_LsuChk(
 		input logic io_load,
+		input logic io_loadWait,
+		input logic io_store,
+		input logic io_storeWait,
 		input logic clock
 	);
 	import "DPI-C" function void lsuLoad();
-	always_ff@(posedge clock) if(io_load)lsuLoad();
+	import "DPI-C" function void lsuLoadWait();
+	import "DPI-C" function void lsuStore();
+	import "DPI-C" function void lsuStoreWait();
+	always_ff@(posedge clock)begin
+		if(io_load		)lsuLoad();
+		if(io_loadWait	)lsuLoadWait();
+		if(io_store		)lsuStore();
+		if(io_storeWait	)lsuStoreWait();
+	end
 	endmodule
 	"""
 	)
