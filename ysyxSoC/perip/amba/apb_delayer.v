@@ -25,7 +25,7 @@ module apb_delayer(
 );
 logic [31:0] cnt,data;
 logic has,done,err;
-localparam rs = 263;//(5.1118-1)*64
+localparam rs = 263;//(5.1118-1)*64//TODO
 // localparam s = 6;//2^6
 always_ff @(posedge clock) begin
 	if(reset | ~in_psel | ~in_penable)has <= 0;
