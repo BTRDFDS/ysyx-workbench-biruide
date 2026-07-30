@@ -2,7 +2,7 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-class ysyx_26020046_Wbu(val Yosys:Bool=false.B) extends Module {
+class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	val PcReset:UInt=0x80000000L.U(BitWidth.W)
 	val RegWidth = log2Ceil(RegNum)
 	val MstatuseReset = 0x1800.U(BitWidth.W)
@@ -70,7 +70,7 @@ class ysyx_26020046_Wbu(val Yosys:Bool=false.B) extends Module {
 		mepc 			:= in.pipe.pc
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
-		if(Yosys === false.B){
+		if(Yosys == false){
 			printf("error,stop!!! %x tval: %x ",in.pipe.csrMesg,in.pipe.csrAddr)//tval
 			when(in.pipe.csrMesg===3.U	){printf("ebreak\n")}
 			when(in.pipe.csrMesg===11.U	){printf("ecall\n")}
@@ -109,7 +109,7 @@ class ysyx_26020046_Wbu(val Yosys:Bool=false.B) extends Module {
 		}otherwise{out.imme.csrOut := 0.U}
 	}
 
-	if(Yosys === false.B){
+	if(Yosys == false){
 		val wbuChk = Module(new ysyx_26020046_WbuChk)
 		wbuChk.io.reg := gpr
 		wbuChk.io.ebreak := 

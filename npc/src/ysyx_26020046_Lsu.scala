@@ -4,7 +4,7 @@ import WidthConsts._
 
 object LsuStatus extends ChiselEnum{val Back,Call,Idle,Suce=Value}
 
-class ysyx_26020046_Lsu(val Yosys:Bool=false.B) extends Module{
+class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val in = IO(new Bundle{
 		val pipe = Flipped(new PipeExLs())
 		val imme = Flipped(new ImmeAfter())
@@ -146,7 +146,7 @@ class ysyx_26020046_Lsu(val Yosys:Bool=false.B) extends Module{
 		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U;out.pipe.csrAddr := in.pipe.result}//写入故障
 	}}
 
-	if(Yosys === false.B){
+	if(Yosys == false){
 		val lsuChk = Module(new ysyx_26020046_LsuChk)
 		lsuChk.clock		:= clock
 		lsuChk.io.load		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Load && axi4.rvalid

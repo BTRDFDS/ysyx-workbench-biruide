@@ -2,7 +2,7 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-class ysyx_26020046_Exu(val Yosys:Bool=false.B) extends Module {
+class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val in = IO(new Bundle {
 		val imme = Flipped(new ImmeAfter())
 		val pipe = Flipped(new PipeIdEx())
@@ -80,7 +80,7 @@ class ysyx_26020046_Exu(val Yosys:Bool=false.B) extends Module {
 			}.otherwise{out.imme.back := in.imme.back}
 		}
 	}
-	if(Yosys === false.B){
+	if(Yosys == false){
 		val exuChk = Module(new ysyx_26020046_ExuChk)
 		exuChk.clock := clock
 		exuChk.io.done := out.pipe.valid && in.imme.back =/= Back.Wait && ~(
