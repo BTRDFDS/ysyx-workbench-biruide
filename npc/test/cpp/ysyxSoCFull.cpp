@@ -296,7 +296,7 @@ void NpcReturn(const char* msg,int returnCode){
 	#ifdef NPC_NVBroad
 		nvboard_quit();
 	#endif
-	printf("%s cycle=%ld inst=%ld IPC=%f pc=0x %x\n",msg,numCycle,numInst,(float)(((float)numInst)/((float)numCycle)),getRegPc(0)-4);//实质上是已经是next pc了
+	printf("%s pc=0x %x cycle=%ld inst=%ld IPC=%f\n",msg,getRegPc(0)-4,numCycle,numInst,(float)(((float)numInst)/((float)numCycle)));//实质上是已经是next pc了
 	printf("ifu inst = %ld wait= %ld WpI= %f\n",numIfuInst,numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst));
 	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld\n",
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
