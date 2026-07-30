@@ -37,23 +37,24 @@ class ysyx_26020046_Idu extends Module{
 	in.imme.r2Addr	:= 0.U
 	in.imme.csrAddr	:= 0.U
 
+	val opCode	= in.pipe.instr( 6, 0)
+	val rdAddr	= in.pipe.instr(11, 7)
+	val funct3	= in.pipe.instr(14,12)
+	val r1Addr	= in.pipe.instr(19,15)
+	val r2Addr	= in.pipe.instr(24,20)
+	val funct7	= in.pipe.instr(31,25)
+
+	val bfuValid = WireInit(true.B)
+	val lsuValid = WireInit(true.B)
+	val aluValid = WireInit(true.B)
+	val csrValid = WireInit(true.B)
+
+	val csrOp	= WireInit(CsrOp.Null)
+	val csrMesg = WireInit(in.imme.csrOut)
+	
 	val (opEnum,opValid) = Op.safe(opCode)
+
 	switch(in.pipe.res){is(IfuRes.Valid){
-		val opCode	= in.pipe.instr( 6, 0)
-		val rdAddr	= in.pipe.instr(11, 7)
-		val funct3	= in.pipe.instr(14,12)
-		val r1Addr	= in.pipe.instr(19,15)
-		val r2Addr	= in.pipe.instr(24,20)
-		val funct7	= in.pipe.instr(31,25)
-
-		val bfuValid = WireInit(true.B)
-		val lsuValid = WireInit(true.B)
-		val aluValid = WireInit(true.B)
-		val csrValid = WireInit(true.B)
-
-		val csrOp	= WireInit(CsrOp.Null)
-		val csrMesg = WireInit(in.imme.csrOut)
-
 		when(opValid){
 			switch(opEnum){
 				is(Op.Ului)		{out.pipe.result := Cat(in.pipe.instr(31,12),0.U(12.W))}
