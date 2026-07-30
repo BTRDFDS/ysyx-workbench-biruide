@@ -86,8 +86,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		exuChk.io.done := out.pipe.valid && in.imme.back =/= Back.Wait && ~(
 			in.pipe.alu === ExuAlu.Null &&
 			in.pipe.bfu === ExuBfu.Null &&
-			in.pipe.csr === ExuCsr.Null &&
-			in.pipe.res === ExuRes.Null)
+			in.pipe.csr === ExuCsr.Null)
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
