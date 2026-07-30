@@ -109,6 +109,7 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
 	make sim	 
 
 srcVerilogYosys += $(shell find $(NPC_HOME)/build/yosys -type f -name "*.sv")
-sta:verilogYosys $(srcVerilogYosys)
+# sta:verilogYosys $(srcVerilogYosys)
+sta: $(srcVerilogYosys)
 	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogYosys)"
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
