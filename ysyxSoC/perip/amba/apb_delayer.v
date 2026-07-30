@@ -29,11 +29,12 @@ localparam rs = 327;//5.1118*64
 // localparam s = 6;//2^6
 always_ff @(posedge clock) begin
 	if(reset)has <= 0;
-	else if(out_pready)begin
+	else if(out_pready & has==0)begin
 			has	<= 1;
 			data<= out_prdata;
 			err	<= out_pslverr;
 	end if(~in_psel | ~in_penable)has <= 'd0;
+
 	if(reset)cnt <= 'd0;
 	else if(has)cnt[31:6] <= (cnt[31:6] == 'd0)?'d0:(cnt[31:6] - 'd1);
 	else if(in_psel & in_penable & ~in_pready)cnt <= cnt + rs;
