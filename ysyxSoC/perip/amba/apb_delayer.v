@@ -36,7 +36,7 @@ always_ff @(posedge clock) begin
 	end
 
 	if(reset | ~in_psel | ~in_penable)cnt <= 'd0;
-	else if(has | in_pready)cnt[31:6] <= (cnt[31:6] == 'd0)?'d0:(cnt[31:6] - 'd1);
+	else if(has | out_pready)cnt[31:6] <= (cnt[31:6] == 'd0)?'d0:(cnt[31:6] - 'd1);
 	else cnt <= cnt + rs;
 end
 assign done = has & (cnt[31:6] == '0);
