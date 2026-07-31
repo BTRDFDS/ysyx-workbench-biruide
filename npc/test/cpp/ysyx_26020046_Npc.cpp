@@ -251,7 +251,7 @@ void NpcInitMem(int argc, char** argv){
 	size_t wordsRead = fread(sdram, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
-	NpcDifftestInit8(sdramSize,sdram,sdramAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-sdram");
+	NpcDifftestInit8(wordsRead,sdram,sdramAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so");
 
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
