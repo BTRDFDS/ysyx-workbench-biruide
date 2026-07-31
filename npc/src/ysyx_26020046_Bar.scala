@@ -31,6 +31,7 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	clt.wstrb	:= 0.U
 	clt.bready	:= false.B
 	clt.awaddr	:= 0.U
+
 	{
 		val status		= RegInit(ArbStatusLoad.Idle)
 		val addr 		= RegInit(0.U(32.W))

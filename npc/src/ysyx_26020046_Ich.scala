@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-// class Block(val CacheBits: Int=4) extends Bundle{
+// class Block(val CacheBit: Int=4) extends Bundle{
 //     val data    = UInt(BitWidth.W)
 //     val tag     = UInt((BitWidth-2-CacheBit).W)
 //     val valid   = Bool()
@@ -18,7 +18,7 @@ class ysyx_26020046Ich(val Yosys:Boolean=false) extends Module {
 	val valid	= RegInit(Vec(CacheNum,false.B))
 
 	val addrTag = Wire(UInt((BitWidth-2-CacheBit).W))
-	val addrIdx = Wire(UInt(CacheBits.W))
+	val addrIdx = Wire(UInt(CacheBit.W))
 
 	addrTag := ifu.addr(BitWidth-2,CacheBit)
 	addrIdx := ifu.addr(CacheBit-1,0)

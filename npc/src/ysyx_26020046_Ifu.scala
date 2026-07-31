@@ -21,7 +21,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	when(in.imme.back =/= Back.Wait){
 		loader.addr	:= pc
 		loader.valid:= ~valid
-	}.otherwire{
+	}.otherwise{
 		loader.addr	:= 0.U
 		loader.valid:=false.B
 	}
