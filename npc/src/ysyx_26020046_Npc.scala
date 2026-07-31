@@ -107,10 +107,10 @@ class ysyx_26020046_Mem extends ExtModule{
 	import "DPI-C" function void sdram_write(input int addr, input int data);
 	assign read_data = read_valid?sdram_read(read_addr):0;
 	always_ff@(posedge write_valid) begin
-		if(write_strb[0])sdram_write({5'b0,write_addr[26:2],2'b00},write_data[ 7: 0]);
-		if(write_strb[1])sdram_write({5'b0,write_addr[26:2],2'b01},write_data[15: 8]);
-		if(write_strb[2])sdram_write({5'b0,write_addr[26:2],2'b10},write_data[23:16]);
-		if(write_strb[3])sdram_write({5'b0,write_addr[26:2],2'b11},write_data[31:24]);
+		if(write_strb[0])sdram_write({5'b0,write_addr[26:2],2'b00},{24'd0,write_data[ 7: 0]});
+		if(write_strb[1])sdram_write({5'b0,write_addr[26:2],2'b01},{24'd0,write_data[15: 8]});
+		if(write_strb[2])sdram_write({5'b0,write_addr[26:2],2'b10},{24'd0,write_data[23:16]});
+		if(write_strb[3])sdram_write({5'b0,write_addr[26:2],2'b11},{24'd0,write_data[31:24]});
 	end
 	endmodule
 	"""
