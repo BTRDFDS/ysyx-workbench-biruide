@@ -186,7 +186,7 @@ class ysyx_26020046_WbuChk extends ExtModule{
 	import "DPI-C" function void wbuCheck();
 	always_ff@(posedge clock) if(io_check)wbuCheck();
 
-	initial $display("%m");
+	// initial $display("%m");
 	endmodule
 	"""
 	)
