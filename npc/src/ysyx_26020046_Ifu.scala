@@ -70,6 +70,8 @@ class ysyx_26020046_IfuChk extends ExtModule{
 	module ysyx_26020046_IfuChk(
 		input logic inst,
 		input logic stall,
+		input logic forword,
+		input logic backword,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
