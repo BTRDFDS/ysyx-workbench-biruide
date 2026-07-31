@@ -4,7 +4,7 @@ import WidthConsts._
 //TODO:需要BlackBox
 //根据官网，blackbox已经被废弃了，使用ExtModule
 object MemStatus extends ChiselEnum{val Idle,Read,Write = Value}
-class ysyx_26020046_MemTop extends Module{
+class ysyx_26020046_Npc extends Module{
 	val PcInit:UInt=0x80000000L.U
 	val cpu = Module(new ysyx_26020046(PcInit))
 	val mem = Module(new ysyx_26020046_Mem())
@@ -103,11 +103,14 @@ class ysyx_26020046_Mem extends ExtModule{
 		input logic[3:0] write_strb,
 		input logic[31:0] write_data
 	);
-	import "DPI-C" function int pmem_read(input int addr);
-	import "DPI-C" function void pmem_write(input int addr, input int data, input byte mask);
-	assign read_data = read_valid?pmem_read(read_addr):0;
+	import "DPI-C" function int sdram_read(input int addr);
+	import "DPI-C" function void sdram_write(input int addr, input int data);
+	assign read_data = read_valid?sdram_read(read_addr):0;
 	always_ff@(posedge write_valid) begin
-			pmem_write(write_addr, write_data, {4'b0,write_strb});
+		if(write_strb[0])sdram_write({5'b0,write_addr[26:2],2'b00},write_data[ 7: 0]);
+		if(write_strb[1])sdram_write({5'b0,write_addr[26:2],2'b01},write_data[15: 8]);
+		if(write_strb[2])sdram_write({5'b0,write_addr[26:2],2'b10},write_data[23:16]);
+		if(write_strb[3])sdram_write({5'b0,write_addr[26:2],2'b11},write_data[31:24]);
 	end
 	endmodule
 	"""
