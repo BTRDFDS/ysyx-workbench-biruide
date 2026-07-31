@@ -63,7 +63,7 @@ class ysyx_26020046_Npc extends Module{
 	mem.write.strb  := wStrb
 	mem.write.data  := wData
 
-	when(status === MemStatus.Write && wAddr === 0x10000000.U(32.W)){printf("%s",wData(7,0))}
+	when(status === MemStatus.Write && wAddr === 0x10000000.U(32.W)){printf("%c",wData(7,0))}
 
 	cpu.io.master.rid	:= 0.U
 	cpu.io.master.rlast	:= false.B
