@@ -10,8 +10,8 @@ class ysyx_26020046Ich(val Yosys:Boolean=false) extends Module {
 	val ifu = IO(Flipped(new LoaderBus(BitWidth-2)))
 	val bar = IO(new LoaderBus())
 
-	val CacheBits   = 4
-	val CacheNum    = 1 << CacheBits
+	val CacheBit   = 4
+	val CacheNum    = 1 << CacheBit
 
 	val data	= Reg(Vec(CacheNum, UInt(BitWidth.W)))
 	val tag		= Reg(Vec(CacheNum, UInt((BitWidth-2-CacheBit).W)))

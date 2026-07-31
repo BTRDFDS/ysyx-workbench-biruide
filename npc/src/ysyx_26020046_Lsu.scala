@@ -48,7 +48,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		when(in.pipe.lsuOp === LsuOp.Load){
 			loader.valid:= true.B
 			loader.addr	:= in.pipe.result
-		}.otherwire{
+		}.otherwise{
 			loader.valid:= false.B
 			loder.addr	:= 0.U
 		}
@@ -65,7 +65,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 				is(LsuAddr.H){storer.data	:= Fill(2,in.pipe.r2(15,0))}
 				is(LsuAddr.W){storer.data	:= in.pipe.r2}
 			}
-		}.otherwire{
+		}.otherwise{
 			storer.valid:= false.B
 			storer.addr	:= 0.U
 			storer.data	:= 0.U

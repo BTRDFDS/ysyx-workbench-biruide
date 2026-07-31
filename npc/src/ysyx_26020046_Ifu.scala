@@ -20,7 +20,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	//发出
 	when(in.imme.back =/= Back.Wait){
 		loader.addr	:= pc
-		loader.valod:=~valid
+		loader.valid:=~valid
 	}.otherwire{
 		loader.addr	:= 0.U
 		loader.valid:=false.B
@@ -34,7 +34,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		when(~valid && in.imme.back =/= Back.Wait){out.pipe.res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
 	//valid
 		when(in.imme.back =/= Back.Wait){valid := false.B}
-		elsewhen(loader.ready)			{valid := true.B }
+		.elsewhen(loader.ready)			{valid := true.B }
 	if(Yosys == false){
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
