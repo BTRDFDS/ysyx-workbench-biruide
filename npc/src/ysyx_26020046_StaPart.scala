@@ -9,7 +9,7 @@ class ysyx_26020046_StaPart extends Module{
 class ysyx_26020046_StaExu extends Module{
 	val r1Addr	= Reg(UInt(RegWidth.W))
 	val r2Addr	= Reg(UInt(RegWidth.W))
-	val csrAddr	= Reg(UInt(CsrWidth.W))
+	val csrAddrI= Reg(UInt(CsrWidth.W))
 
 	val r1Out	= Reg(UInt(BitWidth.W))
 	val r2Out	= Reg(UInt(BitWidth.W))
@@ -30,7 +30,7 @@ class ysyx_26020046_StaExu extends Module{
 
 	r1Addr	:= exu.in.imme.r1Addr
 	r2Addr	:= exu.in.imme.r2Addr
-	csrAddr	:= exu.in.imme.csrAddr
+	csrAddrI:= exu.in.imme.csrAddr
 
 	r1Out	:= exu.out.imme.r1Out
 	r2Out	:= exu.out.imme.r2Out
@@ -54,7 +54,7 @@ class ysyx_26020046_StaIdu extends Module{
 
 	val r1Addr	= Reg(UInt(RegWidth.W))
 	val r2Addr	= Reg(UInt(RegWidth.W))
-	val csrAddr	= Reg(UInt(CsrWidth.W))
+	val csrAddrI= Reg(UInt(CsrWidth.W))
 
 	val alu		= Reg(ExuAlu())
 	val bfu		= Reg(ExuBfu())
@@ -80,7 +80,7 @@ class ysyx_26020046_StaIdu extends Module{
 	addr	:= idu.out.imme.addr
 	r1Addr	:= idu.in.imme.r1Addr
 	r2Addr	:= idu.in.imme.r2Addr
-	csrAddr	:= idu.in.imme.csrAddr
+	csrAddrI:= idu.in.imme.csrAddr
 
 	alu		:= idu.out.pipe.alu
 	bfu		:= idu.out.pipe.bfu
