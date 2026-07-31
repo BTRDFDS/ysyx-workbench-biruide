@@ -25,11 +25,11 @@ class ysyx_26020046_Npc extends Module{
 		is(MemStatus.Write)	{when(cpu.io.master.bready){status := MemStatus.Idle}}
 	}
 	when(cpu.io.master.arvalid && cpu.io.master.araddr(31,28) =/= 0x8.U(4.W)){
-		printf("npc mem error rAddr:%x\n",rAddr)
+		printf("npc mem error rAddr:%x\n",cpu.io.master.araddr)
 		stop()
 	}
 	when(cpu.io.master.awvalid && cpu.io.master.awaddr(31,28) =/= 0x8.U(4.W)){
-		printf("npc mem error wAddr:%x\n",wAddr)
+		printf("npc mem error wAddr:%x\n",cpu.io.master.awaddr)
 		stop()
 	}
 	cpu.io.master.arready := status === MemStatus.Idle
