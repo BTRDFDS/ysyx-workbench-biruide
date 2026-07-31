@@ -31,7 +31,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		out.pipe.instr	:= instr
 		out.pipe.res	:= IfuRes.Null
 		when(valid && (in.imme.back === Back.Jump || in.imme.back === Back.Error) && in.imme.addr(1,0) =/= 0.U){out.pipe.res := IfuRes.Un4b}
-		when(~valid && in.imme.back =/= Back.Wait){out.pipe.res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
+		when(~valid){out.pipe.res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
 	//valid
 		when(in.imme.back =/= Back.Wait){valid := false.B}
 		.elsewhen(loader.ready)			{valid := true.B }
