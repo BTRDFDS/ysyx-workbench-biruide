@@ -2,8 +2,6 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-object LsuStatus extends ChiselEnum{val Back,Call,Idle,Suce=Value}
-
 class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val in = IO(new Bundle{
 		val pipe = Flipped(new PipeExLs())
@@ -13,7 +11,10 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		val pipe = new PipeLsWb()
 		val imme = new ImmeAfter()
 	})
-	val axi4 = IO(new Axi4Master())
+	val loader	= IO(new LoaderBus())
+	val storer	= IO(new StorerBus())	
+
+
 	out.pipe.valid	:= false.B
 	out.pipe.rdAddr	:= in.pipe.rdAddr
 	out.pipe.result	:= in.pipe.result
@@ -33,27 +34,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	in.imme.r2Addr	:= out.imme.r2Addr
 	in.imme.csrAddr	:= out.imme.csrAddr
 
-	val hasAddr = RegInit(false.B)
-	val hasData = RegInit(false.B)
-	val finishAddr = hasAddr || axi4.awready
-	val finishData = hasData || axi4.wready
-
-	val backError = WireInit(false.B)
 	val addrError = WireInit(false.B)
-
-	val status = RegInit(LsuStatus.Idle)
-
-	axi4.awaddr	:= 0.U
-	axi4.awvalid	:= false.B
-	axi4.wdata	:= 0.U
-	axi4.wstrb	:= 0.U
-	axi4.wvalid	:= false.B
-	axi4.bready	:= false.B
-	
-	axi4.araddr	:= 0.U
-	axi4.arvalid	:= false.B
-	axi4.rready	:= false.B
-
 	when(in.pipe.valid & in.pipe.lsuOp =/= LsuOp.Null){
 		switch(in.pipe.lsuAddr){
 			is(LsuAddr.H ){when(in.pipe.result(0)===1.U)	{addrError := true.B}}
@@ -61,61 +42,44 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			is(LsuAddr.W ){when(in.pipe.result(1,0) =/= 0.U){addrError := true.B}}
 		}
 	}
-	when(in.pipe.valid & addrError =/= true.B){
-		switch(status){
-			is(LsuStatus.Idle){when(in.pipe.lsuOp =/= LsuOp.Null){status := LsuStatus.Call}}
-			is(LsuStatus.Call){switch(in.pipe.lsuOp){
-				is(LsuOp.Load)	{when(axi4.arready)			{status := LsuStatus.Back}}
-				is(LsuOp.Store)	{when(finishAddr&finishData){status := LsuStatus.Back}}
-			}}
-			is(LsuStatus.Back){switch(in.pipe.lsuOp){
-				is(LsuOp.Load)	{when(axi4.rvalid){status := LsuStatus.Suce}}
-				is(LsuOp.Store)	{when(axi4.bvalid){status := LsuStatus.Suce}}
-			}}
-			is(LsuStatus.Suce){when(in.imme.back === Back.Ready){status := LsuStatus.Idle}}
+	storer.data	:= 0.U
+	storer.strb	:= 0.U
+	when(in.pipe.valid && ~addrError && in.pipe.lsuOp =/= LsuOp.Null){//发出
+		when(in.pipe.lsuOp === LsuOp.Load){
+			loader.valid:= true.B
+			loader.addr	:= in.pipe.result
+		}.otherwire{
+			loader.valid:= false.B
+			loder.addr	:= 0.U
 		}
+		when(in.pipe.lsuOp === LsuOp.Store){
+			storer.valid:= true.B
+			storer.addr	:= in.pipe.result
+			switch(in.pipe.lsuAddr){
+				is(LsuAddr.B){storer.strb := 0b0001.U << in.pipe.result(1,0)}
+				is(LsuAddr.H){storer.strb := 0b0011.U << in.pipe.result(1,0)}
+				is(LsuAddr.W){storer.strb := 0b1111.U}
+			}
+			switch(in.pipe.lsuAddr){
+				is(LsuAddr.B){storer.data	:= Fill(4,in.pipe.r2(7,0))}
+				is(LsuAddr.H){storer.data	:= Fill(2,in.pipe.r2(15,0))}
+				is(LsuAddr.W){storer.data	:= in.pipe.r2}
+			}
+		}.otherwire{
+			storer.valid:= false.B
+			storer.addr	:= 0.U
+			storer.data	:= 0.U
+		}
+	}
+	val backError = WireInit(false.B)
+	when(in.pipe.valid && ~addrError && in.pipe.lsuOp =/= LsuOp.Null){//接收
 		switch(in.pipe.lsuOp){
-			is(LsuOp.Store){
-				when(status === LsuStatus.Call){
-					when(axi4.wready)	{hasData := true.B}
-					when(axi4.awready)	{hasAddr := true.B}
-				}otherwise{
-					hasData := false.B
-					hasAddr := false.B
-				}
-				axi4.awaddr	:= in.pipe.result
-				axi4.awvalid	:= status === LsuStatus.Call
-				axi4.wvalid	:= status === LsuStatus.Call
-				// axi4.wdata	:= in.pipe.r2
-				axi4.bready	:= status === LsuStatus.Back
-				switch(in.pipe.lsuAddr){
-					is(LsuAddr.B){axi4.wstrb := 0b0001.U << in.pipe.result(1,0)}
-					is(LsuAddr.H){axi4.wstrb := 0b0011.U << in.pipe.result(1,0)}
-					is(LsuAddr.W){axi4.wstrb := 0b1111.U}
-				}
-				switch(in.pipe.lsuAddr){
-					is(LsuAddr.B){axi4.wdata	:= Fill(4,in.pipe.r2(7,0))}
-					is(LsuAddr.H){axi4.wdata	:= Fill(2,in.pipe.r2(15,0))}
-					is(LsuAddr.W){axi4.wdata	:= in.pipe.r2}
-				}
-			}
-			is(LsuOp.Load){
-				// axi4.araddr	:= Cat(in.pipe.result(BitWidth-1,2),0.U(2.W))
-				axi4.araddr	:= in.pipe.result
-				axi4.arvalid:= status === LsuStatus.Call
-				axi4.rready	:= status === LsuStatus.Back
-			}
-		}
-		when(status === LsuStatus.Back){
-			switch(in.pipe.lsuOp){
-				is(LsuOp.Load)	{backError := axi4.rresp =/= 0.U}
-				is(LsuOp.Store)	{backError := axi4.bresp =/= 0.U}
-			}
+			is(LsuOp.Load)	{backError := loader.error && loader.ready}
+			is(LsuOp.Store)	{backError := storer.error && storer.ready}
 		}
 		when(in.pipe.lsuOp === LsuOp.Load){
 			val rdata = RegInit(0.U(BitWidth.W))
-			when(status === LsuStatus.Back & axi4.rvalid){rdata := axi4.rdata >> (8.U * in.pipe.result(1,0))}
-			// when(status === LsuStatus.Back & axi4.rvalid){rdata := axi4.rdata}
+			when(storer.ready){rdata := storer.data >> (8.U * in.pipe.result(1,0))}
 			switch(in.pipe.lsuAddr){
 				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
 				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
@@ -131,7 +95,11 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}otherwise{
-		val ready = ~(status === LsuStatus.Suce^in.pipe.lsuOp =/= LsuOp.Null)
+		val ready = Mux1H(Seq(
+			(in.pipe.lsuOp === LsuOp.Load)	-> loader.ready,
+			(in.pipe.lsuOp === LsuOp.Store)	-> storer.ready,
+			(in.pipe.lsuOp === LsuOp.Null)	-> true.B
+		))
 		out.pipe.valid:= ready & in.pipe.valid
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.elsewhen(ready & in.imme.back === Back.Ready){out.imme.back	:= Back.Ready}
@@ -149,10 +117,10 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	if(Yosys == false){
 		val lsuChk = Module(new ysyx_26020046_LsuChk)
 		lsuChk.clock		:= clock
-		lsuChk.io.load		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Load && axi4.rvalid
-		lsuChk.io.loadWait	:= (status === LsuStatus.Back || status === LsuStatus.Call) && in.pipe.lsuOp === LsuOp.Load
-		lsuChk.io.store		:= status === LsuStatus.Back && in.pipe.lsuOp === LsuOp.Store && axi4.bvalid
-		lsuChk.io.storeWait	:= (status === LsuStatus.Back || status === LsuStatus.Call) && in.pipe.lsuOp === LsuOp.Store
+		lsuChk.io.load		:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Load	&& loader.ready
+		lsuChk.io.loadWait	:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Load
+		lsuChk.io.store		:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Store	&& storer.ready
+		lsuChk.io.storeWait	:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Store
 	}
 }
 class ysyx_26020046_LsuChk extends ExtModule{
