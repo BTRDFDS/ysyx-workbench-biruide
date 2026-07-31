@@ -83,25 +83,25 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	if(Yosys == false){
 		val exuChk = Module(new ysyx_26020046_ExuChk)
 		exuChk.clock := clock
-		exuChk.io.done := out.pipe.valid && in.imme.back =/= Back.Wait && ~(
+		exuChk.done := out.pipe.valid && in.imme.back =/= Back.Wait && ~(
 			in.pipe.alu === ExuAlu.Null &&
 			in.pipe.bfu === ExuBfu.Null &&
 			in.pipe.csr === ExuCsr.Null)
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
-	val io = IO(new Bundle{
-		val done	= Input(Bool())
-	})
-	val clock = IO(Input(Clock()))
+	val done	= IO(Input(Bool()))
+	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_ExuChk.sv",
 	"""
 	module ysyx_26020046_ExuChk(
-		input logic io_done,
+		input logic done,
 		input logic clock
 	);
 	import "DPI-C" function void exuDone();
-	always_ff@(posedge clock) if(io_done)exuDone();
+	always_ff@(posedge clock)begin
+		if(done)	exuDone();
+	end
 	endmodule
 	"""
 	)

@@ -57,6 +57,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.stall	:= (status =/= IfuStatus.Func)
 		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < pc
 		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > pc
+		ifuChk.jump		:= in.imme.back === Back.Jump
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
@@ -64,6 +65,7 @@ class ysyx_26020046_IfuChk extends ExtModule{
 	val stall	= IO(Input(Bool()))
 	val forward	= IO(Input(Bool()))
 	val backward= IO(Input(Bool()))
+	val jump	= IO(Input(Bool()))
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_IfuChk.sv",
 	"""
@@ -72,19 +74,21 @@ class ysyx_26020046_IfuChk extends ExtModule{
 		input logic stall,
 		input logic forward,
 		input logic backward,
+		input logic jump,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
 	import "DPI-C" function void ifuStall();
 	import "DPI-C" function void ifuForward();
 	import "DPI-C" function void ifuBackward();
+	import "DPI-C" function void ifuJump();
 
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
 		if(inst)	ifuInst();
 		if(forward)	ifuForward();
 		if(backward)ifuBackward();
-	
+		if(jump)	ifuJump();
 	end
 	endmodule
 	"""
