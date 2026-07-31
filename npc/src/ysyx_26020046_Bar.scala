@@ -39,23 +39,23 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 				when(lsuL.valid)		{status	:= ArbStatusLoad.LsuCall;addr := lsuL.addr}
 				.elsewhen(ifuL.valid)	{status	:= ArbStatusLoad.IfuCall;addr := ifuL.addr}
 			}
-			is(ArbStatusLoad.IfuCall){when(Mux(addr(31:24) === 2.U(8.W),clt.arready,out.arready)){status := ArbStatusLoad.IfuBack}}
-			is(ArbStatusLoad.LsuCall){when(Mux(addr(31:24) === 2.U(8.W),clt.arready,out.arready)){status := ArbStatusLoad.LsuBack}}
-			is(ArbStatusLoad.IfuBack){when(Mux(addr(31:24) === 2.U(8.W),clt.rvalid,out.rvalid)){status := ArbStatusLoad.Idle}}
-			is(ArbStatusLoad.LsuBack){when(Mux(addr(31:24) === 2.U(8.W),clt.rvalid,out.rvalid)){status := ArbStatusLoad.Idle}}
+			is(ArbStatusLoad.IfuCall){when(Mux(addr(31,24) === 0x02.U(8.W),clt.arready,out.arready)){status := ArbStatusLoad.IfuBack}}
+			is(ArbStatusLoad.LsuCall){when(Mux(addr(31,24) === 0x02.U(8.W),clt.arready,out.arready)){status := ArbStatusLoad.LsuBack}}
+			is(ArbStatusLoad.IfuBack){when(Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid)){status := ArbStatusLoad.Idle}}
+			is(ArbStatusLoad.LsuBack){when(Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid)){status := ArbStatusLoad.Idle}}
 		}
-		out.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31:24) =/= 2.U(8.W)
-		out.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuCall) && addr(31:24) =/= 2.U(8.W)
+		out.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31,24) =/= 0x02.U(8.W)
+		out.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuCall) && addr(31,24) =/= 0x02.U(8.W)
 		out.araddr  := addr
-		clt.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31:24) === 2.U(8.W)
-		clt.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuCall) && addr(31:24) === 2.U(8.W)
+		clt.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31,24) === 0x02.U(8.W)
+		clt.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuCall) && addr(31,24) === 0x02.U(8.W)
 		clt.araddr  := addr
-		ifuL.ready	:= Mux(status =/= IfuBack,0.U,Mux(addr(31:24) === 2.U(8.W),clt.rready,out.rready))
-		ifuL.data	:= Mux(addr(31:24) === 2.U(8.W),clt.rdata,out.rdata)
-		ifuL.error	:= Mux(status =/= IfuBack,0.U,Mux(addr(31:24) === 2.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
-		lsuL.ready	:= Mux(status =/= LsuBack,0.U,Mux(addr(31:24) === 2.U(8.W),clt.rready,out.rready))
-		lsuL.data	:= Mux(addr(31:24) === 2.U(8.W),clt.rdata,out.rdata)
-		lsuL.error	:= Mux(status =/= LsuBack,0.U,Mux(addr(31:24) === 2.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
+		ifuL.ready	:= Mux(status =/= IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rready,out.rready))
+		ifuL.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
+		ifuL.error	:= Mux(status =/= IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
+		lsuL.ready	:= Mux(status =/= LsuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rready,out.rready))
+		lsuL.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
+		lsuL.error	:= Mux(status =/= LsuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
 	}
 	{
 		val status		= RegInit(ArbStatusStore.Idle)
