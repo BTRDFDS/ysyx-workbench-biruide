@@ -20,12 +20,6 @@ verilogSta:
 	mkdir -p ./build
 	mkdir -p ./build/sta
 	mill -i runMain BuilderSta
-verilogStaPart:
-	$(call git_commit, "generate verilog for staPart")
-	mkdir -p ./build
-	mkdir -p ./build/staPart
-	mill -i runMain BuilderStaPart
-
 help:
 	mill -i runMain Builder --help
 
@@ -119,12 +113,12 @@ sta: $(srcVerilogSta)
 	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)"
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
 
-srcVerilogStaWbu += $(NPC_HOME)/build/staPart/ysyx_26020046_Wbu.sv
-srcVerilogStaIdu += $(NPC_HOME)/build/staPart/ysyx_26020046_Idu.sv
-srcVerilogStaIdu += $(NPC_HOME)/build/staPart/ysyx_26020046_StaIdu.sv
-srcVerilogStaExu += $(NPC_HOME)/build/staPart/ysyx_26020046_Exu.sv
-srcVerilogStaExu += $(NPC_HOME)/build/staPart/ysyx_26020046_StaExu.sv
-staPart: verilogStaPart $(srcVerilogStaWbu) $(srcVerilogStaIdu) $(srcVerilogStaExu)
+srcVerilogStaWbu += $(NPC_HOME)/build/sta/ysyx_26020046_Wbu.sv
+srcVerilogStaIdu += $(NPC_HOME)/build/sta/ysyx_26020046_Idu.sv
+srcVerilogStaIdu += $(NPC_HOME)/test/sta/ysyx_26020046_StaIdu.sv
+srcVerilogStaExu += $(NPC_HOME)/build/sta/ysyx_26020046_Exu.sv
+srcVerilogStaExu += $(NPC_HOME)/build/sta/ysyx_26020046_StaExu.sv
+staPart: verilogSta $(srcVerilogStaWbu) $(srcVerilogStaIdu) $(srcVerilogStaExu)
 	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogStaWbu)"
 	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaExu RTL_FILES="$(srcVerilogStaExu)"
 	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaIdu RTL_FILES="$(srcVerilogStaIdu)"
