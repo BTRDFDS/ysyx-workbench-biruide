@@ -105,7 +105,7 @@ class ysyx_26020046_Mem extends ExtModule{
 	);
 	import "DPI-C" function int sdram_read(input int addr);
 	import "DPI-C" function void sdram_write(input int addr, input int data);
-	assign read_data = read_valid?sdram_read(read_addr):0;
+	assign read_data = read_valid?sdram_read({5'd0,read_addr[26:0]}):0;
 	always_ff@(posedge write_valid) begin
 		if(write_strb[0])sdram_write({5'b0,write_addr[26:2],2'b00},{24'd0,write_data[ 7: 0]});
 		if(write_strb[1])sdram_write({5'b0,write_addr[26:2],2'b01},{24'd0,write_data[15: 8]});
