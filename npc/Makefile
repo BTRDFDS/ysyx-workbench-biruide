@@ -107,10 +107,13 @@ runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
 	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim	 
 
+
+YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
+
 srcVerilogSta += $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv")
 # sta:verilogSta $(srcVerilogSta)
 sta: $(srcVerilogSta)
-	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)"
+	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)" $(YOSYS_CONFIG)
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
 
 srcVerilogStaWbu += $(NPC_HOME)/build/sta/ysyx_26020046_Wbu.sv
@@ -118,7 +121,11 @@ srcVerilogStaIdu += $(NPC_HOME)/build/sta/ysyx_26020046_Idu.sv
 srcVerilogStaExu += $(NPC_HOME)/build/sta/ysyx_26020046_Exu.sv
 srcVerilogStaIdu += $(NPC_HOME)/test/sta/ysyx_26020046_StaIdu.sv
 srcVerilogStaExu += $(NPC_HOME)/test/sta/ysyx_26020046_StaExu.sv
-staPart: verilogSta $(srcVerilogStaWbu) $(srcVerilogStaIdu) $(srcVerilogStaExu)
-	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogStaWbu)"
-	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaExu RTL_FILES="$(srcVerilogStaExu)"
-	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaIdu RTL_FILES="$(srcVerilogStaIdu)"
+staExu: $(srcVerilogStaExu)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaExu RTL_FILES="$(srcVerilogStaExu)" $(YOSYS_CONFIG)
+staIdu: $(srcVerilogStaIdu)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaIdu RTL_FILES="$(srcVerilogStaIdu)" $(YOSYS_CONFIG)
+staWbu: $(srcVerilogStaWbu)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogStaWbu)" $(YOSYS_CONFIG)
+# staPart: verilogSta staWbu staIdu staExu
+staPart: staWbu staIdu staExu

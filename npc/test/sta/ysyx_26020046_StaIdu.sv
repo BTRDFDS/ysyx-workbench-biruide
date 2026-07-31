@@ -1,12 +1,13 @@
 module ysyx_26020046_StaIdu(
-input  logic        	clock,
-input  logic [1:0]  	in_pipe_res,
-input  logic [31:0] 	in_pipe_pc,in_pipe_instr,
-input  logic [1:0]  	in_imme_back,
-input  logic [31:0] 	in_imme_addr,
-input  logic [31:0] 	in_imme_r1Out,
-						in_imme_r2Out,
-input  logic [31:0] 	in_imme_csrOut,
+input  logic        	clock,reset,
+input  logic [1:0]  	in_pipe_res_sta,
+input  logic [31:0] 	in_pipe_pc_sta,
+						in_pipe_instr_sta,
+input  logic [1:0]  	in_imme_back_sta,
+input  logic [31:0] 	in_imme_addr_sta,
+input  logic [31:0] 	in_imme_r1Out_sta,
+						in_imme_r2Out_sta,
+input  logic [31:0] 	in_imme_csrOut_sta,
 
 output logic [4:0]  	in_imme_r1Addr_sta,
 						in_imme_r2Addr_sta,
@@ -32,6 +33,17 @@ output logic [31:0] 	out_pipe_r1_sta,
 output logic [1:0]  	out_imme_back_sta,
 output logic [31:0] 	out_imme_addr_sta
 );
+logic [1:0]  	in_pipe_res;
+logic [31:0] 	in_pipe_pc,
+				in_pipe_instr;
+logic [1:0]  	in_imme_back;
+logic [31:0] 	in_imme_addr;
+logic [31:0] 	in_imme_r1Out,
+				in_imme_r2Out;
+logic [31:0] 	in_imme_csrOut;
+
+
+
 logic [4:0]  	in_imme_r1Addr,
 				in_imme_r2Addr;
 logic [11:0] 	in_imme_csrAddr;
@@ -55,7 +67,17 @@ logic        	out_pipe_In1,
 logic [31:0] 	out_pipe_r1;
 logic [1:0]  	out_imme_back;
 logic [31:0] 	out_imme_addr;
-always_ff@(posedge clock) begin
+always_ff@(posedge clock) if(reset)begin
+	in_pipe_res		<= in_pipe_res_sta;
+	in_pipe_pc		<= in_pipe_pc_sta;
+	in_pipe_instr	<= in_pipe_instr_sta;
+	in_imme_back	<= in_imme_back_sta;
+	in_imme_addr	<= in_imme_addr_sta;
+	in_imme_r1Out	<= in_imme_r1Out_sta;
+	in_imme_r2Out	<= in_imme_r2Out_sta;
+	in_imme_csrOut	<= in_imme_csrOut_sta;
+
+
 	in_imme_r1Addr_sta	 <= in_imme_r1Addr;
 	in_imme_r2Addr_sta	 <= in_imme_r2Addr;
 	in_imme_csrAddr_sta	 <= in_imme_csrAddr;
