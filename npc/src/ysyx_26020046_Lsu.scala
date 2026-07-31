@@ -34,6 +34,8 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	in.imme.r2Addr	:= out.imme.r2Addr
 	in.imme.csrAddr	:= out.imme.csrAddr
 
+	loader.valid:= false.B
+	loader.addr	:= 0.U
 	val addrError = WireInit(false.B)
 	when(in.pipe.valid & in.pipe.lsuOp =/= LsuOp.Null){
 		switch(in.pipe.lsuAddr){
@@ -42,6 +44,8 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			is(LsuAddr.W ){when(in.pipe.result(1,0) =/= 0.U){addrError := true.B}}
 		}
 	}
+	storer.valid:= false.B
+	storer.addr	:= 0.U
 	storer.data	:= 0.U
 	storer.strb	:= 0.U
 	when(in.pipe.valid && ~addrError && in.pipe.lsuOp =/= LsuOp.Null){//发出
