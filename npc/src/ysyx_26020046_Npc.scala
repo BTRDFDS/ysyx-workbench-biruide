@@ -28,7 +28,10 @@ class ysyx_26020046_Npc extends Module{
 		printf("npc mem error rAddr:%x\n",cpu.io.master.araddr)
 		stop()
 	}
-	when(cpu.io.master.awvalid && cpu.io.master.awaddr(31,28) =/= 0x8.U(4.W)){
+	when(cpu.io.master.awvalid && ~(
+		cpu.io.master.awaddr(31,28) === 0x8.U(4.W) ||
+		cpu.io.master.awaddr === 0x10000000.U(32.W)
+	)){
 		printf("npc mem error wAddr:%x\n",cpu.io.master.awaddr)
 		stop()
 	}
