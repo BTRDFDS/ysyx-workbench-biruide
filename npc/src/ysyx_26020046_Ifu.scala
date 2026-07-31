@@ -1,45 +1,48 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-
+class IfuStatus extends ChiselEnum{val Call,Back = Value}
 class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val in	= IO(new Bundle{val imme = Flipped(new ImmeBefore())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val loader	= IO(new LoaderBus(BitWidth))
 	//pc更新
 		val pc = RegInit(PcInit)
-		val valid = RegInit(false.B)
-		when(valid){
+		val state = RegInit(IfuStatus.Call)
+		val error = RegInit(false.B)//特指地址错误
+		when(state === IfuStatus.Back){
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr	}
 				is(Back.Error)	{pc := in.imme.addr	}
 				is(Back.Ready)	{pc := pc + 4.U		}
 			}
+			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1:0) =/= 0.U}
 		}
 		out.pipe.pc	:= pc
+	//状态机
+		switch(state){
+			is(IfuStatus.Call){when(loader.ready)				{state := IfuStatus.Back}}
+			is(IfuStatus.Back){when(in.imme.back =/= Back.Wait)	{state := IfuStatus.Call}}
+		}
 	//发出
-	when(in.imme.back =/= Back.Wait){
 		loader.addr	:= pc
-		loader.valid:= ~valid
-	}.otherwise{
-		loader.addr	:= 0.U
-		loader.valid:=false.B
-	}
+		loader.valid:= state === IfuStatus.Call
 	//接收
 		val instr = RegInit(0.U(BitWidth.W))
-		when(loader.ready){instr := loader.data}
+		when(state === IfuStatus.Call && loader.ready){instr := loader.data}
 		out.pipe.instr	:= instr
-		out.pipe.res	:= IfuRes.Null
-		when(valid && (in.imme.back === Back.Jump || in.imme.back === Back.Error) && in.imme.addr(1,0) =/= 0.U){out.pipe.res := IfuRes.Un4b}
-		when(~valid){out.pipe.res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
-	//valid
-		when(in.imme.back =/= Back.Wait){valid := false.B}
-		.elsewhen(loader.ready)			{valid := true.B }
+		switch(state){
+			is(IfuStatus.Call){
+				when(loader.ready){out.pipe.res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
+				.otherwise{out.pipe.res := Mux(error,IfuRes.Un4b,IfuRes.Null)}
+			}
+			is(IfuStatus.Back){out.pipe.res := IfuRes.Valid}
+		}
 	if(Yosys == false){
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
-		ifuChk.inst		:= in.imme.back =/= Back.Wait && ~valid && loader.ready
-		ifuChk.stall	:= in.imme.back =/= Back.Wait && ~valid
+		ifuChk.inst		:= state === IfuStatus.Call && loader.ready
+		ifuChk.stall	:= state === IfuStatus.Call
 		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < pc
 		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > pc
 		ifuChk.jump		:= in.imme.back === Back.Jump
