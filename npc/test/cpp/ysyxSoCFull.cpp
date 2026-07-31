@@ -49,8 +49,8 @@ uint64_t numCycle		=0;
 uint64_t numInst		=0;
 uint64_t numIfuInst		=0;
 uint64_t numIfuStall 	=0;
-uint64_t numIfuForword	=0;
-uint64_t numIfuBackword	=0;
+uint64_t numIfuForward	=0;
+uint64_t numIfuBackward	=0;
 uint64_t numIduCal		=0;
 uint64_t numIduJump		=0;
 uint64_t numIduImm		=0;
@@ -70,8 +70,8 @@ void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void ifuInst()		{numIfuInst++;		}
 extern "C" void ifuStall()		{numIfuStall++;		}
-extern "C" void ifuForword()	{numIfuForword++;	}
-extern "C" void ifuBackword()	{numIfuBackword++;	}
+extern "C" void ifuForward()	{numIfuForward++;	}
+extern "C" void ifuBackward()	{numIfuBackward++;	}
 extern "C" void iduCal()		{numIduCal++;		}
 extern "C" void iduJump()		{numIduJump++;		}
 extern "C" void iduImm()		{numIduImm++;		}
