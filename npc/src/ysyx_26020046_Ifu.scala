@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-class IfuStatus extends ChiselEnum{val Call,Back = Value}
+object IfuStatus extends ChiselEnum{val Call,Back = Value}
 class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val in	= IO(new Bundle{val imme = Flipped(new ImmeBefore())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
