@@ -1,3 +1,6 @@
+import chisel3._
+import chisel3.util._
+
 object  WidthConsts{//const
 	val BitWidth	= 32
 	val RegNum		= 32
@@ -10,8 +13,7 @@ object  WidthConsts{//const
 	val SizeWidth	= 3
 	val BurstWidth	= 2
 }
-import chisel3._
-import chisel3.util._
+
 import WidthConsts._
 class PipeIfId extends Bundle{
 	val res		= Output(IfuRes())
