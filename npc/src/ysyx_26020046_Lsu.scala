@@ -50,7 +50,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			loader.addr	:= in.pipe.result
 		}.otherwise{
 			loader.valid:= false.B
-			loder.addr	:= 0.U
+			loader.addr	:= 0.U
 		}
 		when(in.pipe.lsuOp === LsuOp.Store){
 			storer.valid:= true.B
