@@ -113,3 +113,10 @@ srcVerilogYosys += $(shell find $(NPC_HOME)/build/yosys -type f -name "*.sv")
 sta: $(srcVerilogYosys)
 	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogYosys)"
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
+
+srcVerilogYosysWbu += $(NPC_HOME)/build/yosys/ysyx_26020046_Wbu.sv
+staWbu: $(srcVerilogYosysWbu)
+	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogYosysWbu)"
+srcVerilogYosysExu += $(NPC_HOME)/build/yosys/ysyx_26020046_Exu.sv
+staExu: $(srcVerilogYosysExu)
+	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Exu RTL_FILES="$(srcVerilogYosysExu)"
