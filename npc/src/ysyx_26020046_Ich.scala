@@ -6,7 +6,7 @@ import WidthConsts._
 //     val tag     = UInt((BitWidth-2-CacheBit).W)
 //     val valid   = Bool()
 // }
-class ysyx_26020046(val Yosys:Boolean=false) extends Module {
+class ysyx_26020046Ich(val Yosys:Boolean=false) extends Module {
 	val ifu = IO(Flipped(new LoaderBus(BitWidth-2)))
 	val bar = IO(new LoaderBus())
 

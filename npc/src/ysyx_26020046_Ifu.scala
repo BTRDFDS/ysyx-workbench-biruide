@@ -5,18 +5,18 @@ import WidthConsts._
 class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val in	= IO(new Bundle{val imme = Flipped(new ImmeBefore())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
-	val loader	= IO(new LoaderBus(BitWidth-2))
+	val loader	= IO(new LoaderBus(BitWidth))
 	//pc更新
-		val pc = RegInit(PcInit(31,2))
+		val pc = RegInit(PcInit)
 		val valid = RegInit(false.B)
 		when(valid){
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr	}
 				is(Back.Error)	{pc := in.imme.addr	}
-				is(Back.Ready)	{pc := pc + 1.U		}
+				is(Back.Ready)	{pc := pc + 4.U		}
 			}
 		}
-		out.pipe.pc	:= Cat(pc,0.U(2.W))
+		out.pipe.pc	:= pc
 	//发出
 	when(in.imme.back =/= Back.Wait){
 		loader.addr	:= pc
