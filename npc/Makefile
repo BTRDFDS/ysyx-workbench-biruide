@@ -70,8 +70,8 @@ srcNpc =ysyx_26020046_Npc
 srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
-# runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
-runNpc:$(srcCpp) $(srcCppNpc) wave
+runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
+# runNpc:$(srcCpp) $(srcCppNpc) wave
 	verilator $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \

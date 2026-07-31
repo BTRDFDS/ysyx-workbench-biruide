@@ -24,6 +24,10 @@ class ysyx_26020046_Npc extends Module{
 		is(MemStatus.Read)	{when(cpu.io.master.rready){status := MemStatus.Idle}}
 		is(MemStatus.Write)	{when(cpu.io.master.bready){status := MemStatus.Idle}}
 	}
+	when(rAddr(31:28) =/= 0x8.U(4.W)){
+		printf("npc mem error rAddr:%x\n",rAddr)
+		stop()
+	}
 	cpu.io.master.arready := status === MemStatus.Idle
 	cpu.io.master.rdata	:= Mux(status === MemStatus.Read,mem.read.data,0.U)
 	cpu.io.master.rresp	:= 0.U//OKAY
