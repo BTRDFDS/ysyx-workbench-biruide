@@ -1,6 +1,7 @@
 object  WidthConsts{//const
 	val BitWidth	= 32
 	val RegNum		= 32
+    val RegWidth	= log2Ceil(RegNum)
 	val CsrWidth	= 12
 	val RespWidth	= 2
 	val StrbWidth	= 4
@@ -18,7 +19,6 @@ class PipeIfId extends Bundle{
 	val instr	= Output(UInt(BitWidth.W))
 }
 class PipeLsWb extends Bundle{
-	val RegWidth = log2Ceil(RegNum)
 
     val valid	= Output(Bool())
 	val rdAddr	= Output(UInt(RegWidth.W))
@@ -49,7 +49,6 @@ class ImmeBefore extends Bundle{
 	val addr	= Output(UInt(BitWidth.W))
 }
 class ImmeAfter extends ImmeBefore(){
-    val RegWidth= log2Ceil(RegNum)
 
 	val r1Addr	= Input(UInt(RegWidth.W))
 	val r2Addr	= Input(UInt(RegWidth.W))

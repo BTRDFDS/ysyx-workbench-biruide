@@ -1,7 +1,7 @@
 test:
 	mill -i test
 
-verilog:verilogNpc verilogYsyxSoc verilogYosys
+verilog:verilogNpc verilogYsyxSoc verilogSta verilogStaPart
 	$(call git_commit, "generate verilog")
 # 	mkdir -p ./build
 # 	mill -i runMain Builder
@@ -15,11 +15,16 @@ verilogYsyxSoc:
 	mkdir -p ./build
 	mkdir -p ./build/ysyxsoc
 	mill -i runMain BuilderYsyxSoc
-verilogYosys:
-	$(call git_commit, "generate verilog for Yosys")
+verilogSta:
+	$(call git_commit, "generate verilog for sta")
 	mkdir -p ./build
-	mkdir -p ./build/yosys
-	mill -i runMain BuilderYosys
+	mkdir -p ./build/sta
+	mill -i runMain BuilderSta
+verilogStaPart:
+	$(call git_commit, "generate verilog for staPart")
+	mkdir -p ./build
+	mkdir -p ./build/staPart
+	mill -i runMain BuilderStaPart
 
 help:
 	mill -i runMain Builder --help
@@ -108,15 +113,18 @@ runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
 	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim	 
 
-srcVerilogYosys += $(shell find $(NPC_HOME)/build/yosys -type f -name "*.sv")
-# sta:verilogYosys $(srcVerilogYosys)
-sta: $(srcVerilogYosys)
-	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogYosys)"
+srcVerilogSta += $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv")
+# sta:verilogSta $(srcVerilogSta)
+sta: $(srcVerilogSta)
+	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)"
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
 
-srcVerilogYosysWbu += $(NPC_HOME)/build/yosys/ysyx_26020046_Wbu.sv
-staWbu: $(srcVerilogYosysWbu)
-	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogYosysWbu)"
-srcVerilogYosysExu += $(NPC_HOME)/build/yosys/ysyx_26020046_Exu.sv
-staExu: $(srcVerilogYosysExu)
-	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Exu RTL_FILES="$(srcVerilogYosysExu)"
+srcVerilogStaWbu += $(NPC_HOME)/build/staPart/ysyx_26020046_Wbu.sv
+srcVerilogStaIdu += $(NPC_HOME)/build/staPart/ysyx_26020046_Idu.sv
+srcVerilogStaIdu += $(NPC_HOME)/build/staPart/ysyx_26020046_StaIdu.sv
+srcVerilogStaExu += $(NPC_HOME)/build/staPart/ysyx_26020046_Exu.sv
+srcVerilogStaExu += $(NPC_HOME)/build/staPart/ysyx_26020046_StaExu.sv
+staPart: $(srcVerilogStaWbu) $(srcVerilogStaIdu) $(srcVerilogStaExu)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogStaWbu)"
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaExu RTL_FILES="$(srcVerilogStaExu)"
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaIdu RTL_FILES="$(srcVerilogStaIdu)"
