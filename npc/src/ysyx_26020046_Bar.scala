@@ -50,12 +50,12 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 		clt.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31,24) === 0x02.U(8.W)
 		clt.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuCall) && addr(31,24) === 0x02.U(8.W)
 		clt.araddr  := addr
-		ifuL.ready	:= Mux(status =/= IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rready,out.rready))
+		ifuL.ready	:= Mux(status =/= ArbStatusLoad.IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rready,out.rready))
 		ifuL.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
-		ifuL.error	:= Mux(status =/= IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
-		lsuL.ready	:= Mux(status =/= LsuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rready,out.rready))
+		ifuL.error	:= Mux(status =/= ArbStatusLoad.IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
+		lsuL.ready	:= Mux(status =/= ArbStatusLoad.LsuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rready,out.rready))
 		lsuL.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
-		lsuL.error	:= Mux(status =/= LsuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
+		lsuL.error	:= Mux(status =/= ArbStatusLoad.LsuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
 	}
 	{
 		val status		= RegInit(ArbStatusStore.Idle)
