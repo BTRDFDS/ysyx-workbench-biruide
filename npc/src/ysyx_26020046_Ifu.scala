@@ -52,30 +52,37 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		
 	if(Yosys == false){
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
-		ifuChk.clock		:= clock
-		ifuChk.io.inst	:= (status === IfuStatus.Back && axi4.rvalid)
-		ifuChk.io.stall	:= (status =/= IfuStatus.Func)
+		ifuChk.clock	:= clock
+		ifuChk.inst		:= (status === IfuStatus.Back && axi4.rvalid)
+		ifuChk.stall	:= (status =/= IfuStatus.Func)
+		ifuChk.forword	:= in.imme.back === Back.Jump && in.imme.addr < pc
+		ifuChk.backword	:= in.imme.back === Back.Jump && in.imme.addr > pc
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
-	val io = IO(new Bundle{
-		val inst	= Input(Bool())
-		val stall	= Input(Bool())
-	})
-	val clock = IO(Input(Clock()))
+	val inst	= IO(Input(Bool()))
+	val stall	= IO(Input(Bool()))
+	val forword	= IO(Input(Bool()))
+	val backword= IO(Input(Bool()))
+	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_IfuChk.sv",
 	"""
 	module ysyx_26020046_IfuChk(
-		input logic io_inst,
-		input logic io_stall,
+		input logic inst,
+		input logic stall,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
 	import "DPI-C" function void ifuStall();
+	import "DPI-C" function void ifuForword();
+	import "DPI-C" function void ifuBackword();
 
 	always_ff@(posedge clock)begin
-		if(io_stall)ifuStall();
-		if(io_inst)ifuInst();
+		if(stall)	ifuStall();
+		if(inst)	ifuInst();
+		if(forword)	ifuForword();
+		if(backword)ifuBackword();
+	
 	end
 	endmodule
 	"""
