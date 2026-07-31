@@ -193,7 +193,7 @@ void NpcInitDevice(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new Vysyx_26020046_Npc{contextp};
-	scope=svGetScopeFromName("TOP.ysyx_26020046_Npc.asic.cpu.cpu.wbu.wbuChk");
+	scope=svGetScopeFromName("TOP.ysyx_26020046_Npc.wbu.wbuChk");
 	svSetScope(scope);
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		Verilated::traceEverOn(true);
