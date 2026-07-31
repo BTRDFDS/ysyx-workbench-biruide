@@ -58,10 +58,12 @@ class ysyx_26020046_Npc extends Module{
 
 	mem.read.valid 	:= status === MemStatus.Read
 	mem.read.addr  	:= rAddr
-	mem.write.valid := status === MemStatus.Write
+	mem.write.valid := status === MemStatus.Write && wAddr(31,28) === 0x8.U(4.W)
 	mem.write.addr  := wAddr
 	mem.write.strb  := wStrb
 	mem.write.data  := wData
+
+	when(status === MemStatus.Write && wAddr === 0x10000000.U(32.W)){printf("%s",wData(7,0))}
 
 	cpu.io.master.rid	:= 0.U
 	cpu.io.master.rlast	:= false.B
