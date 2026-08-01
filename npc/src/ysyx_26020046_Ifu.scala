@@ -4,9 +4,9 @@ import WidthConsts._
 class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val in	= IO(new Bundle{val imme = Flipped(new ImmeBefore())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
-	val loader	= IO(new LoaderBus(BitWidth))
+	val loader	= IO(new LoaderBus(BitWidth-2))
 	//pc更新
-		val pc		= RegInit(PcInit)
+		val pc		= RegInit(PcInit(31,2))
 		val state	= RegInit(MemStatus.Call)
 		val error	= RegInit(false.B)//特指地址错误
 		val res		= RegInit(IfuRes.Null)
@@ -14,11 +14,11 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr	}
 				is(Back.Error)	{pc := in.imme.addr	}
-				is(Back.Ready)	{pc := pc + 4.U		}
+				is(Back.Ready)	{pc := pc + 1.U		}
 			}
 			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1,0) =/= 0.U}
 		}
-		out.pipe.pc	:= pc
+		out.pipe.pc	:= Cat(pc,0.U(2.W))
 	//状态机
 		switch(state){
 			is(MemStatus.Call){when(loader.ready || error)		{state := MemStatus.Back}}
@@ -41,8 +41,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= state === MemStatus.Call && loader.ready
 		ifuChk.stall	:= state === MemStatus.Call
-		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < pc
-		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > pc
+		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < Cat(pc,0.U(2.W))
+		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > Cat(pc,0.U(2.W))
 		ifuChk.jump		:= in.imme.back === Back.Jump
 	}
 }

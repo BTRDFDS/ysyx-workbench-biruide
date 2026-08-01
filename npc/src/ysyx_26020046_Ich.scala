@@ -21,7 +21,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val addrTag = Wire(UInt((BitWidth-2-CacheBit).W))
 	val addrIdx = Wire(UInt(CacheBit.W))
 
-	addrTag := ifu.addr(BitWidth-2,CacheBit)
+	addrTag := ifu.addr(BitWidth-2-1,CacheBit)
 	addrIdx := ifu.addr(CacheBit-1,0)
 	when(ifu.valid){
 		when(valid(addrIdx) && tag(addrIdx) === addrTag){
