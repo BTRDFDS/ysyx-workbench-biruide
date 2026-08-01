@@ -27,6 +27,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		when(valid(addrIdx) && tag(addrIdx) === addrTag){
 			ifu.data 	:= data(addrIdx)
 			ifu.ready	:= true.B
+			ifu.error	:= false.B
 			bar.valid	:= false.B
 			bar.addr	:= 0.U
 		}.otherwise{
@@ -34,6 +35,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 			bar.addr	:= Cat(addrTag,addrIdx,0.U(2.W))
 			ifu.data	:= Mux(bar.ready,bar.data,0.U)
 			ifu.ready	:= bar.ready
+			ifu.error	:= bar.error
 			when(bar.ready){
 				data(addrIdx)	:= bar.data
 				tag(addrIdx)	:= addrTag
@@ -43,6 +45,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	}.otherwise{
 		ifu.ready	:= false.B
 		ifu.data	:= 0.U
+		ifu.error	:= false.B
 		bar.valid	:= false.B
 		bar.addr	:= 0.U
 	}
