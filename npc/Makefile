@@ -52,6 +52,7 @@ FLAGS=  --cc -MMD -O3 --x-assign fast --x-initial fast --noassert -Wpedantic -MM
 VERILATOR_CFLAGS += $(FLAGS)
 VERILATOR_CFLAGS += --autoflush
 VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
+VERILATOR_CFLAGS += --compiler "-O3"
 
 srcCpp += $(NPC_HOME)/test/cpp/npcDifftest/npcDifftest.c
 
