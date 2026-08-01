@@ -10,7 +10,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val pc		= RegInit(PcInit)
 		val state	= RegInit(IfuStatus.Call)
 		val error	= RegInit(false.B)//特指地址错误
-		val res		= Reg(IfuRes)
+		val res		= Reg(new IfuRes())
 		when(state === IfuStatus.Back){
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr	}
