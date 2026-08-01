@@ -35,7 +35,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		when(state === IfuStatus.Call){
 			when(loader.ready){	res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
 			.otherwise{			res := Mux(error,		IfuRes.Un4b,IfuRes.Null)}
-		}
+		}.elsewhen(in.imme.back =/= Back.Wait){res := IfuRes.Null}
 		out.pipe.res := res
 	if(Yosys == false){
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
