@@ -13,7 +13,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	})
 	val loader	= IO(new LoaderBus())
 	val storer	= IO(new StorerBus())	
-
+	val state	= RegInit(MemStatus.Call)
 
 	out.pipe.valid	:= false.B
 	out.pipe.rdAddr	:= in.pipe.rdAddr
@@ -33,6 +33,16 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	in.imme.r1Addr	:= out.imme.r1Addr
 	in.imme.r2Addr	:= out.imme.r2Addr
 	in.imme.csrAddr	:= out.imme.csrAddr
+	//状态机
+	when(in.pipe.valid && ~addrError){
+		switch(state){
+			is(MemStatus.Call){switch(in.pipe.lsuOp){
+				is(LsuOp.Load)	{when(loader.ready){state := MemStatus.Back}}
+				is(LsuOp.Store)	{when(storer.ready){state := MemStatus.Back}}
+			}}
+			is(MemStatus.Back){state := MemStatus.Call}//WBU无需等待
+		}
+	}
 
 	loader.valid:= false.B
 	loader.addr	:= 0.U
@@ -50,14 +60,14 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	storer.strb	:= 0.U
 	when(in.pipe.valid && ~addrError && in.pipe.lsuOp =/= LsuOp.Null){//发出
 		when(in.pipe.lsuOp === LsuOp.Load){
-			loader.valid:= true.B
+			loader.valid:= status === MemStatus.Call
 			loader.addr	:= in.pipe.result
 		}.otherwise{
 			loader.valid:= false.B
 			loader.addr	:= 0.U
 		}
 		when(in.pipe.lsuOp === LsuOp.Store){
-			storer.valid:= true.B
+			storer.valid:= status === MemStatus.Call
 			storer.addr	:= in.pipe.result
 			switch(in.pipe.lsuAddr){
 				is(LsuAddr.B){storer.strb := 0b0001.U << in.pipe.result(1,0)}
@@ -83,7 +93,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		}
 		when(in.pipe.lsuOp === LsuOp.Load){
 			val rdata = RegInit(0.U(BitWidth.W))
-			when(loader.ready){rdata := loader.data >> (8.U * in.pipe.result(1,0))}
+			when(status === MemStatus.Call && loader.ready){rdata := loader.data >> (8.U * in.pipe.result(1,0))}
 			switch(in.pipe.lsuAddr){
 				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
 				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
@@ -99,11 +109,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}otherwise{
-		val ready = Mux1H(Seq(
-			(in.pipe.lsuOp === LsuOp.Load)	-> loader.ready,
-			(in.pipe.lsuOp === LsuOp.Store)	-> storer.ready,
-			(in.pipe.lsuOp === LsuOp.Null)	-> true.B
-		))
+		val ready = Mux(in.pipe.lsuOp === LsuOp.Null,true.B,state === MemStatus.Back)
 		out.pipe.valid:= ready & in.pipe.valid
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.elsewhen(ready & in.imme.back === Back.Ready){out.imme.back	:= Back.Ready}
