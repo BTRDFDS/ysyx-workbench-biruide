@@ -59,17 +59,25 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 class ysyx_26020046_IchChk extends ExtModule{
 	val hit		= IO(Input(Bool()))
 	val miss	= IO(Input(Bool()))
+	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_IchChk.sv",
 	"""
 	module ysyx_26020046_IchChk(
 		input logic hit,
-		input logic miss
+		input logic miss,
+		input logic clock
 	);
 	import "DPI-C" function void ichHit();
 	import "DPI-C" function void ichMiss();
+	import "DPI-C" function void ichAccess();
+	import "DPI-C" function void ichPenalty();
 
 	always_ff@(posedge hit)	ichHit();
 	always_ff@(posedge miss)ichMiss();
+	always_ff@(posedge clock) begin
+		if(hit) ichAccess();
+		if(miss)ichPenalty();
+	end
 	endmodule
 	"""
 	)
