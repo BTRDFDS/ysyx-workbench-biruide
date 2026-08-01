@@ -33,16 +33,6 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	in.imme.r1Addr	:= out.imme.r1Addr
 	in.imme.r2Addr	:= out.imme.r2Addr
 	in.imme.csrAddr	:= out.imme.csrAddr
-	//状态机
-	when(in.pipe.valid && ~addrError){
-		switch(state){
-			is(MemStatus.Call){switch(in.pipe.lsuOp){
-				is(LsuOp.Load)	{when(loader.ready){state := MemStatus.Back}}
-				is(LsuOp.Store)	{when(storer.ready){state := MemStatus.Back}}
-			}}
-			is(MemStatus.Back){state := MemStatus.Call}//WBU无需等待
-		}
-	}
 
 	loader.valid:= false.B
 	loader.addr	:= 0.U
@@ -52,6 +42,16 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			is(LsuAddr.H ){when(in.pipe.result(0)===1.U)	{addrError := true.B}}
 			is(LsuAddr.Hu){when(in.pipe.result(0)===1.U)	{addrError := true.B}}
 			is(LsuAddr.W ){when(in.pipe.result(1,0) =/= 0.U){addrError := true.B}}
+		}
+	}
+	//状态机
+	when(in.pipe.valid && ~addrError){
+		switch(state){
+			is(MemStatus.Call){switch(in.pipe.lsuOp){
+				is(LsuOp.Load)	{when(loader.ready){state := MemStatus.Back}}
+				is(LsuOp.Store)	{when(storer.ready){state := MemStatus.Back}}
+			}}
+			is(MemStatus.Back){state := MemStatus.Call}//WBU无需等待
 		}
 	}
 	storer.valid:= false.B
