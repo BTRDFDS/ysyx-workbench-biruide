@@ -31,6 +31,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val instr = RegInit(0.U(BitWidth.W))
 		when(state === IfuStatus.Call && loader.ready){instr := loader.data}
 		out.pipe.instr	:= instr
+		out.pipe.res := IfuRes.Null
 		switch(state){
 			is(IfuStatus.Call){
 				when(loader.ready){out.pipe.res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
