@@ -46,10 +46,10 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 			is(ArbStatusLoad.LsuBack){when(Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid)){status := ArbStatusLoad.Idle}}
 		}
 		out.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31,24) =/= 0x02.U(8.W)
-		out.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuCall) && addr(31,24) =/= 0x02.U(8.W)
+		out.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuBack) && addr(31,24) =/= 0x02.U(8.W)
 		out.araddr  := addr
 		clt.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31,24) === 0x02.U(8.W)
-		clt.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuCall) && addr(31,24) === 0x02.U(8.W)
+		clt.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuBack) && addr(31,24) === 0x02.U(8.W)
 		clt.araddr  := addr
 		ifuL.ready	:= Mux(status =/= ArbStatusLoad.IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
 		ifuL.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
