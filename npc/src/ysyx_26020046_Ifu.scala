@@ -7,9 +7,10 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val loader	= IO(new LoaderBus(BitWidth))
 	//pc更新
-		val pc = RegInit(PcInit)
-		val state = RegInit(IfuStatus.Call)
-		val error = RegInit(false.B)//特指地址错误
+		val pc		= RegInit(PcInit)
+		val state	= RegInit(IfuStatus.Call)
+		val error	= RegInit(false.B)//特指地址错误
+		val res		= Reg(IfuRes)
 		when(state === IfuStatus.Back){
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr	}
@@ -21,24 +22,21 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		out.pipe.pc	:= pc
 	//状态机
 		switch(state){
-			is(IfuStatus.Call){when(loader.ready)				{state := IfuStatus.Back}}
+			is(IfuStatus.Call){when(loader.ready || error)		{state := IfuStatus.Back}}
 			is(IfuStatus.Back){when(in.imme.back =/= Back.Wait)	{state := IfuStatus.Call}}
 		}
 	//发出
 		loader.addr	:= pc
-		loader.valid:= state === IfuStatus.Call
+		loader.valid:= state === IfuStatus.Call && ~error
 	//接收
 		val instr = RegInit(0.U(BitWidth.W))
 		when(state === IfuStatus.Call && loader.ready){instr := loader.data}
 		out.pipe.instr	:= instr
-		out.pipe.res := IfuRes.Null
-		switch(state){
-			is(IfuStatus.Call){
-				when(loader.ready){out.pipe.res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
-				.otherwise{out.pipe.res := Mux(error,IfuRes.Un4b,IfuRes.Null)}
-			}
-			is(IfuStatus.Back){out.pipe.res := IfuRes.Valid}
+		when(state === IfuStatus.Call){
+			when(loader.ready){	res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
+			.otherwise{			res := Mux(error,		IfuRes.Un4b,IfuRes.Null)}
 		}
+		out.pipe.res := res
 	if(Yosys == false){
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
