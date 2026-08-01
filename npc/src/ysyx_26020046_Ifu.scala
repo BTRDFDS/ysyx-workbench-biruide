@@ -12,9 +12,9 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val res		= RegInit(IfuRes.Null)
 		when(state === MemStatus.Back){
 			switch(in.imme.back){
-				is(Back.Jump)	{pc := in.imme.addr	}
-				is(Back.Error)	{pc := in.imme.addr	}
-				is(Back.Ready)	{pc := pc + 1.U		}
+				is(Back.Jump)	{pc := in.imme.addr(31.2)	}
+				is(Back.Error)	{pc := in.imme.addr(31.2)	}
+				is(Back.Ready)	{pc := pc + 1.U				}
 			}
 			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1,0) =/= 0.U}
 		}
