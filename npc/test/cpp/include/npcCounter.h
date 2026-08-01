@@ -47,17 +47,19 @@ extern "C" void lsuStoreWait()	{numLsuStoreWait++;	}
 
 void printCounter(){
 	printf("cycle=%ld inst=%ld IPC=%f CPI= %f\n",numCycle,numInst,((float)numInst)/((float)numCycle),((float)numCycle)/((float)numInst));//实质上是已经是next pc了
-	printf("ich hit= %ld miss= %ld Hp= %f Mp= %f Access= %ld Penalty= %ld AMAT =%f\n",numIchHit,numIchMiss,
-	(float)((float)numIchHit)/((float)numIfuInst),
-	(float)((float)numIchMiss)/((float)numIfuInst),
+	printf("ich hit= %ld miss= %ld Hp= %f Mp= %f Access= %ld Penalty= %ld  ApH= %f PpM= %f AMAT =%f\n",numIchHit,numIchMiss,
+	((float)numIchHit)/((float)numIfuInst),
+	((float)numIchMiss)/((float)numIfuInst),
 	numIchAccess,numIchPenalty,
+	((float)numIchHit)/((float)numIchAccess),
+	((float)numIchPenalty)/((float)numIchMiss),
 	(numIchAccess+numIchPenalty)/((float)numIfuInst)
 	);
 	printf("ifu inst = %ld wait= %ld WpI= %f jump= %ld for= %ld back= %ld fpj= %f bpj= %f\n",
 		numIfuInst,numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst),
 		numIfuJump,numIfuForward,numIfuBackward,
-		(float)((float)numIfuForward)/(float)(numIfuJump),
-		(float)((float)numIfuBackward)/(float)(numIfuJump)
+		((float)numIfuForward)/(float)(numIfuJump),
+		((float)numIfuBackward)/(float)(numIfuJump)
 	);
 	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld\n",
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
