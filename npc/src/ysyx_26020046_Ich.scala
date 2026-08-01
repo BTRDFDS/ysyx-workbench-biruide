@@ -15,7 +15,8 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 
 	val data	= Reg(Vec(CacheNum, UInt(BitWidth.W)))
 	val tag		= Reg(Vec(CacheNum, UInt((BitWidth-2-CacheBit).W)))
-	val valid	= RegInit(Vec(CacheNum,false.B))
+	val valid	= RegInit(VecInit(Seq.fill(CacheNum)(false.B)))
+
 
 	val addrTag = Wire(UInt((BitWidth-2-CacheBit).W))
 	val addrIdx = Wire(UInt(CacheBit.W))
