@@ -16,7 +16,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 				is(Back.Error)	{pc := in.imme.addr	}
 				is(Back.Ready)	{pc := pc + 4.U		}
 			}
-			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1:0) =/= 0.U}
+			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1,0) =/= 0.U}
 		}
 		out.pipe.pc	:= pc
 	//状态机
