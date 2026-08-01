@@ -54,6 +54,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		val ichChk = Module(new ysyx_26020046_IchChk)
 		ichChk.hit	:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag)
 		ichChk.miss	:= ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag)
+		ichChk.clock:= clock
 	}
 }
 class ysyx_26020046_IchChk extends ExtModule{
