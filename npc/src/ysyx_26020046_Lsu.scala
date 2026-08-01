@@ -83,7 +83,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		}
 		when(in.pipe.lsuOp === LsuOp.Load){
 			val rdata = RegInit(0.U(BitWidth.W))
-			when(storer.ready){rdata := storer.data >> (8.U * in.pipe.result(1,0))}
+			when(loader.ready){rdata := loader.data >> (8.U * in.pipe.result(1,0))}
 			switch(in.pipe.lsuAddr){
 				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
 				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
