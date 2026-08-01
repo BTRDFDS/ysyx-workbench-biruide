@@ -111,8 +111,8 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
 YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 
 srcVerilogSta += $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv")
-# sta:verilogSta $(srcVerilogSta)
-sta: $(srcVerilogSta)
+sta:verilogSta $(srcVerilogSta)
+# sta: $(srcVerilogSta)
 	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)" $(YOSYS_CONFIG)
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
 
