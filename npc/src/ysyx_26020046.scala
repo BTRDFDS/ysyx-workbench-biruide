@@ -8,6 +8,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		val master = new Axi4MasterOut()
 		val slave = Flipped(new Axi4MasterOut())
 	})
+	val ich = Module(new ysyx_26020046_Ich(Yosys))
 	val ifu = Module(new ysyx_26020046_Ifu(PcInit,Yosys))
 	val idu = Module(new ysyx_26020046_Idu(Yosys))
 	val exu = Module(new ysyx_26020046_Exu(Yosys))
@@ -27,7 +28,8 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	idu.out.imme <> ifu.in.imme
 
 	//axi4
-	bar.ifuL <> ifu.loader
+	ich.ifu  <> ifu.loader
+	bar.ifuL <> ich.bar
 	bar.lsuL <> lsu.loader
 	bar.lsuS <> lsu.storer
 	bar.clt	 <> clt.axi4
