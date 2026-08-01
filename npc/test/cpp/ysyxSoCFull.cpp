@@ -9,6 +9,7 @@
 #include "svdpi.h"
 #include "VysyxSoCFull__Dpi.h"
 #include <npcDifftest.h>//我只需要difftest
+#include <npcCounter.h>
 
 #ifdef NPC_NVBroad
 #include <nvboard.h>
@@ -45,47 +46,12 @@ const uint32_t flashAddr	=0x30000000;
 const uint32_t flashSize	=0x00ffffff;//flash极限地址是bfff_ffff
 uint8_t flash[flashSize];
 
-uint64_t numCycle		=0;
-uint64_t numInst		=0;
-uint64_t numIfuInst		=0;
-uint64_t numIfuStall 	=0;
-uint64_t numIfuForward	=0;
-uint64_t numIfuBackward	=0;
-uint64_t numIfuJump		=0;
-uint64_t numIduCal		=0;
-uint64_t numIduJump		=0;
-uint64_t numIduImm		=0;
-uint64_t numIduLs		=0;
-uint64_t numIduCsr		=0;
-uint64_t numIduBr		=0;
-uint64_t numExuDone		=0;
-uint64_t numLsuLoad		=0;
-uint64_t numLsuLoadWait	=0;
-uint64_t numLsuStore	=0;
-uint64_t numLsuStoreWait=0;
-
 void NpcEbreak(int returnCode);
 void NpcRun(uint32_t times);
 void NpcReturn(const char* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
-extern "C" void ifuInst()		{numIfuInst++;		}
-extern "C" void ifuStall()		{numIfuStall++;		}
-extern "C" void ifuForward()	{numIfuForward++;	}
-extern "C" void ifuBackward()	{numIfuBackward++;	}
-extern "C" void ifuJump()		{numIfuJump++;		}
-extern "C" void iduCal()		{numIduCal++;		}
-extern "C" void iduJump()		{numIduJump++;		}
-extern "C" void iduImm()		{numIduImm++;		}
-extern "C" void iduLs()			{numIduLs++;		}
-extern "C" void iduCsr()		{numIduCsr++;		}
-extern "C" void iduBr()			{numIduBr++;		}
-extern "C" void exuDone()		{numExuDone++;		}
-extern "C" void lsuLoad()		{numLsuLoad++;		}
-extern "C" void lsuLoadWait()	{numLsuLoadWait++;	}
-extern "C" void lsuStore()		{numLsuStore++;		}
-extern "C" void lsuStoreWait()	{numLsuStoreWait++;	}
-
+extern uint64_t numInst,numIduCsr,numCycle;
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){	numInst++;numIduCsr++;NpcReturn("\nebreak",getRegPc(10)!=0);}
 extern "C" void wbuCheck(){	numInst++;if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);}
@@ -302,20 +268,8 @@ void NpcReturn(const char* msg,int returnCode){
 	#ifdef NPC_NVBroad
 		nvboard_quit();
 	#endif
-	printf("%s pc=0x %x cycle=%ld inst=%ld IPC=%f\n",msg,getRegPc(0)-4,numCycle,numInst,(float)(((float)numInst)/((float)numCycle)));//实质上是已经是next pc了
-	printf("ifu inst = %ld wait= %ld WpI= %f jump= %ld for= %ld back= %ld fpj= %f bpj= %f\n",
-		numIfuInst,numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst),
-		numIfuJump,numIfuForward,numIfuBackward,
-		(float)((float)numIfuForward)/(float)(numIfuJump),
-		(float)((float)numIfuBackward)/(float)(numIfuJump)
-	);
-	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld\n",
-		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
-		numIduCal+numIduJump+numIduImm+numIduLs+numIduCsr+numIduBr
-	);
-	printf("exu done= %ld\n",numExuDone);
-	printf("lsu load= %ld loadWait= %ld WpL= %f\n",numLsuLoad,numLsuLoadWait,(float)((float)numLsuLoadWait)/((float)numLsuLoad));
-	printf("lsu store= %ld storeWait= %ld WpS= %f\n",numLsuStore,numLsuStoreWait,(float)((float)numLsuStoreWait)/((float)numLsuStore));
+	printf("%s pc=0x %x\n",msg,getRegPc(0)-4);//实质上是已经是next pc了
+	printCounter();
 
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
