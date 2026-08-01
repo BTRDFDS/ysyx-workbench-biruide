@@ -49,4 +49,28 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		bar.valid	:= false.B
 		bar.addr	:= 0.U
 	}
+
+	if(Yosys == false){
+		val ichChk = Module(new ysyx_26020046_IchChk)
+		ichChk.hit	:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag)
+		ichChk.miss	:= ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag)
+	}
+}
+class ysyx_26020046_IchChk extends ExtModule{
+	val hit		= IO(Input(Bool()))
+	val miss	= IO(Input(Bool()))
+	setInline("ysyx_26020046_IchChk.sv",
+	"""
+	module ysyx_26020046_IchChk(
+		input logic hit,
+		input logic miss
+	);
+	import "DPI-C" function void ichHit();
+	import "DPI-C" function void ichMiss();
+
+	always_ff@(posedge hit)	ichHit();
+	always_ff@(posedge miss)ichMiss();
+	endmodule
+	"""
+	)
 }

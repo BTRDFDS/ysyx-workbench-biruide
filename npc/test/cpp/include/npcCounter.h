@@ -3,6 +3,8 @@
 
 uint64_t numCycle		=0;
 uint64_t numInst		=0;
+uint64_t numIchHit		=0;
+uint64_t numIchMiss		=0;
 uint64_t numIfuInst		=0;
 uint64_t numIfuStall 	=0;
 uint64_t numIfuForward	=0;
@@ -20,6 +22,8 @@ uint64_t numLsuLoadWait	=0;
 uint64_t numLsuStore	=0;
 uint64_t numLsuStoreWait=0;
 
+extern "C" void ichHit()		{numIchHit++;		}
+extern "C" void ichMiss()		{numIchMiss++;		}
 extern "C" void ifuInst()		{numIfuInst++;		}
 extern "C" void ifuStall()		{numIfuStall++;		}
 extern "C" void ifuForward()	{numIfuForward++;	}
@@ -39,6 +43,10 @@ extern "C" void lsuStoreWait()	{numLsuStoreWait++;	}
 
 void printCounter(){
 	printf("cycle=%ld inst=%ld IPC=%f\n",numCycle,numInst,(float)(((float)numInst)/((float)numCycle)));//实质上是已经是next pc了
+	printf("ich hit= %ld miss= %ld HpA= %f MpA= %f\n",numIchHit,numIchMiss,
+	(float)((float)numIchHit)/((float)numIfuInst),
+	(float)((float)numIchMiss)/((float)numIfuInst)
+	);
 	printf("ifu inst = %ld wait= %ld WpI= %f jump= %ld for= %ld back= %ld fpj= %f bpj= %f\n",
 		numIfuInst,numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst),
 		numIfuJump,numIfuForward,numIfuBackward,
