@@ -1,17 +1,16 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-object IfuStatus extends ChiselEnum{val Call,Back = Value}
 class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val in	= IO(new Bundle{val imme = Flipped(new ImmeBefore())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val loader	= IO(new LoaderBus(BitWidth))
 	//pc更新
 		val pc		= RegInit(PcInit)
-		val state	= RegInit(IfuStatus.Call)
+		val state	= RegInit(MemStatus.Call)
 		val error	= RegInit(false.B)//特指地址错误
 		val res		= RegInit(IfuRes.Null)
-		when(state === IfuStatus.Back){
+		when(state === MemStatus.Back){
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr	}
 				is(Back.Error)	{pc := in.imme.addr	}
@@ -22,17 +21,17 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		out.pipe.pc	:= pc
 	//状态机
 		switch(state){
-			is(IfuStatus.Call){when(loader.ready || error)		{state := IfuStatus.Back}}
-			is(IfuStatus.Back){when(in.imme.back =/= Back.Wait)	{state := IfuStatus.Call}}
+			is(MemStatus.Call){when(loader.ready || error)		{state := MemStatus.Back}}
+			is(MemStatus.Back){when(in.imme.back =/= Back.Wait)	{state := MemStatus.Call}}
 		}
 	//发出
 		loader.addr	:= pc
-		loader.valid:= state === IfuStatus.Call && ~error
+		loader.valid:= state === MemStatus.Call && ~error
 	//接收
 		val instr = RegInit(0.U(BitWidth.W))
-		when(state === IfuStatus.Call && loader.ready){instr := loader.data}
+		when(state === MemStatus.Call && loader.ready){instr := loader.data}
 		out.pipe.instr	:= instr
-		when(state === IfuStatus.Call){
+		when(state === MemStatus.Call){
 			when(loader.ready){	res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
 			.otherwise{			res := Mux(error,		IfuRes.Un4b,IfuRes.Null)}
 		}.elsewhen(in.imme.back =/= Back.Wait){res := IfuRes.Null}
@@ -40,8 +39,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	if(Yosys == false){
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
-		ifuChk.inst		:= state === IfuStatus.Call && loader.ready
-		ifuChk.stall	:= state === IfuStatus.Call
+		ifuChk.inst		:= state === MemStatus.Call && loader.ready
+		ifuChk.stall	:= state === MemStatus.Call
 		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < pc
 		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > pc
 		ifuChk.jump		:= in.imme.back === Back.Jump
