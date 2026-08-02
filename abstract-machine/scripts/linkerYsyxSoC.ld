@@ -21,7 +21,7 @@ SECTIONS{
 		*(.text._bootloader)
 	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
-	PROVIDE(_load_size_ = SIZEOF(.load));
+	PROVIDE(_load_size_ = SIZEOF(.load)/4);
 	PROVIDE(_load_begin_ = LOADADDR(.load));
 	_lma = _lma + SIZEOF(.load);
 	_lma = ALIGN(_lma, 0x4);
@@ -61,7 +61,7 @@ SECTIONS{
 		/* rt-thread */
 	} > sdram 
 	PROVIDE(_imag_start_ = ADDR(.imag));
-	PROVIDE(_imag_size_	 = SIZEOF(.imag));
+	PROVIDE(_imag_size_	 = SIZEOF(.imag)/4);
 	PROVIDE(_imag_begin_ = LOADADDR(.imag));
 	_lma = _lma + SIZEOF(.imag);
 	_lma = ALIGN(_lma, 0x4);
@@ -83,7 +83,7 @@ SECTIONS{
 	} > sdram
 
 	PROVIDE(_base_start_ = ADDR(.base));
-	PROVIDE(_base_size_	 = SIZEOF(.base));
+	PROVIDE(_base_size_	 = SIZEOF(.base)/4);
 
 	. = ALIGN(0x1000);
 	PROVIDE(_heap_start	= .);
