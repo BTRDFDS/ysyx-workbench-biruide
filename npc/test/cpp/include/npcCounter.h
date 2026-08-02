@@ -100,17 +100,6 @@ void logFileClose(){
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 	#endif
-void NpcWave(){
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#elif defined(NPC_MIN_TRACE)
-	if(numCycle >= NpcMinTraceBegin){
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	}
-	#endif
-}
 ////////////////////////////////////////////////////////////////////////////////////////
 void printOver(const char* msg,int returnCode){
 	NpcWave();
