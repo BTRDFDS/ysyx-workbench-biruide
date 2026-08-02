@@ -22,8 +22,8 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDeviceMem(int argc, char** argv){
+	printf("ASD\n");
 	deviceInit(argc, argv,"TOP.ysyxSoCFull.asic.cpu.cpu.wbu.wbuChk");
-	printf("ASD");
 	top = new VysyxSoCFull{contextp};
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		Verilated::traceEverOn(true);
