@@ -23,7 +23,6 @@ svScope scope;//作用域
 	VerilatedFstC* tfp;//波形文件
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
-extern uint64_t numInst,numIduCsr,numCycle;
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){	numInst++;numIduCsr++;NpcReturn("\nebreak",getRegPc(10)!=0);}
 extern "C" void wbuCheck(){	numInst++;if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);}
@@ -81,7 +80,6 @@ void NpcInitMem(int argc, char** argv){
 	fseek(file, 0, SEEK_END);
 	long fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
-	// extern uint32_t *flash;
 	size_t wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
