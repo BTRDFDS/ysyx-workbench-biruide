@@ -1,38 +1,29 @@
 //ysyxSoCFull
 #include "VysyxSoCFull.h"
 #include "verilated.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <fstream>
-#include <stdint.h>
 #include "svdpi.h"
 #include "VysyxSoCFull__Dpi.h"
-#include <npcDifftest.h>//我只需要difftest
 #include <npcCounter.h>
 
 #ifdef NPC_NVBroad
 #include <nvboard.h>
 #endif
 
-VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
-svScope scope;//作用域
-#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
-	#include "verilated_fst_c.h"
-	VerilatedFstC* tfp;//波形文件
-#endif
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){	numInst++;numIduCsr++;NpcReturn("\nebreak",getRegPc(10)!=0);}
 extern "C" void wbuCheck(){	numInst++;if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);}
 ////////////////////////////////////////////////////////////////////////////////////////
-void NpcInitDevice(int argc, char** argv){
-	contextp = new VerilatedContext;
-	contextp->commandArgs(argc, argv);
+void NpcDifftestGetGpr(uint32_t *gpr){
+	if(gpr==NULL){NpcReturn("difftest unable",-1);}
+	for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
+	gpr[0]=0;
+	}
+////////////////////////////////////////////////////////////////////////////////////////
+void NpcInitDeviceMem(int argc, char** argv){
+	deviceInit(argc, argv,"TOP.ysyxSoCFull.asic.cpu.cpu.wbu.wbuChk")
 	top = new VysyxSoCFull{contextp};
-	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.wbu.wbuChk");
-	svSetScope(scope);
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		Verilated::traceEverOn(true);
 		tfp = new VerilatedFstC;
@@ -65,8 +56,6 @@ void NpcInitDevice(int argc, char** argv){
 
 		nvboard_init();
 	#endif
-}
-void NpcInitMem(int argc, char** argv){
 	FILE *file;
 	if(argc>1&&argv[1]!=NULL){
 		printf("!!bin:%s\n",argv[1]);
@@ -84,55 +73,15 @@ void NpcInitMem(int argc, char** argv){
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
 	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-sdram");
-}
-void NpcDifftestGetGpr(uint32_t *gpr){
-	if(gpr==NULL){NpcReturn("difftest unable",-1);}
-	for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
-	gpr[0]=0;
-}
-void NpcWave(){
-	#ifdef NPC_WAVE
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	#elif defined(NPC_MIN_TRACE)
-	if(numCycle >= NpcMinTraceBegin){
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
 	}
-	#endif
-}
-void NpcReturn(const char* msg,int returnCode){
-	NpcWave();
-	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
-		tfp->close();
-	#endif
-	#ifdef NPC_NVBroad
-		nvboard_quit();
-	#endif
-	printf("%s pc=0x %x\n",msg,getRegPc(0)-4);//实质上是已经是next pc了
-	printCounter();
-
-	const char *regsName[] = {
-	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-	"a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
-	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
-	};//A=10 B=11
-	if(returnCode!=0){
-		for(int i=0;i<32;i++){
-			printf("[%2d %s]%8x ",i,regsName[i],getRegPc(i));
-			if(i%8==7)printf("\n");
-		}
-	}
+void NpcReturn(const char* msg,int returnCode,void* top){
+	printOver(msg,returnCode);
 	delete top;
-	delete contextp;
-	logFileClose();
 	exit(returnCode);
-}
+	}
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
-	NpcInitDevice(argc, argv);
-	NpcInitMem(argc, argv);
+	NpcInitDeviceMem(argc, argv);
 	{//初始化
 		for(int i=0;i<12;i++){
 			top->clock=0;top->reset=1;top->eval();

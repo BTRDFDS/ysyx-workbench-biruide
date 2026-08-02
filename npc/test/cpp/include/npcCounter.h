@@ -1,6 +1,14 @@
 #ifndef _NPC_COUNTER_
 #define _NPC_COUNTER_
 
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <fstream>
+#include <stdint.h>
+#include <npcDifftest.h>//我只需要difftest
+
+////////////////////////////////////////////////////////////////////////////////////////
 uint64_t numCycle		=0;
 uint64_t numInst		=0;
 uint64_t numIchHit		=0;
@@ -72,7 +80,7 @@ void printCounter(){
 ////////////////////////////////////////////////////////////////////////////////////////
 #if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
 	std::fstream logFile;//输出日志文件：
-#endif
+	#endif
 void logFileInit(const char* logFileName){
 	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
 		logFile.open(logFileName,std::ios::out);
@@ -81,14 +89,64 @@ void logFileInit(const char* logFileName){
 		exit(-1);
 	}
 	#endif
-}
+	}
 void logFileClose(){
 	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
 		logFile.close();
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
+svScope scope;//作用域
+VerilatedContext* contextp;//verilator上下文
+#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
+	#include "verilated_fst_c.h"
+	VerilatedFstC* tfp;//波形文件
+	#endif
+void deviceInit(int argc, char** argv,const char* scopeAddr){
+	scope=svGetScopeFromName(scopeAddr);
+	svSetScope(scope);
+	contextp = new VerilatedContext;
+	contextp->commandArgs(argc, argv);
+}
+void NpcWave(){
+	#ifdef NPC_WAVE
+		contextp->timeInc(1);
+		tfp->dump(contextp->time());
+	#elif defined(NPC_MIN_TRACE)
+	if(numCycle >= NpcMinTraceBegin){
+		contextp->timeInc(1);
+		tfp->dump(contextp->time());
+	}
+	#endif
+}
+////////////////////////////////////////////////////////////////////////////////////////
+void printOver(const char* msg,int returnCode){
+	NpcWave();
+	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
+		tfp->close();
+	#endif
+	#ifdef NPC_NVBroad
+		nvboard_quit();
+	#endif
+	printf("%s pc=0x %x\n",msg,getRegPc(0)-4);//实质上是已经是next pc了
+	printCounter();
 
+	const char *regsName[] = {
+	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+	"a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
+	};//A=10 B=11
+	if(returnCode!=0){
+		for(int i=0;i<32;i++){
+			printf("[%2d %s]%8x ",i,regsName[i],getRegPc(i));
+			if(i%8==7)printf("\n");
+		}
+	}
+	logFileClose();
+	delete contextp;
+}
+////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
 const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
 uint8_t psram[psramSize];
