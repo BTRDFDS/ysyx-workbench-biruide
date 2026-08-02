@@ -100,7 +100,7 @@ void logFileClose(){
 	#endif
 void iPcTraceFileInit(){
 	#if defined(NPC_I_PC_TRACE)
-		iPcTraceFile.open("./log/trace.log",std::ios::binary);
+		iPcTraceFile.open("./log/trace.log",std::ios::out);
 		if(!iPcTraceFile.is_open()) {
 		printf("Failed to open iPcTrace file!\n");
 		exit(-1);
