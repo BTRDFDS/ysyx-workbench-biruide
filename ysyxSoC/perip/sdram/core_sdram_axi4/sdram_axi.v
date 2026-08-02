@@ -53,7 +53,7 @@ module sdram_axi
     ,input  [  7:0]  inport_arlen_i
     ,input  [  1:0]  inport_arburst_i
     ,input           inport_rready_i
-    ,input  [ 15:0]  sdram_data_input_i
+    ,input  [ 31:0]  sdram_data_input_i
 
     // Outputs
     ,output          inport_awready_o
