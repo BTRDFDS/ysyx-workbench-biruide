@@ -96,6 +96,29 @@ void logFileClose(){
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
+#if defined(NPC_I_PC_TRACE)
+	std::fstream iPcTrace;//输出日志文件：
+	#endif
+void iPcTraceFileInit(){//
+	#if defined(NPC_I_PC_TRACE)
+		iPcTraceFile.open("./iPcTrace.bin",std::ios::binary);
+		if(!iPcTraceFile.is_open()) {
+		printf("Failed to open iPcTrace file!\n");
+		exit(-1);
+	}
+	#endif
+	}
+void iPcTraceFileWrite(uint32_t pc){
+	#if defined(NPC_I_PC_TRACE)
+		iPcTraceFile.write((const char*)&pc, 4);
+	#endif
+	}
+void iPcTraceFileClose(){
+	#if defined(NPC_I_PC_TRACE)
+		iPcTraceFile.close();
+	#endif
+	}
+////////////////////////////////////////////////////////////////////////////////////////
 #if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
@@ -124,6 +147,7 @@ void printOver(const char* msg,int returnCode){
 		}
 	}
 	logFileClose();
+	iPcTraceFileClose();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
