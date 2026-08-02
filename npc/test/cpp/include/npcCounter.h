@@ -110,7 +110,7 @@ void iPcTraceFileInit(){
 	}
 void iPcTraceFileWrite(uint32_t pc){
 	#if defined(NPC_I_PC_TRACE)
-		logFile<<"write pc=0x"<<std::hex<<pc<<"\n";
+		// logFile<<"write pc=0x"<<std::hex<<pc<<"\n";
 		iPcTraceFile.write((const char*)&pc, 4);
 	#endif
 	}
