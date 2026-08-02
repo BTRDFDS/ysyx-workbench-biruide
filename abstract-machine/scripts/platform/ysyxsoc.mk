@@ -22,12 +22,6 @@ image: image-dep
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
-#.boot  .load  .data
-# 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary \
-# 	--only-section=.boot \
-# 	--only-section=.load \
-# 	--only-section=.data \
-# 	$(IMAGE).elf $(IMAGE).bin 
 
 run: insert-arg
 	@make -C $(NPC_HOME) runYsyxSoc t=$(TARGET) ARG=$(IMAGE).bin
