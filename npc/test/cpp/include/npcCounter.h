@@ -7,7 +7,6 @@
 #include <fstream>
 #include <stdint.h>
 #include <npcDifftest.h>//我只需要difftest
-
 ////////////////////////////////////////////////////////////////////////////////////////
 uint64_t numCycle		=0;
 uint64_t numInst		=0;
@@ -269,6 +268,15 @@ extern "C" void sdram_write(int addr,int data){
 	#elif defined(NPC_MIN_TRACE)
 		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
 	#endif
+	}
+////////////////////////////////////////////////////////////////////////////////////////
+extern void NpcReturn(const char* msg,int returnCode);
+extern "C" int getRegPc(int addr);
+extern "C" void ebreak(){numInst++;numIduCsr++;NpcReturn("\nebreak",getRegPc(10)!=0);}
+extern "C" void wbuCheck(){
+	numInst++;
+	iPcTraceFileWrite(getRegPc(0));
+	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
 #endif

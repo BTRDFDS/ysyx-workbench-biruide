@@ -13,13 +13,6 @@ VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
 svScope scope;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
-extern "C" int getRegPc(int addr);
-extern "C" void ebreak(){	numInst++;numIduCsr++;NpcReturn("\nebreak",getRegPc(10)!=0);}
-extern "C" void wbuCheck(){
-	numInst++;
-	iPcTraceFileWrite(getRegPc(0));
-	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
-	}
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
