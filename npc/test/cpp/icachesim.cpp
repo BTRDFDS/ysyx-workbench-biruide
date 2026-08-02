@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
 	top->clock=0;top->reset=0;top->eval();
 	}
 	printf("\033[1;32m Welcome to ysyx_26020046_Ich[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	std::fstream file("./bin/microbench-ref.bin", std::ios::in | std::ios::binary);
+	std::fstream file("./bin/microbench-test.bin", std::ios::in | std::ios::binary);
 	// std::fstream file("./bin/dummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint32_t pc;

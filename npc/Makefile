@@ -138,8 +138,8 @@ srcIcache = ysyx_26020046_Ich
 srcCppIcache += $(NPC_HOME)/test/cpp/icachesim.cpp
 srcVerilogIcache += $(shell find $(NPC_HOME)/build/icache -type f -name "*.sv")
 # BuilderIcache
-runIcache:verilogIcache $(srcCppIcache)
-# runIcache: $(srcCppIcache)
+# runIcache:verilogIcache $(srcCppIcache)
+runIcache: $(srcCppIcache)
 	verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
 	--exe $(srcCpp) $(srcCppIcache) --Mdir build/$(srcIcache) --build \
 	--top-module $(srcIcache) \
