@@ -74,7 +74,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 	fclose(file);
 	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-sdram");
 	}
-void NpcReturn(const char* msg,int returnCode,void* top){
+void NpcReturn(const char* msg,int returnCode){
 	printOver(msg,returnCode);
 	delete top;
 	exit(returnCode);
