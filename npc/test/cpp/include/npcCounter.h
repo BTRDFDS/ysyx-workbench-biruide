@@ -96,15 +96,17 @@ void logFileClose(){
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 #if defined(NPC_I_PC_TRACE)
-	std::fstream iPcTraceFile;//输出日志文件：
+	std::fstream iPcTraceFile;
+	#include <cerrno> 
 	#endif
 void iPcTraceFileInit(){
 	#if defined(NPC_I_PC_TRACE)
 		iPcTraceFile.open("./iPcTrace.log",std::ios::binary);
 		if(!iPcTraceFile.is_open()) {
+			std::perror("Failed to open iPcTrace file");
 		printf("Failed to open iPcTrace file!\n");
 		exit(-1);
-	}
+		}
 	#endif
 	}
 void iPcTraceFileWrite(uint32_t pc){
