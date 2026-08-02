@@ -96,7 +96,7 @@ void logFileClose(){
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 #if defined(NPC_I_PC_TRACE)
-	std::fstream iPcTrace;//输出日志文件：
+	std::fstream iPcTraceFile;//输出日志文件：
 	#endif
 void iPcTraceFileInit(){//
 	#if defined(NPC_I_PC_TRACE)
