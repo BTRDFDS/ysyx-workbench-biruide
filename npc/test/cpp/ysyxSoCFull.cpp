@@ -13,7 +13,6 @@ VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
 svScope scope;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
 	for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
@@ -33,6 +32,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 		tfp->open("./wave/ysyxSoCFull.fst");
 	#endif
 	logFileInit("./log/ysyxSoCFull.log");
+	iPcTraceFileInit();
 	#ifdef NPC_NVBroad
 		nvboard_bind_pin(&top->externalPins_uart_rx  ,1,UART_RX);
 		nvboard_bind_pin(&top->externalPins_uart_tx  ,1,UART_TX);
