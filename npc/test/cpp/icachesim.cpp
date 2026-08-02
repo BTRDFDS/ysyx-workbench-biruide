@@ -31,15 +31,14 @@ int main(int argc, char** argv) {
 			printf("cnt= %ld hit= %ld\n"cnt,hit);
 			break;
 		}
+		top->bar_ready	=1;
+		top->bar_error	=0;
+
 		top->ifu_valid	=1;
-		top->ifu_addr	=pc;
-		top->clock=1;top->eval();
-		if(top->ifu_ready){
-			if(!top->bar_valid)
-		}
-
-
+		top->ifu_addr	=(pc>>2)&0x3fffffff;
 		top->clock=0;top->eval();
+		if(!top->bar_valid)hit++;
+		top->clock=1;top->eval();
 	}
 	delete top;
 	delete contextp;
