@@ -17,3 +17,4 @@ import chisel3._
 object BuilderNpc		extends App	{emitSystemVerilogFile(new ysyx_26020046_Npc		,Array("--target-dir","./build/npc")	,firtoolOptions)}
 object BuilderYsyxSoc	extends App	{emitSystemVerilogFile(new ysyx_26020046			,Array("--target-dir","./build/ysyxsoc"),firtoolOptions)}
 object BuilderSta		extends App	{emitSystemVerilogFile(new ysyx_26020046(0.U,true)	,Array("--target-dir","./build/sta")	,firtoolOptions)}
+object BuilderIcache	extends App	{emitSystemVerilogFile(new ysyx_26020046_Ich(true)	,Array("--target-dir","./build/icache")	,firtoolOptions)}

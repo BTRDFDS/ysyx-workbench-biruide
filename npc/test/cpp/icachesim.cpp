@@ -1,5 +1,5 @@
-//icachesim
-#include "Vicachesim.h"
+//ysyx_26020046_Ich
+#include "Vysyx_26020046_Ich.h"
 #include "verilated.h"
 
 #include <stdlib.h>
@@ -9,19 +9,19 @@
 #include <stdint.h>
 
 VerilatedContext* contextp;//verilator上下文
-Vicachesim* top;//顶层模块
+Vysyx_26020046_Ich* top;//顶层模块
 svScope scope;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
-	top = new Vicachesim{contextp};
+	top = new Vysyx_26020046_Ich{contextp};
 	{//初始化
 	top->clock=0;top->reset=1;top->eval();
 	top->clock=1;top->reset=1;top->eval();
 	top->clock=0;top->reset=0;top->eval();
 	}
-	printf("\033[1;32m Welcome to icachesim[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
+	printf("\033[1;32m Welcome to ysyx_26020046_Ich[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
 	std::fstream file("./bin/dummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint32_t pc;

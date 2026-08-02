@@ -20,6 +20,11 @@ verilogSta:
 	mkdir -p ./build
 	mkdir -p ./build/sta
 	mill -i runMain BuilderSta
+verilogIcache:
+	$(call git_commit, "generate verilog for icache")
+	mkdir -p ./build
+	mkdir -p ./build/icache
+	mill -i runMain BuilderIcache
 help:
 	mill -i runMain Builder --help
 
@@ -94,7 +99,7 @@ SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
 SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
 
-runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
+runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 # runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
 	verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
@@ -106,7 +111,6 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppNpc) wave
 # 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim
-
 
 YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 
@@ -129,3 +133,20 @@ staWbu: $(srcVerilogStaWbu)
 	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogStaWbu)" $(YOSYS_CONFIG)
 # staPart: verilogSta staWbu staIdu staExu
 staPart: staWbu staIdu staExu
+
+srcIcache = ysyx_26020046_Ich
+srcCppIcache += $(NPC_HOME)/test/cpp/icachesim.cpp
+srcVerilogIcache += $(shell find $(NPC_HOME)/build/icache -type f -name "*.sv")
+# BuilderIcache
+runIcache:verilogIcache $(srcCppIcache)
+# runIcache: $(srcCppIcache)
+	verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
+	--exe $(srcCpp) $(srcCppIcache) --Mdir build/$(srcIcache) \
+	--top-module $(srcIcache) \
+	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
+	$(addprefix -CFLAGS , $(CXXFLAGS)) \
+	$(addprefix -LDFLAGS , $(LDFLAGS))
+# 	 -Wno-UNOPTFLAT
+# 	./build/$(srcIcache)/V$(srcIcache) $(ARG)
+	time ./build/$(srcIcache)/V$(srcIcache) $(ARG)
+	make sim
