@@ -20,7 +20,6 @@ SECTIONS{
 	.load : AT(_lma){
 		*(.text._bootloader)
 		*(.rodata*)
-		*(.srodata*)
 	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load));
@@ -30,6 +29,7 @@ SECTIONS{
 
 	.imag : AT(_lma){/*image*/
 		*(.text*)
+		*(.srodata*)
 		*(.data*)
 		*(.sdata*)
 		
