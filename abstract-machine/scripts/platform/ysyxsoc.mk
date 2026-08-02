@@ -30,6 +30,6 @@ image: image-dep
 # 	$(IMAGE).elf $(IMAGE).bin 
 
 run: insert-arg
-	make -C $(NPC_HOME) runYsyxSoc t=$(TARGET) ARG=$(IMAGE).bin
+	@make -C $(NPC_HOME) runYsyxSoc t=$(TARGET) ARG=$(IMAGE).bin
 
 .PHONY: insert-arg
