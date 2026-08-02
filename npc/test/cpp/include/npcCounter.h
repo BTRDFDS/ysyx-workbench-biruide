@@ -102,7 +102,6 @@ void logFileClose(){
 	#endif
 ////////////////////////////////////////////////////////////////////////////////////////
 void printOver(const char* msg,int returnCode){
-	NpcWave();
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		tfp->close();
 	#endif

@@ -91,6 +91,7 @@ void NpcWave(){
 	#endif
 	}
 void NpcReturn(const char* msg,int returnCode){
+	NpcWave();
 	printOver(msg,returnCode);
 	printf("qwe\n");
 	delete top;
