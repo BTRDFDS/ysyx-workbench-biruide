@@ -100,7 +100,8 @@ void logFileClose(){
 	#endif
 void iPcTraceFileInit(){
 	#if defined(NPC_I_PC_TRACE)
-		iPcTraceFile.open("./log/trace.log",std::ios::out);
+		iPcTraceFile.open("./iPcTrace.bin",std::ios::out);
+		printf("./iPcTrace.bin\n");
 		if(!iPcTraceFile.is_open()) {
 		printf("Failed to open iPcTrace file!\n");
 		exit(-1);
@@ -109,6 +110,7 @@ void iPcTraceFileInit(){
 	}
 void iPcTraceFileWrite(uint32_t pc){
 	#if defined(NPC_I_PC_TRACE)
+		logFile<<"write pc=0x"<<std::hex<<pc<<"\n";
 		iPcTraceFile.write((const char*)&pc, 4);
 	#endif
 	}
