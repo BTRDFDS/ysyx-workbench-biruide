@@ -139,6 +139,7 @@ void printOver(const char* msg,int returnCode){
 	}
 	logFileClose();
 	delete contextp;
+	printf("asd\n");
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
