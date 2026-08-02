@@ -277,9 +277,11 @@ void NpcReturn(const char* msg,int returnCode){
 	"a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
 	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
 	};//A=10 B=11
-	for(int i=0;i<32;i++){
-		printf("[%2d %s]%8x ",i,regsName[i],getRegPc(i));
-		if(i%8==7)printf("\n");
+	if(returnCode!=0){
+		for(int i=0;i<32;i++){
+			printf("[%2d %s]%8x ",i,regsName[i],getRegPc(i));
+			if(i%8==7)printf("\n");
+		}
 	}
 	delete top;
 	delete contextp;
