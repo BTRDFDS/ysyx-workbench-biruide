@@ -32,6 +32,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 		tfp->open("./wave/ysyx_26020046_Npc.fst");
 	#endif
 	logFileInit("./log/ysyx_26020046_Npc.log");
+	iPcTraceFileInit();
 	#ifdef NPC_NVBroad
 		nvboard_bind_pin(&top->externalPins_uart_rx  ,1,UART_RX);
 		nvboard_bind_pin(&top->externalPins_uart_tx  ,1,UART_TX);
