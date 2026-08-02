@@ -9,7 +9,9 @@
 #include <nvboard.h>
 #endif
 
+VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
+svScope scope;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){	numInst++;numIduCsr++;NpcReturn("\nebreak",getRegPc(10)!=0);}
@@ -77,10 +79,21 @@ void NpcInitDeviceMem(int argc, char** argv){
 	fclose(file);
 	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-sdram");
 	}
+void NpcWave(){
+	#ifdef NPC_WAVE
+		contextp->timeInc(1);
+		tfp->dump(contextp->time());
+	#elif defined(NPC_MIN_TRACE)
+	if(numCycle >= NpcMinTraceBegin){
+		contextp->timeInc(1);
+		tfp->dump(contextp->time());
+	}
+	#endif
+	}
 void NpcReturn(const char* msg,int returnCode){
 	printOver(msg,returnCode);
 	printf("qwe\n");
-	// delete top;
+	delete top;
 	printf("asd\n");
 	delete contextp;
 	printf("zxc\n");

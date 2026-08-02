@@ -96,8 +96,6 @@ void logFileClose(){
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-svScope scope;//作用域
-VerilatedContext* contextp;//verilator上下文
 #if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
@@ -138,7 +136,6 @@ void printOver(const char* msg,int returnCode){
 		}
 	}
 	logFileClose();
-	delete contextp;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
