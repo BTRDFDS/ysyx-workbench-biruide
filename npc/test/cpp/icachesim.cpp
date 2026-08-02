@@ -10,7 +10,6 @@
 
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_Ich* top;//顶层模块
-svScope scope;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
 	contextp = new VerilatedContext;
@@ -28,7 +27,7 @@ int main(int argc, char** argv) {
 	uint64_t hit;
 	for(uint64_t cnt=0;(!contextp->gotFinish());cnt++){
 		if(!file.read((char*)&pc, sizeof(pc))){
-			printf("cnt= %ld hit= %ld\n"cnt,hit);
+			printf("cnt= %ld hit= %ld\n",cnt,hit);
 			break;
 		}
 		top->bar_ready	=1;
