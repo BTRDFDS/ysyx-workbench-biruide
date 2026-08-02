@@ -23,7 +23,7 @@ SECTIONS{
 		*(.srodata*)
 	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
-	PROVIDE(_load_size_ = SIZEOF(.load));
+	PROVIDE(_load_size_ = SIZEOF(.load)/4);
 	PROVIDE(_load_begin_ = LOADADDR(.load));
 	_lma = _lma + SIZEOF(.load);
 	_lma = ALIGN(_lma, 0x4);
