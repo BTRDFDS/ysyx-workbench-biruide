@@ -1,18 +1,13 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-// class Block(val CacheBit: Int=4) extends Bundle{
-//     val data    = UInt(BitWidth.W)
-//     val tag     = UInt((BitWidth-2-CacheBit).W)
-//     val valid   = Bool()
-// }
+object IchEnum extends ChiselEnum{val Imme,Back=Value}
 class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val ifu = IO(Flipped(new LoaderBus(BitWidth-2)))
 	val bar = IO(new LoaderBus())
 
 	val CacheBit	= 4
 	val CacheNum    = 1 << CacheBit
-	val CacheSize	= 2
 
 	val data	= Reg(Vec(CacheNum, UInt(BitWidth.W)))
 	val tag		= Reg(Vec(CacheNum, UInt((BitWidth-2-CacheBit).W)))

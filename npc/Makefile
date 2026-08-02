@@ -135,7 +135,7 @@ staWbu: $(srcVerilogStaWbu)
 staPart: staWbu staIdu staExu
 
 srcIcache = ysyx_26020046_Ich
-srcCppIcache += $(NPC_HOME)/test/cpp/icachesim.cpp
+srcCppIcache += $(NPC_HOME)/test/cpp/ysyx_26020046_Ich.cpp
 srcVerilogIcache += $(shell find $(NPC_HOME)/build/icache -type f -name "*.sv")
 # BuilderIcache
 runIcache:verilogIcache $(srcCppIcache)
@@ -150,3 +150,6 @@ runIcache:verilogIcache $(srcCppIcache)
 # 	./build/$(srcIcache)/V$(srcIcache) $(ARG)
 	time ./build/$(srcIcache)/V$(srcIcache) $(ARG)
 	make sim
+icachesim:
+	clang++ $(NPC_HOME)/test/cpp/icachesim.cpp -o icachesim
+	time ./icachesim

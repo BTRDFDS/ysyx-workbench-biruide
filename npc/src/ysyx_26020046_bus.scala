@@ -119,9 +119,9 @@ class Axi4MasterOut extends Bundle {
 	val bready	= Output(Bool())
 }
 class LoaderBus(val AddrWidth: Int=BitWidth) extends Bundle{
-    val valid	= Output(Bool())
-    val addr	= Output(UInt(AddrWidth.W))
-    val data	= Input(UInt(BitWidth.W))
+	val valid	= Output(Bool())
+	val addr	= Output(UInt(AddrWidth.W))
+	val data	= Input(UInt(BitWidth.W))
 	val ready	= Input(Bool())
 	val error	= Input(Bool())
 }
