@@ -99,10 +99,9 @@ void logFileClose(){
 	std::fstream iPcTraceFile;//输出日志文件：
 	#endif
 void iPcTraceFileInit(){
-		printf("./iPcTrace.bin\n");
 	#if defined(NPC_I_PC_TRACE)
 		iPcTraceFile.open("./iPcTrace.bin",std::ios::binary);
-		printf("./iPcTrace.bin\n");
+		// printf("./iPcTrace.bin\n");
 		if(!iPcTraceFile.is_open()) {
 		printf("Failed to open iPcTrace file!\n");
 		exit(-1);
