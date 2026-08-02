@@ -77,7 +77,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 	size_t wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
-	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-sdram");
+	NpcDifftestInit8(wordsRead,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-sdram");
 	}
 void NpcWave(){
 	#ifdef NPC_WAVE
@@ -93,11 +93,8 @@ void NpcWave(){
 void NpcReturn(const char* msg,int returnCode){
 	NpcWave();
 	printOver(msg,returnCode);
-	printf("qwe\n");
 	delete top;
-	printf("asd\n");
 	delete contextp;
-	printf("zxc\n");
 	exit(returnCode);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +108,7 @@ int main(int argc, char** argv) {
 		top->clock=0;top->reset=0;top->eval();
 		numCycle=0;
 	}
-	printf("\033[1;32m Welcome to YsyxSoc[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
+	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
 	for(int i=0;(!contextp->gotFinish());i++){
 	// for(int i=0;i<500000&(!contextp->gotFinish());i++){
 		#ifdef NPC_NVBroad
