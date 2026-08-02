@@ -141,7 +141,7 @@ srcVerilogIcache += $(shell find $(NPC_HOME)/build/icache -type f -name "*.sv")
 runIcache:verilogIcache $(srcCppIcache)
 # runIcache: $(srcCppIcache)
 	verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
-	--exe $(srcCpp) $(srcCppIcache) --Mdir build/$(srcIcache) \
+	--exe $(srcCpp) $(srcCppIcache) --Mdir build/$(srcIcache) --build \
 	--top-module $(srcIcache) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
