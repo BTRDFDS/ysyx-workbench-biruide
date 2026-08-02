@@ -1,8 +1,8 @@
 //ysyx_26020046_Npc
-#include "VysyxSoCFull.h"
+#include "Vysyx_26020046_Npc.h"
 #include "verilated.h"
 #include "svdpi.h"
-#include "VysyxSoCFull__Dpi.h"
+#include "Vysyx_26020046_Npc__Dpi.h"
 #include <npcCounter.h>
 
 #ifdef NPC_NVBroad
@@ -10,7 +10,7 @@
 #endif
 
 VerilatedContext* contextp;//verilator上下文
-VysyxSoCFull* top;//顶层模块
+Vysyx_26020046_Npc* top;//顶层模块
 svScope scope;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int getRegPc(int addr);
@@ -26,7 +26,7 @@ void NpcDifftestGetGpr(uint32_t *gpr){
 void NpcInitDeviceMem(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
-	top = new VysyxSoCFull{contextp};
+	top = new Vysyx_26020046_Npc{contextp};
 	scope=svGetScopeFromName("TOP.ysyx_26020046_Npc.cpu.wbu.wbuChk");
 	svSetScope(scope);
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
