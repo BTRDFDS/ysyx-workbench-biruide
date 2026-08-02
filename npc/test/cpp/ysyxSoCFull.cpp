@@ -23,137 +23,10 @@ svScope scope;//作用域
 	VerilatedFstC* tfp;//波形文件
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
-#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
-	//输出日志文件：
-	std::fstream logFile;
-#endif
-////////////////////////////////////////////////////////////////////////////////////////
-
-const uint32_t psramAddr	=0x80000000;
-const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
-uint8_t psram[psramSize];
-
-const uint32_t sdramAddr	=0xa0000000;
-const uint32_t sdramSize	=0x07ffffff;//2+12+10+2
-uint8_t sdram[sdramSize];
-
-const uint32_t mromAddr		=0x20000000;//mrom起始地址
-const uint32_t mromSize		=0xfff;
-uint8_t mrom[mromSize];
-
-
-const uint32_t flashAddr	=0x30000000;
-const uint32_t flashSize	=0x00ffffff;//flash极限地址是bfff_ffff
-uint8_t flash[flashSize];
-
-void NpcEbreak(int returnCode);
-void NpcRun(uint32_t times);
-void NpcReturn(const char* msg,int returnCode);
-void NpcWave();
-////////////////////////////////////////////////////////////////////////////////////////
 extern uint64_t numInst,numIduCsr,numCycle;
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){	numInst++;numIduCsr++;NpcReturn("\nebreak",getRegPc(10)!=0);}
 extern "C" void wbuCheck(){	numInst++;if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);}
-////////////////////////////////////////////////////////////////////////////////////////
-extern "C" void flash_read(int32_t addr, int32_t *data) {
-	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
-	#ifdef NPC_M_TRACE
-	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
-	#endif
-	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcReturn("flash read error",addrX);}
-	if(addrX>=flashSize)NpcReturn("flash read error",addrX);
-	uint32_t temp=
-		((uint32_t)flash[addrX+0]<< 0)|
-		((uint32_t)flash[addrX+1]<< 8)|
-		((uint32_t)flash[addrX+2]<<16)|
-		((uint32_t)flash[addrX+3]<<24);
-	*data=temp;
-	#ifdef NPC_M_TRACE
-		logFile<<" => "<<std::hex<<temp<<std::endl;
-	#endif
-}
-extern "C" void mrom_read(int32_t addr, int32_t *data) {
-	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
-	if(addrX-mromAddr>=mromSize|addrX<mromAddr){NpcReturn("mrom read",-2);}
-	uint32_t temp=
-		((uint32_t)mrom[addrX-mromAddr+0]<< 0)|
-		((uint32_t)mrom[addrX-mromAddr+1]<< 8)|
-		((uint32_t)mrom[addrX-mromAddr+2]<<16)|
-		((uint32_t)mrom[addrX-mromAddr+3]<<24);
-	*data=temp;
-	#ifdef NPC_M_TRACE
-	logFile<<"mrom	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" => "<<std::hex<<temp<<std::endl;
-	#endif
-}
-extern "C" int psram_read(int32_t addr){
-	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
-	#if defined(NPC_M_TRACE)
-		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
-	#elif defined(NPC_MIN_TRACE)
-		// if(numCycle >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
-		// if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
-	#endif
-	if(addrX>=psramSize)NpcReturn("psram read error",addrX);
-	uint32_t temp=
-		((uint32_t)psram[addrX+0]<< 0)|
-		((uint32_t)psram[addrX+1]<< 8)|
-		((uint32_t)psram[addrX+2]<<16)|
-		((uint32_t)psram[addrX+3]<<24);
-	#ifdef NPC_M_TRACE
-		logFile<<" => "<<std::hex<<temp<<std::endl;
-	#endif
-	return temp;
-}
-extern "C" void psram_write(int addr,int data){
-	uint32_t addrX=(uint32_t)addr;
-	#if defined(NPC_M_TRACE)
-		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
-	#elif defined(NPC_MIN_TRACE)
-		// if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
-	#endif
-	psram[addrX+0]=(uint8_t)(data&0xff);
-	#if defined(NPC_M_TRACE)
-		logFile<<std::hex<<(uint32_t)psram[addrX+0]<<std::endl;
-	#elif defined(NPC_MIN_TRACE)
-		// if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<std::hex<<(uint32_t)psram[addrX+0]<<"\n";
-	#endif
-}
-extern "C" int sdram_read(int32_t addr){
-	uint32_t addrX=((uint32_t)addr);
-	#if defined(NPC_M_TRACE)
-		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
-	#elif defined(NPC_MIN_TRACE)
-		if(numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<getRegPc(0)<<"\n";
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
-	#endif
-	if(addrX>=sdramSize)NpcReturn("sdram read error",addrX);
-	uint32_t temp=
-		((uint32_t)sdram[addrX+0]<< 0)|
-		((uint32_t)sdram[addrX+1]<< 8)|
-		((uint32_t)sdram[addrX+2]<<16)|
-		((uint32_t)sdram[addrX+3]<<24);
-	#ifdef NPC_M_TRACE
-		logFile<<" => "<<std::hex<<temp<<std::endl;
-	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<" => "<<std::hex<<temp<<std::endl;
-	#endif
-	return temp;
-}
-extern "C" void sdram_write(int addr,int data){
-	uint32_t addrX=(uint32_t)addr;
-	#if defined(NPC_M_TRACE)
-		logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
-	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
-	#endif
-	sdram[addrX+0]=(uint8_t)(data&0xff);
-	#if defined(NPC_M_TRACE)
-		logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
-	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
-	#endif
-}
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDevice(int argc, char** argv){
 	contextp = new VerilatedContext;
@@ -167,13 +40,7 @@ void NpcInitDevice(int argc, char** argv){
 		top->trace(tfp, 99);
 		tfp->open("./wave/ysyxSoCFull.fst");
 	#endif
-	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
-		logFile.open("./log/ysyxSoCFull.log",std::ios::out);
-		if(!logFile.is_open()) {
-		printf("Failed to open log file!\n");
-		exit(-1);
-	}
-	#endif
+	logFileInit("./log/ysyxSoCFull.log");
 	#ifdef NPC_NVBroad
 		nvboard_bind_pin(&top->externalPins_uart_rx  ,1,UART_RX);
 		nvboard_bind_pin(&top->externalPins_uart_tx  ,1,UART_TX);
@@ -214,35 +81,11 @@ void NpcInitMem(int argc, char** argv){
 	fseek(file, 0, SEEK_END);
 	long fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
+	// extern uint32_t *flash;
 	size_t wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
-	// printf("fileSize=%lx\n",fileSize);
-	// printf("has open.fileSize=%lx\n",fileSize);
-	// for(int i=0;i<0x100;i+=4){//小段检查
-	// 	printf("%02x%02x%02x%02x ",flash[i+3],flash[i+2],flash[i+1],flash[i]);
-	// 	if(i%16==15)printf("\n");
-	// }
 	NpcDifftestInit8(flashSize,flash,flashAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-flash-sdram");
-	// for(uint32_t i=0;i<0x100;i++){
-	// 	flash[i]=i&0xff;
-	// }
-	// file =fopen("/home/biruide/ysyx-workbench/am-kernels/tests/my-tests/build/myTest_chat-riscv32i-ysyxsoc.bin","rb");
-	// if(file==NULL){printf("can't open myTest_chat\n");exit(-1);}
-	// fseek(file, 0, SEEK_END);
-	// fileSize = ftell(file);
-	// fseek(file, 0, SEEK_SET);
-	// wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
-	// if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
-	// fclose(file);
-	// for(uint32_t i=0;i<0x100;i+=4){
-	// 	uint32_t temp=
-	// 	((uint32_t)flash[i+0]<< 0)|
-	// 	((uint32_t)flash[i+1]<< 8)|
-	// 	((uint32_t)flash[i+2]<<16)|
-	// 	((uint32_t)flash[i+3]<<24);
-	// 	logFile<<std::hex<<temp<<std::endl;
-	// }
 }
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
@@ -285,9 +128,7 @@ void NpcReturn(const char* msg,int returnCode){
 	}
 	delete top;
 	delete contextp;
-	#if defined(NPC_M_TRACE)// || defined(NPC_MIN_TRACE)
-		logFile.close();
-	#endif
+	logFileClose();
 	exit(returnCode);
 }
 ////////////////////////////////////////////////////////////////////////////////////////
