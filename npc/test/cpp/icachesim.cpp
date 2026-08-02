@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 	uint64_t hit=0;
 	for(uint64_t cnt=0;(!contextp->gotFinish());cnt++){
 		if(!file.read((char*)&pc, sizeof(pc))){
-			printf("cnt= %ld hit= %ld\n",cnt,hit);
+			printf("cnt= %ld hit= %ld Hp= %f\n",cnt,hit,(float)hit/cnt);
 			break;
 		}
 		top->bar_ready	=1;
