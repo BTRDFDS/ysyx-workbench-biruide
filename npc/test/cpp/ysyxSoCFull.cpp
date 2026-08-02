@@ -79,8 +79,11 @@ void NpcInitDeviceMem(int argc, char** argv){
 	}
 void NpcReturn(const char* msg,int returnCode){
 	printOver(msg,returnCode);
+	printf("qwe\n");
 	delete top;
+	printf("asd\n");
 	delete contextp;
+	printf("zxc\n");
 	exit(returnCode);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
