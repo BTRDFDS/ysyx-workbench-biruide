@@ -80,6 +80,7 @@ void logFileInit(const char* logFileName){
 		printf("Failed to open log file!\n");
 		exit(-1);
 	}
+	#endif
 }
 void logFileClose(){
 	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
