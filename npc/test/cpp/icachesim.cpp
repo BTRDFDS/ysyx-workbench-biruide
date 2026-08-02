@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 	std::fstream file("./bin/dummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint32_t pc;
-	uint64_t hit;
+	uint64_t hit=0;
 	for(uint64_t cnt=0;(!contextp->gotFinish());cnt++){
 		if(!file.read((char*)&pc, sizeof(pc))){
 			printf("cnt= %ld hit= %ld\n",cnt,hit);
