@@ -53,14 +53,14 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	io.master.awaddr	<> bar.out.awaddr
 	io.master.awid		:= 0.U
 	io.master.awlen		:= 0.U
-	io.master.awsize	:= 2.U
+	io.master.awsize	:= 0.U
 	io.master.awburst	:= 0.U
 	io.master.awready	<> bar.out.awready
 
 	io.master.wvalid	<> bar.out.wvalid
 	io.master.wdata		<> bar.out.wdata
 	io.master.wstrb		<> bar.out.wstrb
-	io.master.wlast		:= true.B
+	io.master.wlast		:= false.B
 	io.master.wready	<> bar.out.wready
 
 	io.master.bvalid	<> bar.out.bvalid
