@@ -102,12 +102,6 @@ VerilatedContext* contextp;//verilator上下文
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 	#endif
-void deviceInit(int argc, char** argv,const char* scopeAddr){
-	contextp = new VerilatedContext;
-	contextp->commandArgs(argc, argv);
-	scope=svGetScopeFromName(scopeAddr);
-	svSetScope(scope);
-}
 void NpcWave(){
 	#ifdef NPC_WAVE
 		contextp->timeInc(1);
