@@ -11,15 +11,15 @@ uint32_t bolckTag[0x100]{};
 uint32_t bolckValid[0x100]{};
 std::fstream file;
 int main() {
-	for(uint32_t size=2;size<=4;size++){
-		for(uint32_t bit=2;bit<=4;bit++){
+	for(uint32_t size=2;size<=5;size++){
+		for(uint32_t bit=2;bit<=5;bit++){
 			file.open("./bin/microbench-train.bin", std::ios::in | std::ios::binary);
 			if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 			uint32_t pc;
 			uint64_t hit=0;
 			for(uint64_t cnt=0;;cnt++){
 				if(!file.read((char*)&pc, sizeof(pc))){
-					printf("%dB\t%dW\t:cnt= %ld hit= %ld Hp= %f\n",1<<bit,1<<size,cnt,hit,(float)hit/cnt);
+					printf("%dB\t%dW\t:cnt= %ld hit= %ld Hp= %f\n",1<<bit,(1<<size)/4,cnt,hit,(float)hit/cnt);
 					break;
 				}
 				uint32_t index = (pc>>(size))&((1<<bit)-1);
