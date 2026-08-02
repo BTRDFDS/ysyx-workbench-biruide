@@ -14,7 +14,7 @@ void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   asm volatile("lw %0, 0(%1)" : "=r"(timeD) : "r"(0x0200BFF8));
   asm volatile("lw %0, 0(%1)" : "=r"(timeU) : "r"(0x0200BFF8 + 4));
   nowTime=((uint64_t)timeU << 32) | (uint64_t)timeD;
-  uptime->us=(nowTime-beginTime)/9;//CLINT系数
+  uptime->us=(nowTime-beginTime);//CLINT系数
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
