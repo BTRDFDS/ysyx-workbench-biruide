@@ -19,17 +19,17 @@ SECTIONS{
 
 	.load : AT(_lma){
 		*(.text._bootloader)
-		*(.rodata*)
-		*(.srodata*)
 	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
-	PROVIDE(_load_size_ = SIZEOF(.load)/4);
+	PROVIDE(_load_size_ = SIZEOF(.load));
 	PROVIDE(_load_begin_ = LOADADDR(.load));
 	_lma = _lma + SIZEOF(.load);
 	_lma = ALIGN(_lma, 0x4);
 
 	.imag : AT(_lma){/*image*/
 		*(.text*)
+		*(.rodata*)
+		*(.srodata*)
 		*(.data*)
 		*(.sdata*)
 		
@@ -89,6 +89,6 @@ SECTIONS{
 	PROVIDE(_heap_start	= .);
 	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
 
-	_stack_pointer = ORIGIN(sdram) + LENGTH(sdram);
+	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
 }
