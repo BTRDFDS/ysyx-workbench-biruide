@@ -150,6 +150,9 @@ runIcache:verilogIcache $(srcCppIcache)
 # 	./build/$(srcIcache)/V$(srcIcache) $(ARG)
 	time ./build/$(srcIcache)/V$(srcIcache) $(ARG)
 	make sim
-icachesim:
-	clang++ $(NPC_HOME)/test/cpp/icachesim.cpp -o icachesim
-	time ./icachesim
+
+buildIcachesim:./test/cpp/icachesim/icachesim.cpp
+	clang++ ./test/cpp/icachesim/icachesim.cpp -o ./test/cpp/icachesim/icachesim
+
+icachesim:./test/cpp/icachesim/icachesim
+	time ./test/cpp/icachesim/icachesim
