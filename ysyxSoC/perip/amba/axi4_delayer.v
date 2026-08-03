@@ -170,7 +170,7 @@ always_ff@(posedge clock)begin
 		rAcnt	<= 'd0;
 		rIcnt	<= 'd0;
 		rOcnt	<= 'd0;
-		rHas	<= in_arvalid;
+		rHas	<= 'd0;
 		rDone	<= 0;
 		foreach (rFcnt[i]) rFcnt[i] <= 'h3ffffff;
 	end else if(rHas)begin
@@ -200,7 +200,7 @@ always_ff@(posedge clock)begin
 			rRcnt	<= rRcnt+rs;
 			rAcnt	<= rAcnt+'d1;
 		end
-	end
+	end else if(in_arvalid)rHas<=1;
 end
 	assign out_rready	= in_rready;
 
