@@ -88,28 +88,28 @@ module axi4_delayer(
 	assign out_wdata = in_wdata;
 	assign out_wstrb = in_wstrb;
 	assign out_wlast = in_wlast;
-	assign out_bready = in_bready;
-	assign in_bvalid = out_bvalid;
-	assign in_bid = out_bid;
-	assign in_bresp = out_bresp;
+	// assign out_bready = in_bready;
+	// assign in_bvalid = out_bvalid;
+	// assign in_bid = out_bid;
+	// assign in_bresp = out_bresp;
 
 
-// logic [31:0] wCnt;
-// logic wHas,wDone;
-// localparam rs = 263;
-// assign wDone = wHas & (wCnt[31:6] == '0);
-// always_ff @(posedge clock) begin
-// 	if(reset | (out_bvalid & in_bready & wDone))wHas <= 0;
-// 	else if(out_bvalid & wHas==0)wHas <= 1;
+logic [31:0] wCnt;
+logic wHas,wDone;
+localparam rs = 263;
+assign wDone = wHas & (wCnt[31:6] == '0);
+always_ff @(posedge clock) begin
+	if(reset | (out_bvalid & in_bready & wDone))wHas <= 0;
+	else if(out_bvalid & wHas==0)wHas <= 1;
 
-// 	if(reset | (out_bvalid & in_bready & wDone))wCnt[31:6] <= 'd0;
-// 	else if(wHas)wCnt[31:6]<=(wCnt[31:6]=='d0)?'d0:(wCnt[31:6]-'d1);
-// 	else wCnt <= wCnt + rs;
-// end
-// assign out_bready	= wDone?in_bready	:'b0;
-// assign in_bvalid	= wDone?out_bvalid	:'b0;
-// assign in_bid		= wDone?out_bid		:'b0;
-// assign in_bresp		= wDone?out_bresp	:'b0;
+	if(reset | (out_bvalid & in_bready & wDone))wCnt[31:6] <= 'd0;
+	else if(wHas)wCnt[31:6]<=(wCnt[31:6]=='d0)?'d0:(wCnt[31:6]-'d1);
+	else wCnt <= wCnt + rs;
+end
+assign out_bready	= wDone?in_bready	:'b0;
+assign in_bvalid	= wDone?out_bvalid	:'b0;
+assign in_bid		= wDone?out_bid		:'b0;
+assign in_bresp		= wDone?out_bresp	:'b0;
 
 // logic [31:0]	rRcnt;
 // logic [25:0]	rAcnt;
