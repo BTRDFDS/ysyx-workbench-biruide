@@ -120,7 +120,7 @@ module sdramCore(
 			case(state)
 				Idle	:cnt <= code==Write?3'b0:mode.Latency[2:0];
 				Wait	:cnt <= (cnt<mode.Latency[2:0]) ? cnt+3'b1 : 3'b0;
-				Burst	:cnt <= (code==BurstStop || cnt==burstLen) ?mode.Latency[2:0]:cnt+3'b1;
+				Burst	:cnt <= (code==Read) ?mode.Latency[2:0]:cnt+3'b1;
 				Done	:cnt <= 3'b1;
 			endcase
 			if(state==Idle)begin
@@ -130,6 +130,7 @@ module sdramCore(
 				if(code==Write)	write <= 1'b1;
 				if(code==Read)	write <= 1'b0;
 			end
+			if(state==Burst && code==Read && ~(code==BurstStop || cnt==burstLen))addr<=addr+1;
 			if(state==Idle && code == Write)begin
 				if(~dqm[0])sdram_write({5'b0,Hight,{row[ba],ba,a[8:0]},2'd0|Index},{24'b0,dai[ 7: 0]});
 				if(~dqm[1])sdram_write({5'b0,Hight,{row[ba],ba,a[8:0]},2'd1|Index},{24'b0,dai[15: 8]});
