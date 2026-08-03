@@ -46,7 +46,7 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	ifu.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
 
 	when(state === BarState.IfuBack){
-		when(out.rresp === 0.U)	{ifu.res := BurstRes.Erro}
+		when(out.rresp =/= 0.U)	{ifu.res := BurstRes.Erro}
 		.elsewhen(out.rlast)	{ifu.res := BurstRes.Done}
 		.elsewhen(out.rvalid)	{ifu.res := BurstRes.Read}
 		.otherwise				{ifu.res := BurstRes.Idle}
