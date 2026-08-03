@@ -1,44 +1,44 @@
 test:
-	mill -i test
+	@mill -i test
 
 verilog:verilogNpc verilogYsyxSoc verilogSta verilogStaPart
 	$(call git_commit, "generate verilog")
-# 	mkdir -p ./build
-# 	mill -i runMain Builder
+# 	@mkdir -p ./build
+# 	@mill -i runMain Builder
 verilogNpc:
 	$(call git_commit, "generate verilog for Npc")
-	mkdir -p ./build
-	mkdir -p ./build/npc
-	mill -i runMain BuilderNpc
+	@mkdir -p ./build
+	@mkdir -p ./build/npc
+	@mill -i runMain BuilderNpc
 verilogYsyxSoc:
 	$(call git_commit, "generate verilog for YsyxSoc")
-	mkdir -p ./build
-	mkdir -p ./build/ysyxsoc
-	mill -i runMain BuilderYsyxSoc
+	@mkdir -p ./build
+	@mkdir -p ./build/ysyxsoc
+	@mill -i runMain BuilderYsyxSoc
 verilogSta:
 	$(call git_commit, "generate verilog for sta")
-	mkdir -p ./build
-	mkdir -p ./build/sta
-	mill -i runMain BuilderSta
+	@mkdir -p ./build
+	@mkdir -p ./build/sta
+	@mill -i runMain BuilderSta
 verilogIcache:
 	$(call git_commit, "generate verilog for icache")
-	mkdir -p ./build
-	mkdir -p ./build/icache
-	mill -i runMain BuilderIcache
+	@mkdir -p ./build
+	@mkdir -p ./build/icache
+	@mill -i runMain BuilderIcache
 help:
-	mill -i runMain Builder --help
+	@mill -i runMain Builder --help
 
 reformat:
-	mill -i __.reformat
+	@mill -i __.reformat
 
 checkformat:
-	mill -i __.checkFormat
+	@mill -i __.checkFormat
 
 bsp:
-	mill -i mill.bsp.BSP/install
+	@mill -i @mill.bsp.BSP/install
 
 idea:
-	mill -i mill.idea.GenIdea/idea
+	@mill -i @mill.idea.GenIdea/idea
 
 clean:
 	-rm -rf ./build
@@ -69,7 +69,7 @@ CXXFLAGS += -I/$(NEMU_HOME)/include
 CXXFLAGS += -I/$(NVBOARD_HOME)/usr/include
 
 wave:
-	mkdir -p wave
+	@mkdir -p wave
 
 srcNpc =ysyx_26020046_Npc
 srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
@@ -77,7 +77,7 @@ srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
 runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
 # runNpc:$(srcCpp) $(srcCppNpc) wave
-	verilator $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
+	@verilator $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
@@ -101,7 +101,7 @@ SOC_CFLAGS += --no-timing
 
 runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 # runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
-	verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
+	@verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
@@ -140,7 +140,7 @@ srcVerilogIcache += $(shell find $(NPC_HOME)/build/icache -type f -name "*.sv")
 # BuilderIcache
 runIcache:verilogIcache $(srcCppIcache)
 # runIcache: $(srcCppIcache)
-	verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
+	@verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
 	--exe $(srcCpp) $(srcCppIcache) --Mdir build/$(srcIcache) --build \
 	--top-module $(srcIcache) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
