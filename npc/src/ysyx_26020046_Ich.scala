@@ -30,6 +30,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	addrOffset	:= ifu.addr(CacheWidth-1,0)
 	dontTouch(addrIdx)
 	dontTouch(addrOffset)
+	dontTouch(addrTag)
 
 	val state	= RegInit(IchState.Imm)
 	val cnt		= RegInit(0.U(CacheWidth.W))
