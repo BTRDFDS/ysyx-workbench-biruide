@@ -94,7 +94,7 @@ module axi4_delayer(
 	// assign in_bresp = out_bresp;
 
 
-localparam rs = 30;//(5.1118-1)*64//TODO
+localparam rs = 3;//(5.1118-1)*64//TODO
 logic [31:0] wCnt;
 logic wHas,wDone;
 assign wDone = wHas & (wCnt[31:6] == '0);
