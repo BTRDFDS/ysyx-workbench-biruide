@@ -42,5 +42,5 @@ class ysyx_26020046_Clt extends Module{
 	axi4.wready	:= false.B
 	axi4.bvalid	:= false.B
 	axi4.bresp	:= 1.U//但凡想写就都是false
-	axi4.alast	:= false.B
+	axi4.rlast	:= false.B
 }
