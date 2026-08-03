@@ -40,11 +40,11 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		is(IchState.Out){
 			when(bar.res === BurstRes.Done || bar.res === BurstRes.Read){
 				data(burstIdx)(burstOffset+cnt) := bar.data
-				cnt := cnt + 1.U
-			}
-			when(bar.res === BurstRes.Done){
 				tag(burstIdx)	:= burstTag
 				valid(burstIdx)	:= true.B
+			}
+			when(bar.res === BurstRes.Read){
+				cnt := cnt + 1.U
 			}
 		}
 	}
@@ -56,7 +56,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	when(ifu.valid){
 		when(valid(addrIdx) && tag(addrIdx) === addrTag){
 			ifu.data 	:= data(addrIdx)(addrOffset)
-			ifu.ready	:= true.B
+			ifu.ready	:= burstOffset+cnt >= addrOffset
 			ifu.error	:= false.B
 			bar.valid	:= false.B
 			bar.addr	:= 0.U
