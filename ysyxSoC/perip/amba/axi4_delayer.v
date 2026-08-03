@@ -96,7 +96,7 @@ module axi4_delayer(
 
 logic [31:0] wCnt;
 logic wHas,wDone;
-localparam rs = 263;
+localparam rs = 32;//(5.1118-1)*64//TODO
 assign wDone = wHas & (wCnt[31:6] == '0);
 always_ff @(posedge clock) begin
 	if(reset | (out_bvalid & in_bready & wDone))wHas <= 0;
