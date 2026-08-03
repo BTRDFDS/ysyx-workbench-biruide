@@ -192,15 +192,15 @@ always_ff@(posedge clock)begin
 		end else begin
 			rDone <= 0;
 		end
-		if(rFcnt[rOcnt]==rAcnt & rFifoLast[rOcnt])begin
-			rRcnt	<= 'd0;
-			rAcnt	<= 'd0;
-			rHas	<= 0;
-		end else begin
-			rRcnt	<= rRcnt+rs;
-			rAcnt	<= rAcnt+'d1;
-		end
 	end else if(in_arvalid)rHas<=1;
+	if(rFcnt[rOcnt]==rAcnt & rFifoLast[rOcnt] & rHas)begin
+		rRcnt	<= 'd0;
+		rAcnt	<= 'd0;
+		rHas	<= 0;
+	end else if(rHas | in_arvalid)begin
+		rRcnt	<= rRcnt+rs;
+		rAcnt	<= rAcnt+'d1;
+	end
 end
 	assign out_rready	= in_rready;
 
