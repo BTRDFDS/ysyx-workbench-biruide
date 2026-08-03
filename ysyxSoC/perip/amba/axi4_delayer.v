@@ -110,6 +110,8 @@ localparam rs = 263;//(5.1118-1)*64//TODO
 logic [31:0]	wRcnt;
 logic [25:0]	wAcnt,wFcnt;
 logic wHasAddr,wHasData,wDone;
+logic [3:0]	wBid;
+logic [1:0]	wBresp;
 always_ff@(posedge clock)begin
 	if(reset)begin
 		wHasAddr<=0;
@@ -130,7 +132,11 @@ always_ff@(posedge clock)begin
 		wFcnt	<= 'h3ffffff;
 		wDone	<= 'd0;
 	end else begin
-		if(out_bvalid)wFcnt <= wRcnt[31:6];
+		if(out_bvalid)begin
+			wFcnt <= wRcnt[31:6];
+			wBid <= in_bid;
+			wBresp <= in_bresp;
+		end
 		if(wFcnt==wAcnt)begin
 			wDone <= 1;
 			wRcnt <='0;
@@ -142,10 +148,10 @@ always_ff@(posedge clock)begin
 		end
 	end
 end
-assign out_bready	= wDone?in_bready	:'b0;
-assign in_bvalid	= wDone?out_bvalid	:'b0;
-assign in_bid		= wDone?out_bid		:'b0;
-assign in_bresp		= wDone?out_bresp	:'b0;
+assign out_bready	= in_bready;
+assign in_bvalid	= wDone;
+assign in_bid		= wDone?wBid	:'b0;
+assign in_bresp		= wDone?wBresp	:'b0;
 
 
 
