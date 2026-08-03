@@ -165,7 +165,7 @@ logic 			rFifoLast	[7:0];
 logic [3:0]		rFifoId		[7:0];
 logic rDone,rHas;
 always_ff@(posedge clock)begin
-	if(reset | in_arvalid)begin
+	if(reset)begin
 		rRcnt	<= 'd0;
 		rAcnt	<= 'd0;
 		rIcnt	<= 'd0;
