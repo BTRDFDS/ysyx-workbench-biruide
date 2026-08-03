@@ -126,7 +126,7 @@ always_ff@(posedge clock)begin
 	if(reset | ~wHasAddr | ~wHasData)begin
 		wRcnt	<= 'd0;
 		wAcnt	<= 'd0;
-		wFcnt	<= 'd0;
+		wFcnt	<= 'h3ffffff;
 		wDone	<= 'd0;
 	end else begin
 		if(out_bvalid)wFcnt <= wRcnt[31:6];
@@ -165,6 +165,7 @@ always_ff@(posedge clock)begin
 		rOcnt	<= 'd0;
 		rHas	<= in_arvalid;
 		rDone	<= 0;
+		foreach (rFcnt[i]) rFcnt[i] <= 'h3ffffff;
 	end else if(rHas)begin
 		if(out_rvalid)begin
 			rFcnt[rIcnt] <= rRcnt[31:6];
@@ -177,7 +178,10 @@ always_ff@(posedge clock)begin
 		if(rFcnt[rOcnt]==rAcnt)begin
 			rDone <= 1;
 			if(rFifoLast[rOcnt])rOcnt <= rIcnt;
-			else				rOcnt <= rOcnt +'d1;
+			else begin
+				rOcnt <= rOcnt +'d1;
+				rFcnt[rOcnt] <= 'h3ffffff;
+			end
 		end else begin
 			rDone <= 0;
 		end
