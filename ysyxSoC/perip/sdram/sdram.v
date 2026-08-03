@@ -130,7 +130,7 @@ module sdramCore(
 				if(code==Write)	write <= 1'b1;
 				if(code==Read)	write <= 1'b0;
 			end
-			if(state==Burst && code==Read && ~(code==BurstStop || cnt==burstLen))addr<=addr+1;
+			if(state==Burst && code==Read)addr<={row[ba],ba,a[8:0]};
 			if(state==Idle && code == Write)begin
 				if(~dqm[0])sdram_write({5'b0,Hight,{row[ba],ba,a[8:0]},2'd0|Index},{24'b0,dai[ 7: 0]});
 				if(~dqm[1])sdram_write({5'b0,Hight,{row[ba],ba,a[8:0]},2'd1|Index},{24'b0,dai[15: 8]});
