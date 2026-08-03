@@ -10,7 +10,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val CacheNum    = 1 << CacheBit
 	// val CacheWidth	= 2
 	// val CacheSize	= 1 << CacheWidth
-	val CacheDone = (1 << CacheWidth)-1
+	val CacheDone.U = (1 << CacheWidth)-1
 
 	val data	= Reg(Vec(CacheNum,Vec(CacheSize,UInt(BitWidth.W))))
 	val tag		= Reg(Vec(CacheNum, UInt((BitWidth-2-CacheBit-CacheWidth).W)))
@@ -29,7 +29,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val cnt		= RegInit(0.U(CacheWidth.W))
 	switch(state){
 		is(IchState.Imm){when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag))					{state := IchState.Out}}
-		is(IchState.Out){when((cnt === CacheDone) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm;}}
+		is(IchState.Out){when((cnt === CacheDone.U) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm;}}
 	}
 	switch(state){
 		is(IchState.Imm){cnt := 0.U}
@@ -55,7 +55,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 			bar.addr	:= Cat(ifu.addr,0.U(2.W))
 			ifu.data	:= Mux(bar.res === BurstRes.Read,bar.data,0.U)
 			ifu.ready	:= bar.res === BurstRes.Read && cnt === 0.U
-			ifu.error	:= bar.res===BurstRes.Erro || (bar.res===BurstRes.Done && cnt =/= CacheDone)
+			ifu.error	:= bar.res===BurstRes.Erro || (bar.res===BurstRes.Done && cnt =/= CacheDone.U)
 		}
 	}.otherwise{
 		ifu.ready	:= false.B
