@@ -93,7 +93,8 @@ module axi4_delayer(
 	// assign in_bid = out_bid;
 	// assign in_bresp = out_bresp;
 
-
+// `define Delay
+`ifdef Delay
 localparam rs = 128;//(5.1118-1)*64//TODO
 logic [31:0] wCnt;
 logic wHas,wDone;
@@ -205,4 +206,16 @@ end
 
 // initial $display("%m");
 
+`else
+	assign out_rready = in_rready;
+	assign in_rvalid = out_rvalid;
+	assign in_rid = out_rid;
+	assign in_rdata = out_rdata;
+	assign in_rresp = out_rresp;
+	assign in_rlast = out_rlast;
+	assign out_bready = in_bready;
+	assign in_bvalid = out_bvalid;
+	assign in_bid = out_bid;
+	assign in_bresp = out_bresp;
+`endif
 endmodule
