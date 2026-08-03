@@ -37,10 +37,11 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 			when(bar.res === BurstRes.Done || bar.res === BurstRes.Read){
 				data(addrIdx)(addrOffset+cnt) := bar.data
 				cnt := cnt + 1.U
+			}
+			when(bar.res === BurstRes.Done){
 				tag(addrIdx)	:= addrTag
 				valid(addrIdx)	:= true.B
 			}
-			when(bar.res === BurstRes.Read){cnt := cnt + 1.U}
 		}
 	}
 	when(ifu.valid){
