@@ -75,7 +75,7 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	clt.awaddr	:= 0.U
 	clt.wdata	:= 0.U
 	clt.wstrb	:= 0.U
-	clt.awlen	:= 0.U
+	clt.arlen	:= 0.U
 	clt.arsize	:= 0.U
 	clt.arburst := 0.U
 
