@@ -45,7 +45,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	io.master.rdata		<> bar.out.rdata
 	io.master.rresp		<> bar.out.rresp
 	// io.master.rid		:= 0.U //Input
-	io.master.rlast		:= bar.out.rlast
+	io.master.rlast		<> bar.out.rlast
 	io.master.rready	<> bar.out.rready
 
 	io.master.awvalid	<> bar.out.awvalid
