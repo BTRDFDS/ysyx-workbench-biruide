@@ -58,22 +58,22 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	bar.addr	:= 0.U 
 	when(in.pipe.valid && ~addrError && state === MemStatus.Call){//发出
 		when(in.pipe.lsuOp === LsuOp.Load){
-			bar.size	:= Mux1H(Seq(
-				in.pipe.lsuAddr === LsuAddr.B  -> 0b00.U,
-				in.pipe.lsuAddr === LsuAddr.Bu -> 0b00.U,
-				in.pipe.lsuAddr === LsuAddr.H  -> 0b01.U,
-				in.pipe.lsuAddr === LsuAddr.Hu -> 0b01.U,
-				in.pipe.lsuAddr === LsuAddr.W  -> 0b10.U
-			))
+			switch(in.pipe.lsuAddr){
+				is(LsuAddr.B ){bar.size := 0b00.U}
+				is(LsuAddr.Bu){bar.size := 0b00.U}
+				is(LsuAddr.H ){bar.size := 0b01.U}
+				is(LsuAddr.Hu){bar.size := 0b01.U}
+				is(LsuAddr.W ){bar.size := 0b10.U}
+			}
 			bar.addr	:= in.pipe.result
 		}
 		when(in.pipe.lsuOp === LsuOp.Store){
 			bar.write	:= true.B
-			bar.size:= := Mux1H(Seq(
-				in.pipe.lsuAddr === LsuAddr.B  -> 0b00.U,
-				in.pipe.lsuAddr === LsuAddr.H  -> 0b01.U,
-				in.pipe.lsuAddr === LsuAddr.W  -> 0b10.U
-			))
+			switch(in.pipe.lsuAddr){
+				is(LsuAddr.B ){bar.size := 0b00.U}
+				is(LsuAddr.H ){bar.size := 0b01.U}
+				is(LsuAddr.W ){bar.size := 0b10.U}
+			}
 			bar.addr	:= in.pipe.result
 			switch(in.pipe.lsuAddr){
 				is(LsuAddr.B){bar.wstrb := 0b0001.U << in.pipe.result(1,0)}
