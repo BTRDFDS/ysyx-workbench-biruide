@@ -13,8 +13,8 @@ std::fstream file;
 int main() {
 	// for(uint32_t size=2;size<=5;size++){
 	// 	for(uint32_t bit=2;bit<=5;bit++){
-	for(uint32_t total=6;total<=7;total++){
-		for(uint32_t bit=2;bit<total-1;bit++){
+	for(uint32_t total=6;total<=6;total++){
+		for(uint32_t bit=0;bit<=total-2;bit++){//size至少为2
 			uint32_t size=total-bit;
 			file.open("./bin/microbench-train.bin", std::ios::in | std::ios::binary);
 			if (!file.is_open()) {printf("Failed to open file\n");return -1;}
