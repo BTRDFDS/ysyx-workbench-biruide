@@ -93,7 +93,7 @@ module axi4_delayer(
 	// assign in_bid = out_bid;
 	// assign in_bresp = out_bresp;
 
-// `define Delay
+`define Delay
 `ifdef Delay
 localparam rs = 128;//(5.1118-1)*64//TODO
 logic [31:0] wCnt;
