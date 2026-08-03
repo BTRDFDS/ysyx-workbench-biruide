@@ -10,7 +10,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val CacheNum    = 1 << CacheBit
 	// val CacheWidth	= 2
 	// val CacheSize	= 1 << CacheWidth
-	val CacheDone.U = (1 << CacheWidth)-1
+	val CacheDone = (1 << CacheWidth)-1
 
 	val data	= Reg(Vec(CacheNum,Vec(CacheSize,UInt(BitWidth.W))))
 	val tag		= Reg(Vec(CacheNum, UInt((BitWidth-2-CacheBit-CacheWidth).W)))
