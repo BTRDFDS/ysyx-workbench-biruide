@@ -114,7 +114,7 @@ module sdramCore(
 			case(state)
 				Idle	:state <= (code==Read)?(mode.Latency[2:0]==1?Burst:Wait):(code==Write?Burst:Idle);
 				Wait	:state <= (cnt<mode.Latency[2:0]) ? Wait : Burst;
-				Burst	:state <= (code==BurstStop || cnt==burstLen) ? Idle : Burst;
+				Burst	:state <= (code==BurstStop || cnt==burstLen) ? (code==Read?(mode.Latency[2:0]==1?Burst:Wait):Idle) : Burst;
 				Done	:state <= Idle;
 			endcase
 			case(state)
