@@ -69,6 +69,17 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	lsu.ready	:= ((state === BarState.LsuDone) && out.bvalid) || (state === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
 	lsu.error	:= ((state === BarState.LsuDone) && out.bresp =/= 0.U) || (state === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rresp,out.rresp) =/= 0.U)
 	
+	clt.awvalid := false.B
+	clt.wvalid	:= false.B
+	clt.bready	:= false.B
+	clt.awaddr	:= 0.U
+	clt.wdata	:= 0.U
+	clt.wstrb	:= 0.U
+	clt.awlen	:= 0.U
+	clt.arsize	:= 0.U
+	clt.arburst := 0.U
+
+
 	// val addrValid = (
 	// 	(addr		=== 0x02.U(8.W))	||//clint
 	// 	(addr		=== 0x0f.U(8.W))	||//sram
