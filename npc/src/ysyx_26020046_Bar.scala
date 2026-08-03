@@ -3,7 +3,6 @@ import chisel3.util._
 import WidthConsts._
 
 object BarState	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack,LsuWrit,LsuDone=Value}
-object ArbStatusStore	extends ChiselEnum{val Idle,Call,Back=Value}
 object ArbAddr extends ChiselEnum{val Clint,Out,Error=Value}
 class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	val out = IO(new Axi4Master())
@@ -62,14 +61,14 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 		hasData := false.B
 		hasAddr := false.B
 	}
-	out.awvalid	:= (state === ArbStatusStore.Call) && !hasAddr
-	out.wvalid	:= (state === ArbStatusStore.Call) && !hasData
+	out.awvalid	:= (state === BurstRes.Call) && !hasAddr
+	out.wvalid	:= (state === BurstRes.Call) && !hasData
 	out.wdata	:= lsu.wdata
 	out.wstrb	:= lsu.wstrb
-	out.bready	:= (state === ArbStatusStore.Back)
+	out.bready	:= (state === BurstRes.Back)
 	out.awaddr	:= addr
-	lsu.ready	:= ((state === ArbStatusStore.Back) && out.bvalid) || (state === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
-	lsu.error	:= ((state === ArbStatusStore.Back) && out.bresp =/= 0.U) || (state === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rresp,out.rresp) =/= 0.U)
+	lsu.ready	:= ((state === BurstRes.Back) && out.bvalid) || (state === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
+	lsu.error	:= ((state === BurstRes.Back) && out.bresp =/= 0.U) || (state === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rresp,out.rresp) =/= 0.U)
 	
 	// val addrValid = (
 	// 	(addr		=== 0x02.U(8.W))	||//clint
