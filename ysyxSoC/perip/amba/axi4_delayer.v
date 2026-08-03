@@ -94,9 +94,9 @@ module axi4_delayer(
 	// assign in_bresp = out_bresp;
 
 
+localparam rs = 30;//(5.1118-1)*64//TODO
 // logic [31:0] wCnt;
 // logic wHas,wDone;
-localparam rs = 30;//(5.1118-1)*64//TODO
 // assign wDone = wHas & (wCnt[31:6] == '0);
 // always_ff @(posedge clock) begin
 // 	if(reset | (out_bvalid & in_bready & wDone))wHas <= 0;
@@ -106,10 +106,6 @@ localparam rs = 30;//(5.1118-1)*64//TODO
 // 	else if(wHas)wCnt[31:6]<=(wCnt[31:6]=='d0)?'d0:(wCnt[31:6]-'d1);
 // 	else wCnt <= wCnt + rs;
 // end
-// assign out_bready	= wDone?in_bready	:'b0;
-// assign in_bvalid	= wDone?out_bvalid	:'b0;
-// assign in_bid		= wDone?out_bid		:'b0;
-// assign in_bresp		= wDone?out_bresp	:'b0;
 logic [31:0]	wRcnt;
 logic [25:0]	wAcnt,wFcnt;
 logic wHasAddr,wHasData,wDone;
@@ -120,7 +116,7 @@ always_ff@(posedge clock)begin
 	end else if(wDone)begin
 		wHasAddr<=0;
 		wHasData<=0;
-	end else if(wFcnt==wAcnt)begin
+	end else if(wFcnt==wAcnt & in_bready & out_bvalid)begin
 		wHasAddr<=0;
 		wHasData<=0;
 	end else begin
@@ -139,12 +135,16 @@ always_ff@(posedge clock)begin
 			wRcnt <='0;
 			wAcnt <='0;
 		end else begin
-			wDone <=0;
+			if(in_bready & out_bvalid)wDone <=0;
 			wRcnt <= wRcnt + rs;
 			wAcnt <= wAcnt + 'd1;
 		end
 	end
 end
+assign out_bready	= wDone?in_bready	:'b0;
+assign in_bvalid	= wDone?out_bvalid	:'b0;
+assign in_bid		= wDone?out_bid		:'b0;
+assign in_bresp		= wDone?out_bresp	:'b0;
 
 
 
