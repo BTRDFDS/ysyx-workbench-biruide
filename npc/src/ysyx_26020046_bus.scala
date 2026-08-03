@@ -12,6 +12,9 @@ object  WidthConsts{//const
 	val LenWidth	= 8
 	val SizeWidth	= 3
 	val BurstWidth	= 2
+
+	val CacheWidth	= 2
+	val CacheSize	= 1 << CacheWidth
 }
 
 import WidthConsts._
@@ -64,11 +67,15 @@ class Axi4Master extends Bundle {
 	val arvalid	= Output(Bool())
     val araddr	= Output(UInt(BitWidth.W))
 	val arready	= Input(Bool())
+	val arlen	= Output(UInt(LenWidth.W))
+	val arsize	= Output(UInt(SizeWidth.W))
+	val arburst	= Output(UInt(BurstWidth.W))
 
 	val rvalid	= Input(Bool())
 	val rdata	= Input(UInt(BitWidth.W))
 	val rresp	= Input(UInt(2.W))
 	val rready	= Output(Bool())
+	val rlast	= Input(Bool())
 
 	val awvalid	= Output(Bool())
 	val awaddr	= Output(UInt(BitWidth.W))
@@ -83,53 +90,40 @@ class Axi4Master extends Bundle {
 	val bresp	= Input(UInt(RespWidth.W))
 	val bready	= Output(Bool())
 }
-class Axi4MasterOut extends Bundle {
-	val arvalid	= Output(Bool())
-    val araddr	= Output(UInt(BitWidth.W))
+class Axi4MasterOut extends Axi4Master {
 	val arid	= Output(UInt(IdWidth.W))
-	val arlen	= Output(UInt(LenWidth.W))
-	val arsize	= Output(UInt(SizeWidth.W))
-	val arburst	= Output(UInt(BurstWidth.W))
-	val arready	= Input(Bool())
 
-	val rvalid	= Input(Bool())
-	val rdata	= Input(UInt(BitWidth.W))
-	val rresp	= Input(UInt(2.W))
 	val rid		= Input(UInt(IdWidth.W))
-	val rlast	= Input(Bool())
-	val rready	= Output(Bool())
 
-	val awvalid	= Output(Bool())
-	val awaddr	= Output(UInt(BitWidth.W))
 	val awid	= Output(UInt(IdWidth.W))
 	val awlen	= Output(UInt(LenWidth.W))
 	val awsize	= Output(UInt(SizeWidth.W))
 	val awburst	= Output(UInt(BurstWidth.W))
-	val awready	= Input(Bool())
 
-	val wvalid	= Output(Bool())
-	val wdata	= Output(UInt(BitWidth.W))
-	val wstrb	= Output(UInt(StrbWidth.W))
 	val wlast	= Output(Bool())
-	val wready	= Input(Bool())
 
-	val bvalid	= Input(Bool())
-	val bresp	= Input(UInt(RespWidth.W))
 	val bid		= Input(UInt(IdWidth.W))
-	val bready	= Output(Bool())
 }
-class LoaderBus(val AddrWidth: Int=BitWidth) extends Bundle{
+class InstrBus extends Bundle{
 	val valid	= Output(Bool())
-	val addr	= Output(UInt(AddrWidth.W))
+	val addr	= Output(UInt((BitWidth-2).W))
 	val data	= Input(UInt(BitWidth.W))
 	val ready	= Input(Bool())
 	val error	= Input(Bool())
 }
-class StorerBus extends Bundle{
-    val valid	= Output(Bool())
-    val addr	= Output(UInt(BitWidth.W))
-    val data	= Output(UInt(BitWidth.W))
-	val strb	= Output(UInt(StrbWidth.W))
-	val ready	= Input(Bool())
-	val error	= Input(Bool())
+class BurstBus extends Bundle{
+	val valid	= Output(Bool())
+	val addr	= Output(UInt(BitWidth.W))
+	val data	= Input(UInt(BitWidth.W))
+	val res		= Input(BurstRes())
+}
+class MemBus extends Bundle{
+	val addr	= Output(UInt(BitWidth.W))
+	val rdata	=  Input(UInt(BitWidth.W))
+	val wdata	= Output(UInt(BitWidth.W))
+	val wstrb	= Output(UInt(StrbWidth.W))
+	val error	=  Input(Bool())
+	val ready	=  Input(Bool())
+	val size	= Output(UInt(2.W))
+	val write	= Output(Bool())
 }

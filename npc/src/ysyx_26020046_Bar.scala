@@ -2,90 +2,75 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-object ArbStatusLoad	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack=Value}
+object BarState	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack,LsuWrit,LsuDone=Value}
 object ArbStatusStore	extends ChiselEnum{val Idle,Call,Back=Value}
 object ArbAddr extends ChiselEnum{val Clint,Out,Error=Value}
 class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	val out = IO(new Axi4Master())
 	val clt = IO(new Axi4Master())
-	val ifuL = IO(Flipped(new LoaderBus()))
-	val lsuL = IO(Flipped(new LoaderBus()))
-	val lsuS = IO(Flipped(new StorerBus()))
-	//初始化
-	out.arvalid	:= false.B
-	out.rready	:= false.B
-	out.araddr	:= 0.U
-	out.awvalid	:= false.B
-	out.wvalid	:= false.B
-	out.wdata	:= 0.U
-	out.wstrb	:= 0.U
-	out.bready	:= false.B
-	out.awaddr	:= 0.U
+	val ifu = IO(Flipped(new BurstBus()))
+	val lsu = IO(Flipped(new MemBus()))
+	
+	val status		= RegInit(BarState.Idle)
+	val addr 		= RegInit(0.U(32.W))
+	val hasAddr		= RegInit(false.B)
+	val hasData		= RegInit(false.B)
+	val finishAddr = hasAddr || out.awready
+	val finishData = hasData || out.wready
 
-	clt.arvalid	:= false.B
-	clt.rready	:= false.B
-	clt.araddr	:= 0.U
-	clt.awvalid	:= false.B
-	clt.wvalid	:= false.B
-	clt.wdata	:= 0.U
-	clt.wstrb	:= 0.U
-	clt.bready	:= false.B
-	clt.awaddr	:= 0.U
+	switch(status){
+		is(BarState.Idle){
+			when(lsu.szie =/= 0b11.U){
+				state := Mux(lsu.write,ArbAddr.LsuWrit,ArbAddr.LsuCall)
+				addr := lsu.addr
+			}.elsewhen(ifu.valid){status	:= BarState.IfuCall;addr := ifu.addr}
+		}
+		is(BarState.IfuCall){when(out.arready)												{status := BarState.IfuBack	}}
+		is(BarState.IfuBack){when(out.rlast)												{status := BarState.Idle	}}
+		is(BarState.LsuCall){when(Mux(addr(31,24) === 0x02.U(8.W),clt.arready,out.arready))	{status := BarState.LsuBack	}}
+		is(BarState.LsuBack){when(Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))	{status := BarState.Idle	}}
+		is(BarState.LsuWrit){when(finishAddr || finishData)									{status := BarState.LsuDone	}}
+		is(BarState.LsuDone){when(out.bvalid)												{status := BarState.Idle	}}
+	}
+	out.arvalid := (status === BarState.IfuCall || status === BarState.LsuCall) && addr(31,24) =/= 0x02.U(8.W)
+	out.rready  := (status === BarState.IfuBack || status === BarState.LsuBack) && addr(31,24) =/= 0x02.U(8.W)
+	out.araddr  := addr
+	out.arlen	:= Mux(status === BarState.IfuCall,(CacheSize-1).U,0.U)//只有ifu能突发
+	out.arsize	:= Mux(status === BarState.IfuCall,2.U,lsu.szie)
+	out.arburst := Mux(status === BarState.IfuCall,2.U,0.U)
+	clt.arvalid := (status === BarState.IfuCall || status === BarState.LsuCall) && addr(31,24) === 0x02.U(8.W)
+	clt.rready  := (status === BarState.IfuBack || status === BarState.LsuBack) && addr(31,24) === 0x02.U(8.W)
+	clt.araddr  := addr
+	clt.arlen	:= 0.U
+	clt.arsize	:= 0.U//用不到
+	clt.arburst := 0.U
 
-	{
-		val status		= RegInit(ArbStatusLoad.Idle)
-		val addr 		= RegInit(0.U(32.W))
-		switch(status){
-			is(ArbStatusLoad.Idle){
-				when(lsuL.valid)		{status	:= ArbStatusLoad.LsuCall;addr := lsuL.addr}
-				.elsewhen(ifuL.valid)	{status	:= ArbStatusLoad.IfuCall;addr := ifuL.addr}
-			}
-			is(ArbStatusLoad.IfuCall){when(Mux(addr(31,24) === 0x02.U(8.W),clt.arready,out.arready)){status := ArbStatusLoad.IfuBack}}
-			is(ArbStatusLoad.LsuCall){when(Mux(addr(31,24) === 0x02.U(8.W),clt.arready,out.arready)){status := ArbStatusLoad.LsuBack}}
-			is(ArbStatusLoad.IfuBack){when(Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid)){status := ArbStatusLoad.Idle}}
-			is(ArbStatusLoad.LsuBack){when(Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid)){status := ArbStatusLoad.Idle}}
-		}
-		out.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31,24) =/= 0x02.U(8.W)
-		out.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuBack) && addr(31,24) =/= 0x02.U(8.W)
-		out.araddr  := addr
-		clt.arvalid := (status === ArbStatusLoad.IfuCall || status === ArbStatusLoad.LsuCall) && addr(31,24) === 0x02.U(8.W)
-		clt.rready  := (status === ArbStatusLoad.IfuBack || status === ArbStatusLoad.LsuBack) && addr(31,24) === 0x02.U(8.W)
-		clt.araddr  := addr
-		ifuL.ready	:= Mux(status =/= ArbStatusLoad.IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
-		ifuL.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
-		ifuL.error	:= Mux(status =/= ArbStatusLoad.IfuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
-		lsuL.ready	:= Mux(status =/= ArbStatusLoad.LsuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
-		lsuL.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
-		lsuL.error	:= Mux(status =/= ArbStatusLoad.LsuBack,0.U,Mux(addr(31,24) === 0x02.U(8.W),clt.rresp =/= 0.U,out.rresp =/= 0.U))
+	ifu.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
+
+	when(status === BarState.IfuBack){
+		when(out.rresp === 0.U)	{ifu.res := BurstRes.Erro}
+		.elsewhen(out.rlast)	{ifu.res := BurstRes.Done}
+		.elsewhen(out.rvalid)	{ifu.res := BurstRes.Read}
+		.otherwise				{ifu.res := BurstRes.Idle}
+	}.otherwise{ifu.res := BurstRes.Idle}
+
+	lsu.rdata	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
+	when(status === BarState.LsuWrit){
+		when(out.awready)	{hasAddr := true.B}
+		when(out.wready)	{hasData := true.B}
+	}otherwise{
+		hasData := false.B
+		hasAddr := false.B
 	}
-	{
-		val status		= RegInit(ArbStatusStore.Idle)
-		val addr 		= RegInit(0.U(32.W))
-		val hasAddr		= RegInit(false.B)
-		val hasData		= RegInit(false.B)
-		val finishAddr = hasAddr || out.awready
-		val finishData = hasData || out.wready
-		switch(status){
-			is(ArbStatusStore.Idle){when(lsuS.valid){status := ArbStatusStore.Call;addr := lsuS.addr;}}
-			is(ArbStatusStore.Call){when(finishAddr || finishData){status := ArbStatusStore.Back}}
-			is(ArbStatusStore.Back){when(out.bvalid){status := ArbStatusStore.Idle}}
-		}
-		when(status === ArbStatusStore.Call){
-			when(out.awready)	{hasAddr := true.B}
-			when(out.wready)	{hasData := true.B}
-		}otherwise{
-			hasData := false.B
-			hasAddr := false.B
-		}
-		out.awvalid	:= (status === ArbStatusStore.Call) && !hasAddr
-		out.wvalid	:= (status === ArbStatusStore.Call) && !hasData
-		out.wdata	:= lsuS.data
-		out.wstrb	:= lsuS.strb
-		out.bready	:= (status === ArbStatusStore.Back)
-		out.awaddr	:= addr
-		lsuS.ready	:= (status === ArbStatusStore.Back) && out.bvalid
-		lsuS.error	:= (status === ArbStatusStore.Back) && out.bresp =/= 0.U
-	}
+	out.awvalid	:= (status === ArbStatusStore.Call) && !hasAddr
+	out.wvalid	:= (status === ArbStatusStore.Call) && !hasData
+	out.wdata	:= lsu.wdata
+	out.wstrb	:= lsu.wstrb
+	out.bready	:= (status === ArbStatusStore.Back)
+	out.awaddr	:= addr
+	lsu.ready	:= ((status === ArbStatusStore.Back) && out.bvalid) || (status === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
+	lsu.error	:= ((status === ArbStatusStore.Back) && out.bresp =/= 0.U) || (status === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rresp,out.rresp) =/= 0.U)
+	
 	// val addrValid = (
 	// 	(addr		=== 0x02.U(8.W))	||//clint
 	// 	(addr		=== 0x0f.U(8.W))	||//sram

@@ -50,3 +50,4 @@ object Op extends ChiselEnum {
 	val Jal		= Value(0b1101111.U)
 	val Icsr	= Value(0b1110011.U)
 }
+object BurstRes extends ChiselEnum{val Idle,Read,Done,Erro= Value}

@@ -4,7 +4,7 @@ import WidthConsts._
 class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val in	= IO(new Bundle{val imme = Flipped(new ImmeBefore())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
-	val loader	= IO(new LoaderBus(BitWidth-2))
+	val ich	= IO(new InstrBus())
 	//pc更新
 		val pc		= RegInit(PcInit(31,2))
 		val state	= RegInit(MemStatus.Call)
@@ -21,25 +21,25 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		out.pipe.pc	:= Cat(pc,0.U(2.W))
 	//状态机
 		switch(state){
-			is(MemStatus.Call){when(loader.ready || error)		{state := MemStatus.Back}}
+			is(MemStatus.Call){when(ich.ready || error)		{state := MemStatus.Back}}
 			is(MemStatus.Back){when(in.imme.back =/= Back.Wait)	{state := MemStatus.Call}}
 		}
 	//发出
-		loader.addr	:= pc
-		loader.valid:= state === MemStatus.Call && ~error
+		ich.addr	:= pc
+		ich.valid:= state === MemStatus.Call && ~error
 	//接收
 		val instr = RegInit(0.U(BitWidth.W))
-		when(state === MemStatus.Call && loader.ready){instr := loader.data}
+		when(state === MemStatus.Call && ich.ready){instr := ich.data}
 		out.pipe.instr	:= instr
 		when(state === MemStatus.Call){
-			when(loader.ready){	res := Mux(loader.error,IfuRes.Fall,IfuRes.Valid)}
+			when(ich.ready){	res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 			.otherwise{			res := Mux(error,		IfuRes.Un4b,IfuRes.Null)}
 		}.elsewhen(in.imme.back =/= Back.Wait){res := IfuRes.Null}
 		out.pipe.res := res
 	if(Yosys == false){
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
-		ifuChk.inst		:= state === MemStatus.Call && loader.ready
+		ifuChk.inst		:= state === MemStatus.Call && ich.ready
 		ifuChk.stall	:= state === MemStatus.Call
 		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < Cat(pc,0.U(2.W))
 		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > Cat(pc,0.U(2.W))

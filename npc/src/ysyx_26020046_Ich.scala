@@ -1,42 +1,60 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-object IchEnum extends ChiselEnum{val Imme,Back=Value}
+object IchState extends ChiselEnum{val Imm,Out=Value}
 class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
-	val ifu = IO(Flipped(new LoaderBus(BitWidth-2)))
-	val bar = IO(new LoaderBus())
+	val ifu = IO(Flipped(new InstrBus()))
+	val bar = IO(new BurstBus())
 
 	val CacheBit	= 4
 	val CacheNum    = 1 << CacheBit
+	// val CacheWidth	= 2
+	// val CacheSize	= 1 << CacheWidth
 
-	val data	= Reg(Vec(CacheNum, UInt(BitWidth.W)))
-	val tag		= Reg(Vec(CacheNum, UInt((BitWidth-2-CacheBit).W)))
+	val data	= Reg(Vec(CacheNum,Vec(CacheSize,UInt(BitWidth.W))))
+	val tag		= Reg(Vec(CacheNum, UInt((BitWidth-2-CacheBit-CacheWidth).W)))
 	val valid	= RegInit(VecInit(Seq.fill(CacheNum)(false.B)))
 
 
-	val addrTag = Wire(UInt((BitWidth-2-CacheBit).W))
-	val addrIdx = Wire(UInt(CacheBit.W))
+	val addrTag		= Wire(UInt((BitWidth-2-CacheBit).W))
+	val addrIdx		= Wire(UInt(CacheBit.W))
+	val addrOffset = Wire(UInt(CacheWidth.W))
 
-	addrTag := ifu.addr(BitWidth-2-1,CacheBit)
-	addrIdx := ifu.addr(CacheBit-1,0)
+	addrTag 	:= ifu.addr(BitWidth-2-1,CacheBit+CacheWidth)
+	addrIdx 	:= ifu.addr(CacheBit+CacheWidth-1,CacheWidth)
+	addrOffset	:= ifu.addr(CacheWidth-1,0)(CacheWidth.W)
+
+	val state	= RegInit(IchState.Imm)
+	val cnt		= RegInit(0.U(CacheWidth.W))
+	switch(state){
+		is(IchState.Imm){when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag))	{state := IchState.Out}}
+		is(IchSatae.Out){when(&(cnt) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm;}}
+	}
+	switch(state){
+		is(IchState.Imm){cnt := 0.U}
+		is(IchState.Out){
+			when(bar.res === BurstRes.Done || bar.res === BurstRes.Read){
+				data(addrIdx)(addrOffset+cnt) := bar.data
+				cnt := cnt + 1.U
+				tag(addrIdx)	:= addrTag
+				valid(addrIdx)	:= true.B
+			}
+			when(bar.res === BurstRes.Read){cnt := cnt + 1.U}
+		}
+	}
 	when(ifu.valid){
 		when(valid(addrIdx) && tag(addrIdx) === addrTag){
-			ifu.data 	:= data(addrIdx)
+			ifu.data 	:= data(addrIdx)(addrOffset)
 			ifu.ready	:= true.B
 			ifu.error	:= false.B
 			bar.valid	:= false.B
 			bar.addr	:= 0.U
 		}.otherwise{
 			bar.valid	:= true.B
-			bar.addr	:= Cat(addrTag,addrIdx,0.U(2.W))
-			ifu.data	:= Mux(bar.ready,bar.data,0.U)
-			ifu.ready	:= bar.ready
-			ifu.error	:= bar.error
-			when(bar.ready){
-				data(addrIdx)	:= bar.data
-				tag(addrIdx)	:= addrTag
-				valid(addrIdx)	:= true.B
-			}
+			bar.addr	:= Cat(ifu.addr,0.U(2.W))
+			ifu.data	:= Mux(bar.res === BurstRes.Read,bar.data,0.U)
+			ifu.ready	:= bar.res === BurstRes.Read && cnt === 0.U
+			ifu.error	:= bar.res===BurstRes.Erro || (bar.res===BurstRes.Done && ~&(cnt))
 		}
 	}.otherwise{
 		ifu.ready	:= false.B
