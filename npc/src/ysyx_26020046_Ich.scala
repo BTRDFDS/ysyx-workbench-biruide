@@ -22,13 +22,13 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 
 	addrTag 	:= ifu.addr(BitWidth-2-1,CacheBit+CacheWidth)
 	addrIdx 	:= ifu.addr(CacheBit+CacheWidth-1,CacheWidth)
-	addrOffset	:= ifu.addr(CacheWidth-1,0)(CacheWidth.W)
+	addrOffset	:= ifu.addr(CacheWidth.U-1.U,0.U)(CacheWidth.W)
 
 	val state	= RegInit(IchState.Imm)
 	val cnt		= RegInit(0.U(CacheWidth.W))
 	switch(state){
 		is(IchState.Imm){when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag))	{state := IchState.Out}}
-		is(IchSatae.Out){when((&cnt) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm;}}
+		is(IchState.Out){when((&cnt) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm;}}
 	}
 	switch(state){
 		is(IchState.Imm){cnt := 0.U}
