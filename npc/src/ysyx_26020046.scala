@@ -36,16 +36,16 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	io.master.arvalid	<> bar.out.arvalid
 	io.master.araddr	<> bar.out.araddr
 	io.master.arid		:= 0.U
-	io.master.arlen		:= 0.U
-	io.master.arsize	:= 0.U
-	io.master.arburst	:= 0.U
+	io.master.arlen		:= bar.out.arlen
+	io.master.arsize	:= bar.out.arsize
+	io.master.arburst	:= bar.out.arburst
 	io.master.arready	<> bar.out.arready
 
 	io.master.rvalid	<> bar.out.rvalid
 	io.master.rdata		<> bar.out.rdata
 	io.master.rresp		<> bar.out.rresp
 	// io.master.rid		:= 0.U //Input
-	// io.master.rlast		:= 0.U //Input
+	io.master.rlast		:= bar.out.rlast
 	io.master.rready	<> bar.out.rready
 
 	io.master.awvalid	<> bar.out.awvalid
