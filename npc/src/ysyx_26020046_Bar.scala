@@ -56,7 +56,7 @@ object BarWstate	extends ChiselEnum{val Idle,Call,Back=Value}
 		is(BarWstate.Call){when(finishAddr || finishData)		{wState := BarWstate.Back	}}
 		is(BarWstate.Back){when(out.bvalid)						{wState := BarWstate.Idle	}}
 	}
-	when(wState === BarRstate.LsuWrit){
+	when(wState === BarWstate.Call){
 		when(out.awready)	{hasAddr := true.B}
 		when(out.wready)	{hasData := true.B}
 	}otherwise{
