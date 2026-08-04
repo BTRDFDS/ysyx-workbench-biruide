@@ -100,38 +100,41 @@ localparam rs = 327;//(5.1118)*64
 logic wHasAddr,wHasData,wDone;
 logic [3:0]	wBid;
 logic [1:0]	wBresp;
-logic [31:0]	wRcnt;
-logic [25:0]	wAcnt,wFcnt;
+logic [31:0]wRcnt;
+logic [25:0]wAcnt,wFcnt;
 always_ff@(posedge clock)begin
 	if(reset)begin
-		wHasAddr<=0;
-		wHasData<=0;
 		wRcnt	<= 'd0;
 		wAcnt	<= 'd0;
+		wHasAddr<=0;
+		wHasData<=0;
 		wFcnt	<= 'h3ffffff;
 		wDone	<= 'd0;
-	end else begin
-		if(out_awready & in_awvalid)wHasAddr<=1;
-		if(out_wready  & in_wvalid )wHasData<=1;
-		if(wDone & in_bready)		wHasAddr<=0;
-		if(wDone & in_bready)		wHasData<=0;
+	end else if(wHasAddr&wHasData)begin
 		if(out_bvalid)begin
 			wFcnt	<= wRcnt[31:6];
 			wBid	<= out_bid;
 			wBresp	<= out_bresp;
-		end 
+		end
 		if(wFcnt == wAcnt)begin
 			wDone <= 1;
 			wFcnt <= 'h3ffffff;
-		end else if(in_bready & out_bvalid)wDone <=0;
-		if((wHasAddr & wHasData)|(out_awready & in_awvalid & out_wready & in_wvalid))begin
-			wRcnt <= wRcnt + rs;
-			wAcnt <= wAcnt + 'd1;
 		end else begin
 			wDone <=0;
-			wRcnt <='0;
-			wAcnt <='0;
 		end
+	end else begin
+		wDone <=0;
+		if(out_awready & in_awvalid)wHasAddr<=1;
+		if(out_wready  & in_wvalid )wHasData<=1;
+	end
+	if(wFcnt == wAcnt & wHasAddr&wHasData)begin
+		wRcnt <='0;
+		wAcnt <='0;
+		wHasAddr<=0;
+		wHasData<=0;
+	end else if((wHasAddr & wHasData)|(out_awready & in_awvalid & out_wready & in_wvalid))begin
+		wRcnt <= wRcnt + rs;
+		wAcnt <= wAcnt + 'd1;
 	end
 end
 assign out_bready	= in_bready;
