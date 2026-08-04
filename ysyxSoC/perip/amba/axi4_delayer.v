@@ -147,7 +147,7 @@ assign in_bresp		= wDone?wBresp	:'b0;
 	assign in_bresp = out_bresp;
 `endif
 
-// `define DelayR
+`define DelayR
 `ifdef DelayR
 
 logic [31:0]	rRcnt;
@@ -184,8 +184,6 @@ always_ff@(posedge clock)begin
 				rOcnt <= rOcnt +'d1;
 				rFcnt[rOcnt] <= 'h3ffffff;
 			end
-		end else begin
-			rDone <= 0;
 		end
 	end else begin
 		rDone <= 0;
