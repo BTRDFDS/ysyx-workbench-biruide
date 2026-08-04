@@ -93,60 +93,38 @@ module axi4_delayer(
 	// assign in_bid = out_bid;
 	// assign in_bresp = out_bresp;
 
-`define Delay
-`ifdef Delay
-localparam rs = 327;//(5.1118-1)*64//TODO
-// logic [31:0] wCnt;
-// logic wHas,wDone;
-// assign wDone = wHas & (wCnt[31:6] == '0);
-// always_ff @(posedge clock) begin
-// 	if(reset | (out_bvalid & in_bready & wDone))wHas <= 0;
-// 	else if(out_bvalid & wHas==0)wHas <= 1;
+localparam rs = 327;//(5.1118)*64
 
-// 	if(reset | (out_bvalid & in_bready & wDone))wCnt[31:6] <= 'd0;
-// 	else if(wHas)wCnt[31:6]<=(wCnt[31:6]=='d0)?'d0:(wCnt[31:6]-'d1);
-// 	else wCnt <= wCnt + rs;
-// end
-logic [31:0]	wRcnt;
-logic [25:0]	wAcnt,wFcnt;
+`define DelayW
+`ifdef DelayW
 logic wHasAddr,wHasData,wDone;
 logic [3:0]	wBid;
 logic [1:0]	wBresp;
+logic [31:0]	wRcnt;
+logic [25:0]	wAcnt,wFcnt;
 always_ff@(posedge clock)begin
 	if(reset)begin
 		wHasAddr<=0;
 		wHasData<=0;
-	end else if(wDone)begin
-		wHasAddr<=0;
-		wHasData<=0;
-	end else if(wFcnt==wAcnt & in_bready & out_bvalid)begin
-		wHasAddr<=0;
-		wHasData<=0;
-	end else begin
-		if(out_awready & in_awvalid)wHasAddr<=1;
-		if(out_wready  & in_wvalid )wHasData<=1;
-	end
-	if(reset | ~wHasAddr | ~wHasData)begin
 		wRcnt	<= 'd0;
 		wAcnt	<= 'd0;
 		wFcnt	<= 'h3ffffff;
 		wDone	<= 'd0;
 	end else begin
+		if(out_awready & in_awvalid)wHasAddr<=1;
+		if(out_wready  & in_wvalid )wHasData<=1;
+		if(wDone & in_bready)		wHasAddr<=0;
+		if(wDone & in_bready)		wHasData<=0;
 		if(out_bvalid)begin
-			wFcnt <= wRcnt[31:6];
-			wBid <= in_bid;
-			wBresp <= in_bresp;
-		end
-	end
-	if(wFcnt==wAcnt)begin
-		if(wHasAddr & wHasData)begin
+			wFcnt	<= wRcnt[31:6];
+			wBid	<= out_bid;
+			wBresp	<= out_bresp;
+		end else if(wFcnt == wAcnt)begin
 			wDone <= 1;
 			wRcnt <='0;
 			wAcnt <='0;
 			wFcnt <= 'h3ffffff;
-		end
-	end else begin
-		if((wHasAddr & wHasData)|(out_awready & in_awvalid & out_wready & in_wvalid))begin
+		end else if((wHasAddr & wHasData)|(out_awready & in_awvalid & out_wready & in_wvalid))begin
 			if(in_bready & out_bvalid)wDone <=0;
 			wRcnt <= wRcnt + rs;
 			wAcnt <= wAcnt + 'd1;
@@ -158,7 +136,15 @@ assign in_bvalid	= wDone;
 assign in_bid		= wDone?wBid	:'b0;
 assign in_bresp		= wDone?wBresp	:'b0;
 
+`else
+	assign out_bready = in_bready;
+	assign in_bvalid = out_bvalid;
+	assign in_bid = out_bid;
+	assign in_bresp = out_bresp;
+`endif
 
+`define DelayR
+`ifdef DelayR
 
 logic [31:0]	rRcnt;
 logic [25:0]	rAcnt;
@@ -224,9 +210,5 @@ end
 	assign in_rdata = out_rdata;
 	assign in_rresp = out_rresp;
 	assign in_rlast = out_rlast;
-	assign out_bready = in_bready;
-	assign in_bvalid = out_bvalid;
-	assign in_bid = out_bid;
-	assign in_bresp = out_bresp;
 `endif
 endmodule
