@@ -2,73 +2,75 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-object BarState	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack,LsuWrit,LsuDone=Value}
 class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	val out = IO(new Axi4Master())
 	val clt = IO(new Axi4Master())
 	val ifu = IO(Flipped(new BurstBus()))
 	val lsu = IO(Flipped(new MemBus()))
-	
-	val state		= RegInit(BarState.Idle)
+object BarRstate	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack=Value}
+	val rState		= RegInit(BarRstate.Idle)
+{
+	val addr 		= RegInit(0.U(32.W))
+	switch(rState){
+		is(BarRstate.Idle){
+			when(lsu.size =/= 0b11.U){
+				rState	:= Mux(lsu.write,BarRstate.Idle,BarRstate.LsuCall)
+				addr	:= lsu.addr
+			}.elsewhen(ifu.valid){rState := BarRstate.IfuCall;addr := ifu.addr}
+		}
+		is(BarRstate.IfuCall){when(out.arready)												{rState := BarRstate.IfuBack}}
+		is(BarRstate.IfuBack){when(out.rlast)												{rState := BarRstate.Idle	}}
+		is(BarRstate.LsuCall){when(Mux(addr(31,24) === 0x02.U(8.W),clt.arready,out.arready)){rState := BarRstate.LsuBack}}
+		is(BarRstate.LsuBack){when(Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))	{rState := BarRstate.Idle	}}
+	}
+	out.arvalid := (rState === BarRstate.IfuCall || rState === BarRstate.LsuCall) && addr(31,24) =/= 0x02.U(8.W)
+	out.rready  := (rState === BarRstate.IfuBack || rState === BarRstate.LsuBack) && addr(31,24) =/= 0x02.U(8.W)
+	out.araddr  := addr
+	out.arlen	:= Mux(rState === BarRstate.IfuCall,(CacheSize-1).U,0.U)//只有ifu能突发
+	out.arsize	:= Mux(rState === BarRstate.IfuCall,2.U,lsu.size)
+	out.arburst := Mux(rState === BarRstate.IfuCall,2.U,0.U)
+	clt.arvalid := (rState === BarRstate.IfuCall || rState === BarRstate.LsuCall) && addr(31,24) === 0x02.U(8.W)
+	clt.rready  := (rState === BarRstate.IfuBack || rState === BarRstate.LsuBack) && addr(31,24) === 0x02.U(8.W)
+	clt.araddr  := addr
+	clt.arlen	:= 0.U
+	clt.arsize	:= 0.U//用不到
+	clt.arburst := 0.U
+	ifu.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
+	when(rState === BarRstate.IfuBack){
+		when(out.rresp =/= 0.U)	{ifu.res := BurstRes.Erro}
+		.elsewhen(out.rlast)	{ifu.res := BurstRes.Done}
+		.elsewhen(out.rvalid)	{ifu.res := BurstRes.Read}
+		.otherwise				{ifu.res := BurstRes.Idle}
+	}.otherwise{ifu.res := BurstRes.Idle}
+	lsu.rdata	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
+}
+object BarWstate	extends ChiselEnum{val Idle,Call,Back=Value}
+	val wState		= RegInit(BarWstate.Idle)
+{
 	val addr 		= RegInit(0.U(32.W))
 	val hasAddr		= RegInit(false.B)
 	val hasData		= RegInit(false.B)
 	val finishAddr = hasAddr || out.awready
 	val finishData = hasData || out.wready
 
-	switch(state){
-		is(BarState.Idle){
-			when(lsu.size =/= 0b11.U){
-				state	:= Mux(lsu.write,BarState.LsuWrit,BarState.LsuCall)
-				addr	:= lsu.addr
-			}.elsewhen(ifu.valid){state := BarState.IfuCall;addr := ifu.addr}
-		}
-		is(BarState.IfuCall){when(out.arready)												{state := BarState.IfuBack	}}
-		is(BarState.IfuBack){when(out.rlast)												{state := BarState.Idle	}}
-		is(BarState.LsuCall){when(Mux(addr(31,24) === 0x02.U(8.W),clt.arready,out.arready))	{state := BarState.LsuBack	}}
-		is(BarState.LsuBack){when(Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))	{state := BarState.Idle	}}
-		is(BarState.LsuWrit){when(finishAddr || finishData)									{state := BarState.LsuDone	}}
-		is(BarState.LsuDone){when(out.bvalid)												{state := BarState.Idle	}}
+	switch(wState){
+		is(BarWstate.Idle){when(lsu.write & lsu.size =/= 0b11.U){wState := BarWstate.Call;addr := lsu.addr}}
+		is(BarWstate.Call){when(finishAddr || finishData)		{wState := BarWstate.Back	}}
+		is(BarWstate.Back){when(out.bvalid)						{wState := BarWstate.Idle	}}
 	}
-	out.arvalid := (state === BarState.IfuCall || state === BarState.LsuCall) && addr(31,24) =/= 0x02.U(8.W)
-	out.rready  := (state === BarState.IfuBack || state === BarState.LsuBack) && addr(31,24) =/= 0x02.U(8.W)
-	out.araddr  := addr
-	out.arlen	:= Mux(state === BarState.IfuCall,(CacheSize-1).U,0.U)//只有ifu能突发
-	out.arsize	:= Mux(state === BarState.IfuCall,2.U,lsu.size)
-	out.arburst := Mux(state === BarState.IfuCall,2.U,0.U)
-	clt.arvalid := (state === BarState.IfuCall || state === BarState.LsuCall) && addr(31,24) === 0x02.U(8.W)
-	clt.rready  := (state === BarState.IfuBack || state === BarState.LsuBack) && addr(31,24) === 0x02.U(8.W)
-	clt.araddr  := addr
-	clt.arlen	:= 0.U
-	clt.arsize	:= 0.U//用不到
-	clt.arburst := 0.U
-
-	ifu.data	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
-
-	when(state === BarState.IfuBack){
-		when(out.rresp =/= 0.U)	{ifu.res := BurstRes.Erro}
-		.elsewhen(out.rlast)	{ifu.res := BurstRes.Done}
-		.elsewhen(out.rvalid)	{ifu.res := BurstRes.Read}
-		.otherwise				{ifu.res := BurstRes.Idle}
-	}.otherwise{ifu.res := BurstRes.Idle}
-
-	lsu.rdata	:= Mux(addr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
-	when(state === BarState.LsuWrit){
+	when(wState === BarRstate.LsuWrit){
 		when(out.awready)	{hasAddr := true.B}
 		when(out.wready)	{hasData := true.B}
 	}otherwise{
 		hasData := false.B
 		hasAddr := false.B
 	}
-	out.awvalid	:= (state === BarState.LsuWrit) && !hasAddr
-	out.wvalid	:= (state === BarState.LsuWrit) && !hasData
+	out.awvalid	:= (wState === BarWstate.Call) && !hasAddr
+	out.wvalid	:= (wState === BarWstate.Call) && !hasData
 	out.wdata	:= lsu.wdata
 	out.wstrb	:= lsu.wstrb
-	out.bready	:= (state === BarState.LsuDone)
+	out.bready	:= (wState === BarWstate.Back)
 	out.awaddr	:= addr
-	lsu.ready	:= ((state === BarState.LsuDone) && out.bvalid) || (state === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
-	lsu.error	:= ((state === BarState.LsuDone) && out.bresp =/= 0.U) || (state === BarState.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rresp,out.rresp) =/= 0.U)
-	
 	clt.arlen	:= 0.U
 	clt.arsize	:= 0.U
 	clt.arburst := 0.U
@@ -78,6 +80,11 @@ class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	clt.wstrb	:= 0.U
 	clt.wvalid	:= false.B
 	clt.bready	:= false.B
+}
+
+	lsu.ready	:= ((wState === BarWstate.Back) && out.bvalid)			|| (rState === BarRstate.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
+	lsu.error	:= ((wState === BarWstate.Back) && out.bresp =/= 0.U)	|| (rState === BarRstate.LsuBack && Mux(addr(31,24) === 0x02.U(8.W),clt.rresp,out.rresp) =/= 0.U)
+	
 
 
 	// val addrValid = (
