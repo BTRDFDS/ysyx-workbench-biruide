@@ -119,15 +119,18 @@ always_ff@(posedge clock)begin
 			wFcnt	<= wRcnt[31:6];
 			wBid	<= out_bid;
 			wBresp	<= out_bresp;
-		end else if(wFcnt == wAcnt)begin
+		end 
+		if(wFcnt == wAcnt)begin
 			wDone <= 1;
-			wRcnt <='0;
-			wAcnt <='0;
 			wFcnt <= 'h3ffffff;
-		end else if((wHasAddr & wHasData)|(out_awready & in_awvalid & out_wready & in_wvalid))begin
-			if(in_bready & out_bvalid)wDone <=0;
+		end else if(in_bready & out_bvalid)wDone <=0;
+		if((wHasAddr & wHasData)|(out_awready & in_awvalid & out_wready & in_wvalid))begin
 			wRcnt <= wRcnt + rs;
 			wAcnt <= wAcnt + 'd1;
+		end else begin
+			wDone <=0;
+			wRcnt <='0;
+			wAcnt <='0;
 		end
 	end
 end
