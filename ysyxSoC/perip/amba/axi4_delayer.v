@@ -63,8 +63,8 @@ module axi4_delayer(
 	input  [1:0]  out_bresp
 );
 
-	// assign in_arready = out_arready;
-	assign out_arvalid = in_arvalid;
+	assign in_arready = out_arready;
+	// assign out_arvalid = in_arvalid;
 	assign out_arid = in_arid;
 	assign out_araddr = in_araddr;
 	assign out_arlen = in_arlen;
@@ -193,7 +193,8 @@ always_ff@(posedge clock)begin
 		rAcnt	<= rAcnt+'d1;
 	end
 end
-	assign in_arready	= out_arready & ~rHas;
+	assign out_arvalid = in_arvalid & ~rHas;
+
 	assign out_rready	= in_rready;
 	assign in_rvalid	= rDone;
 	assign in_rid		= rDone?rFifoId		[rOcnt-1'd1]:'d0;
@@ -204,7 +205,7 @@ end
 // initial $display("%m");
 
 `else
-	assign in_arready = out_arready;
+	assign out_arvalid = in_arvalid;
 	assign out_rready = in_rready;
 	assign in_rvalid = out_rvalid;
 	assign in_rid = out_rid;
