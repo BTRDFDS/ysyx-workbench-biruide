@@ -119,8 +119,6 @@ always_ff@(posedge clock)begin
 		if(wFcnt == wAcnt)begin
 			wDone <= 1;
 			wFcnt <= 'h3ffffff;
-		end else begin
-			wDone <=0;
 		end
 	end else begin
 		wDone <=0;
