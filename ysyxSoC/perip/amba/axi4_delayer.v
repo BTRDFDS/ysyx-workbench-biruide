@@ -95,7 +95,7 @@ module axi4_delayer(
 
 localparam rs = 327;//(5.1118)*64
 
-`define DelayW
+// `define DelayW
 `ifdef DelayW
 logic wHasAddr,wHasData,wDone;
 logic [3:0]	wBid;
