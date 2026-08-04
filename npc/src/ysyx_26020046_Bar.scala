@@ -71,9 +71,6 @@ object BarWstate	extends ChiselEnum{val Idle,Call,Back=Value}
 	out.wstrb	:= lsu.wstrb
 	out.bready	:= (wState === BarWstate.Back)
 	out.awaddr	:= addr
-	clt.arlen	:= 0.U
-	clt.arsize	:= 0.U
-	clt.arburst := 0.U
 	clt.awvalid := false.B
 	clt.awaddr	:= 0.U
 	clt.wdata	:= 0.U
