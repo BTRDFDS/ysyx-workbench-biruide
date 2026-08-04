@@ -175,9 +175,13 @@ always_ff@(posedge clock)begin
 		end
 		if(rFcnt[rOcnt]==rAcnt)begin
 			rDone <= 1;
-			rFcnt[rOcnt] <= 'h3ffffff;
 			if(rFifoLast[rOcnt])rOcnt <= rIcnt;
-			else 				rOcnt <= rOcnt +'d1;
+			else begin
+				rOcnt <= rOcnt +'d1;
+				rFcnt[rOcnt] <= 'h3ffffff;
+			end
+		end else begin
+			rDone <= 0;
 		end
 	end else begin
 		rDone <= 0;
