@@ -142,7 +142,8 @@ void dCacheTraceFileInit(){
 	}
 extern "C" void lsuTrace(int addr){
 	#if defined(NPC_D_CACHE_TRACE)
-		dCacheTraceFile.write((const char*)&((uint32_t)addr), 4);
+	uint32_t addrX=(uint32_t)addr;
+		dCacheTraceFile.write((const char*)&addrX, 4);
 	#endif
 }
 void dCacheTraceFileClose(){

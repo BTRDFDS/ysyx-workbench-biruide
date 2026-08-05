@@ -3,7 +3,7 @@
 #include "verilated.h"
 #include "svdpi.h"
 #include "Vysyx_26020046_Npc__Dpi.h"
-#include <npcCounter.h>
+#include <npcDevice.h>
 
 #ifdef NPC_NVBroad
 #include <nvboard.h>
