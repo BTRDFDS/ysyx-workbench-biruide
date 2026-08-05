@@ -11,11 +11,10 @@
 
 VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
-svScope scope;//作用域
-svScope scope1;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr==NULL){NpcReturn("difftest unable",-1);}
+	svSetScope(scopeWbu);
 	for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
 	gpr[0]=0;
 	}
@@ -24,10 +23,8 @@ void NpcInitDeviceMem(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new VysyxSoCFull{contextp};
-	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.wbu.wbuChk");
-	scope1=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.ifu.ifuChk");
-	svSetScope(scope);
-	svSetScope(scope1);
+	scopeWbu=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.wbu.wbuChk");
+	scopeIfu=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.ifu.ifuChk");
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		Verilated::traceEverOn(true);
 		tfp = new VerilatedFstC;

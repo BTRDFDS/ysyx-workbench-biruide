@@ -164,7 +164,8 @@ void printOver(const char* msg,int returnCode){
 	#ifdef NPC_NVBroad
 		nvboard_quit();
 	#endif
-	printf("%s pc=0x %x\n",msg,getRegPc(0)-4);//实质上是已经是next pc了
+	svSetScope(scopeWbu);
+	printf("%s pc=0x %x\n",msg,getRegPc(0));
 	printCounter();
 
 	const char *regsName[] = {
@@ -174,6 +175,7 @@ void printOver(const char* msg,int returnCode){
 	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
 	};//A=10 B=11
 	if(returnCode!=0){
+		svSetScope(scopeWbu);
 		for(int i=0;i<32;i++){
 			printf("[%2d %s]%8x ",i,regsName[i],getRegPc(i));
 			if(i%8==7)printf("\n");
@@ -209,6 +211,7 @@ void NpcWave();
 extern "C" void flash_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#ifdef NPC_M_TRACE
+	svSetScope(scopeWbu);
 	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#endif
 	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcReturn("flash read error",addrX);}
@@ -233,12 +236,14 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 		((uint32_t)mrom[addrX-mromAddr+3]<<24);
 	*data=temp;
 	#ifdef NPC_M_TRACE
+	svSetScope(scopeWbu);
 	logFile<<"mrom	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 	}
 extern "C" int psram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#if defined(NPC_M_TRACE)
+		svSetScope(scopeWbu);
 		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#elif defined(NPC_MIN_TRACE)
 		// if(numCycle >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
@@ -258,6 +263,7 @@ extern "C" int psram_read(int32_t addr){
 extern "C" void psram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#if defined(NPC_M_TRACE)
+		svSetScope(scopeWbu);
 		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
 	#elif defined(NPC_MIN_TRACE)
 		// if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
@@ -272,8 +278,10 @@ extern "C" void psram_write(int addr,int data){
 extern "C" int sdram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr);
 	#if defined(NPC_M_TRACE)
+		svSetScope(scopeWbu);
 		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#elif defined(NPC_MIN_TRACE)
+		svSetScope(scopeWbu);
 		if(numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<getRegPc(0)<<"\n";
 		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#endif
@@ -293,8 +301,10 @@ extern "C" int sdram_read(int32_t addr){
 extern "C" void sdram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#if defined(NPC_M_TRACE)
+		svSetScope(scopeWbu);
 		logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
 	#elif defined(NPC_MIN_TRACE)
+		svSetScope(scopeWbu);
 		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
 	#endif
 	sdram[addrX+0]=(uint8_t)(data&0xff);
@@ -310,12 +320,17 @@ extern "C" int getRegPc(int addr);
 extern "C" int getNextPc();
 extern "C" void ebreak(){
 	numInst++;numIduCsr++;
+	svSetScope(scopeWbu);
 	iCacheTraceFileWrite(getRegPc(0));
 	NpcReturn("\nebreak",getRegPc(10)!=0);
 	}
-extern "C" void wbuCheck(){
+svScope scopeWbu;//作用域
+svScope scopeIfu;//作用域
+	extern "C" void wbuCheck(){
 	numInst++;
+	svSetScope(scopeWbu);
 	iCacheTraceFileWrite(getRegPc(0));
+	svSetScope(scopeIfu);
 	if(NpcDifftestCheck(getNextPc()))NpcReturn("difftest",-1);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
