@@ -27,6 +27,16 @@ SECTIONS{
 	_lma = _lma + SIZEOF(.load);
 	_lma = ALIGN(_lma, 0x4);
 
+	.fence : AT(_lma){
+		. = ALIGN(0x10);
+		*(.text._fence)
+	} > sdram 
+	PROVIDE(_fence_start_ = ADDR(.fence));
+	PROVIDE(_fence_size_ = SIZEOF(.fence)/4);
+	PROVIDE(_fence_begin_ = LOADADDR(.fence));
+	_lma = _lma + SIZEOF(.fence);
+	_lma = ALIGN(_lma, 0x4);
+
 	.imag : AT(_lma){/*image*/
 		. = ALIGN(0x10);
 		*(.text*)

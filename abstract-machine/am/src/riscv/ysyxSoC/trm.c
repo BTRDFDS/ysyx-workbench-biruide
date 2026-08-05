@@ -33,12 +33,9 @@ void putch(char ch) {
 void halt(int code) {asm volatile("mv a0, %0; ebreak" : :"r"(code));while (1);}
 int main(const char *args);
 extern char _load_start_,_load_size_,_load_begin_[];
+extern char _fence_start_,_fence_size_,_fence_begin_[];
 extern char _imag_start_,_imag_size_,_imag_begin_[];
 extern char _base_start_,_base_size_;
-// void _fence(){
-
-// 	_bootloader();
-// }
 void _bootloader() {//SSLB
 	uint32_t* data=(uint32_t*)&_imag_start_;
 	while((data-(uint32_t*)&_imag_start_)<=(size_t)&_imag_size_){
@@ -52,12 +49,24 @@ void _bootloader() {//SSLB
 	}
 	halt(main(mainargs));
 }
+void volatile _fence(){
+	asm volatile("nop");
+	asm volatile("lui a0, 0xa0000");
+    asm volatile("jalr x0, 0(a0)");
+	_bootloader();
+}
 void _trm_init() {//FSLB
 	uint32_t* load=(uint32_t*)&_load_start_;
 	while((load-(uint32_t*)&_load_start_)<=(size_t)&_load_size_){
 		*load = *((uint32_t*)&_load_begin_ + (load - (uint32_t*)&_load_start_));
 		load=load+1;
 	}
-	// _fence();
-	_bootloader();
+	uint32_t* fence=(uint32_t*)&_imag_start_;
+	while((fence-(uint32_t*)&_imag_start_)<=(size_t)&_fence_size_){
+		*fence = *((uint32_t*)&_fence_begin_ + (fence - (uint32_t*)&_imag_start_));
+		fence=fence+1;
+	}
+	main(mainargs);
+	// _bootloader();
+	_fence();
 }
