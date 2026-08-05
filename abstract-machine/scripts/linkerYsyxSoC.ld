@@ -20,7 +20,7 @@ SECTIONS{
 	.load : AT(_lma){
 		. = ALIGN(0x10);
 		*(.text._bootloader)
-	} > sram 
+	} > sdram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load)/4);
 	PROVIDE(_load_begin_ = LOADADDR(.load));
