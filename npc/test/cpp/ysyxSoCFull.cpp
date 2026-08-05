@@ -3,7 +3,7 @@
 #include "verilated.h"
 #include "svdpi.h"
 #include "VysyxSoCFull__Dpi.h"
-#include <npcCounter.h>
+#include <npcDevice.h>
 
 #ifdef NPC_NVBroad
 #include <nvboard.h>
@@ -32,7 +32,8 @@ void NpcInitDeviceMem(int argc, char** argv){
 		tfp->open("./wave/ysyxSoCFull.fst");
 	#endif
 	logFileInit("./log/ysyxSoCFull.log");
-	iPcTraceFileInit();
+	iCacheTraceFileInit();
+	dCacheTraceFileInit();
 	#ifdef NPC_NVBroad
 		nvboard_bind_pin(&top->externalPins_uart_rx  ,1,UART_RX);
 		nvboard_bind_pin(&top->externalPins_uart_tx  ,1,UART_TX);

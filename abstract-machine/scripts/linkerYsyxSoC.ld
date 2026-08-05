@@ -20,21 +20,11 @@ SECTIONS{
 	.load : AT(_lma){
 		. = ALIGN(0x10);
 		*(.text._bootloader)
-	} > sdram 
+	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load)/4);
 	PROVIDE(_load_begin_ = LOADADDR(.load));
 	_lma = _lma + SIZEOF(.load);
-	_lma = ALIGN(_lma, 0x4);
-
-	.fence : AT(_lma){
-		. = ALIGN(0x10);
-		*(.text._fence)
-	} > sdram 
-	PROVIDE(_fence_start_ = ADDR(.fence));
-	PROVIDE(_fence_size_ = SIZEOF(.fence)/4);
-	PROVIDE(_fence_begin_ = LOADADDR(.fence));
-	_lma = _lma + SIZEOF(.fence);
 	_lma = ALIGN(_lma, 0x4);
 
 	.imag : AT(_lma){/*image*/

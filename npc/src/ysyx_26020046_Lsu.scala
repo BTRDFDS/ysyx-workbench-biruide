@@ -126,40 +126,43 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 
 	if(Yosys == false){
 		val lsuChk = Module(new ysyx_26020046_LsuChk)
-		lsuChk.clock		:= clock
-		lsuChk.io.load		:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Load	&& bar.ready
-		lsuChk.io.loadWait	:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Load
-		lsuChk.io.store		:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Store	&& bar.ready
-		lsuChk.io.storeWait	:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Store
+		lsuChk.clock	:= clock
+		lsuChk.load		:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Load	&& bar.ready
+		lsuChk.loadWait	:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Load
+		lsuChk.store	:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Store	&& bar.ready
+		lsuChk.storeWait:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Store
+		lsuChk.addr		:= in.pipe.result
 	}
 }
 class ysyx_26020046_LsuChk extends ExtModule{
-	val io = IO(new Bundle{
-		val load		= Input(Bool())
-		val loadWait	= Input(Bool())
-		val store		= Input(Bool())
-		val storeWait	= Input(Bool())
-	})
-	val clock = IO(Input(Clock()))
+	val load		= IO(Input(Bool()))
+	val loadWait	= IO(Input(Bool()))
+	val store		= IO(Input(Bool()))
+	val storeWait	= IO(Input(Bool()))
+	val addr		= IO(Input(UInt(32.W)))
+	val clock		= IO(Input(Clock()))
 	setInline("ysyx_26020046_LsuChk.sv",
 	"""
 	module ysyx_26020046_LsuChk(
-		input logic io_load,
-		input logic io_loadWait,
-		input logic io_store,
-		input logic io_storeWait,
+		input logic load,
+		input logic loadWait,
+		input logic store,
+		input logic storeWait,
+		input logic [31:0] addr,
 		input logic clock
 	);
 	import "DPI-C" function void lsuLoad();
 	import "DPI-C" function void lsuLoadWait();
 	import "DPI-C" function void lsuStore();
 	import "DPI-C" function void lsuStoreWait();
+	import "DPI-C" function void lsuTrace(int addr);
 	always_ff@(posedge clock)begin
-		if(io_load		)lsuLoad();
-		if(io_loadWait	)lsuLoadWait();
-		if(io_store		)lsuStore();
-		if(io_storeWait	)lsuStoreWait();
+		if(load			)lsuLoad();
+		if(loadWait		)lsuLoadWait();
+		if(store		)lsuStore();
+		if(storeWait	)lsuStoreWait();
 	end
+	always_ff(@posedge load)lsuLoadTrace(addr);
 	endmodule
 	"""
 	)

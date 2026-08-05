@@ -1,5 +1,5 @@
-#ifndef _NPC_COUNTER_
-#define _NPC_COUNTER_
+#ifndef _NPC_DEVICE_
+#define _NPC_DEVICE_
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -102,28 +102,52 @@ void logFileClose(){
 	#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-#if defined(NPC_I_PC_TRACE)
-	std::fstream iPcTraceFile;//输出日志文件：
+#if defined(NPC_I_CACHE_TRACE)
+	std::fstream iCacheTraceFile;//输出日志文件：
 	#endif
-void iPcTraceFileInit(){
-	#if defined(NPC_I_PC_TRACE)
-		iPcTraceFile.open("./bin/iPcTrace.bin",std::ios::out | std::ios::binary);
-		printf("./bin/iPcTrace.bin\n");
-		if(!iPcTraceFile.is_open()) {
-		printf("Failed to open iPcTrace file!\n");
+void iCacheTraceFileInit(){
+	#if defined(NPC_I_CACHE_TRACE)
+		iCacheTraceFile.open("./bin/iCacheTrace.bin",std::ios::out | std::ios::binary);
+		printf("./bin/iCacheTrace.bin\n");
+		if(!iCacheTraceFile.is_open()) {
+		printf("Failed to open iCacheTrace file!\n");
 		exit(-1);
 	}
 	#endif
 	}
-void iPcTraceFileWrite(uint32_t pc){
-	#if defined(NPC_I_PC_TRACE)
+void iCacheTraceFileWrite(uint32_t pc){
+	#if defined(NPC_I_CACHE_TRACE)
 		// logFile<<"write pc=0x"<<std::hex<<pc<<"\n";
-		iPcTraceFile.write((const char*)&pc, 4);
+		iCacheTraceFile.write((const char*)&pc, 4);
 	#endif
 	}
-void iPcTraceFileClose(){
-	#if defined(NPC_I_PC_TRACE)
-		iPcTraceFile.close();
+void iCacheTraceFileClose(){
+	#if defined(NPC_I_CACHE_TRACE)
+		iCacheTraceFile.close();
+	#endif
+	}
+////////////////////////////////////////////////////////////////////////////////////////
+#if defined(NPC_D_CACHE_TRACE)
+	std::fstream dCacheTraceFile;//输出日志文件：
+	#endif
+void dCacheTraceFileInit(){
+	#if defined(NPC_D_CACHE_TRACE)
+		dCacheTraceFile.open("./bin/dCacheTrace.bin",std::ios::out | std::ios::binary);
+		printf("./bin/dCacheTrace.bin\n");
+		if(!dCacheTraceFile.is_open()) {
+		printf("Failed to open dCacheTrace file!\n");
+		exit(-1);
+	}
+	#endif
+	}
+extern "C" void lsuTrace(int addr){
+	#if defined(NPC_D_CACHE_TRACE)
+		dCacheTraceFile.write((const char*)&((uint32_t)addr), 4);
+	#endif
+}
+void dCacheTraceFileClose(){
+	#if defined(NPC_D_CACHE_TRACE)
+		dCacheTraceFile.close();
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +179,8 @@ void printOver(const char* msg,int returnCode){
 		}
 	}
 	logFileClose();
-	iPcTraceFileClose();
+	iCacheTraceFileClose();
+	dCacheTraceFileClose();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
@@ -283,12 +308,12 @@ extern void NpcReturn(const char* msg,int returnCode);
 extern "C" int getRegPc(int addr);
 extern "C" void ebreak(){
 	numInst++;numIduCsr++;
-	iPcTraceFileWrite(getRegPc(0));
+	iCacheTraceFileWrite(getRegPc(0));
 	NpcReturn("\nebreak",getRegPc(10)!=0);
 	}
 extern "C" void wbuCheck(){
 	numInst++;
-	iPcTraceFileWrite(getRegPc(0));
+	iCacheTraceFileWrite(getRegPc(0));
 	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
