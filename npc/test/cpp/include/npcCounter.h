@@ -11,6 +11,7 @@
 uint64_t numCycle		=0;
 uint64_t numInst		=0;
 uint64_t numIchHit		=0;
+uint64_t numIchWait		=0;
 uint64_t numIchMiss		=0;
 uint64_t numIchAccess	=0;
 uint64_t numIchPenalty	=0;
@@ -32,6 +33,7 @@ uint64_t numLsuStore	=0;
 uint64_t numLsuStoreWait=0;
 
 extern "C" void ichHit()		{numIchHit++;		}
+extern "C" void ichWait()		{numIchWait++;		}
 extern "C" void ichMiss()		{numIchMiss++;		}
 extern "C" void ichAccess()		{numIchAccess++;	}
 extern "C" void ichPenalty()	{numIchPenalty++;	}
@@ -54,7 +56,7 @@ extern "C" void lsuStoreWait()	{numLsuStoreWait++;	}
 
 void printCounter(){
 	printf("cycle= %ld inst= %ld IPC= %f CPI= %f\n",numCycle,numInst,((float)numInst)/((float)numCycle),((float)numCycle)/((float)numInst));//实质上是已经是next pc了
-	printf("ich hit= %ld miss= %ld Hp= %f Mp= %f Access= %ld Penalty= %ld  ApH= %f PpM= %f AMAT =%f\n",numIchHit,numIchMiss,
+	printf("ich hit= %ld wait= %;d miss= %ld Hp= %f Mp= %f Access= %ld Penalty= %ld  ApH= %f PpM= %f AMAT =%f\n",numIchHit,numIchWait,numIchMiss,
 	((float)numIchHit)/((float)numIfuInst),
 	((float)numIchMiss)/((float)numIfuInst),
 	numIchAccess,numIchPenalty,
