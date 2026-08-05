@@ -16,7 +16,7 @@ int main() {
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	for(uint64_t cnt=0;;cnt++){
 		if(!file.read((char*)&addr, sizeof(addr))){
-			printf("cnt= %ld\thit= %ld\tHp= %f\n",cnt,hit,(float)cnt/(float)hit);
+			printf("cnt= %ld\thit= %ld\tHp= %f\n",cnt,hit,(float)hit/(float)cnt);
 			break;
 		}
 		uint32_t index = addr&((1<<bit)-1);

@@ -162,7 +162,7 @@ class ysyx_26020046_LsuChk extends ExtModule{
 		if(store		)lsuStore();
 		if(storeWait	)lsuStoreWait();
 	end
-	always_ff@(posedge load)lsuTrace(addr);
+	always_ff@(posedge load or posedge store)lsuTrace(addr);
 	endmodule
 	"""
 	)
