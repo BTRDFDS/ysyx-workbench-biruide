@@ -80,7 +80,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 
 	if(Yosys == false){
 		val ichChk = Module(new ysyx_26020046_IchChk)
-		ichChk.hit	:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag)
+		ichChk.hit	:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag) && (state === IchState.Imm || (state === IchState.Out && cnt > addrOffset-burstOffset && addrOffset >= burstOffset))
 		ichChk.miss	:= ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag)
 		ichChk.clock:= clock
 	}
