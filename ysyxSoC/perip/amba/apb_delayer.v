@@ -1,3 +1,4 @@
+// `define Delay
 module apb_delayer(
 	input         clock,
 	input         reset,
@@ -23,7 +24,6 @@ module apb_delayer(
 	input  [31:0] out_prdata,
 	input         out_pslverr
 );
-`define Delay
 `ifdef Delay
 logic [31:0] cnt,data;
 logic has,done,err;
