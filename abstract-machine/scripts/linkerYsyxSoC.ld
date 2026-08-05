@@ -28,7 +28,7 @@ SECTIONS{
 	_lma = ALIGN(_lma, 0x4);
 
 	.imag : AT(_lma){/*image*/
-		. = ALIGN(0x4);
+		. = ALIGN(0x10);
 		*(.text*)
 		*(.rodata*)
 		*(.srodata*)
