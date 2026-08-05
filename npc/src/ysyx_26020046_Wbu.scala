@@ -127,9 +127,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 			(pipeCsrOp === CsrOp.Trap)&(pipeValid)&(pipeCsrMesg === 0x3L.U) ||
 			(pipeValid === false.B & pipeCsrOp === CsrOp.Trap) ||
 			error
-		val chkPc = Reg(UInt(BitWidth.W))
-		chkPc := pipePc
-		wbuChk.io.pc := chkPc
+		wbuChk.io.pc := in.pipe.pc
 		val check = Reg(Bool())
 		check := pipeValid === true.B
 		wbuChk.io.check := check

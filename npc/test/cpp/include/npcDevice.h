@@ -331,7 +331,7 @@ extern "C" void ebreak(){
 	svSetScope(scopeWbu);
 	iCacheTraceFileWrite(getRegPc(0));
 	svSetScope(scopeIfu);
-	if(NpcDifftestCheck(getNextPc()))NpcReturn("difftest",-1);
+	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
 #endif
