@@ -307,6 +307,7 @@ extern "C" void sdram_write(int addr,int data){
 ////////////////////////////////////////////////////////////////////////////////////////
 extern void NpcReturn(const char* msg,int returnCode);
 extern "C" int getRegPc(int addr);
+extern "C" int getNextPc();
 extern "C" void ebreak(){
 	numInst++;numIduCsr++;
 	iCacheTraceFileWrite(getRegPc(0));
@@ -315,7 +316,7 @@ extern "C" void ebreak(){
 extern "C" void wbuCheck(){
 	numInst++;
 	iCacheTraceFileWrite(getRegPc(0));
-	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
+	if(NpcDifftestCheck(getNextPc()))NpcReturn("difftest",-1);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
 #endif

@@ -44,6 +44,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < Cat(pc,0.U(2.W))
 		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > Cat(pc,0.U(2.W))
 		ifuChk.jump		:= in.imme.back === Back.Jump
+		ifuChk.pc		:= pc
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
@@ -52,6 +53,7 @@ class ysyx_26020046_IfuChk extends ExtModule{
 	val forward	= IO(Input(Bool()))
 	val backward= IO(Input(Bool()))
 	val jump	= IO(Input(Bool()))
+	val pc		= IO(Input(UInt(32.W)))
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_IfuChk.sv",
 	"""
@@ -61,6 +63,7 @@ class ysyx_26020046_IfuChk extends ExtModule{
 		input logic forward,
 		input logic backward,
 		input logic jump,
+		input logic [31:0] pc,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
@@ -75,7 +78,9 @@ class ysyx_26020046_IfuChk extends ExtModule{
 		if(forward)	ifuForward();
 		if(backward)ifuBackward();
 		if(jump)	ifuJump();
+		if(change)	ifuPcChange(pc);
 	end
+	export "DPI-C" function getNextPc;function int getNextPc();return pc;endfunction
 	endmodule
 	"""
 	)

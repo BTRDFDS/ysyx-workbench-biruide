@@ -35,7 +35,7 @@ bool NpcDifftestCheck(uint32_t pc){
     //     npc_state.gpr[i] = getReg(i);//TODO:处理获取寄存器的逻辑
     // }
     NpcDifftestGetGpr(npc_state.gpr);
-    npc_state.pc = pc;
+    npc_state.pc = pc;//这个是下一个的PC
     npc_state.gpr[0] = 0;
 
     ref_difftest_exec(1);
