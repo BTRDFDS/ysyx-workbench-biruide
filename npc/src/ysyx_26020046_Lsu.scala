@@ -15,18 +15,19 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val ich		= IO(new FecneBus())
 	val state	= RegInit(MemStatus.Call)
 
+	val pipeReady 	= Wire(Bool())
 	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)
-	val pipeValid	= Reg(Bool())			;pipeValid	:= Mux(pipeReset,false.B		,in.pipe.valid	)
-	val pipeFenceI	= Reg(Bool())			;pipeFenceI	:= Mux(pipeReset,false.B		,in.pipe.fenceI	)
-	val pipeRdAddr	= Reg(UInt(RegWidth.W))	;pipeRdAddr	:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.rdAddr	)
-	val pipeResult	= Reg(UInt(BitWidth.W))	;pipeResult	:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.result	)
-	val pipePc		= Reg(UInt(BitWidth.W))	;pipePc		:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.pc		)
-	val pipeCsrAddr	= Reg(UInt(BitWidth.W))	;pipeCsrAddr:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.csrAddr)
-	val pipeCsrMesg	= Reg(UInt(BitWidth.W))	;pipeCsrMesg:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.csrMesg)
-	val pipeR2		= Reg(UInt(BitWidth.W))	;pipeR2		:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.r2		)
-	val pipeLsuOp	= Reg(LsuOp())			;pipeLsuOp	:= Mux(pipeReset,LsuOp.Null		,in.pipe.lsuOp	)
-	val pipeLsuAddr	= Reg(LsuAddr())		;pipeLsuAddr:= Mux(pipeReset,LsuAddr.B		,in.pipe.lsuAddr)
-	val pipeCsrOp	= Reg(CsrOp())			;pipeCsrOp	:= Mux(pipeReset,CsrOp.Null		,in.pipe.csrOp	)
+	val pipeValid	= PipeReg(pipeReset,false.B			,pipeReady,in.pipe.valid	)
+	val pipeFenceI	= PipeReg(pipeReset,false.B			,pipeReady,in.pipe.fenceI	)
+	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)	,pipeReady,in.pipe.rdAddr	)
+	val pipeResult	= PipeReg(pipeReset,0.U(RegWidth.W)	,pipeReady,in.pipe.result	)
+	val pipePc		= PipeReg(pipeReset,0.U(RegWidth.W)	,pipeReady,in.pipe.pc		)
+	val pipeCsrAddr	= PipeReg(pipeReset,0.U(RegWidth.W)	,pipeReady,in.pipe.csrAddr	)
+	val pipeCsrMesg	= PipeReg(pipeReset,0.U(RegWidth.W)	,pipeReady,in.pipe.csrMesg	)
+	val pipeR2		= PipeReg(pipeReset,0.U(RegWidth.W)	,pipeReady,in.pipe.r2		)
+	val pipeLsuOp	= PipeReg(pipeReset,LsuOp.Null		,pipeReady,in.pipe.lsuOp	)
+	val pipeLsuAddr	= PipeReg(pipeReset,LsuAddr.B		,pipeReady,in.pipe.lsuAddr	)
+	val pipeCsrOp	= PipeReg(pipeReset,CsrOp.Null		,pipeReady,in.pipe.csrOp	)
 
 	out.pipe.valid	:= false.B
 	out.pipe.rdAddr	:= pipeRdAddr
@@ -130,10 +131,10 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}otherwise{
-		val ready = Mux(pipeLsuOp === LsuOp.Null,true.B,state === MemStatus.Back)
-		out.pipe.valid:= ready & pipeValid
+		pipeReady := Mux(pipeLsuOp === LsuOp.Null,true.B,state === MemStatus.Back)
+		out.pipe.valid:= pipeReady & pipeValid
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
-		.elsewhen(ready & in.imme.back === Back.Ready){out.imme.back	:= Back.Ready}
+		.elsewhen(pipeReady & in.imme.back === Back.Ready){out.imme.back	:= Back.Ready}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}
 	when(addrError){switch(pipeLsuOp){
