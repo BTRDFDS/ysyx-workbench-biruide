@@ -18,7 +18,7 @@ SECTIONS{
 	_lma = ALIGN(_lma, 0x4);
 
 	.load : AT(_lma){
-		. = ALIGN(0x4);
+		. = ALIGN(0x10);
 		*(.text._bootloader)
 	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
