@@ -35,7 +35,10 @@ int main(const char *args);
 extern char _load_start_,_load_size_,_load_begin_[];
 extern char _imag_start_,_imag_size_,_imag_begin_[];
 extern char _base_start_,_base_size_;
+// void _fence(){
 
+// 	_bootloader();
+// }
 void _bootloader() {//SSLB
 	uint32_t* data=(uint32_t*)&_imag_start_;
 	while((data-(uint32_t*)&_imag_start_)<=(size_t)&_imag_size_){
@@ -55,5 +58,6 @@ void _trm_init() {//FSLB
 		*load = *((uint32_t*)&_load_begin_ + (load - (uint32_t*)&_load_start_));
 		load=load+1;
 	}
+	// _fence();
 	_bootloader();
 }
