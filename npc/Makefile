@@ -29,9 +29,9 @@ help:
 
 srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
 build/%.stamp:$(srcScala)
-	@mkdir -p build/$*
 	@mill -i runMain $*
 	$(call git_commit, "generate verilog for $*")
+	touch $@
 mytest:build/BuilderYsyxSoc.stamp
 
 
