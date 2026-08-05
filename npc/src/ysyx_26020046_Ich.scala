@@ -81,20 +81,21 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	if(Yosys == false){
 		val ichChk = Module(new ysyx_26020046_IchChk)
 		ichChk.hit	:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag)
-		ichChk.wait	:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag) && (state === IchState.Out && ~(cnt > addrOffset-burstOffset && addrOffset >= burstOffset))
+		ichChk.waits:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag) && (state === IchState.Out && ~(cnt > addrOffset-burstOffset && addrOffset >= burstOffset))
 		ichChk.miss	:= ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag)
 		ichChk.clock:= clock
 	}
 }
 class ysyx_26020046_IchChk extends ExtModule{
 	val hit		= IO(Input(Bool()))
-	val wait	= IO(Input(Bool()))
+	val waits	= IO(Input(Bool()))
 	val miss	= IO(Input(Bool()))
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_IchChk.sv",
 	"""
 	module ysyx_26020046_IchChk(
 		input logic hit,
+		input logic waits,
 		input logic miss,
 		input logic clock
 	);
@@ -105,7 +106,7 @@ class ysyx_26020046_IchChk extends ExtModule{
 	import "DPI-C" function void ichPenalty();
 
 	always_ff@(posedge hit)	ichHit();
-	always_ff@(posedge wait)ichWait();
+	always_ff@(posedge waits)ichWait();
 	always_ff@(posedge miss)ichMiss();
 	always_ff@(posedge clock) begin
 		if(hit) ichAccess();
