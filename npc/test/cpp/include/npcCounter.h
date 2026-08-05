@@ -14,6 +14,7 @@ uint64_t numIchHit		=0;
 uint64_t numIchWait		=0;
 uint64_t numIchMiss		=0;
 uint64_t numIchAccess	=0;
+uint64_t numIchReady	=0;
 uint64_t numIchPenalty	=0;
 uint64_t numIfuInst		=0;
 uint64_t numIfuStall 	=0;
@@ -36,6 +37,7 @@ extern "C" void ichHit()		{numIchHit++;		}
 extern "C" void ichWait()		{numIchWait++;		}
 extern "C" void ichMiss()		{numIchMiss++;		}
 extern "C" void ichAccess()		{numIchAccess++;	}
+extern "C" void ichReady()		{numIchReady++;		}
 extern "C" void ichPenalty()	{numIchPenalty++;	}
 extern "C" void ifuInst()		{numIfuInst++;		}
 extern "C" void ifuStall()		{numIfuStall++;		}
@@ -56,10 +58,10 @@ extern "C" void lsuStoreWait()	{numLsuStoreWait++;	}
 
 void printCounter(){
 	printf("cycle= %ld inst= %ld IPC= %f CPI= %f\n",numCycle,numInst,((float)numInst)/((float)numCycle),((float)numCycle)/((float)numInst));//实质上是已经是next pc了
-	printf("ich hit= %ld wait= %ld miss= %ld Hp= %f Mp= %f Access= %ld Penalty= %ld  ApH= %f PpM= %f AMAT =%f\n",numIchHit,numIchWait,numIchMiss,
+	printf("ich hit= %ld wait= %ld miss= %ld Hp= %f Mp= %f Access= %ld Ready= %ld Penalty= %ld ApH= %f PpM= %f AMAT =%f\n",numIchHit,numIchWait,numIchMiss,
 	((float)numIchHit)/((float)numIfuInst),
 	((float)numIchMiss)/((float)numIfuInst),
-	numIchAccess,numIchPenalty,
+	numIchAccess,numIchReady,numIchPenalty,
 	((float)numIchAccess)/((float)numIchHit),
 	((float)numIchPenalty)/((float)numIchMiss),
 	(numIchAccess+numIchPenalty)/((float)numIfuInst)

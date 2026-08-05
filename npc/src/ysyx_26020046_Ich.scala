@@ -103,14 +103,16 @@ class ysyx_26020046_IchChk extends ExtModule{
 	import "DPI-C" function void ichWait();
 	import "DPI-C" function void ichMiss();
 	import "DPI-C" function void ichAccess();
+	import "DPI-C" function void ichReady();
 	import "DPI-C" function void ichPenalty();
 
 	always_ff@(posedge hit)	ichHit();
 	always_ff@(posedge waits)ichWait();
 	always_ff@(posedge miss)ichMiss();
 	always_ff@(posedge clock) begin
-		if(hit) ichAccess();
-		if(miss)ichPenalty();
+		if(hit)  ichAccess();
+		if(miss) ichPenalty();
+		if(waits)ichReady();
 	end
 	endmodule
 	"""
