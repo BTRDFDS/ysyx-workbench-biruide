@@ -21,15 +21,18 @@
 
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
-static uint8_t *SRAM = NULL;
+static uint8_t *sram = NULL;
+static uint8_t *flash = NULL;
 #else // CONFIG_PMEM_GARRAY
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
-static uint8_t SRAM[CONFIG_SRAM_END-CONFIG_SRAM_START] PG_ALIGN = {};
+static uint8_t sram[CONFIG_SRAM_END-CONFIG_SRAM_START] PG_ALIGN = {};
+static uint8_t flash[CONFIG_FLASH_END-CONFIG_FLASH_START] PG_ALIGN = {};
 #endif
 void free_mem() {
 #if   defined(CONFIG_PMEM_MALLOC)
   if(pmem)free(pmem);
-  if(SRAM)free(SRAM);
+  if(sram)free(sram);
+  if(flash)free(flash);
 #endif
 }
 
@@ -39,7 +42,8 @@ paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
 static word_t pmem_read(paddr_t addr, int len) {
   // word_t ret = host_read(guest_to_host(addr), len);
   if(addr - CONFIG_MBASE < CONFIG_MSIZE)return host_read(guest_to_host(addr), len);
-  if(CONFIG_SRAM_START<=addr&&addr<=CONFIG_SRAM_END)return host_read(SRAM + addr - CONFIG_SRAM_START, len);
+  if(CONFIG_SRAM_START<=addr&&addr<=CONFIG_SRAM_END)return host_read(sram + addr - CONFIG_SRAM_START, len);
+  if(CONFIG_FLASH_START<=addr&&addr<=CONFIG_FLASH_END)return host_read(flash + addr - CONFIG_FLASH_START, len);
   // return ret;
   return 0;
 }
@@ -47,7 +51,8 @@ static word_t pmem_read(paddr_t addr, int len) {
 static void pmem_write(paddr_t addr, int len, word_t data) {
   // host_write(guest_to_host(addr), len, data); 
   if(addr - CONFIG_MBASE < CONFIG_MSIZE)host_write(guest_to_host(addr), len, data);
-  else if(CONFIG_SRAM_START<=addr&&addr<=CONFIG_SRAM_END)host_write(SRAM + addr - CONFIG_SRAM_START, len, data);
+  else if(CONFIG_SRAM_START<=addr&&addr<=CONFIG_SRAM_END)host_write(sram + addr - CONFIG_SRAM_START, len, data);
+  else if(CONFIG_FLASH_START<=addr&&addr<=CONFIG_FLASH_END)host_write(flash + addr - CONFIG_FLASH_START, len, data);
 }
 
 static void out_of_bound(paddr_t addr) {
@@ -59,13 +64,17 @@ void init_mem() {
 #if   defined(CONFIG_PMEM_MALLOC)
   pmem = malloc(CONFIG_MSIZE);
   assert(pmem);
-  SRAM = malloc(CONFIG_SRAM_END-CONFIG_SRAM_START);
-  assert(SRAM);
+  sram = malloc(CONFIG_SRAM_END-CONFIG_SRAM_START);
+  assert(sram);
+  flash = malloc(CONFIG_FLASH_END-CONFIG_FLASH_START);
+  assert(flash);
 #endif
   IFDEF(CONFIG_MEM_RANDOM, memset(pmem, rand(), CONFIG_MSIZE));
   Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
-  IFDEF(CONFIG_MEM_RANDOM, memset(SRAM, rand(), CONFIG_SRAM_END-CONFIG_SRAM_START));
-  Log("SRAM [" FMT_PADDR ", " FMT_PADDR "]", CONFIG_SRAM_START, CONFIG_SRAM_END);
+  IFDEF(CONFIG_MEM_RANDOM, memset(sram, rand(), CONFIG_SRAM_END-CONFIG_SRAM_START));
+  Log("sram [" FMT_PADDR ", " FMT_PADDR "]", CONFIG_SRAM_START, CONFIG_SRAM_END);
+  IFDEF(CONFIG_MEM_RANDOM, memset(flash, rand(), CONFIG_FLASH_END-CONFIG_FLASH_START));
+  Log("flash [" FMT_PADDR ", " FMT_PADDR "]", CONFIG_FLASH_START, CONFIG_FLASH_END);
 }
 
 word_t paddr_read(paddr_t addr, int len) {

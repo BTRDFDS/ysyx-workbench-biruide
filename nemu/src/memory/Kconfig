@@ -12,6 +12,13 @@ config SRAM_END
   hex "SRAM end"
   default 0x0f001fff
 
+config FLASH_START
+  hex "FLASH start"
+  default 0x30000000
+config FLASH_END
+  hex "FLASH end"
+  default 0x30ffffff
+
 config MSIZE
   hex "Memory size"
   default 0x8000000

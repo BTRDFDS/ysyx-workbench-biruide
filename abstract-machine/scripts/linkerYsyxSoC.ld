@@ -4,7 +4,7 @@ MEMORY {
 	mrom	: ORIGIN = 0x20000000, LENGTH = 4K
 	sram	: ORIGIN = 0x0f000000, LENGTH = 8K
 	psram	: ORIGIN = 0x80000000, LENGTH = 16M
-	sdram	: ORIGIN = 0xa0000000, LENGTH = 16M
+	sdram	: ORIGIN = 0xa0000000, LENGTH = 128M
 }
 SECTIONS{
 	_lma = ORIGIN(flash);
@@ -20,7 +20,7 @@ SECTIONS{
 	.load : AT(_lma){
 		. = ALIGN(0x10);
 		*(.text._bootloader)
-	} > sdram 
+	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load)/4);
 	PROVIDE(_load_begin_ = LOADADDR(.load));
@@ -91,6 +91,6 @@ SECTIONS{
 	PROVIDE(_heap_start	= .);
 	PROVIDE(_heap_end	= ORIGIN(sdram) + LENGTH(sdram));
 
-	_stack_pointer = ORIGIN(sdram) + LENGTH(sdram);
+	_stack_pointer = ORIGIN(sram) + LENGTH(sram);
 
 }
