@@ -6,8 +6,8 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val ifu = IO(Flipped(new InstrBus()))
 	val bar = IO(new BurstBus())
 
-	val CacheBit	= 2
-	val CacheNum    = 1 << CacheBit
+	// val CacheBit	= 2
+	// val CacheNum    = 1 << CacheBit
 	// val CacheWidth	= 2
 	// val CacheSize	= 1 << CacheWidth
 	val CacheDone = (1 << CacheWidth)-1
