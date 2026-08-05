@@ -330,7 +330,7 @@ extern "C" void ebreak(){
 	numInst++;
 	svSetScope(scopeWbu);
 	iCacheTraceFileWrite(getRegPc(0));
-	svSetScope(scopeIfu);
+	// svSetScope(scopeIfu);
 	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
