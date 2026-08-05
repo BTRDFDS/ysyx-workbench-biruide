@@ -45,8 +45,8 @@ class PipeIdEx extends PipeExLs(){
 	val bfu = Output(ExuBfu())
 	val csr = Output(ExuCsr())
 	val res = Output(ExuRes())
-	val In1 = Output(ExuIn1())
-	val In2 = Output(ExuIn2())
+	val in1 = Output(ExuIn1())
+	val in2 = Output(ExuIn2())
 
 	val enJcod	=Output(Bool())
 	val r1		=Output(UInt(BitWidth.W))

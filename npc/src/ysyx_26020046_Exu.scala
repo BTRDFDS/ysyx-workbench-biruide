@@ -23,8 +23,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val pipeR1		= Reg(UInt(BitWidth.W))	;pipeR1		:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.r1		)
 	val pipeR2		= Reg(UInt(BitWidth.W))	;pipeR2		:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.r2		)
 	val pipeLsuOp	= Reg(LsuOp())			;pipeLsuOp	:= Mux(pipeReset,LsuOp.Null		,in.pipe.lsuOp	)
-	val pipeLsuAddr	= Reg(LsuAddr())		;pipeLsuAddr:= Mux(pipeReset,LsuOp.Null		,in.pipe.lsuAddr)
-	val pipeCsrOp	= Reg(CsrOp())			;pipeCsrOp	:= Mux(pipeReset,LsuOp.Null		,in.pipe.csrOp	)
+	val pipeLsuAddr	= Reg(LsuAddr())		;pipeLsuAddr:= Mux(pipeReset,LsuAddr.B		,in.pipe.lsuAddr)
+	val pipeCsrOp	= Reg(CsrOp())			;pipeCsrOp	:= Mux(pipeReset,CsrOp.Null		,in.pipe.csrOp	)
 	val pipeAlu		= Reg(ExuAlu())			;pipeAlu	:= Mux(pipeReset,ExuAlu.Null	,in.pipe.alu	)
 	val pipeBfu		= Reg(ExuBfu())			;pipeBfu	:= Mux(pipeReset,ExuBfu.Null	,in.pipe.bfu	)
 	val pipeCsr		= Reg(ExuCsr())			;pipeCsr	:= Mux(pipeReset,ExuCsr.Null	,in.pipe.csr	)
@@ -95,7 +95,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 				out.imme.back := Back.Jump
 			}.otherwise{out.imme.back := in.imme.back}
 		}
-		val rdResult = Wire(UInt(BitWidth.W))
+		val rdResult = WireInit(0.U(BitWidth.W))
 		switch(pipeRes){
 			is(ExuRes.Alu)	{rdResult := result}
 			is(ExuRes.Null)	{rdResult := 0.U}

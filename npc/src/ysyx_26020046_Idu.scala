@@ -34,8 +34,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.bfu	:= ExuBfu.Null
 	out.pipe.csr	:= ExuCsr.Null
 	out.pipe.res	:= ExuRes.Alu
-	out.pipe.In1	:= ExuIn1.R1
-	out.pipe.In2	:= ExuIn2.R2
+	out.pipe.in1	:= ExuIn1.R1
+	out.pipe.in2	:= ExuIn2.R2
 
 	out.imme.back	:= in.imme.back
 	out.imme.addr	:= in.imme.addr
@@ -115,19 +115,19 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Ului)		{out.pipe.alu := ExuAlu.Imm}
 			}
 			switch(opEnum){
-				is(Op.Uauipc)	{out.pipe.In1 := ExuIn1.Pc}
-				is(Op.Jal)		{out.pipe.In1 := ExuIn1.Pc}
-				is(Op.Branch)	{out.pipe.In1 := ExuIn1.Pc}
+				is(Op.Uauipc)	{out.pipe.in1 := ExuIn1.Pc}
+				is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
+				is(Op.Branch)	{out.pipe.in1 := ExuIn1.Pc}
 			}
 			switch(opEnum){
-				is(Op.Uauipc)	{out.pipe.In2 := ExuIn2.Imm}
-				is(Op.Ului)		{out.pipe.In2 := ExuIn2.Imm}
-				is(Op.Ialu)		{out.pipe.In2 := ExuIn2.Imm}
-				is(Op.Jal)		{out.pipe.In2 := ExuIn2.Imm}
-				is(Op.Ijalr)	{out.pipe.In2 := ExuIn2.Imm}
-				is(Op.Iload)	{out.pipe.In2 := ExuIn2.Imm}
-				is(Op.Branch)	{out.pipe.In2 := ExuIn2.Imm}
-				is(Op.Store)	{out.pipe.In2 := ExuIn2.Imm}
+				is(Op.Uauipc)	{out.pipe.in2 := ExuIn2.Imm}
+				is(Op.Ului)		{out.pipe.in2 := ExuIn2.Imm}
+				is(Op.Ialu)		{out.pipe.in2 := ExuIn2.Imm}
+				is(Op.Jal)		{out.pipe.in2 := ExuIn2.Imm}
+				is(Op.Ijalr)	{out.pipe.in2 := ExuIn2.Imm}
+				is(Op.Iload)	{out.pipe.in2 := ExuIn2.Imm}
+				is(Op.Branch)	{out.pipe.in2 := ExuIn2.Imm}
+				is(Op.Store)	{out.pipe.in2 := ExuIn2.Imm}
 			}
 			switch(opEnum){
 				is(Op.Iload)	{out.pipe.res := ExuRes.Alu}
