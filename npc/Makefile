@@ -1,6 +1,5 @@
 test:
 	@mill -i test
-
 verilog:verilogNpc verilogYsyxSoc verilogSta verilogStaPart
 	$(call git_commit, "generate verilog")
 # 	@mkdir -p ./build
@@ -27,6 +26,16 @@ verilogIcache:
 	@mill -i runMain BuilderIcache
 help:
 	@mill -i runMain Builder --help
+
+srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
+build/%.stamp:$(srcScala)
+	@mkdir -p build/$*
+	@mill -i runMain $*
+	$(call git_commit, "generate verilog for $*")
+mytest:build/BuilderYsyxSoc.stamp
+
+
+
 
 reformat:
 	@mill -i __.reformat
