@@ -163,6 +163,10 @@ runIcache:verilogIcache $(srcCppIcache)
 
 buildIcachesim:./test/cpp/icachesim/icachesim.cpp
 	clang++ ./test/cpp/icachesim/icachesim.cpp -o ./test/cpp/icachesim/icachesim
-
 icachesim:./test/cpp/icachesim/icachesim
 	time ./test/cpp/icachesim/icachesim
+
+buildDcachesim:./test/cpp/dcachesim/dcachesim.cpp
+	clang++ ./test/cpp/dcachesim/dcachesim.cpp -o ./test/cpp/dcachesim/dcachesim
+dcachesim:./test/cpp/dcachesim/dcachesim
+	time ./test/cpp/dcachesim/dcachesim
