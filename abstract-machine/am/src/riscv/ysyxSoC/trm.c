@@ -47,6 +47,7 @@ void _bootloader() {//SSLB
 		*bss=0;
 		bss=bss+1;
 	}
+	asm volatile("fence.i");
 	halt(main(mainargs));
 }
 void volatile _fence(){
