@@ -19,7 +19,8 @@ SECTIONS{
 
 	.load : AT(_lma){
 		. = ALIGN(0x10);
-	} > sram 
+		*(.text._bootloader)
+	} > sdram 
 	PROVIDE(_load_start_ = ADDR(.load));
 	PROVIDE(_load_size_ = SIZEOF(.load)/4);
 	PROVIDE(_load_begin_ = LOADADDR(.load));
@@ -27,7 +28,6 @@ SECTIONS{
 	_lma = ALIGN(_lma, 0x4);
 
 	.imag : AT(_lma){/*image*/
-		*(.text._bootloader)
 		. = ALIGN(0x10);
 		*(.text*)
 		*(.rodata*)
