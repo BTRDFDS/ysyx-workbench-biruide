@@ -26,8 +26,7 @@ class PipeIfId extends Bundle{
 	val instr	= Output(UInt(BitWidth.W))
 }
 class PipeLsWb extends Bundle{
-
-    val valid	= Output(Bool())
+	val valid	= Output(Bool())
 	val rdAddr	= Output(UInt(RegWidth.W))
 	val result	= Output(UInt(BitWidth.W))
 	val pc		= Output(UInt(BitWidth.W))
@@ -62,6 +61,7 @@ class ImmeAfter extends ImmeBefore(){
 	val r2Addr	= Input(UInt(RegWidth.W))
 	val r1Out	= Output(UInt(BitWidth.W))
 	val r2Out	= Output(UInt(BitWidth.W))
+	val valid	= Output(Bool())
 
 	val csrAddr	= Input(UInt(CsrWidth.W))
 	val csrOut	= Output(UInt(BitWidth.W))

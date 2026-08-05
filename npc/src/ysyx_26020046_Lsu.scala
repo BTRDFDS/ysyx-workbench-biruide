@@ -15,38 +15,52 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val ich		= IO(new FecneBus())
 	val state	= RegInit(MemStatus.Call)
 
+	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)
+	val pipeValid	= Reg(Bool())			;pipeValid	:= Mux(pipeReset,false.B		,in.pipe.valid	)
+	val pipeFenceI	= Reg(Bool())			;pipeFenceI	:= Mux(pipeReset,false.B		,in.pipe.fenceI	)
+	val pipeRdAddr	= Reg(UInt(RegWidth.W))	;pipeRdAddr	:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.rdAddr	)
+	val pipeResult	= Reg(UInt(BitWidth.W))	;pipeResult	:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.result	)
+	val pipePc		= Reg(UInt(BitWidth.W))	;pipePc		:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.pc		)
+	val pipeCsrAddr	= Reg(UInt(BitWidth.W))	;pipeCsrAddr:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.csrAddr)
+	val pipeCsrMesg	= Reg(UInt(BitWidth.W))	;pipeCsrMesg:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.csrMesg)
+	val pipeR2		= Reg(UInt(BitWidth.W))	;pipeR2		:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.r2		)
+	val pipeLsuOp	= Reg(LsuOp())			;pipeLsuOp	:= Mux(pipeReset,LsuOp.Null		,in.pipe.lsuOp	)
+	val pipeLsuAddr	= Reg(LsuAddr())		;pipeLsuAddr:= Mux(pipeReset,LsuOp.Null		,in.pipe.lsuAddr)
+	val pipeCsrOp	= Reg(CsrOp())			;pipeCsrOp	:= Mux(pipeReset,LsuOp.Null		,in.pipe.csrOp	)
+
 	out.pipe.valid	:= false.B
-	out.pipe.rdAddr	:= in.pipe.rdAddr
-	out.pipe.result	:= in.pipe.result
-	out.pipe.pc		:= in.pipe.pc
-	out.pipe.csrOp	:= in.pipe.csrOp
-	out.pipe.csrAddr:= in.pipe.csrAddr
-	out.pipe.csrMesg:= in.pipe.csrMesg
-	ich.fenceI		:= in.pipe.fenceI
+	out.pipe.rdAddr	:= pipeRdAddr
+	out.pipe.result	:= pipeResult
+	out.pipe.pc		:= pipePc
+	out.pipe.csrOp	:= pipeCsrOp
+	out.pipe.csrAddr:= pipeCsrAddr
+	out.pipe.csrMesg:= pipeCsrMesg
+	ich.fenceI		:= pipeFenceI
 
 	//处理回传
-	out.imme.r1Out	:= in.imme.r1Out
-	out.imme.r2Out	:= in.imme.r2Out
 	out.imme.csrOut	:= in.imme.csrOut
 	out.imme.addr	:= in.imme.addr
 	out.imme.back	:= in.imme.back
+	out.imme.r1Out	:= in.imme.r1Out//这三都是默认值
+	out.imme.r2Out	:= in.imme.r2Out
+	out.imme.valid	:= in.imme.valid
 
 	in.imme.r1Addr	:= out.imme.r1Addr
 	in.imme.r2Addr	:= out.imme.r2Addr
 	in.imme.csrAddr	:= out.imme.csrAddr
 
 	val addrError = WireInit(false.B)
-	when(in.pipe.valid & in.pipe.lsuOp =/= LsuOp.Null){
-		switch(in.pipe.lsuAddr){
-			is(LsuAddr.H ){when(in.pipe.result(0)===1.U)	{addrError := true.B}}
-			is(LsuAddr.Hu){when(in.pipe.result(0)===1.U)	{addrError := true.B}}
-			is(LsuAddr.W ){when(in.pipe.result(1,0) =/= 0.U){addrError := true.B}}
+	when(pipeValid & pipeLsuOp =/= LsuOp.Null){
+		switch(pipeLsuAddr){
+			is(LsuAddr.H ){when(pipeResult(0)===1.U)	{addrError := true.B}}
+			is(LsuAddr.Hu){when(pipeResult(0)===1.U)	{addrError := true.B}}
+			is(LsuAddr.W ){when(pipeResult(1,0) =/= 0.U){addrError := true.B}}
 		}
 	}
 	//状态机
-	when(in.pipe.valid && ~addrError){
+	when(pipeValid && ~addrError){
 		switch(state){
-			is(MemStatus.Call){switch(in.pipe.lsuOp){
+			is(MemStatus.Call){switch(pipeLsuOp){
 				is(LsuOp.Load)	{when(bar.ready){state := MemStatus.Back}}
 				is(LsuOp.Store)	{when(bar.ready){state := MemStatus.Back}}
 			}}
@@ -58,47 +72,54 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	bar.wstrb	:= 0.U
 	bar.write	:= false.B
 	bar.addr	:= 0.U 
-	when(in.pipe.valid && ~addrError && state === MemStatus.Call){//发出
-		when(in.pipe.lsuOp === LsuOp.Load){
-			switch(in.pipe.lsuAddr){
+	when(pipeValid && ~addrError && state === MemStatus.Call){//发出
+		when(pipeLsuOp === LsuOp.Load){
+			switch(pipeLsuAddr){
 				is(LsuAddr.B ){bar.size := 0b00.U}
 				is(LsuAddr.Bu){bar.size := 0b00.U}
 				is(LsuAddr.H ){bar.size := 0b01.U}
 				is(LsuAddr.Hu){bar.size := 0b01.U}
 				is(LsuAddr.W ){bar.size := 0b10.U}
 			}
-			bar.addr	:= in.pipe.result
+			bar.addr	:= pipeResult
 		}
-		when(in.pipe.lsuOp === LsuOp.Store){
+		when(pipeLsuOp === LsuOp.Store){
 			bar.write	:= true.B
-			switch(in.pipe.lsuAddr){
+			switch(pipeLsuAddr){
 				is(LsuAddr.B ){bar.size := 0b00.U}
 				is(LsuAddr.H ){bar.size := 0b01.U}
 				is(LsuAddr.W ){bar.size := 0b10.U}
 			}
-			bar.addr	:= in.pipe.result
-			switch(in.pipe.lsuAddr){
-				is(LsuAddr.B){bar.wstrb := 0b0001.U << in.pipe.result(1,0)}
-				is(LsuAddr.H){bar.wstrb := 0b0011.U << in.pipe.result(1,0)}
+			bar.addr	:= pipeResult
+			switch(pipeLsuAddr){
+				is(LsuAddr.B){bar.wstrb := 0b0001.U << pipeResult(1,0)}
+				is(LsuAddr.H){bar.wstrb := 0b0011.U << pipeResult(1,0)}
 				is(LsuAddr.W){bar.wstrb := 0b1111.U}
 			}
-			switch(in.pipe.lsuAddr){
-				is(LsuAddr.B){bar.wdata	:= Fill(4,in.pipe.r2(7,0))}
-				is(LsuAddr.H){bar.wdata	:= Fill(2,in.pipe.r2(15,0))}
-				is(LsuAddr.W){bar.wdata	:= in.pipe.r2}
+			switch(pipeLsuAddr){
+				is(LsuAddr.B){bar.wdata	:= Fill(4,pipeR2(7,0))}
+				is(LsuAddr.H){bar.wdata	:= Fill(2,pipeR2(15,0))}
+				is(LsuAddr.W){bar.wdata	:= pipeR2}
 			}
 		}
 	}
-	when(in.pipe.valid && ~addrError && in.pipe.lsuOp =/= LsuOp.Null){//接收
-		when(in.pipe.lsuOp === LsuOp.Load){
+	when(pipeValid && ~addrError && pipeLsuOp =/= LsuOp.Null){//接收
+		when(pipeLsuOp === LsuOp.Load){
 			val rdata = RegInit(0.U(BitWidth.W))
-			when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> (8.U * in.pipe.result(1,0))}
-			switch(in.pipe.lsuAddr){
-				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
-				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
-				is(LsuAddr.W ){out.pipe.result := rdata}
-				is(LsuAddr.Bu){out.pipe.result := Cat(0.U((BitWidth- 8).W),rdata( 7,0))}
-				is(LsuAddr.Hu){out.pipe.result := Cat(0.U((BitWidth-16).W),rdata(15,0))}
+			val result = RegInit(0.U(BitWidth.W))
+			when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> (8.U * pipeResult(1,0))}
+			switch(pipeLsuAddr){
+				is(LsuAddr.B ){result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
+				is(LsuAddr.H ){result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
+				is(LsuAddr.W ){result := rdata}
+				is(LsuAddr.Bu){result := Cat(0.U((BitWidth- 8).W),rdata( 7,0))}
+				is(LsuAddr.Hu){result := Cat(0.U((BitWidth-16).W),rdata(15,0))}
+			}
+			out.pipe.result := result
+			when(out.imme.r1Addr === pipeRdAddr & pipAddr=/=0.U){out.imme.r1Out := result}
+			when(out.imme.r2Addr === pipeRdAddr & pipAddr=/=0.U){out.imme.r2Out := result}
+			when(pipAddr=/=0.U & (out.imme.r1Addr === pipeRdAddr | out.imme.r2Addr === pipeRdAddr)){
+				out.imme.valid := state === MemStatus.Back
 			}
 		}
 	}
@@ -109,29 +130,29 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}otherwise{
-		val ready = Mux(in.pipe.lsuOp === LsuOp.Null,true.B,state === MemStatus.Back)
-		out.pipe.valid:= ready & in.pipe.valid
+		val ready = Mux(pipeLsuOp === LsuOp.Null,true.B,state === MemStatus.Back)
+		out.pipe.valid:= ready & pipeValid
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.elsewhen(ready & in.imme.back === Back.Ready){out.imme.back	:= Back.Ready}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}
-	when(addrError){switch(in.pipe.lsuOp){
-		is(LsuOp.Load)	{out.pipe.csrMesg := 4.U;out.pipe.csrAddr := in.pipe.result}//读取地址不对齐
-		is(LsuOp.Store)	{out.pipe.csrMesg := 6.U;out.pipe.csrAddr := in.pipe.result}//写入地址不对齐
+	when(addrError){switch(pipeLsuOp){
+		is(LsuOp.Load)	{out.pipe.csrMesg := 4.U;out.pipe.csrAddr := pipeResult}//读取地址不对齐
+		is(LsuOp.Store)	{out.pipe.csrMesg := 6.U;out.pipe.csrAddr := pipeResult}//写入地址不对齐
 	}}
-	.elsewhen(backError){switch(in.pipe.lsuOp){
-		is(LsuOp.Load)	{out.pipe.csrMesg := 5.U;out.pipe.csrAddr := in.pipe.result}//读取故障
-		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U;out.pipe.csrAddr := in.pipe.result}//写入故障
+	.elsewhen(backError){switch(pipeLsuOp){
+		is(LsuOp.Load)	{out.pipe.csrMesg := 5.U;out.pipe.csrAddr := pipeResult}//读取故障
+		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U;out.pipe.csrAddr := pipeResult}//写入故障
 	}}
 
 	if(Yosys == false){
 		val lsuChk = Module(new ysyx_26020046_LsuChk)
 		lsuChk.clock	:= clock
-		lsuChk.load		:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Load	&& bar.ready
-		lsuChk.loadWait	:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Load
-		lsuChk.store	:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Store	&& bar.ready
-		lsuChk.storeWait:= in.pipe.valid && in.pipe.lsuOp === LsuOp.Store
-		lsuChk.addr		:= in.pipe.result
+		lsuChk.load		:= pipeValid && pipeLsuOp === LsuOp.Load	&& bar.ready
+		lsuChk.loadWait	:= pipeValid && pipeLsuOp === LsuOp.Load
+		lsuChk.store	:= pipeValid && pipeLsuOp === LsuOp.Store	&& bar.ready
+		lsuChk.storeWait:= pipeValid && pipeLsuOp === LsuOp.Store
+		lsuChk.addr		:= pipeResult
 	}
 }
 class ysyx_26020046_LsuChk extends ExtModule{

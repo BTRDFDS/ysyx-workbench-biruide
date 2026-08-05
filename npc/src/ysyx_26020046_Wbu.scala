@@ -14,6 +14,16 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	val out = IO(new Bundle {
 		val imme = new ImmeAfter()
 	})
+	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)
+	val pipeValid	= Reg(Bool())			;pipeValid	:= Mux(pipeReset,false.B		,in.pipe.valid	)
+	val pipeRdAddr	= Reg(UInt(RegWidth.W))	;pipeRdAddr	:= Mux(pipeReset,0.U(RegWidth.W),in.pipe.rdAddr	)
+	val pipeResult	= Reg(UInt(BitWidth.W))	;pipeResult	:= Mux(pipeReset,0.U(BitWidth.W),in.pipe.result	)
+	val pipePc		= Reg(UInt(BitWidth.W))	;pipePc		:= Mux(pipeReset,0.U(BitWidth.W),in.pipe.pc		)
+	val pipeCsrAddr	= Reg(UInt(BitWidth.W))	;pipeCsrAddr:= Mux(pipeReset,0.U(BitWidth.W),in.pipe.csrAddr)
+	val pipeCsrMesg	= Reg(UInt(BitWidth.W))	;pipeCsrMesg:= Mux(pipeReset,0.U(BitWidth.W),in.pipe.csrMesg)
+	val pipeCsrOp	= Reg(CsrOp())			;pipeCsrOp	:= Mux(pipeReset,CsrOp.Null		,in.pipe.csrOp	)
+	
+
 	val gpr = Reg(Vec(RegNum, UInt(BitWidth.W)))
 
 	val mepc		= RegInit(PcReset)
@@ -33,54 +43,54 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	
 	out.imme.back := Back.Ready
 
-	when(in.pipe.valid){//合法处理
-		switch(in.pipe.csrOp){
+	when(pipeValid){//合法处理
+		switch(pipeCsrOp){
 			is(CsrOp.Mret){mstatus := MstatuseReset}//TODO
 			is(CsrOp.Trap){//TODO:ecall有问题
-				mcause	:= in.pipe.csrMesg
-				mepc 	:= in.pipe.pc
+				mcause	:= pipeCsrMesg
+				mepc 	:= pipePc
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
-				val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(in.pipe.csrAddr(CsrWidth-1,0))
+				val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
 				when(csrWriteValid){
 					switch(csrWriteAddr){
-						is(CsrAddr.Mcycle)		{nextMcycle	:= in.pipe.csrMesg}
-						is(CsrAddr.Mcycleh)		{nextMcycleh:= in.pipe.csrMesg}
-						is(CsrAddr.Mepc)		{mepc		:= in.pipe.csrMesg}
-						is(CsrAddr.Mtvec)		{mtvec		:= in.pipe.csrMesg}
-						is(CsrAddr.Mcause)		{mcause		:= in.pipe.csrMesg}
-						is(CsrAddr.Mstatus)		{mstatus	:= in.pipe.csrMesg}
-						is(CsrAddr.Marchid)		{marchid	:= in.pipe.csrMesg}
-						is(CsrAddr.Mvendorid)	{mvendorid	:= in.pipe.csrMesg}
+						is(CsrAddr.Mcycle)		{nextMcycle	:= pipeCsrMesg}
+						is(CsrAddr.Mcycleh)		{nextMcycleh:= pipeCsrMesg}
+						is(CsrAddr.Mepc)		{mepc		:= pipeCsrMesg}
+						is(CsrAddr.Mtvec)		{mtvec		:= pipeCsrMesg}
+						is(CsrAddr.Mcause)		{mcause		:= pipeCsrMesg}
+						is(CsrAddr.Mstatus)		{mstatus	:= pipeCsrMesg}
+						is(CsrAddr.Marchid)		{marchid	:= pipeCsrMesg}
+						is(CsrAddr.Mvendorid)	{mvendorid	:= pipeCsrMesg}
 					}
 				}otherwise{
 					error	:= true.B
 					mcause	:= ErrorMesg
-					mepc	:= in.pipe.pc
+					mepc	:= pipePc
 					//TODO:mstatus
 				}
 			}
 			is(CsrOp.Null){}//空，这里4个全覆盖了
 		}
-		when((in.pipe.rdAddr =/= 0.U)&(error === false.B)){gpr(in.pipe.rdAddr) := in.pipe.result}
+		when((pipeRdAddr =/= 0.U)&(error === false.B)){gpr(pipeRdAddr) := pipeResult}
 	}
-	when((in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) || error){
-		mcause			:= in.pipe.csrMesg
-		mepc 			:= in.pipe.pc
+	when((pipeValid === false.B & pipeCsrOp === CsrOp.Trap) || error){
+		mcause			:= pipeCsrMesg
+		mepc 			:= pipePc
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
 		if(Yosys == false){
-			printf("error,stop!!! %x tval: %x ",in.pipe.csrMesg,in.pipe.csrAddr)//tval
-			when(in.pipe.csrMesg===3.U	){printf("ebreak\n")}
-			when(in.pipe.csrMesg===11.U	){printf("ecall\n")}
-			when(in.pipe.csrMesg===0.U	){printf("ifuN4\n")}
-			when(in.pipe.csrMesg===1.U	){printf("ifuErr\n")}
-			when(in.pipe.csrMesg===2.U	){printf("instr\n")}
-			when(in.pipe.csrMesg===4.U	){printf("laddr\n")}
-			when(in.pipe.csrMesg===5.U	){printf("lerror\n")}
-			when(in.pipe.csrMesg===6.U	){printf("sAddr\n")}
-			when(in.pipe.csrMesg===7.U	){printf("sError\n")}
+			printf("error,stop!!! %x tval: %x ",pipeCsrMesg,pipeCsrAddr)//tval
+			when(pipeCsrMesg===3.U	){printf("ebreak\n")}
+			when(pipeCsrMesg===11.U	){printf("ecall\n")}
+			when(pipeCsrMesg===0.U	){printf("ifuN4\n")}
+			when(pipeCsrMesg===1.U	){printf("ifuErr\n")}
+			when(pipeCsrMesg===2.U	){printf("instr\n")}
+			when(pipeCsrMesg===4.U	){printf("laddr\n")}
+			when(pipeCsrMesg===5.U	){printf("lerror\n")}
+			when(pipeCsrMesg===6.U	){printf("sAddr\n")}
+			when(pipeCsrMesg===7.U	){printf("sError\n")}
 			stop()
 		}
 	}otherwise{
@@ -93,6 +103,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	{//提供数据
 		out.imme.r1Out := Mux(out.imme.r1Addr === 0.U, 0.U, gpr(out.imme.r1Addr))
 		out.imme.r2Out := Mux(out.imme.r2Addr === 0.U, 0.U, gpr(out.imme.r2Addr))
+		out.imme.valid:= true.B
 		val (csrReadAddr,csrReadValid)=CsrAddr.safe(out.imme.csrAddr)
 		out.imme.csrOut := 0.U
 		when(csrReadValid){
@@ -113,12 +124,12 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		val wbuChk = Module(new ysyx_26020046_WbuChk)
 		wbuChk.io.reg := gpr
 		wbuChk.io.ebreak := 
-			(in.pipe.csrOp === CsrOp.Trap)&(in.pipe.valid)&(in.pipe.csrMesg === 0x3L.U) ||
-			(in.pipe.valid === false.B & in.pipe.csrOp === CsrOp.Trap) ||
+			(pipeCsrOp === CsrOp.Trap)&(pipeValid)&(pipeCsrMesg === 0x3L.U) ||
+			(pipeValid === false.B & pipeCsrOp === CsrOp.Trap) ||
 			error
-		wbuChk.io.pc := in.pipe.pc
+		wbuChk.io.pc := pipePc
 		val check = Reg(Bool())
-		check := in.pipe.valid === true.B
+		check := pipeValid === true.B
 		wbuChk.io.check := check
 		wbuChk.clock := clock
 	}
