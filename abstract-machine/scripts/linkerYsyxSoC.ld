@@ -9,16 +9,16 @@ MEMORY {
 SECTIONS{
 	_lma = ORIGIN(flash);
 	.boot : AT(_lma){
-		. = ALIGN(0x8);
+		. = ALIGN(0x4);
 		*(entry)
 		*(.text._trm_init)
-		. = ALIGN(0x8);
+		. = ALIGN(0x4);
 	} > flash 
 	_lma = _lma + SIZEOF(.boot);
 	_lma = ALIGN(_lma, 0x4);
 
 	.load : AT(_lma){
-		. = ALIGN(0x8);
+		. = ALIGN(0x4);
 		*(.text._bootloader)
 	} > sram 
 	PROVIDE(_load_start_ = ADDR(.load));
@@ -28,7 +28,7 @@ SECTIONS{
 	_lma = ALIGN(_lma, 0x4);
 
 	.imag : AT(_lma){/*image*/
-		. = ALIGN(0x8);
+		. = ALIGN(0x4);
 		*(.text*)
 		*(.rodata*)
 		*(.srodata*)
