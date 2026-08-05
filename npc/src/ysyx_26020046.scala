@@ -28,6 +28,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	idu.out.imme <> ifu.in.imme
 
 	//axi4
+	ich.lsu <> lsu.ich
 	ich.ifu <> ifu.ich
 	bar.ifu <> ich.bar
 	bar.lsu <> lsu.bar
