@@ -40,6 +40,7 @@ object CsrAddr extends ChiselEnum {
 }
 object Op extends ChiselEnum {
 	val Iload	= Value(0b0000011.U)
+	val Fence	= Value(0b0001111.U)
 	val Ialu	= Value(0b0010011.U)
 	val Uauipc	= Value(0b0010111.U)
 	val Store	= Value(0b0100011.U)

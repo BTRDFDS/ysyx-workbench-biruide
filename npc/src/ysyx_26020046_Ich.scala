@@ -5,6 +5,7 @@ object IchState extends ChiselEnum{val Imm,Out=Value}
 class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val ifu = IO(Flipped(new InstrBus()))
 	val bar = IO(new BurstBus())
+	val lsu	= IO(Flipped(new FecneBus()))
 
 	// val CacheBit	= 2
 	// val CacheNum    = 1 << CacheBit
@@ -39,12 +40,14 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		is(IchState.Out){when((cnt === CacheDone.U) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm;}}
 	}
 	switch(state){
-		is(IchState.Imm){cnt := 0.U}
+		is(IchState.Imm){
+			cnt := 0.U
+			when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag) && ~lsu.fenceI){valid(burstIdx) := true.B}
+		}
 		is(IchState.Out){
 			when(bar.res === BurstRes.Done || bar.res === BurstRes.Read){
 				data(burstIdx)(burstOffset+cnt) := bar.data
 				tag(burstIdx)	:= burstTag
-				valid(burstIdx)	:= true.B
 			}
 			when(bar.res === BurstRes.Read){
 				cnt := cnt + 1.U
@@ -77,6 +80,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		bar.valid	:= false.B
 		bar.addr	:= 0.U
 	}
+	when(lsu.fenceI){valid.foreach(_ := false.B)}
 
 	if(Yosys == false){
 		val ichChk = Module(new ysyx_26020046_IchChk)

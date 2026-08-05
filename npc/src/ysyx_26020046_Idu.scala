@@ -19,6 +19,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.csrAddr:= 0.U//Illegal Instruction
 	out.pipe.lsuAddr:= LsuAddr.B//000
 	out.pipe.lsuOp	:= LsuOp.Null
+	out.pipe.fenceI	:= false.B
 	out.pipe.r2		:= in.imme.r2Out
 	out.pipe.r1		:= in.imme.r1Out
 	out.pipe.csrMesg:= in.imme.csrOut
@@ -187,6 +188,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 					is(0b010.U){out.pipe.csrAddr := Cat(0.U(8.W),funct7,r2Addr);csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
 				}
 			}
+			out.pipe.fenceI := in.pipe.instr === 0x0000100F.U
 		}
 		when(opValid & aluValid & lsuValid & bfuValid & csrValid){
 			// out.pipe.valid	:= csrOp =/= CsrOp.Trap

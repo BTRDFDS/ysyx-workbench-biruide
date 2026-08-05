@@ -12,6 +12,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		val imme = new ImmeAfter()
 	})
 	val bar		= IO(new MemBus())
+	val ich		= IO(new FecneBus())
 	val state	= RegInit(MemStatus.Call)
 
 	out.pipe.valid	:= false.B
@@ -21,6 +22,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	out.pipe.csrOp	:= in.pipe.csrOp
 	out.pipe.csrAddr:= in.pipe.csrAddr
 	out.pipe.csrMesg:= in.pipe.csrMesg
+	ich.fenceI		:= in.pipe.fenceI
 
 	//处理回传
 	out.imme.r1Out	:= in.imme.r1Out

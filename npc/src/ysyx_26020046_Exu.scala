@@ -14,6 +14,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	
 	out.pipe.lsuAddr:= in.pipe.lsuAddr
 	out.pipe.lsuOp	:= in.pipe.lsuOp
+	out.pipe.fenceI	:= in.pipe.fenceI
 	out.pipe.r2		:= in.pipe.r2
 	out.pipe.pc		:= in.pipe.pc
 	out.pipe.csrOp	:= in.pipe.csrOp
