@@ -4,7 +4,7 @@
 #include <fstream>
 #include <stdint.h>
 
-const uint32_t bit	= 5;
+const uint32_t bit	= 4;
 const uint32_t num=1<<bit;
 uint32_t bolckTag[num]{};
 uint32_t bolckValid[num]{};
