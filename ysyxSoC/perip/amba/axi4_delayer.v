@@ -195,7 +195,7 @@ always_ff@(posedge clock)begin
 		rRcnt	<= 'd0;
 		rAcnt	<= 'd0;
 		rHas	<= 0;
-	end else if(rHas | in_arvalid)begin
+	end else if(rHas | in_arvalid & in_arready)begin
 		rRcnt	<= rRcnt+rs;
 		rAcnt	<= rAcnt+'d1;
 	end
