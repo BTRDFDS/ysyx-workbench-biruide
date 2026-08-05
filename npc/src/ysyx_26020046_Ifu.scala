@@ -78,7 +78,6 @@ class ysyx_26020046_IfuChk extends ExtModule{
 		if(forward)	ifuForward();
 		if(backward)ifuBackward();
 		if(jump)	ifuJump();
-		if(change)	ifuPcChange(pc);
 	end
 	export "DPI-C" function getNextPc;function int getNextPc();return pc;endfunction
 	endmodule
