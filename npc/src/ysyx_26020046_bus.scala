@@ -17,6 +17,13 @@ object  WidthConsts{//const
 	val CacheWidth	= 1
 	val CacheNum    = 1 << CacheBit
 	val CacheSize	= 1 << CacheWidth
+
+	def PipeReg[T <: Data](pipeReset:Bool,pipeInit:T,pipeChange:Bool,pipeNext:T): T = {
+		val reg = Reg(pipeInit.cloneType)
+		when	 (pipeReset ){reg := pipeInit}
+		.elsewhen(pipeChange){reg := pipeNext}
+		reg
+	}
 }
 
 import WidthConsts._
@@ -132,10 +139,4 @@ class MemBus extends Bundle{
 }
 class FecneBus extends Bundle{
 	val fenceI	= Output(Bool())
-}
-def PipeReg[T <: Data](pipeReset:Bool,pipeInit:T,pipeChange:Bool,pipeNext:T): T = {
-	val reg = Reg(pipeInit.cloneType)
-	when	 (pipeReset ){reg := pipeInit}
-	.elsewhen(pipeChange){reg := pipeNext}
-	reg
 }
