@@ -7,6 +7,8 @@
 #include <fstream>
 #include <stdint.h>
 #include <npcDifftest.h>//我只需要difftest
+svScope scopeWbu;//作用域
+svScope scopeIfu;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
 uint64_t numCycle		=0;
 uint64_t numInst		=0;
@@ -324,8 +326,6 @@ extern "C" void ebreak(){
 	iCacheTraceFileWrite(getRegPc(0));
 	NpcReturn("\nebreak",getRegPc(10)!=0);
 	}
-svScope scopeWbu;//作用域
-svScope scopeIfu;//作用域
 	extern "C" void wbuCheck(){
 	numInst++;
 	svSetScope(scopeWbu);

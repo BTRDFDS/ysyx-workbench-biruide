@@ -44,7 +44,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < Cat(pc,0.U(2.W))
 		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > Cat(pc,0.U(2.W))
 		ifuChk.jump		:= in.imme.back === Back.Jump
-		ifuChk.pc		:= pc
+		ifuChk.pc		:= Cat(pc,0.U(2.W))
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
