@@ -58,7 +58,7 @@ void printCounter(){
 	((float)numIchHit)/((float)numIfuInst),
 	((float)numIchMiss)/((float)numIfuInst),
 	numIchAccess,numIchPenalty,
-	((float)numIchHit)/((float)numIchAccess),
+	((float)numIchAccess)/((float)numIchHit),
 	((float)numIchPenalty)/((float)numIchMiss),
 	(numIchAccess+numIchPenalty)/((float)numIfuInst)
 	);
