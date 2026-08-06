@@ -37,7 +37,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val cnt		= RegInit(0.U(CacheWidth.W))
 	switch(state){
 		is(IchState.Imm){when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag))					{state := IchState.Out}}
-		is(IchState.Out){when((cnt === CacheDone.U) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm;}}
+		is(IchState.Out){when((cnt === CacheDone.U) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm}}
 	}
 	switch(state){
 		is(IchState.Imm){

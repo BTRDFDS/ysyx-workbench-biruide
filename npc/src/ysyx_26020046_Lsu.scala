@@ -107,18 +107,18 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	when(pipeValid && ~addrError && pipeLsuOp =/= LsuOp.Null){//接收
 		when(pipeLsuOp === LsuOp.Load){
 			val rdata = RegInit(0.U(BitWidth.W))
-			val result = RegInit(0.U(BitWidth.W))
+			// val result = RegInit(0.U(BitWidth.W))
 			when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> (8.U * pipeResult(1,0))}
 			switch(pipeLsuAddr){
-				is(LsuAddr.B ){result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
-				is(LsuAddr.H ){result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
-				is(LsuAddr.W ){result := rdata}
-				is(LsuAddr.Bu){result := Cat(0.U((BitWidth- 8).W),rdata( 7,0))}
-				is(LsuAddr.Hu){result := Cat(0.U((BitWidth-16).W),rdata(15,0))}
+				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
+				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
+				is(LsuAddr.W ){out.pipe.result := rdata}
+				is(LsuAddr.Bu){out.pipe.result := Cat(0.U((BitWidth- 8).W),rdata( 7,0))}
+				is(LsuAddr.Hu){out.pipe.result := Cat(0.U((BitWidth-16).W),rdata(15,0))}
 			}
-			out.pipe.result := result
-			when(out.imme.r1Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r1Out := result}
-			when(out.imme.r2Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r2Out := result}
+			// out.pipe.result := result
+			when(out.imme.r1Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r1Out := out.pipe.result}
+			when(out.imme.r2Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r2Out := out.pipe.result}
 			when(pipeRdAddr=/=0.U & (out.imme.r1Addr === pipeRdAddr | out.imme.r2Addr === pipeRdAddr)){
 				out.imme.valid := state === MemStatus.Back
 			}
