@@ -116,13 +116,12 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 				is(LsuAddr.Bu){out.pipe.result := Cat(0.U((BitWidth- 8).W),rdata( 7,0))}
 				is(LsuAddr.Hu){out.pipe.result := Cat(0.U((BitWidth-16).W),rdata(15,0))}
 			}
-			// out.pipe.result := result
-			when(out.imme.r1Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r1Out := out.pipe.result}
-			when(out.imme.r2Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r2Out := out.pipe.result}
 			when(pipeRdAddr=/=0.U & (out.imme.r1Addr === pipeRdAddr | out.imme.r2Addr === pipeRdAddr)){
 				out.imme.valid := state === MemStatus.Back
 			}
-		}
+		}//旁路转发无需load
+		when(out.imme.r1Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r1Out := out.pipe.result}
+		when(out.imme.r2Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r2Out := out.pipe.result}
 	}
 	val backError = bar.error && bar.ready
 	when(addrError || backError){
