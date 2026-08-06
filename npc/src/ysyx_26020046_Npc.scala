@@ -47,7 +47,7 @@ class ysyx_26020046_Npc extends Module{
 			is(3.U){printf("arsize error\n");stop();}
 		}
 		mem.read.valid	:= true.B
-		mem.read.addr	:= araddr + cnt<<2.U
+		mem.read.addr	:= araddr + (cnt<<2.U)
 		when(arburst=/=2.U && arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
 	}
 	val wState = RegInit(NpcState.Idle)
