@@ -69,13 +69,13 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	io.master.bready	<> bar.out.bready
 
 
-	io.slave.arready	:= false.B
+	io.slave.arready:= false.B
 	io.slave.rvalid	:= false.B
 	io.slave.rdata	:= 0.U
 	io.slave.rresp	:= 0.U
 	io.slave.rid	:= 0.U
 	io.slave.rlast	:= false.B
-	io.slave.awready	:= false.B
+	io.slave.awready:= false.B
 	io.slave.wready	:= false.B
 	io.slave.bvalid	:= false.B
 	io.slave.bresp	:= 0.U

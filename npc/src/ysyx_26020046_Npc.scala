@@ -3,95 +3,117 @@ import chisel3.util._
 import WidthConsts._
 //TODO:需要BlackBox
 //根据官网，blackbox已经被废弃了，使用ExtModule
-object NpcStatus extends ChiselEnum{val Idle,Read,Write = Value}
+object NpcState extends ChiselEnum{val Idle,Back = Value}
 class ysyx_26020046_Npc extends Module{
 	val PcInit:UInt=0x80000000L.U
 	val cpu = Module(new ysyx_26020046(PcInit))
 	val mem = Module(new ysyx_26020046_Mem())
-	val status = RegInit(NpcStatus.Idle)
-	val rAddr = RegInit(0.U(32.W))
-	val wAddr = RegInit(0.U(32.W))
-	val wData = RegInit(0.U(32.W))
-	val wStrb = RegInit(0.U(4.W))
-	val wAddrValid = RegInit(false.B)
-	val wDataValid = RegInit(false.B)
-	val writeValid = (wAddrValid||cpu.io.master.awvalid)&(wDataValid||cpu.io.master.wvalid)
-	switch(status){
-		is(NpcStatus.Idle){
-			when(cpu.io.master.arvalid)	{status := NpcStatus.Read}
-			.elsewhen(writeValid)		{status := NpcStatus.Write}
+{
+	val state	= RegInit(NpcState.Idle)
+	val araddr	= RegInit(0.U(BitWidth.W))
+	val arlen	= RegInit(0.U(LenWidth.W))
+	val arsiz	= RegInit(0.U(SizeWidth.W))
+	val arburst	= RegInit(0.U(BurstWidth.W))
+	val cnt		= RegInit(0.U(LenWidth.W))
+	when(state===pcStatus.Idle){
+		when(cpu.io.master.arvalid){
+			state	:= NpcState.Back
+			araddr	:= cpu.io.master.araddr
+			arlen	:= cpu.io.master.arlen
+			arsiz	:= cpu.io.master.arsize
+			arburst	:= cpu.io.master.arburst
 		}
-		is(NpcStatus.Read)	{when(cpu.io.master.rready){status := NpcStatus.Idle}}
-		is(NpcStatus.Write)	{when(cpu.io.master.bready){status := NpcStatus.Idle}}
+		cnt	:= 0.U
+		cpu.io.master.arready	:= true.B
+		cpu.io.master.rvalid	:= false.B
+		cpu.io.master.rlast		:= false.B
+		cpu.io.master.rdata		:= 0.U
+		cpu.io.master.rresp		:= 0.U
+		mem.read.valid			:= false.B
+		mem.read.addr			:= 0.U
+	}.otherwise{
+		when(cpu.io.master.rready && Mux(arburst,cnt===arlen,true.B)){state := NpcState.Idle}
+		cnt := cnt + 1.U
+		cpu.io.master.arready	:= false.B
+		cpu.io.master.rvalid	:= true.B
+		cpu.io.master.rlast		:= Mux(arburst,cnt===arlen,true.B)
+		cpu.io.master.rdata		:= 0.U
+		cpu.io.master.rresp		:= 0.U
+		switch(arsiz){
+			is(0.U){cpu.io.master.rdata := Fill(4,mem.read.data( 7, 0))}
+			is(1.U){cpu.io.master.rdata := Fill(2,mem.read.data(15, 0))}
+			is(2.U){cpu.io.master.rdata := mem.read.data(31, 0)}
+			is(3.U){printf("arsize error\n");stop();}
+		}
+		mem.read.valid	:= true.B
+		mem.read.addr	:= araddr + cnt
 	}
-	when(cpu.io.master.arvalid && cpu.io.master.araddr(31,28) =/= 0x8.U(4.W)){
-		printf("npc mem error rAddr:%x\n",cpu.io.master.araddr)
-		stop()
+}
+{
+	val state = RegInit(NpcState.Idle)
+	val awaddr= RegInit(0.U(BitWidth.W))
+	val wdata = RegInit(0.U(BitWidth.W))
+	val wstrb = RegInit(0.U(StrbWidth.W))
+	val hasAddr = RegInit(false.B)
+	val hasData = RegInit(false.B)
+	when(state===NpcState.Idle){
+		when((hasAddr && hasData) || (cpu.io.master.awvalid && cpu.io.master.wvalid)){state:=NpcState.Back}
+		hasAddr := cpu.io.master.awvalid
+		hasData := cpu.io.master.wvalid
+		when(cpu.io.master.awvalid && ~hasAddr){
+			awaddr := cpu.io.master.awaddr
+		}
+		when(cpu.io.master.wvalid && ~hasData){
+			wdata := cpu.io.master.wdata
+			wstrb := cpu.io.master.wstrb
+		}
+		cpu.io.master.awready	:= ~hasAddr
+		cpu.io.master.wready	:= ~hasData
+		cpu.io.master.bvalid	:= false.B
+		cpu.io.master.bresp		:= 0.U
+		mem.write.valid	:= false.B
+		mem.write.addr		:= 0.U
+		mem.write.strb		:= 0.U
+		mem.write.data		:= 0.U
+	}.otherwise{
+		when(cpu.io.master.bready){state := NpcState.Idle}
+		cpu.io.master.awready	:= false.B
+		cpu.io.master.wready	:= false.B
+		cpu.io.master.bvalid	:= true.B
+		cpu.io.master.bresp		:= 0.U
+		mem.write.valid	:= true.B
+		mem.write.addr		:= awaddr
+		mem.write.strb		:= wstrb
+		mem.write.data		:= wdata
 	}
-	when(cpu.io.master.awvalid && ~(
-		cpu.io.master.awaddr(31,28) === 0x8.U(4.W) ||
-		cpu.io.master.awaddr === 0x10000000.U(32.W)
-	)){
-		printf("npc mem error wAddr:%x\n",cpu.io.master.awaddr)
-		stop()
-	}
-	cpu.io.master.arready := status === NpcStatus.Idle
-	cpu.io.master.rdata	:= Mux(status === NpcStatus.Read,mem.read.data,0.U)
-	cpu.io.master.rresp	:= 0.U//OKAY
-	cpu.io.master.rvalid	:= status === NpcStatus.Read
-	when(status === NpcStatus.Idle & cpu.io.master.arvalid){rAddr := cpu.io.master.araddr}
-
-	cpu.io.master.awready	:= status === NpcStatus.Idle
-	cpu.io.master.wready	:= status === NpcStatus.Idle
-	cpu.io.master.bresp	:= 0.U//OKAY
-	cpu.io.master.bvalid	:= status === NpcStatus.Write
-	when(status === NpcStatus.Idle & cpu.io.master.awvalid){
-		wAddr := cpu.io.master.awaddr
-		wAddrValid := true.B
-	}
-	when(status === NpcStatus.Write & cpu.io.master.bready){
-		wAddrValid := false.B
-		wDataValid := false.B
-	}
-	when(status === NpcStatus.Idle & cpu.io.master.wvalid){
-		wData := cpu.io.master.wdata
-		wStrb := cpu.io.master.wstrb
-		wDataValid := true.B
-	}
-
-	mem.read.valid 	:= status === NpcStatus.Read
-	mem.read.addr  	:= rAddr
-	mem.write.valid := status === NpcStatus.Write && wAddr(31,28) === 0x8.U(4.W)
-	mem.write.addr  := wAddr
-	mem.write.strb  := wStrb
-	mem.write.data  := wData
-
-	when(status === NpcStatus.Write && wAddr === 0x10000000.U(32.W)){printf("%c",wData(7,0))}
-
+}
+	// val arid	= Output(UInt(IdWidth.W))
+	// val awid	= Output(UInt(IdWidth.W))
+	// val awlen	= Output(UInt(LenWidth.W))
+	// val awsize	= Output(UInt(SizeWidth.W))
+	// val awburst	= Output(UInt(BurstWidth.W))
+	// val wlast	= Output(Bool())Z
 	cpu.io.master.rid	:= 0.U
-	cpu.io.master.rlast	:= false.B
 	cpu.io.master.bid	:= 0.U
-
-	cpu.io.slave.arvalid:= false.B
-	cpu.io.slave.araddr	:= 0.U
-	cpu.io.slave.arid	:= 0.U
-	cpu.io.slave.arlen	:= 0.U
-	cpu.io.slave.arsize	:= 0.U
-	cpu.io.slave.arburst:= 0.U
-	cpu.io.slave.rready	:= false.B
-	cpu.io.slave.awvalid:= false.B
-	cpu.io.slave.awaddr	:= 0.U
-	cpu.io.slave.awid	:= 0.U
-	cpu.io.slave.awlen	:= 0.U
-	cpu.io.slave.awsize	:= 0.U
-	cpu.io.slave.awburst:= 0.U
-	cpu.io.slave.wvalid	:= false.B
-	cpu.io.slave.wdata	:= 0.U
-	cpu.io.slave.wstrb	:= 0.U
-	cpu.io.slave.wlast	:= false.B
-	cpu.io.slave.bready	:= false.B
-
-	cpu.io.interrupt	:= false.B;
+	
+	cpu.io.slave.arvalid	:= false.B
+	cpu.io.slave.rready		:= false.B
+	cpu.io.slave.awvalid	:= false.B
+	cpu.io.slave.wvalid		:= false.B
+	cpu.io.slave.bready		:= false.B
+	cpu.io.slave.wlast		:= false.B
+    cpu.io.slave.araddr		:= 0.U
+	cpu.io.slave.arlen		:= 0.U
+	cpu.io.slave.arsize		:= 0.U
+	cpu.io.slave.arburst	:= 0.U
+	cpu.io.slave.awaddr		:= 0.U
+	cpu.io.slave.wdata		:= 0.U
+	cpu.io.slave.wstrb		:= 0.U
+	cpu.io.slave.arid		:= 0.U
+	cpu.io.slave.awid		:= 0.U
+	cpu.io.slave.awlen		:= 0.U
+	cpu.io.slave.awsize		:= 0.U
+	cpu.io.slave.awburst	:= 0.U
 }
 class ysyx_26020046_Mem extends ExtModule{
     val read = IO(new Bundle{
