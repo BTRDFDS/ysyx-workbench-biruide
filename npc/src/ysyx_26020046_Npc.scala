@@ -48,7 +48,7 @@ class ysyx_26020046_Npc extends Module{
 		}
 		mem.read.valid	:= true.B
 		mem.read.addr	:= araddr + cnt
-		when(arburst=/=2.U || arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
+		when(arburst=/=2.U && arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
 	}
 	val wState = RegInit(NpcState.Idle)
 	val awaddr= RegInit(0.U(BitWidth.W))
