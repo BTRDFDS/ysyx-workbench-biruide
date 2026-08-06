@@ -17,10 +17,10 @@ object BarRstate	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack=Val
 				rAddr	:= lsu.addr
 			}.elsewhen(ifu.valid){rState := BarRstate.IfuCall;rAddr := ifu.addr}
 		}
-		is(BarRstate.IfuCall){when(out.arready)												{rState := BarRstate.IfuBack}}
-		is(BarRstate.IfuBack){when(out.rlast)												{rState := BarRstate.Idle	}}
-		is(BarRstate.LsuCall){when(Mux(rAddr(31,24) === 0x02.U(8.W),clt.arready,out.arready)){rState := BarRstate.LsuBack}}
-		is(BarRstate.LsuBack){when(Mux(rAddr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))	{rState := BarRstate.Idle	}}
+		is(BarRstate.IfuCall){when(out.arready)													{rState := BarRstate.IfuBack}}
+		is(BarRstate.IfuBack){when(out.rlast)													{rState := BarRstate.Idle	}}
+		is(BarRstate.LsuCall){when(Mux(rAddr(31,24) === 0x02.U(8.W),clt.arready,out.arready))	{rState := BarRstate.LsuBack}}
+		is(BarRstate.LsuBack){when(Mux(rAddr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))		{rState := BarRstate.Idle	}}
 	}
 	out.arvalid := (rState === BarRstate.IfuCall || rState === BarRstate.LsuCall) && rAddr(31,24) =/= 0x02.U(8.W)
 	out.rready  := (rState === BarRstate.IfuBack || rState === BarRstate.LsuBack) && rAddr(31,24) =/= 0x02.U(8.W)

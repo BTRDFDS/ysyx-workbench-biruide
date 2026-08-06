@@ -29,9 +29,9 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	addrTag 	:= ifu.addr(BitWidth-2-1,CacheBit+CacheWidth)
 	addrIdx 	:= ifu.addr(CacheBit+CacheWidth-1,CacheWidth)
 	addrOffset	:= ifu.addr(CacheWidth-1,0)
-	// dontTouch(addrIdx)
-	// dontTouch(addrOffset)
-	// dontTouch(addrTag)
+	dontTouch(addrIdx)
+	dontTouch(addrOffset)
+	dontTouch(addrTag)
 
 	val state	= RegInit(IchState.Imm)
 	val cnt		= RegInit(0.U(CacheWidth.W))
@@ -42,9 +42,10 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	switch(state){
 		is(IchState.Imm){
 			cnt := 0.U
-			when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag) && ~lsu.fenceI){valid(burstIdx) := true.B}
+			// when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag) && ~lsu.fenceI){valid(burstIdx) := true.B}
 		}
 		is(IchState.Out){
+			when(bar.res === BurstRes.Read && cnt=== 0.U){valid(burstIdx) := true.B}
 			when(bar.res === BurstRes.Done || bar.res === BurstRes.Read){
 				data(burstIdx)(burstOffset+cnt) := bar.data
 				tag(burstIdx)	:= burstTag
