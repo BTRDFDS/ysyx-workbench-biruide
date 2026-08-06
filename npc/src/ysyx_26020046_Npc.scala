@@ -140,14 +140,14 @@ class ysyx_26020046_Mem extends ExtModule{
 		input logic[3:0] write_strb,
 		input logic[31:0] write_data
 	);
-	import "DPI-C" function int sdram_read(input int addr);
-	import "DPI-C" function void sdram_write(input int addr, input int data);
-	assign read_data = read_valid?sdram_read({5'd0,read_addr[26:2],2'b00}):0;
+	import "DPI-C" function int psram_read(input int addr);
+	import "DPI-C" function void psram_write(input int addr, input int data);
+	assign read_data = read_valid?psram_read({5'd0,read_addr[26:2],2'b00}):0;
 	always_ff@(posedge write_valid) begin
-		if(write_strb[0])sdram_write({5'b0,write_addr[26:2],2'b00},{24'd0,write_data[ 7: 0]});
-		if(write_strb[1])sdram_write({5'b0,write_addr[26:2],2'b01},{24'd0,write_data[15: 8]});
-		if(write_strb[2])sdram_write({5'b0,write_addr[26:2],2'b10},{24'd0,write_data[23:16]});
-		if(write_strb[3])sdram_write({5'b0,write_addr[26:2],2'b11},{24'd0,write_data[31:24]});
+		if(write_strb[0])psram_write({5'b0,write_addr[26:2],2'b00},{24'd0,write_data[ 7: 0]});
+		if(write_strb[1])psram_write({5'b0,write_addr[26:2],2'b01},{24'd0,write_data[15: 8]});
+		if(write_strb[2])psram_write({5'b0,write_addr[26:2],2'b10},{24'd0,write_data[23:16]});
+		if(write_strb[3])psram_write({5'b0,write_addr[26:2],2'b11},{24'd0,write_data[31:24]});
 	end
 	endmodule
 	"""
