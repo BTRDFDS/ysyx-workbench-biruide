@@ -9,6 +9,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val pc		= RegInit(PcInit(31,2))
 		val state	= RegInit(MemStatus.Call)
 		val error	= RegInit(false.B)//特指地址错误
+		val change	= RegInit(false.B)
 		val res		= RegInit(IfuRes.Null)
 		val instr = RegInit(0.U(BitWidth.W))
 
@@ -22,7 +23,6 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		}
 		when(state === MemStatus.Call){
 			ich.valid	:= ~error
-			val change	= RegInit(false.B)
 			when(ich.ready & ~change){instr := ich.data}
 
 			when(error)						{res := IfuRes.Un4b}
@@ -30,7 +30,10 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 			.otherwise						{res := IfuRes.Null}
 
 			when(change&ich.ready){change := false.B}
-		}.otherwise{res := IfuRes.Null}
+		}.otherwise{
+			ich.valid	:= false.B
+			res			:= IfuRes.Null
+		}
 		switch(in.imme.back){
 			is(Back.Jump)	{pc := in.imme.addr(31,2)}
 			is(Back.Error)	{pc := in.imme.addr(31,2)}
