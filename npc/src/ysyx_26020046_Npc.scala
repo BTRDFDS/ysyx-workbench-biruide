@@ -3,6 +3,7 @@ import chisel3.util._
 import WidthConsts._
 //TODO:需要BlackBox
 //根据官网，blackbox已经被废弃了，使用ExtModule
+//TODO:1为了简化进行了一定程度的行为建模2写没有处理突发传输3读写可能冲不够应该问题不大
 object NpcState extends ChiselEnum{val Idle,Back = Value}
 class ysyx_26020046_Npc extends Module{
 	val PcInit:UInt=0x80000000L.U

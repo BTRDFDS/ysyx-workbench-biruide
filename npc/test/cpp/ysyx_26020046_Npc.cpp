@@ -1,4 +1,5 @@
 //ysyx_26020046_Npc
+//sdram
 #include "Vysyx_26020046_Npc.h"
 #include "verilated.h"
 #include "svdpi.h"
@@ -32,7 +33,8 @@ void NpcInitDeviceMem(int argc, char** argv){
 		tfp->open("./wave/ysyx_26020046_Npc.fst");
 	#endif
 	logFileInit("./log/ysyx_26020046_Npc.log");
-	iPcTraceFileInit();
+	iCacheTraceFileInit();
+	dCacheTraceFileInit();
 	#ifdef NPC_NVBroad
 		nvboard_bind_pin(&top->externalPins_uart_rx  ,1,UART_RX);
 		nvboard_bind_pin(&top->externalPins_uart_tx  ,1,UART_TX);
@@ -74,7 +76,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 	size_t wordsRead = fread(sdram, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
-	NpcDifftestInit8(wordsRead,sdram,sdramAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so");
+	NpcDifftestInit8(sdramSize,sdram,sdramAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so");
 	}
 void NpcWave(){
 	#ifdef NPC_WAVE
@@ -106,8 +108,8 @@ int main(int argc, char** argv) {
 		numCycle=0;
 	}
 	printf("\033[1;32m Welcome to ysyx_26020046_Npc[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	for(int i=0;(!contextp->gotFinish());i++){
-	// for(int i=0;i<500000&(!contextp->gotFinish());i++){
+	// for(int i=0;(!contextp->gotFinish());i++){
+	for(int i=0;i<500000&(!contextp->gotFinish());i++){
 		#ifdef NPC_NVBroad
 			nvboard_update();
 		#endif
