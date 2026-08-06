@@ -10,31 +10,19 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val state	= RegInit(MemStatus.Call)
 		val error	= RegInit(false.B)//特指地址错误
 		val res		= RegInit(IfuRes.Null)
-		val reLoad	= RegInit(false.B)
-		val reAddr	= Reg(UInt((BitWidth-2).W))
-		when(state === MemStatus.Back){
+		// when(state === MemStatus.Back){
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr(31,2)	}
 				is(Back.Error)	{pc := in.imme.addr(31,2)	}
 				is(Back.Ready)	{pc := pc + 1.U				}
 			}
 			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1,0) =/= 0.U}
-		}.otherwise{//IDU不可能判错
-			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){
-				reLoad	:= true.B
-				reAddr	:= in.imme.addr(31,2)
-				error	:= in.imme.addr(1,0) =/= 0.U
-			}
-			when(ich.ready & reLoad){
-				pc := reAddr
-				reLoad := false.B
-			}
-		}
+		// }
 		out.pipe.pc	:= Cat(pc,0.U(2.W))
 	//状态机
 		switch(state){
-			is(MemStatus.Call){when((ich.ready && ~reLoad) || error){state := MemStatus.Back}}
-			is(MemStatus.Back){when(in.imme.back =/= Back.Wait)		{state := MemStatus.Call}}
+			is(MemStatus.Call){when(ich.ready || error)		{state := MemStatus.Back}}
+			is(MemStatus.Back){when(in.imme.back =/= Back.Wait)	{state := MemStatus.Call}}
 		}
 	//发出
 		ich.addr	:= pc
@@ -45,7 +33,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		out.pipe.instr	:= instr
 		when(state === MemStatus.Call){
 			when(ich.ready){	res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
-			.otherwise{			res := Mux(error	,IfuRes.Un4b,IfuRes.Null)}
+			.otherwise{			res := Mux(error,		IfuRes.Un4b,IfuRes.Null)}
 		}.elsewhen(in.imme.back =/= Back.Wait){res := IfuRes.Null}
 		out.pipe.res := res
 	if(Yosys == false){
