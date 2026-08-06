@@ -18,13 +18,12 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 			}
 			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1,0) =/= 0.U}
 		}.otherwise{
-			when(ich.ready){
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr(31,2)	}
 				is(Back.Error)	{pc := in.imme.addr(31,2)	}
 			}
 			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1,0) =/= 0.U}
-		}}
+		}
 		out.pipe.pc	:= Cat(pc,0.U(2.W))
 	//状态机
 		switch(state){
