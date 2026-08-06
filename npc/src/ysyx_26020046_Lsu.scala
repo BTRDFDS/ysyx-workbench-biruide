@@ -104,7 +104,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			}
 		}
 	}
-	when(pipeValid && ~addrError && pipeLsuOp =/= LsuOp.Null){//接收
+	when(pipeValid && ~addrError){//接收
 		when(pipeLsuOp === LsuOp.Load){
 			val rdata = RegInit(0.U(BitWidth.W))
 			// val result = RegInit(0.U(BitWidth.W))
