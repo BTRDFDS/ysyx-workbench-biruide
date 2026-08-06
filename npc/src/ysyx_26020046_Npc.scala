@@ -9,16 +9,16 @@ class ysyx_26020046_Npc extends Module{
 	val PcInit:UInt=0x80000000L.U
 	val cpu = Module(new ysyx_26020046(PcInit))
 	val mem = Module(new ysyx_26020046_Mem())
-{
-	val state	= RegInit(NpcState.Idle)
+
+	val rState	= RegInit(NpcState.Idle)
 	val araddr	= RegInit(0.U(BitWidth.W))
 	val arlen	= RegInit(0.U(LenWidth.W))
 	val arsiz	= RegInit(0.U(SizeWidth.W))
 	val arburst	= RegInit(0.U(BurstWidth.W))
 	val cnt		= RegInit(0.U(LenWidth.W))
-	when(state===pcStatus.Idle){
+	when(rState===NpcState.Idle){
 		when(cpu.io.master.arvalid){
-			state	:= NpcState.Back
+			rState	:= NpcState.Back
 			araddr	:= cpu.io.master.araddr
 			arlen	:= cpu.io.master.arlen
 			arsiz	:= cpu.io.master.arsize
@@ -33,11 +33,11 @@ class ysyx_26020046_Npc extends Module{
 		mem.read.valid			:= false.B
 		mem.read.addr			:= 0.U
 	}.otherwise{
-		when(cpu.io.master.rready && Mux(arburst,cnt===arlen,true.B)){state := NpcState.Idle}
+		when(cpu.io.master.rready && Mux(arburst===2.U,cnt===arlen,true.B)){rState := NpcState.Idle}
 		cnt := cnt + 1.U
 		cpu.io.master.arready	:= false.B
 		cpu.io.master.rvalid	:= true.B
-		cpu.io.master.rlast		:= Mux(arburst,cnt===arlen,true.B)
+		cpu.io.master.rlast		:= Mux(arburst===2.U,cnt===arlen,true.B)
 		cpu.io.master.rdata		:= 0.U
 		cpu.io.master.rresp		:= 0.U
 		switch(arsiz){
@@ -48,17 +48,16 @@ class ysyx_26020046_Npc extends Module{
 		}
 		mem.read.valid	:= true.B
 		mem.read.addr	:= araddr + cnt
+		when(arburst=/=2.U || arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
 	}
-}
-{
-	val state = RegInit(NpcState.Idle)
+	val wState = RegInit(NpcState.Idle)
 	val awaddr= RegInit(0.U(BitWidth.W))
 	val wdata = RegInit(0.U(BitWidth.W))
 	val wstrb = RegInit(0.U(StrbWidth.W))
 	val hasAddr = RegInit(false.B)
 	val hasData = RegInit(false.B)
-	when(state===NpcState.Idle){
-		when((hasAddr && hasData) || (cpu.io.master.awvalid && cpu.io.master.wvalid)){state:=NpcState.Back}
+	when(wState===NpcState.Idle){
+		when((hasAddr && hasData) || (cpu.io.master.awvalid && cpu.io.master.wvalid)){wState:=NpcState.Back}
 		hasAddr := cpu.io.master.awvalid
 		hasData := cpu.io.master.wvalid
 		when(cpu.io.master.awvalid && ~hasAddr){
@@ -77,7 +76,7 @@ class ysyx_26020046_Npc extends Module{
 		mem.write.strb		:= 0.U
 		mem.write.data		:= 0.U
 	}.otherwise{
-		when(cpu.io.master.bready){state := NpcState.Idle}
+		when(cpu.io.master.bready){wState := NpcState.Idle}
 		cpu.io.master.awready	:= false.B
 		cpu.io.master.wready	:= false.B
 		cpu.io.master.bvalid	:= true.B
@@ -87,7 +86,7 @@ class ysyx_26020046_Npc extends Module{
 		mem.write.strb		:= wstrb
 		mem.write.data		:= wdata
 	}
-}
+
 	// val arid	= Output(UInt(IdWidth.W))
 	// val awid	= Output(UInt(IdWidth.W))
 	// val awlen	= Output(UInt(LenWidth.W))
@@ -96,6 +95,8 @@ class ysyx_26020046_Npc extends Module{
 	// val wlast	= Output(Bool())Z
 	cpu.io.master.rid	:= 0.U
 	cpu.io.master.bid	:= 0.U
+
+	cpu.io.interrupt	:= false.B
 	
 	cpu.io.slave.arvalid	:= false.B
 	cpu.io.slave.rready		:= false.B
