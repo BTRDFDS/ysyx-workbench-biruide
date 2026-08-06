@@ -39,13 +39,13 @@ class ysyx_26020046_Npc extends Module{
 		cpu.io.master.rvalid	:= true.B
 		cpu.io.master.rlast		:= Mux(arburst===2.U,cnt===arlen,true.B)
 		cpu.io.master.rdata		:= 0.U
-		cpu.io.master.rresp		:= 0.U
-		switch(arsiz){
-			is(0.U){cpu.io.master.rdata := Fill(4,mem.read.data( 7, 0))}
-			is(1.U){cpu.io.master.rdata := Fill(2,mem.read.data(15, 0))}
-			is(2.U){cpu.io.master.rdata := mem.read.data(31, 0)}
-			is(3.U){printf("arsize error\n");stop();}
-		}
+		cpu.io.master.rresp		:= mem.read.data
+		// switch(arsiz){
+		// 	is(0.U){cpu.io.master.rdata := Fill(4,mem.read.data( 7, 0))}
+		// 	is(1.U){cpu.io.master.rdata := Fill(2,mem.read.data(15, 0))}
+		// 	is(2.U){cpu.io.master.rdata := mem.read.data(31, 0)}
+		// 	is(3.U){printf("arsize error\n");stop();}
+		// }
 		mem.read.valid	:= true.B
 		mem.read.addr	:= araddr + (cnt<<2.U)
 		when(arburst=/=2.U && arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
