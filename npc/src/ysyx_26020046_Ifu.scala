@@ -36,7 +36,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	//接收
 		val instr = RegInit(0.U(BitWidth.W))
 		when(state === MemStatus.Call && ich.ready){instr := ich.data}
-		out.pipe.instr	:= instr
+		out.pipe.instr	:= instr//TODO:重写状态机，现在只会顶掉PC但是指令没有被正确冲刷
 		when(state === MemStatus.Call){
 			when(ich.ready){	res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 			.otherwise{			res := Mux(error,		IfuRes.Un4b,IfuRes.Null)}
