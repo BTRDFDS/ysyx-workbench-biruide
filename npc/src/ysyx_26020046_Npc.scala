@@ -38,8 +38,8 @@ class ysyx_26020046_Npc extends Module{
 		cpu.io.master.arready	:= false.B
 		cpu.io.master.rvalid	:= true.B
 		cpu.io.master.rlast		:= Mux(arburst===2.U,cnt===arlen,true.B)
-		cpu.io.master.rdata		:= 0.U
-		cpu.io.master.rresp		:= mem.read.data
+		cpu.io.master.rdata		:= mem.read.data
+		cpu.io.master.rresp		:= 0.U
 		// switch(arsiz){
 		// 	is(0.U){cpu.io.master.rdata := Fill(4,mem.read.data( 7, 0))}
 		// 	is(1.U){cpu.io.master.rdata := Fill(2,mem.read.data(15, 0))}
