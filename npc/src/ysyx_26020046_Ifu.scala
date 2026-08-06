@@ -24,9 +24,11 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 			ich.valid	:= ~error
 			val change	= RegInit(false.B)
 			when(ich.ready & ~change){instr := ich.data}
+
 			when(error)						{res := IfuRes.Un4b}
 			.elsewhen(ich.ready && ~change)	{res :=Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 			.otherwise						{res := IfuRes.Null}
+
 			when(change&ich.ready){change := false.B}
 		}.otherwise{res := IfuRes.Null}
 		switch(in.imme.back){
