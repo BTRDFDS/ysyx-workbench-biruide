@@ -131,7 +131,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		val check = Reg(Bool())
 		when(~check && pipeValid){check := true.B}
 		when( check && in.pipe.valid){check := false.B}
-		wbuChk.io.check := check && in.pipe.valid
+		wbuChk.io.check := check && pipeValid
 		wbuChk.clock := clock
 	}
 }
