@@ -77,6 +77,8 @@ class ysyx_26020046_Npc extends Module{
 		mem.write.data		:= 0.U
 	}.otherwise{
 		when(cpu.io.master.bready){wState := NpcState.Idle}
+		hasAddr := false.B
+		hasData := false.B
 		cpu.io.master.awready	:= false.B
 		cpu.io.master.wready	:= false.B
 		cpu.io.master.bvalid	:= true.B
