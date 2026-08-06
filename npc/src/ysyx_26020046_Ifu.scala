@@ -10,6 +10,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val state	= RegInit(MemStatus.Call)
 		val error	= RegInit(false.B)//特指地址错误
 		val res		= RegInit(IfuRes.Null)
+		val change	= RegInit(false.B)
 		when(state === MemStatus.Back){
 			switch(in.imme.back){
 				is(Back.Jump)	{pc := in.imme.addr(31,2)	}
@@ -17,18 +18,22 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 				is(Back.Ready)	{pc := pc + 1.U				}
 			}
 			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1,0) =/= 0.U}
+			when(change){change := false.B}
 		}.otherwise{
 			switch(in.imme.back){
-				is(Back.Jump)	{pc := in.imme.addr(31,2)	}
-				is(Back.Error)	{pc := in.imme.addr(31,2)	}
+				is(Back.Jump)	{pc := in.imme.addr(31,2)}
+				is(Back.Error)	{pc := in.imme.addr(31,2)}
 			}
-			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){error := in.imme.addr(1,0) =/= 0.U}
+			when(in.imme.back === Back.Error || in.imme.back === Back.Jump){
+				error := in.imme.addr(1,0) =/= 0.U
+				change := true.B
+			}
 		}
 		out.pipe.pc	:= Cat(pc,0.U(2.W))
 	//状态机
 		switch(state){
-			is(MemStatus.Call){when(ich.ready || error)		{state := MemStatus.Back}}
-			is(MemStatus.Back){when(in.imme.back =/= Back.Wait)	{state := MemStatus.Call}}
+			is(MemStatus.Call){when(ich.ready || error)					{state := MemStatus.Back}}
+			is(MemStatus.Back){when(in.imme.back =/= Back.Wait||change)	{state := MemStatus.Call}}
 		}
 	//发出
 		ich.addr	:= pc
@@ -38,8 +43,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		when(state === MemStatus.Call && ich.ready){instr := ich.data}
 		out.pipe.instr	:= instr//TODO:重写状态机，现在只会顶掉PC但是指令没有被正确冲刷
 		when(state === MemStatus.Call){
-			when(ich.ready){	res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
-			.otherwise{			res := Mux(error,		IfuRes.Un4b,IfuRes.Null)}
+			when(ich.ready& ~error)	{res := Mux(ich.error	,IfuRes.Fall,IfuRes.Valid)}
+			.otherwise				{res := Mux(error		,IfuRes.Un4b,IfuRes.Null )}
 		}.elsewhen(in.imme.back =/= Back.Wait){res := IfuRes.Null}
 		out.pipe.res := res
 	if(Yosys == false){
