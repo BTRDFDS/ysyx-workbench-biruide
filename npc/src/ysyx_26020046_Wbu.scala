@@ -82,15 +82,17 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		out.imme.addr	:= mtvec
 		if(Yosys == false){
 			printf("error,stop!!! %x tval: %x ",pipeCsrMesg,pipeCsrAddr)//tval
-			when(pipeCsrMesg===3.U	){printf("ebreak\n")}
-			when(pipeCsrMesg===11.U	){printf("ecall\n")}
-			when(pipeCsrMesg===0.U	){printf("ifuN4\n")}
-			when(pipeCsrMesg===1.U	){printf("ifuErr\n")}
-			when(pipeCsrMesg===2.U	){printf("instr\n")}
-			when(pipeCsrMesg===4.U	){printf("laddr\n")}
-			when(pipeCsrMesg===5.U	){printf("lerror\n")}
-			when(pipeCsrMesg===6.U	){printf("sAddr\n")}
-			when(pipeCsrMesg===7.U	){printf("sError\n")}
+			switch(pipeCsrMesg){
+				is(3.U	){printf("ebreak\n")}
+				is(11.U	){printf("ecall\n")}
+				is(0.U	){printf("ifuN4\n")}
+				is(1.U	){printf("ifuErr\n")}
+				is(2.U	){printf("instr\n")}
+				is(4.U	){printf("laddr\n")}
+				is(5.U	){printf("lerror\n")}
+				is(6.U	){printf("sAddr\n")}
+				is(7.U	){printf("sError\n")}
+			}
 			stop()
 		}
 	}otherwise{
@@ -125,8 +127,8 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		wbuChk.io.reg := gpr
 		wbuChk.io.ebreak := 
 			(pipeCsrOp === CsrOp.Trap)&(pipeValid)&(pipeCsrMesg === 0x3L.U) ||
-			(pipeValid === false.B & pipeCsrOp === CsrOp.Trap) ||
 			error
+			// (pipeValid === false.B & pipeCsrOp === CsrOp.Trap) ||
 		// wbuChk.io.pc := pipePc
 		// val check = Reg(Bool())
 		// when(~check && pipeValid){check := true.B}
