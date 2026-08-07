@@ -143,7 +143,7 @@ class ysyx_26020046_Mem extends ExtModule{
 	import "DPI-C" function int psram_read(input int addr);
 	import "DPI-C" function void psram_write(input int addr, input int data);
 	assign read_data = read_valid?psram_read({5'd0,read_addr[26:2],2'b00}):0;
-	always_ff@(posedge write_valid) if(write_addr[31:28]==4'h1000)begin
+	always_ff@(posedge write_valid) if(write_addr[31:28]==4'b1000)begin
 		if(write_strb[0])psram_write({5'b0,write_addr[26:2],2'b00},{24'd0,write_data[ 7: 0]});
 		if(write_strb[1])psram_write({5'b0,write_addr[26:2],2'b01},{24'd0,write_data[15: 8]});
 		if(write_strb[2])psram_write({5'b0,write_addr[26:2],2'b10},{24'd0,write_data[23:16]});
