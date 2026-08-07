@@ -130,7 +130,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.otherwise{out.imme.back	:= Back.Wait}
 	}otherwise{
-		pipeReady := Mux(pipeLsuOp === LsuOp.Null,true.B,state === MemStatus.Back)
+		pipeReady := Mux((pipeLsuOp === LsuOp.Null)||(~pipeValid),true.B,state === MemStatus.Back)
 		out.pipe.valid:= pipeReady & pipeValid
 		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
 		.elsewhen(pipeReady & in.imme.back === Back.Ready){out.imme.back	:= Back.Ready}
