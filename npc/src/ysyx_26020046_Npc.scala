@@ -41,7 +41,8 @@ class ysyx_26020046_Npc extends Module{
 		cpu.io.master.rdata		:= mem.read.data
 		cpu.io.master.rresp		:= 0.U
 		mem.read.valid	:= true.B
-		mem.read.addr	:= araddr + (cnt<<2.U)
+		// mem.read.addr	:= araddr + (cnt<<2.U)
+		mem.read.addr	:= Cat(araddr(31,4),(cnt<<2.U+araddr(3,0))(3,0))
 		when(arburst=/=2.U && arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
 		when(arsiz=/=0.U && arsiz=/=1.U && arsiz=/=2.U){printf("arsize=%x error\n",arsiz);stop();}
 	}
