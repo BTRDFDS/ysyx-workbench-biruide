@@ -96,17 +96,18 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 				out.imme.back := Back.Jump
 			}.otherwise{out.imme.back := in.imme.back}
 		}
-		val rdResult = WireInit(0.U(BitWidth.W))
 		switch(pipeRes){
-			is(ExuRes.Alu)	{rdResult := result}
-			is(ExuRes.Null)	{rdResult := 0.U}
-			is(ExuRes.Snpc)	{rdResult := pipePc+4.U}
-			is(ExuRes.Csr)	{rdResult := pipeResult}//给rd的
+			is(ExuRes.Alu)	{out.pipe.result := result}
+			is(ExuRes.Null)	{out.pipe.result := 0.U}
+			is(ExuRes.Snpc)	{out.pipe.result := pipePc+4.U}
+			is(ExuRes.Csr)	{out.pipe.result := pipeResult}//给rd的
 		}
-		out.pipe.result := rdResult
 		when(pipeRdAddr =/= 0.U){
-			when(out.imme.r1Addr === pipeRdAddr){out.imme.r1Out := rdResult}
-			when(out.imme.r2Addr === pipeRdAddr){out.imme.r2Out := rdResult}
+			when(out.imme.r1Addr === pipeRdAddr){out.imme.r1Out := out.pipe.result}
+			when(out.imme.r2Addr === pipeRdAddr){out.imme.r2Out := out.pipe.result}
+			when(out.imme.r1Addr === pipeRdAddr || out.imme.r2Addr === pipeRdAddr){
+				out.imme.valid := pipeLsuOp === LsuOp.Null//Write理论上也可以
+			}
 		}
 	}
 	if(Yosys == false){
