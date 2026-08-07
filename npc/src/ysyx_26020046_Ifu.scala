@@ -15,7 +15,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 		ich.addr		:= pc
 		out.pipe.instr	:= instr
-		out.pipe.pc		:= Cat(pc,0.U(2.W))
+		out.pipe.pc		:= pc
 		out.pipe.res 	:= res
 		switch(state){
 			is(MemStatus.Call){when((ich.ready& ~change & (in.imme.back === Back.Ready || in.imme.back === Back.Wait)) || error)
@@ -48,6 +48,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 
 	if(Yosys == false){
+		val ifuPc = Mux(res === IfuRes.Valid,Cat(pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= state === MemStatus.Call && ich.ready

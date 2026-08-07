@@ -14,13 +14,13 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		val imme = new ImmeAfter()
 	})
 	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)
-	val pipeValid	= PipeReg(pipeReset,false.B			,true.B,in.pipe.valid	)
-	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)	,true.B,in.pipe.rdAddr	)
-	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)	,true.B,in.pipe.result	)
-	val pipePc		= PipeReg(pipeReset,0.U(BitWidth.W)	,true.B,in.pipe.pc		)
-	val pipeCsrAddr	= PipeReg(pipeReset,0.U(BitWidth.W)	,true.B,in.pipe.csrAddr	)
-	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)	,true.B,in.pipe.csrMesg	)
-	val pipeCsrOp	= PipeReg(pipeReset,CsrOp.Null		,true.B,in.pipe.csrOp	)
+	val pipeValid	= PipeReg(pipeReset,false.B				,true.B,in.pipe.valid	)
+	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,true.B,in.pipe.rdAddr	)
+	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.result	)
+	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,true.B,in.pipe.pc		)
+	val pipeCsrAddr	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.csrAddr	)
+	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.csrMesg	)
+	val pipeCsrOp	= PipeReg(pipeReset,CsrOp.Null			,true.B,in.pipe.csrOp	)
 	
 
 	val gpr = Reg(Vec(RegNum, UInt(BitWidth.W)))
@@ -47,7 +47,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 			is(CsrOp.Mret){mstatus := MstatuseReset}//TODO
 			is(CsrOp.Trap){//TODO:ecall有问题
 				mcause	:= pipeCsrMesg
-				mepc 	:= pipePc
+				mepc 	:= Cat(pipePc,0.U(2.w))
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
@@ -66,7 +66,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 				}otherwise{
 					error	:= true.B
 					mcause	:= ErrorMesg
-					mepc	:= pipePc
+					mepc	:= Cat(pipePc,0.U(2.w))
 					//TODO:mstatus
 				}
 			}
@@ -76,7 +76,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	}
 	when((pipeValid === false.B & pipeCsrOp === CsrOp.Trap) || error){
 		mcause			:= pipeCsrMesg
-		mepc 			:= pipePc
+		mepc 			:= Cat(pipePc,0.U(2.w))
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
 		if(Yosys == false){
@@ -122,6 +122,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	}
 
 	if(Yosys == false){
+		val wbuPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(wbuPc)
 		val wbuChk = Module(new ysyx_26020046_WbuChk)
 		wbuChk.io.reg := gpr
 		wbuChk.io.ebreak := 
@@ -138,7 +139,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		val noFirst	=RegInit(false.B)
 		when(~noFirst){noFirst := in.pipe.valid}
 		check	:= noFirst && (in.pipe.valid)
-		pc		:= in.pipe.pc
+		pc		:= Cat(in.pipe.pc,0.U(2.w))
 		wbuChk.io.check	:= check
 		wbuChk.io.pc	:= pc
 		wbuChk.clock	:= clock

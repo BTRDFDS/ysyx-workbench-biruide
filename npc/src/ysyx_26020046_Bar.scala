@@ -15,7 +15,7 @@ object BarRstate	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack=Val
 			when(lsu.size =/= 0b11.U){
 				rState	:= Mux(lsu.write,BarRstate.Idle,BarRstate.LsuCall)
 				rAddr	:= lsu.addr
-			}.elsewhen(ifu.valid){rState := BarRstate.IfuCall;rAddr := ifu.addr}
+			}.elsewhen(ifu.valid){rState := BarRstate.IfuCall;rAddr := Cat(ifu.addr,0.U(2.W))}
 		}
 		is(BarRstate.IfuCall){when(out.arready)													{rState := BarRstate.IfuBack}}
 		is(BarRstate.IfuBack){when(out.rlast)													{rState := BarRstate.Idle	}}

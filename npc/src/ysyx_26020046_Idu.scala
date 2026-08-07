@@ -12,9 +12,9 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	})
 	val pipeReady	= in.imme.back===Back.Ready && in.imme.valid
 	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)||(out.imme.back===Back.Jump)
-	val pipeRes		= PipeReg(pipeReset,IfuRes.Null		,pipeReady,in.pipe.res		)
-	val pipePc		= PipeReg(pipeReset,0.U(BitWidth.W)	,pipeReady,in.pipe.pc		)
-	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)	,pipeReady,in.pipe.instr	)
+	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,pipeReady,in.pipe.res		)
+	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,pipeReady,in.pipe.pc		)
+	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,pipeReady,in.pipe.instr	)
 
 
 	//默认值
@@ -208,10 +208,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			out.pipe.csrAddr:= pipeInstr//mtval
 		}
 		}
-		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U;out.pipe.csrAddr := pipePc}//Instruction address misaligned
-		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;out.pipe.csrAddr := pipePc}//Instruction access fault
+		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U;out.pipe.csrAddr := Cat(pipePc,0.U(2.W))}//Instruction address misaligned
+		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;out.pipe.csrAddr := Cat(pipePc,0.U(2.W))}//Instruction access fault
 	}
 	if(Yosys == false){
+		val iduPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)
 		val iduChk = Module(new ysyx_26020046_IduChk)
 		iduChk.clock := clock
 		iduChk.io.cal	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)

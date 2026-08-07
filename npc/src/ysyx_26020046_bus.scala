@@ -29,14 +29,14 @@ object  WidthConsts{//const
 import WidthConsts._
 class PipeIfId extends Bundle{
 	val res		= Output(IfuRes())
-	val pc		= Output(UInt(BitWidth.W))
+	val pc		= Output(UInt((BitWidth-2).W))
 	val instr	= Output(UInt(BitWidth.W))
 }
 class PipeLsWb extends Bundle{
 	val valid	= Output(Bool())
 	val rdAddr	= Output(UInt(RegWidth.W))
 	val result	= Output(UInt(BitWidth.W))
-	val pc		= Output(UInt(BitWidth.W))
+	val pc		= Output(UInt((BitWidth-2).W))
 	val csrOp	= Output(CsrOp())
 	val csrAddr	= Output(UInt(BitWidth.W))
 	val csrMesg	= Output(UInt(BitWidth.W))
@@ -123,7 +123,7 @@ class InstrBus extends Bundle{
 }
 class BurstBus extends Bundle{
 	val valid	= Output(Bool())
-	val addr	= Output(UInt(BitWidth.W))
+	val addr	= Output(UInt((BitWidth-2).W))
 	val data	= Input(UInt(BitWidth.W))
 	val res		= Input(BurstRes())
 }
