@@ -1,5 +1,5 @@
-// `define DelayW
-// `define DelayR
+`define DelayW
+`define DelayR
 module axi4_delayer(
 	input         clock,
 	input         reset,
