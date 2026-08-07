@@ -41,12 +41,7 @@ class ysyx_26020046_Npc extends Module{
 		cpu.io.master.rdata		:= mem.read.data
 		cpu.io.master.rresp		:= 0.U
 		mem.read.valid	:= true.B
-		if(CacheWidth==0){
-			mem.read.addr	:= Cat(araddr(31,2),0.U(2.W))
-		}else{
-			mem.read.addr	:= Cat(araddr(31,CacheWidth+2),(cnt+araddr(CacheWidth+1,2)),0.U(2.W))
-		}
-		// mem.read.addr	:= Cat(araddr(31,CacheWidth+2),(cnt+araddr(CacheWidth+1,2)),0.U(2.W))
+		mem.read.addr	:= Cat(araddr(31,CacheWidth+2),(cnt+araddr(CacheWidth+1,2)),0.U(2.W))
 		// val myAddr0 = Cat(araddr(31,CacheWidth+2),0.U((CacheWidth+2).W));dontTouch(myAddr0)
 		// val myAddr1 = araddr(CacheWidth+1,2)							;dontTouch(myAddr1)
 		// val myAddr2 = cnt+araddr(CacheWidth+1,2)						;dontTouch(myAddr2)
