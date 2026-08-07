@@ -31,8 +31,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 			when(change&ich.ready){change := false.B}
 		}.otherwise{
-			ich.valid	:= false.B
-			res			:= IfuRes.Null
+			ich.valid := false.B
+			when(in.imme.back =/= Back.Wait){res := IfuRes.Null}
 		}
 		switch(in.imme.back){
 			is(Back.Jump)	{pc := in.imme.addr(31,2)}
