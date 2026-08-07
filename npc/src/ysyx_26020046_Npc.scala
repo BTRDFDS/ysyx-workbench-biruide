@@ -15,7 +15,7 @@ class ysyx_26020046_Npc extends Module{
 	val arlen	= RegInit(0.U(LenWidth.W))
 	val arsiz	= RegInit(0.U(SizeWidth.W))
 	val arburst	= RegInit(0.U(BurstWidth.W))
-	val cnt		= RegInit(0.U(LenWidth.W))
+	val cnt		= RegInit(0.U(CacheWidth.W))
 	when(rState===NpcState.Idle){
 		when(cpu.io.master.arvalid){
 			rState	:= NpcState.Back
@@ -41,10 +41,10 @@ class ysyx_26020046_Npc extends Module{
 		cpu.io.master.rdata		:= mem.read.data
 		cpu.io.master.rresp		:= 0.U
 		mem.read.valid	:= true.B
-		mem.read.addr	:= Cat(araddr(31,4),(cnt+araddr(3,2)),0.U(2.W))
-		val myAddr0 = Cat(araddr(31,4),0.U(4.W));dontTouch(myAddr0)
-		val myAddr1 = araddr(3,2)				;dontTouch(myAddr1)
-		val myAddr2 = (cnt+araddr(3,2))			;dontTouch(myAddr2)
+		mem.read.addr	:= Cat(araddr(31,CacheWidth+2),(cnt+araddr(CacheWidth+1,2)),0.U(2.W))
+		val myAddr0 = Cat(araddr(31,CacheWidth+2),0.U((CacheWidth+2).W));dontTouch(myAddr0)
+		val myAddr1 = araddr(CacheWidth+1,2)							;dontTouch(myAddr1)
+		val myAddr2 = cnt+araddr(CacheWidth+1,2)						;dontTouch(myAddr2)
 		when(arburst=/=2.U && arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
 		when(arsiz=/=0.U && arsiz=/=1.U && arsiz=/=2.U){printf("arsize=%x error\n",arsiz);stop();}
 	}
