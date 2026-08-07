@@ -187,9 +187,9 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				csrValid := false.B
 				switch(funct3){
 					is(0b000.U){
-					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0xbL.U}//ECALL from M-mode
-					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}//Breakpoint
-					when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
+					when(Cat(funct7,pipeInstr(24,15),pipeInstr(11,7)) === 0b0000000_00000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0xbL.U}//ECALL from M-mode
+					when(Cat(funct7,pipeInstr(24,15),pipeInstr(11,7)) === 0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}//Breakpoint
+					when(Cat(funct7,pipeInstr(24,15),pipeInstr(11,7)) === 0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 					}
 					is(0b001.U){out.pipe.csrAddr := Cat(0.U(8.W),funct7,r2Addr);csrOp := CsrOp.Write;csrValid := true.B}
 					is(0b010.U){out.pipe.csrAddr := Cat(0.U(8.W),funct7,r2Addr);csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
