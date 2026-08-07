@@ -107,8 +107,8 @@ int main(int argc, char** argv) {
 		numCycle=0;
 	}
 	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	// for(int i=0;(!contextp->gotFinish());i++){
-	for(int i=0;i<500000&(!contextp->gotFinish());i++){
+	for(int i=0;(!contextp->gotFinish());i++){
+	// for(int i=0;i<500000&(!contextp->gotFinish());i++){
 		#ifdef NPC_NVBroad
 			nvboard_update();
 		#endif
