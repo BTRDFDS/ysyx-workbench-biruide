@@ -91,7 +91,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 			out.imme.back	:= Back.Error
 			out.imme.addr	:= in.imme.addr
 		}.otherwise{
-			when(pipeEnJcod || enBfun){
+			when((pipeEnJcod || enBfun)&&in.imme.back === Back.Ready){
 				out.imme.addr := result
 				out.imme.back := Back.Jump
 			}.otherwise{out.imme.back := in.imme.back}
