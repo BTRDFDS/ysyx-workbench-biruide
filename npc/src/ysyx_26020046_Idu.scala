@@ -46,10 +46,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	in.imme.csrAddr	:= 0.U
 
 	val opCode	= pipeInstr( 6, 0)
-	val rdAddr	= pipeInstr(11, 7)
+	val rdAddr	= pipeInstr( 6+RegWidth, 7)
 	val funct3	= pipeInstr(14,12)
-	val r1Addr	= pipeInstr(19,15)
-	val r2Addr	= pipeInstr(24,20)
+	val r1Addr	= pipeInstr(14+RegWidth,15)
+	val r2Addr	= pipeInstr(19+RegWidth,20)
 	val funct7	= pipeInstr(31,25)
 
 	val bfuValid = WireInit(true.B)
@@ -158,15 +158,15 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			}
 			out.pipe.rdAddr := rdAddr
 			switch(opEnum){
-				is(Op.Store)	{out.pipe.rdAddr := 0.U(5.W)}
-				is(Op.Branch)	{out.pipe.rdAddr := 0.U(5.W)}
+				is(Op.Store)	{out.pipe.rdAddr := 0.U}
+				is(Op.Branch)	{out.pipe.rdAddr := 0.U}
 				is(Op.Icsr)		{out.pipe.rdAddr := Mux(funct3 === 0.U(3.W),0.U(5.W),rdAddr)}
 			}
 			in.imme.r1Addr := r1Addr
 			switch(opEnum){//反选
-			    is(Op.Ului)		{in.imme.r1Addr := 0.U(5.W)}
-				is(Op.Uauipc)	{in.imme.r1Addr := 0.U(5.W)}
-				is(Op.Jal)		{in.imme.r1Addr := 0.U(5.W)}
+			    is(Op.Ului)		{in.imme.r1Addr := 0.U}
+				is(Op.Uauipc)	{in.imme.r1Addr := 0.U}
+				is(Op.Jal)		{in.imme.r1Addr := 0.U}
 			}
 			switch(opEnum){
 				is(Op.Store)	{in.imme.r2Addr := r2Addr}
