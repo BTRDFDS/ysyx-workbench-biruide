@@ -140,6 +140,8 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		pc		:= in.pipe.pc
 		wbuChk.io.check	:= check
 		wbuChk.io.pc	:= pc
+		wbuChk.io.pipeRd	:= pipeRdAddr
+		wbuChk.io.pipeRes	:= pipeResult
 		wbuChk.clock	:= clock
 	}
 }
@@ -162,6 +164,8 @@ class ysyx_26020046_WbuChk extends ExtModule{
 		input logic [31:0] io_reg_16,io_reg_17,io_reg_18,io_reg_19,io_reg_20,io_reg_21,io_reg_22,io_reg_23,
 		input logic [31:0] io_reg_24,io_reg_25,io_reg_26,io_reg_27,io_reg_28,io_reg_29,io_reg_30,io_reg_31,
 		input logic [31:0] io_pc,
+		input logic [4:0] io_pipeRd,
+		input logic [31:0] io_pipeRes,
 		input logic io_check,
 		input logic clock
 	);
@@ -169,7 +173,7 @@ class ysyx_26020046_WbuChk extends ExtModule{
 	always_ff@(posedge clock) if(io_ebreak)ebreak();
 	export "DPI-C" function getRegPc;
 	function int getRegPc(input int addr);
-		if(addr==pipeRd)return pipeRes;
+		if(addr==io_pipeRd)return io_pipeRes;
 		else begin
 			case(addr)
 				32'd00:return io_pc;
