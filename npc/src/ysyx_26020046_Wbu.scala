@@ -132,12 +132,15 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		// when(~check && pipeValid){check := true.B}
 		// when( check && (pipeValid || in.pipe.valid)){check := false.B}
 		// wbuChk.io.check := check && (pipeValid || in.pipe.valid)
-		wbuChk.io.pc := in.pipe.pc
-		val check = Reg(Bool())
-		when(~check){check := in.pipe.valid}
-		// when(check && (in.pipe.valid)){check := false.B}
-		wbuChk.io.check := check && (in.pipe.valid)
-		wbuChk.clock := clock
+		val check	= RegInit(false.B)
+		val pc		= RegInit(0.U(BitWidth.W))
+		val noFirst	=RegInit(false.B)
+		when(~noFirst){noFirst := in.pipe.valid}
+		check	:= noFirst && (in.pipe.valid)
+		pc		:= in.pipe.pc
+		wbuChk.io.check	:= check
+		wbuChk.io.pc	:= pc
+		wbuChk.clock	:= clock
 	}
 }
 class ysyx_26020046_WbuChk extends ExtModule{
@@ -201,7 +204,7 @@ class ysyx_26020046_WbuChk extends ExtModule{
 		endcase
 	endfunction
 	import "DPI-C" function void wbuCheck();
-	always_ff@(negedge clock) if(io_check)wbuCheck();
+	always_ff@(posedge clock) if(io_check)wbuCheck();
 	// always_ff@(posedge io_check) wbuCheck();
 
 	// initial $display("%m");
