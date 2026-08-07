@@ -10,7 +10,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val pipe	= new PipeIdEx()
 		val imme	= new ImmeBefore()
 	})
-	val pipeReady	= in.imme.back===Back.Ready
+	val pipeReady	= in.imme.back===Back.Ready && in.imme.valid
 	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)||(out.imme.back===Back.Jump)
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null		,pipeReady,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U(BitWidth.W)	,pipeReady,in.pipe.pc		)
@@ -197,8 +197,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			}
 			out.pipe.fenceI := pipeInstr === 0x0000100F.U
 		}
-		when(opValid & aluValid & lsuValid & bfuValid & csrValid & in.imme.valid){
-			out.pipe.valid	:= true.B
+		when(opValid & aluValid & lsuValid & bfuValid & csrValid){
+			out.pipe.valid	:= in.imme.valid
 			out.pipe.csrOp	:= csrOp
 			out.pipe.csrMesg:= csrMesg
 		}
