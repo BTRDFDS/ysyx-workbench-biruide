@@ -173,7 +173,7 @@ class ysyx_26020046_WbuChk extends ExtModule{
 	always_ff@(posedge clock) if(io_ebreak)ebreak();
 	export "DPI-C" function getRegPc;
 	function int getRegPc(input int addr);
-		if(addr=={27'b0,io_pipeRd})return io_pipeRes;
+		if(addr=={27'b0,io_pipeRd} && io_pipeRd!=0)return io_pipeRes;
 		else begin
 			case(addr)
 				32'd00:return io_pc;
