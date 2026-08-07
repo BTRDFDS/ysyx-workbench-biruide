@@ -47,7 +47,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 			is(CsrOp.Mret){mstatus := MstatuseReset}//TODO
 			is(CsrOp.Trap){//TODO:ecall有问题
 				mcause	:= pipeCsrMesg
-				mepc 	:= Cat(pipePc,0.U(2.w))
+				mepc 	:= Cat(pipePc,0.U(2.W))
 				//TODO:mstatus
 			}
 			is(CsrOp.Write){
@@ -66,7 +66,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 				}otherwise{
 					error	:= true.B
 					mcause	:= ErrorMesg
-					mepc	:= Cat(pipePc,0.U(2.w))
+					mepc	:= Cat(pipePc,0.U(2.W))
 					//TODO:mstatus
 				}
 			}
@@ -76,7 +76,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	}
 	when((pipeValid === false.B & pipeCsrOp === CsrOp.Trap) || error){
 		mcause			:= pipeCsrMesg
-		mepc 			:= Cat(pipePc,0.U(2.w))
+		mepc 			:= Cat(pipePc,0.U(2.W))
 		out.imme.back	:= Back.Error
 		out.imme.addr	:= mtvec
 		if(Yosys == false){
@@ -139,7 +139,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		val noFirst	=RegInit(false.B)
 		when(~noFirst){noFirst := in.pipe.valid}
 		check	:= noFirst && (in.pipe.valid)
-		pc		:= Cat(in.pipe.pc,0.U(2.w))
+		pc		:= Cat(in.pipe.pc,0.U(2.W))
 		wbuChk.io.check	:= check
 		wbuChk.io.pc	:= pc
 		wbuChk.clock	:= clock

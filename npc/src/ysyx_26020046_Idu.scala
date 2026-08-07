@@ -212,7 +212,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;out.pipe.csrAddr := Cat(pipePc,0.U(2.W))}//Instruction access fault
 	}
 	if(Yosys == false){
-		val iduPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)
+		val iduPc = Mux(pipeRes=== IfuRes.Valid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)
 		val iduChk = Module(new ysyx_26020046_IduChk)
 		iduChk.clock := clock
 		iduChk.io.cal	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
