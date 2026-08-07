@@ -24,6 +24,6 @@ image: image-dep
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
-	@make -C $(NPC_HOME) runYsyxSoc t=$(TARGET) ARG=$(IMAGE).bin
+	@make -C $(NPC_HOME) runYsyxSoc ARG=$(IMAGE).bin
 
 .PHONY: insert-arg

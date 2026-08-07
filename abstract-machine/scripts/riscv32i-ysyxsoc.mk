@@ -3,12 +3,10 @@ include $(AM_HOME)/scripts/platform/ysyxsoc.mk
 COMMON_CFLAGS += -march=rv32i_zicsr -mabi=ilp32   # overwrite
 LDFLAGS       += -melf32lriscv                    # overwrite
 
-LDFLAGS += -Map $(IMAGE).map
-
 AM_SRCS += riscv/npc/libgcc/div.S \
            riscv/npc/libgcc/muldi3.S \
            riscv/npc/libgcc/multi3.c \
            riscv/npc/libgcc/ashldi3.c \
            riscv/npc/libgcc/unused.c
 
-TARGET=rv32i
+# LDFLAGS += -Map $(IMAGE).map
