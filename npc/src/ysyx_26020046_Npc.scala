@@ -42,9 +42,9 @@ class ysyx_26020046_Npc extends Module{
 		cpu.io.master.rresp		:= 0.U
 		mem.read.valid	:= true.B
 		mem.read.addr	:= Cat(araddr(31,4),(cnt+araddr(3,2)),0.U(2.W))
-		val myAddr0 = Cat(araddr(31,4),0.U(4.W))
-		val myAddr1 = araddr(3,2)
-		val myAddr2 = (cnt+araddr(3,2))
+		// val myAddr0 = Cat(araddr(31,4),0.U(4.W))
+		// val myAddr1 = araddr(3,2)
+		// val myAddr2 = (cnt+araddr(3,2))
 		when(arburst=/=2.U && arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
 		when(arsiz=/=0.U && arsiz=/=1.U && arsiz=/=2.U){printf("arsize=%x error\n",arsiz);stop();}
 	}
