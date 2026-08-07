@@ -148,7 +148,7 @@ class ysyx_26020046_Mem extends ExtModule{
 		if(write_strb[1])psram_write({5'b0,write_addr[26:2],2'b01},{24'd0,write_data[15: 8]});
 		if(write_strb[2])psram_write({5'b0,write_addr[26:2],2'b10},{24'd0,write_data[23:16]});
 		if(write_strb[3])psram_write({5'b0,write_addr[26:2],2'b11},{24'd0,write_data[31:24]});
-	end else if(write_addr==32'h10000000)$display("%c",write_data[ 7: 0]);
+	end else if(write_addr==32'h10000000)$write("%c",write_data[ 7: 0]);
 	endmodule
 	"""
 	)
