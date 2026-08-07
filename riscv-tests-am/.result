@@ -10,3 +10,4 @@
 [          bltu] [1;32mPASS[0m
 [           bne] [1;32mPASS[0m
 [           jal] [1;32mPASS[0m
+[          jalr] [1;32mPASS[0m
