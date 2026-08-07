@@ -18,7 +18,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		out.pipe.pc		:= Cat(pc,0.U(2.W))
 		out.pipe.res 	:= res
 		switch(state){
-			is(MemStatus.Call){when((ich.ready& ~change) || error)	{state := MemStatus.Back}}
+			is(MemStatus.Call){when((ich.ready& ~change & (in.imme.back === Back.Ready || in.imme.back === Back.Wait)) || error)
+																	{state := MemStatus.Back}}
 			is(MemStatus.Back){when(in.imme.back =/= Back.Wait)		{state := MemStatus.Call}}
 		}
 		when(state === MemStatus.Call){
