@@ -1,3 +1,4 @@
+//flash
 //ysyxSoCFull
 #include "VysyxSoCFull.h"
 #include "verilated.h"

@@ -1,3 +1,4 @@
+//psram
 //ysyx_26020046_Npc
 #include "Vysyx_26020046_Npc.h"
 #include "verilated.h"
@@ -66,7 +67,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 	fseek(file, 0, SEEK_END);
 	long fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
-	size_t wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+	size_t wordsRead = fread(psram, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
 	NpcDifftestInit8(psramSize,psram,psramAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-npc");
