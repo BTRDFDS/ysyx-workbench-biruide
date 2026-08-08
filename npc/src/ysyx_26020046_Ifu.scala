@@ -57,7 +57,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.stall	:= state === MemStatus.Call
 		ifuChk.jAb		:= in.imme.back === Back.Jump && state === MemStatus.Back
 		// ifuChk.jAC		:= in.imme.back === Back.Jump && state === MemStatus.Call
-		ifuChk.jAC		:= state === MemStatus.Call && (ich.ready& ~change & (in.imme.back === Back.Ready || in.imme.back === Back.Wait)) || error
+		// ifuChk.jAC		:= state === MemStatus.Call && ich.ready& ~change & (in.imme.back === Back.Ready || in.imme.back === Back.Wait)
+		ifuChk.jAC		:= (state === MemStatus.Call && ich.ready) ^( ~change & (in.imme.back === Back.Ready || in.imme.back === Back.Wait))
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
