@@ -92,7 +92,7 @@ runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-	time ./build/$(srcNpc)/V$(srcNpc) $(ARG)
+	./build/$(srcNpc)/V$(srcNpc) $(ARG)
 	make sim
 
 srcYsyxSoc = ysyxSoCFull
@@ -116,8 +116,7 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 # 	 -Wno-UNOPTFLAT
-# 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
-	time ./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
+	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim
 
 YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45

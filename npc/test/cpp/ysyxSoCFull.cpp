@@ -91,6 +91,7 @@ void NpcWave(){
 void NpcReturn(const char* msg,int returnCode){
 	NpcWave();
 	printOver(msg,returnCode);
+	contextp->statsPrintSummary();
 	delete top;
 	delete contextp;
 	exit(returnCode);
