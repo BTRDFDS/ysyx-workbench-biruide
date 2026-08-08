@@ -108,7 +108,8 @@ int main(int argc, char** argv) {
 	}
 	NpcWave();
 	printOver();
-	// contextp->statsPrintSummary();
+	contextp->statsPrintSummary();
+	contextp->coveragep()->write("ysyx_26020046_Npc.dat");
 	delete top;
 	delete contextp;
 	return returnCode;
