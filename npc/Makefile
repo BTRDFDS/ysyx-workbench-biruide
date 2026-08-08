@@ -132,17 +132,23 @@ sta:verilogSta $(srcVerilogSta)
 
 srcVerilogStaWbu += $(NPC_HOME)/build/sta/ysyx_26020046_Wbu.sv
 srcVerilogStaIdu += $(NPC_HOME)/build/sta/ysyx_26020046_Idu.sv
-srcVerilogStaExu += $(NPC_HOME)/build/sta/ysyx_26020046_Exu.sv
 srcVerilogStaIdu += $(NPC_HOME)/test/sta/ysyx_26020046_StaIdu.sv
+srcVerilogStaExu += $(NPC_HOME)/build/sta/ysyx_26020046_Exu.sv
 srcVerilogStaExu += $(NPC_HOME)/test/sta/ysyx_26020046_StaExu.sv
-staExu: $(srcVerilogStaExu)
+srcVerilogStaIch += $(NPC_HOME)/build/sta/ysyx_26020046_Ich.sv
+srcVerilogStaIfu += $(NPC_HOME)/build/sta/ysyx_26020046_Ifu.sv
+srcVerilogStaLsu += $(NPC_HOME)/build/sta/ysyx_26020046_Lsu.sv
+staExu:verilogSta $(srcVerilogStaExu)
 	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaExu RTL_FILES="$(srcVerilogStaExu)" $(YOSYS_CONFIG)
-staIdu: $(srcVerilogStaIdu)
+staIdu:verilogSta $(srcVerilogStaIdu)
 	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaIdu RTL_FILES="$(srcVerilogStaIdu)" $(YOSYS_CONFIG)
-staWbu: $(srcVerilogStaWbu)
+staWbu:verilogSta $(srcVerilogStaWbu)
 	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogStaWbu)" $(YOSYS_CONFIG)
-# staPart: verilogSta staWbu staIdu staExu
-staPart: staWbu staIdu staExu
+staIch:verilogSta $(srcVerilogStaIch)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Ich RTL_FILES="$(srcVerilogStaIch)" $(YOSYS_CONFIG)
+staIfu:verilogSta $(srcVerilogStaIfu)
+	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Ifu RTL_FILES="$(srcVerilogStaIfu)" $(YOSYS_CONFIG)
+staPart:verilogSta staWbu staIdu staExu staIch staIfu
 
 srcIcache = ysyx_26020046_Ich
 srcCppIcache += $(NPC_HOME)/test/cpp/ysyx_26020046_Ich.cpp
