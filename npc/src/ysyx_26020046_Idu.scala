@@ -10,12 +10,13 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val pipe	= new PipeIdEx()
 		val imme	= new ImmeBefore()
 	})
-	val pipeReady	= in.imme.back===Back.Ready && in.imme.valid
+	val empty		= Wire(Bool())
+	val pipeReady	= (in.imme.back===Back.Ready && in.imme.valid) || empty
 	val pipeReset	= reset.asBool||(in.imme.back===Back.Error)||(in.imme.back===Back.Jump)
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,pipeReady,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,pipeReady,in.pipe.pc		)
 	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,pipeReady,in.pipe.instr	)
-
+	empty := pipeRes === IfuRes.Null
 
 	//默认值
 	out.pipe.valid	:= false.B
