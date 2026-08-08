@@ -99,7 +99,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 				.otherwise						{hasJump := false.B}
 				out.imme.addr := result
 				out.imme.back := Mux(hasJump,Mux(in.pipe.valid||in.imme.back=/=Back.Wait,in.imme.back,Back.Ready),Back.Jump)
-			}.otherwise{out.imme.back := in.imme.back}
+			}.otherwise{out.imme.back := Mux(empty,Back.Ready,in.imme.back)}
 		}
 		switch(pipeRes){
 			is(ExuRes.Alu)	{out.pipe.result := result}
