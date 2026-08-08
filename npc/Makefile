@@ -87,7 +87,7 @@ srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
 runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
 # runNpc:$(srcCpp) $(srcCppNpc) wave
-	@verilator $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
+	@verilator $(VERILATOR_CFLAGS) --coverage $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
