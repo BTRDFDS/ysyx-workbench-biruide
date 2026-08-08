@@ -52,42 +52,42 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val ifuInst = Mux(res === IfuRes.Valid,instr,0.U(BitWidth.W));dontTouch(ifuInst)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
-		ifuChk.inst		:= state === MemStatus.Call && ich.ready && ~change
+		ifuChk.inst		:= state === MemStatus.Call && ich.ready
+		ifuChk.unable	:= state === MemStatus.Call && ich.ready && change
 		ifuChk.stall	:= state === MemStatus.Call
-		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < Cat(pc,0.U(2.W))
-		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > Cat(pc,0.U(2.W))
-		ifuChk.jump		:= in.imme.back === Back.Jump
+		ifuChk.jAb		:= in.imme.back === Back.Jump && state === MemStatus.Back
+		ifuChk.jAC		:= in.imme.back === Back.Jump && state === MemStatus.Call
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
 	val inst	= IO(Input(Bool()))
 	val stall	= IO(Input(Bool()))
-	val forward	= IO(Input(Bool()))
-	val backward= IO(Input(Bool()))
-	val jump	= IO(Input(Bool()))
+	val jAb		= IO(Input(Bool()))
+	val jAC		= IO(Input(Bool()))
+	val unable	= IO(Input(Bool()))
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_IfuChk.sv",
 	"""
 	module ysyx_26020046_IfuChk(
 		input logic inst,
 		input logic stall,
-		input logic forward,
-		input logic backward,
-		input logic jump,
+		input logic jAb	,
+		input logic jAC,
+		input logic unable,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
 	import "DPI-C" function void ifuStall();
-	import "DPI-C" function void ifuForward();
-	import "DPI-C" function void ifuBackward();
-	import "DPI-C" function void ifuJump();
+	import "DPI-C" function void ifuJaB();
+	import "DPI-C" function void ifuJaC();
+	import "DPI-C" function void ifuUnable();
 
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
 		if(inst)	ifuInst();
-		if(forward)	ifuForward();
-		if(backward)ifuBackward();
-		if(jump)	ifuJump();
+		if(jAb)		ifuJaB();
+		if(jAC)		ifuJaC();
+		if(unable)	ifuUnable();
 	end
 	endmodule
 	"""

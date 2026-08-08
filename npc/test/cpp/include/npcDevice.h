@@ -26,9 +26,9 @@ uint64_t numIchReady	=0;
 uint64_t numIchPenalty	=0;
 uint64_t numIfuInst		=0;
 uint64_t numIfuStall 	=0;
-uint64_t numIfuForward	=0;
-uint64_t numIfuBackward	=0;
-uint64_t numIfuJump		=0;
+uint64_t numIfuJaB		=0;
+uint64_t numIfuJaC		=0;
+uint64_t numIfuUnable	=0;
 uint64_t numIduCal		=0;
 uint64_t numIduJump		=0;
 uint64_t numIduImm		=0;
@@ -49,9 +49,9 @@ extern "C" void ichReady()		{numIchReady++;		}
 extern "C" void ichPenalty()	{numIchPenalty++;	}
 extern "C" void ifuInst()		{numIfuInst++;		}
 extern "C" void ifuStall()		{numIfuStall++;		}
-extern "C" void ifuForward()	{numIfuForward++;	}
-extern "C" void ifuBackward()	{numIfuBackward++;	}
-extern "C" void ifuJump()		{numIfuJump++;		}
+extern "C" void ifuJaB()		{numIfuJaB++;		}
+extern "C" void ifuJaC()		{numIfuJaC++;		}
+extern "C" void ifuUnable()		{numIfuUnable++;	}
 extern "C" void iduCal()		{numIduCal++;		}
 extern "C" void iduJump()		{numIduJump++;		}
 extern "C" void iduImm()		{numIduImm++;		}
@@ -77,11 +77,9 @@ void printCounter(){
 	((float)(numIchHit-numIchWait))/((float)numIfuInst),((float)(numIchMiss+numIchWait))/((float)numIfuInst),
 	numIchAccess-numIchWait,numIchPenalty+numIchWait
 	);
-	printf("ifu inst = %ld wait= %ld WpI= %f jump= %ld for= %ld back= %ld fpj= %f bpj= %f\n",
+	printf("ifu inst = %ld wait= %ld WpI= %f unable= %ld JaB= %ld JaC= %ld\n",
 		numIfuInst,numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst),
-		numIfuJump,numIfuForward,numIfuBackward,
-		((float)numIfuForward)/(float)(numIfuJump),
-		((float)numIfuBackward)/(float)(numIfuJump)
+		numIfuUnable,numIfuJaB,numIfuJaC
 	);
 	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld\n",
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
