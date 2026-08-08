@@ -86,7 +86,7 @@ srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
 runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
-	@verilator --coverage $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
+	@verilator --coverage --coverage-toggle $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
