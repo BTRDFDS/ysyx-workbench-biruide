@@ -91,9 +91,12 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 			out.imme.back	:= Back.Error
 			out.imme.addr	:= in.imme.addr
 		}.otherwise{
-			when((pipeEnJcod || enBfun)&&in.imme.back === Back.Ready){
+			when(pipeEnJcod || enBfun){
+				val hasJump = RegInit(false.B)
+				when(out.imme.back===Back.Jump)	{hasJump := true.B}
+				otherwise						{hasJump := false.B}
 				out.imme.addr := result
-				out.imme.back := Back.Jump
+				out.imme.back := Mux(hasJump,Mux(in.pipe.valid||in.imme.back=/=Back.Wait,in.imme.back,Back.Ready),Back.Jump)
 			}.otherwise{out.imme.back := in.imme.back}
 		}
 		switch(pipeRes){
