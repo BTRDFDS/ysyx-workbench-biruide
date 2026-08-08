@@ -213,6 +213,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	}
 	if(Yosys == false){
 		val iduPc = Mux(pipeRes=== IfuRes.Valid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)
+		val iduInstr = Mux(pipeRes=== IfuRes.Valid,pipeInstr,0.U(32.W));dontTouch(iduInstr)
 		val iduChk = Module(new ysyx_26020046_IduChk)
 		iduChk.clock := clock
 		iduChk.io.cal	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
