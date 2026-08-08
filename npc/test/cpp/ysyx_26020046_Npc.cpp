@@ -1,5 +1,4 @@
 //ysyx_26020046_Npc
-//psram
 #include "Vysyx_26020046_Npc.h"
 #include "verilated.h"
 #include "svdpi.h"
@@ -13,12 +12,6 @@
 VerilatedContext* contextp;//verilator上下文
 Vysyx_26020046_Npc* top;//顶层模块
 svScope scope;//作用域
-////////////////////////////////////////////////////////////////////////////////////////
-void NpcDifftestGetGpr(uint32_t *gpr){
-	if(gpr==NULL){NpcReturn("difftest unable",-1);}
-	for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
-	gpr[0]=0;
-	}
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDeviceMem(int argc, char** argv){
 	contextp = new VerilatedContext;
@@ -73,7 +66,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 	fseek(file, 0, SEEK_END);
 	long fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
-	size_t wordsRead = fread(psram, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
+	size_t wordsRead = fread(flash, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
 	NpcDifftestInit8(psramSize,psram,psramAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-npc");
@@ -89,14 +82,6 @@ void NpcWave(){
 	}
 	#endif
 	}
-void NpcReturn(const char* msg,int returnCode){
-	NpcWave();
-	printOver(msg,returnCode);
-	contextp->statsPrintSummary();
-	delete top;
-	delete contextp;
-	exit(returnCode);
-	}
 ////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv) {
 	NpcInitDeviceMem(argc, argv);
@@ -109,8 +94,8 @@ int main(int argc, char** argv) {
 		numCycle=0;
 	}
 	printf("\033[1;32m Welcome to ysyx_26020046_Npc[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	for(int i=0;(!contextp->gotFinish());i++){
-	// for(int i=0;i<500000&(!contextp->gotFinish());i++){
+	for(int i=0;(!contextp->gotFinish())&(!stop);i++){
+	// for(int i=0;i<500000&(!contextp->gotFinish()&(!stop));i++){
 		#ifdef NPC_NVBroad
 			nvboard_update();
 		#endif
@@ -120,5 +105,10 @@ int main(int argc, char** argv) {
 		top->clock=0;top->eval();
 		numCycle++;
 	}
-	NpcReturn("ending",-1);
+	NpcWave();
+	printOver();
+	contextp->statsPrintSummary();
+	delete top;
+	delete contextp;
+	return returnCode;
 }
