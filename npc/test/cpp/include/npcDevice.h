@@ -8,6 +8,14 @@
 #include <stdint.h>
 #include <npcDifftest.h>//我只需要difftest
 ////////////////////////////////////////////////////////////////////////////////////////
+bool stop=false;
+uint32_t returnCode=1;
+void NpcFinish(const char* msg,int code){
+	printf("%s\n",msg);
+	returnCode=code;
+	stop=true;
+}
+////////////////////////////////////////////////////////////////////////////////////////
 uint64_t numCycle		=0;
 uint64_t numInst		=0;
 uint64_t numIchHit		=0;
@@ -157,16 +165,14 @@ void dCacheTraceFileClose(){
 	VerilatedFstC* tfp;//波形文件
 	#endif
 ////////////////////////////////////////////////////////////////////////////////////////
-void printOver(const char* msg,int returnCode){
+void printOver(){
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		tfp->close();
 	#endif
 	#ifdef NPC_NVBroad
 		nvboard_quit();
 	#endif
-	printf("%s pc=0x %x\n",msg,getRegPc(0));
 	printCounter();
-
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
 	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
@@ -201,9 +207,7 @@ const uint32_t flashAddr	=0x30000000;
 const uint32_t flashSize	=0x00ffffff;//flash极限地址是bfff_ffff
 uint8_t flash[flashSize];
 
-void NpcEbreak(int returnCode);
 void NpcRun(uint32_t times);
-void NpcReturn(const char* msg,int returnCode);
 void NpcWave();
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void flash_read(int32_t addr, int32_t *data) {
@@ -211,8 +215,8 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 	#ifdef NPC_M_TRACE
 	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#endif
-	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcReturn("flash read error",addrX);}
-	if(addrX>=flashSize)NpcReturn("flash read error",addrX);
+	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcFinish("flash read error",addrX);}
+	if(addrX>=flashSize)NpcFinish("flash read error",addrX);
 	uint32_t temp=
 		((uint32_t)flash[addrX+0]<< 0)|
 		((uint32_t)flash[addrX+1]<< 8)|
@@ -225,7 +229,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 	}
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
-	if(addrX-mromAddr>=mromSize|addrX<mromAddr){NpcReturn("mrom read",-2);}
+	if(addrX-mromAddr>=mromSize|addrX<mromAddr){NpcFinish("mrom read",-2);}
 	uint32_t temp=
 		((uint32_t)mrom[addrX-mromAddr+0]<< 0)|
 		((uint32_t)mrom[addrX-mromAddr+1]<< 8)|
@@ -244,7 +248,7 @@ extern "C" int psram_read(int32_t addr){
 		// if(numCycle >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
 		// if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#endif
-	if(addrX>=psramSize)NpcReturn("psram read error",addrX);
+	if(addrX>=psramSize)NpcFinish("psram read error",addrX);
 	uint32_t temp=
 		((uint32_t)psram[addrX+0]<< 0)|
 		((uint32_t)psram[addrX+1]<< 8)|
@@ -277,7 +281,7 @@ extern "C" int sdram_read(int32_t addr){
 		if(numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<getRegPc(0)<<"\n";
 		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#endif
-	if(addrX>=sdramSize)NpcReturn("sdram read error",addrX);
+	if(addrX>=sdramSize)NpcFinish("sdram read error",addrX);
 	uint32_t temp=
 		((uint32_t)sdram[addrX+0]<< 0)|
 		((uint32_t)sdram[addrX+1]<< 8)|
@@ -305,18 +309,26 @@ extern "C" void sdram_write(int addr,int data){
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
-extern void NpcReturn(const char* msg,int returnCode);
 extern "C" int getRegPc(int addr);
 extern "C" int getNextPc();
 extern "C" void ebreak(){
 	numInst++;numIduCsr++;
 	iCacheTraceFileWrite(getRegPc(0));
-	NpcReturn("\nebreak",getRegPc(10)!=0);
+	NpcFinish("ebreak",getRegPc(10)!=0);
 	}
 extern "C" void wbuCheck(){
 	numInst++;
 	iCacheTraceFileWrite(getRegPc(0));
-	if(NpcDifftestCheck(getRegPc(0)))NpcReturn("difftest",-1);
+	if(NpcDifftestCheck(getRegPc(0)))NpcFinish("difftest end",-1);
+	}
+void NpcDifftestGetGpr(uint32_t *gpr){
+	if(gpr==NULL){
+		for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
+		gpr[0]=0;
+	}else{
+		printf("difftest *gpr=Null");
+		stop=true;
+	}
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
 #endif
