@@ -8,7 +8,6 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		val master = new Axi4MasterOut()
 		val slave = Flipped(new Axi4MasterOut())
 	})
-	RegNum := 16
 	val ich = Module(new ysyx_26020046_Ich(Yosys))
 	val ifu = Module(new ysyx_26020046_Ifu(PcInit,Yosys))
 	val idu = Module(new ysyx_26020046_Idu(Yosys))
