@@ -55,6 +55,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	in.imme.r2Addr	:= out.imme.r2Addr
 	in.imme.csrAddr	:= out.imme.csrAddr
 
+	val enBfun = WireInit(false.B)
 	when(pipeValid){
 		val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
 		val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeResult)
@@ -74,7 +75,6 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 			is(ExuAlu.Imm)	{result := pipeResult}
 			is(ExuAlu.Jalr)	{result := Cat((pipeR1 + pipeResult)(31,1), 0.U(1.W))}
 		}
-		val enBfun = WireInit(false.B)
 		switch(pipeBfu){
 			is(ExuBfu.Beq)	{enBfun := pipeR1 === pipeR2}
 			is(ExuBfu.Bne)	{enBfun := pipeR1 =/= pipeR2}
@@ -118,7 +118,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		// 	pipeAlu === ExuAlu.Null &&
 		// 	pipeBfu === ExuBfu.Null &&
 		// 	pipeCsr === ExuCsr.Null)
-		exuChk.done := pipeValid&&in.pipe.valid&&pipeEnJcod
+		exuChk.done := pipeValid&&in.pipe.valid&&(pipeEnJcod || enBfun)
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
