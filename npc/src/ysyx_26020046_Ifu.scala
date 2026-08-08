@@ -43,7 +43,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		}
 		when(in.imme.back === Back.Error || in.imme.back === Back.Jump){
 			error := in.imme.addr(1,0) =/= 0.U
-			when(state===MemStatus.Call){change := true.B}
+			when(state===MemStatus.Call){change := pc(BitWidth-2-1,CacheBit+CacheWidth) =/= in.imme.addr(BitWidth-1,CacheBit+CacheWidth+2)}
 		}
 
 
