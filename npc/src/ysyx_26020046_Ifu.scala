@@ -52,7 +52,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val ifuInst = Mux(res === IfuRes.Valid,instr,0.U(BitWidth.W));dontTouch(ifuInst)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
-		ifuChk.inst		:= state === MemStatus.Call && ich.ready
+		ifuChk.inst		:= state === MemStatus.Call && ich.ready && ~change
 		ifuChk.stall	:= state === MemStatus.Call
 		ifuChk.forward	:= in.imme.back === Back.Jump && in.imme.addr < Cat(pc,0.U(2.W))
 		ifuChk.backward	:= in.imme.back === Back.Jump && in.imme.addr > Cat(pc,0.U(2.W))
