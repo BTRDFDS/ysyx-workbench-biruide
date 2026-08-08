@@ -86,7 +86,7 @@ srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
 runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
-	verilator --coverage --coverage-toggle $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
+	verilator --coverage --coverage-toggle --coverage-branch $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
@@ -171,3 +171,6 @@ buildDcachesim:./test/cpp/dcachesim/dcachesim.cpp
 	clang++ ./test/cpp/dcachesim/dcachesim.cpp -o ./test/cpp/dcachesim/dcachesim
 dcachesim:./test/cpp/dcachesim/dcachesim
 	time ./test/cpp/dcachesim/dcachesim
+
+coverager:
+	lcov --list --rc branch_coverage=1 --rc function_coverage=0 /home/biruide/ysyx-workbench/npc/log/merged.info
