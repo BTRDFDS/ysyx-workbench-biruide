@@ -39,7 +39,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.in1	:= ExuIn1.R1
 	out.pipe.in2	:= ExuIn2.R2
 
-	out.imme.back	:= in.imme.back
+	out.imme.back	:= Mux(in.imme.back===Wait,Mux(empty,Back.Ready,in.imme.back),in.imme.back)
 	out.imme.addr	:= in.imme.addr
 
 	in.imme.r1Addr	:= 0.U

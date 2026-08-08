@@ -320,7 +320,7 @@ extern "C" void wbuCheck(){
 	if(NpcDifftestCheck(getRegPc(0)))NpcFinish("difftest end",-1);
 	}
 void NpcDifftestGetGpr(uint32_t *gpr){
-	if(gpr==NULL){
+	if(gpr){
 		for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
 		gpr[0]=0;
 	}else{
