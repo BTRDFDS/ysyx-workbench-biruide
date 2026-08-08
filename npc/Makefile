@@ -86,7 +86,6 @@ srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
 runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
-# runNpc:$(srcCpp) $(srcCppNpc) wave
 	verilator $(VERILATOR_CFLAGS) --coverage $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
@@ -110,7 +109,6 @@ SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
 
 runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
-# runYsyxSoc:$(srcCpp) $(srcCppYsyxSoc) wave
 	@verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
@@ -126,7 +124,6 @@ YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 
 srcVerilogSta += $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv")
 sta:verilogSta $(srcVerilogSta)
-# sta: $(srcVerilogSta)
 	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)" $(YOSYS_CONFIG)
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
 
@@ -155,7 +152,6 @@ srcCppIcache += $(NPC_HOME)/test/cpp/ysyx_26020046_Ich.cpp
 srcVerilogIcache += $(shell find $(NPC_HOME)/build/icache -type f -name "*.sv")
 # BuilderIcache
 runIcache:verilogIcache $(srcCppIcache)
-# runIcache: $(srcCppIcache)
 	@verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
 	--exe $(srcCpp) $(srcCppIcache) --Mdir build/$(srcIcache) --build \
 	--top-module $(srcIcache) \
