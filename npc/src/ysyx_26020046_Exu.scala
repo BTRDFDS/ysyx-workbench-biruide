@@ -114,10 +114,11 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val exuPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(exuPc)
 		val exuChk = Module(new ysyx_26020046_ExuChk)
 		exuChk.clock := clock
-		exuChk.done := out.pipe.valid && in.imme.back =/= Back.Wait && ~(
-			pipeAlu === ExuAlu.Null &&
-			pipeBfu === ExuBfu.Null &&
-			pipeCsr === ExuCsr.Null)
+		// exuChk.done := out.pipe.valid && in.imme.back =/= Back.Wait && ~(
+		// 	pipeAlu === ExuAlu.Null &&
+		// 	pipeBfu === ExuBfu.Null &&
+		// 	pipeCsr === ExuCsr.Null)
+		exuChk.done := pipeValid&&in.pipe.valid 
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
