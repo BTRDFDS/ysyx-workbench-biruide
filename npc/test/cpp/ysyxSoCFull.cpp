@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
 		numCycle++;
 	}
 	NpcWave();
-	printOver(returnCode);
+	printOver();
 	contextp->statsPrintSummary();
 	delete top;
 	delete contextp;
