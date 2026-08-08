@@ -109,7 +109,7 @@ SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
 
 runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
-	@verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
+	verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
@@ -152,7 +152,7 @@ srcCppIcache += $(NPC_HOME)/test/cpp/ysyx_26020046_Ich.cpp
 srcVerilogIcache += $(shell find $(NPC_HOME)/build/icache -type f -name "*.sv")
 # BuilderIcache
 runIcache:verilogIcache $(srcCppIcache)
-	@verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
+	verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
 	--exe $(srcCpp) $(srcCppIcache) --Mdir build/$(srcIcache) --build \
 	--top-module $(srcIcache) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
