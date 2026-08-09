@@ -14,16 +14,17 @@ int main() {
 	uint8_t jump;
 	for(uint64_t cnt=0;;cnt++){
 		if(!file.read((char*)&pc, sizeof(pc))){
-			printf("cnt= %ld bij= %ld bnj= %ld jump= %f\n",cnt,bij,bnj,bij/(float)cnt);
+			printf("cnt= %ld bij= %ld bnj= %ld iB= %f nB= %f\n",cnt,bij,bnj,bij/(float)cnt,bnj/(float)cnt);
 			break;
 		}
-		file.read((char*)&jump, sizeof(jump))
+		file.read((char*)&jump, sizeof(jump));
 		if(jump==1){
+			file.read((char*)&addr, sizeof(addr));
 			bij++;
 		}else if(jump==0){
 			bnj++;
 		}else{
-			printf("jump= %d\n");
+			printf("jump= %d\n",jump);
 			break;
 		}
 	}
