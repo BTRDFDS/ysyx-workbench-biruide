@@ -137,6 +137,8 @@ class ysyx_26020046_ExuChk extends ExtModule{
 	module ysyx_26020046_ExuChk(
 		input logic bnj,
 		input logic bij,
+		input logic [31:0]addr,
+		input logic [31:0]pc,
 		input logic clock
 	);
 	import "DPI-C" function void exuBnj();
