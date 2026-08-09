@@ -124,22 +124,22 @@ bool TPGL(bool actual,uint32_t pc) {//从deepseek搞来锦标赛体验一下，�
 }
 bool TAGE(bool actual,uint32_t pc) {//也是从deepseek搞来的
     // ========== 1. 硬件参数（编译期固定） ==========
-    static const uint32_t TAGEbanks = 9;          // 4 个标记表（不含基础表）
+    static const uint32_t TAGEbanks = 4;          // 4 个标记表（不含基础表）
     static const uint32_t TAGEtable_size = 1024;  // 每个表 1024 项
     static const uint32_t TAGEmask = TAGEtable_size - 1u;
     
     // 各级历史长度（几何级数）：基础表(0)，表1(4)，表2(8)，表3(16)，表4(32)
-    static const uint32_t TAGEhist_len[10] = {0, 4, 8, 16, 32,64,128,256,512,1024};
+    static const uint32_t TAGEhist_len[5] = {0, 4, 8, 16, 32};
     // 对应的掩码，用于截取 GHR 的低位（避免移位溢出）
-    static const uint32_t TAGEhist_mask[10] = {0, 0xF, 0xFF, 0xFFFF, 0xFFFFFFFF, 0xFFFFFFFFF,0xFFFFFFFFFF,0xFFFFFFFFFFF,0xFFFFFFFFFFFF,0xFFFFFFFFFFFFFF};
+    static const uint32_t TAGEhist_mask[5] = {0, 0xF, 0xFF, 0xFFFF, 0xFFFFFFFF};
 
     // ========== 2. 存储单元（SRAM 阵列） ==========
     // 计数器表（2-bit 饱和计数器）：[表编号][表项索引]
-    static uint8_t TAGEpred[10][1024];
+    static uint8_t TAGEpred[5][1024];
     // 标签表：用于验证当前 PC+历史 是否命中该项
-    static uint32_t TAGEtag[10][1024];
+    static uint32_t TAGEtag[5][1024];
     // 有用性计数器（2-bit）：记录该表项是否“经常被用到”，用于替换策略
-    static uint8_t TAGEuseful[10][1024];
+    static uint8_t TAGEuseful[5][1024];
 
     // 全局历史寄存器（GHR）
     static uint32_t TAGEghr = 0;
@@ -147,7 +147,7 @@ bool TAGE(bool actual,uint32_t pc) {//也是从deepseek搞来的
     // ========== 3. 上电复位（仅执行一次） ==========
     static bool TAGEinit = true;
     if (TAGEinit) {
-        for (uint32_t i = 0; i < 10; ++i) {
+        for (uint32_t i = 0; i < 5; ++i) {
             for (uint32_t j = 0; j < TAGEtable_size; ++j) {
                 TAGEpred[i][j] = 2;    // 初始化为“弱跳转”
                 TAGEuseful[i][j] = 0;  // 初始为“无用”
