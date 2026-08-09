@@ -120,10 +120,10 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val exuPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(exuPc)
 		val exuChk = Module(new ysyx_26020046_ExuChk)
 		exuChk.clock:= clock
-		exuChk.bnj	:= pipeValid&&pipeBfu=/=ExuBfu.Null&& ~enBfun
-		exuChk.bij	:= pipeValid&&pipeBfu=/=ExuBfu.Null&& enBfun && out.imme.back===Back.Jump
+		exuChk.bnj	:= pipeValid&&pipeBfu=/=ExuBfu.Null&& ~enBfun && out.imme.back===Back.Ready
+		exuChk.bij	:= pipeValid&&pipeBfu=/=ExuBfu.Null&&  enBfun && out.imme.back===Back.Jump
 		exuChk.addr := out.imme.addr
-		exuChk.pc 	:= exuPc
+		exuChk.pc 	:= Cat(pipePc,0.U(2.W))
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
@@ -143,12 +143,16 @@ class ysyx_26020046_ExuChk extends ExtModule{
 	);
 	import "DPI-C" function void exuBnj();
 	import "DPI-C" function void exuBij();
+	// import "DPI-C" function void exuBnTrace(int pc);
+	// import "DPI-C" function void exuBiTrace(int pc,int addr);
 	always_ff@(posedge clock)begin
-		// if(bnj)	exuBnj();
+		if(bnj) exuBnj();
 		if(bij) exuBij();
+		// if(bnj) exuBnTrace(pc);
+		// if(bij) exuBiTrace(pc,addr);
 	end
-	always_ff@(posedge bnj)exuBnj();
-	// always_ff@(posedge bij)exuBij();
+	// always_ff@(posedge bnj)exuBnj(pc);
+	// always_ff@(posedge bij)exuBij(pc);
 	endmodule
 	"""
 	)
