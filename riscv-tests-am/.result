@@ -8,3 +8,4 @@
 [          bgeu] [1;32mPASS[0m
 [           blt] [1;32mPASS[0m
 [          bltu] [1;32mPASS[0m
+[           bne] [1;32mPASS[0m
