@@ -125,7 +125,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		// 	pipeBfu === ExuBfu.Null &&
 		// 	pipeCsr === ExuCsr.Null)
 		// exuChk.done := pipeValid&&in.pipe.valid&&(pipeEnJcod || enBfun)
-		exuChk.bnj := pipeValid&&pipeBfu=/=ExuBfu.Null&& ~enBfun
+		exuChk.bnj := pipeValid&&pipeBfu=/=ExuBfu.Null&& enBfun
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
