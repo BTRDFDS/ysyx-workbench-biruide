@@ -10,13 +10,12 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val pipe	= new PipeIdEx()
 		val imme	= new ImmeBefore()
 	})
-	val empty		= Wire(Bool())
-	val pipeReady	= (in.imme.back===Back.Ready && in.imme.valid) || empty
+	val pipeReady	= Wire(Bool())
 	val pipeReset	= reset.asBool||(in.imme.back===Back.Error)||(in.imme.back===Back.Jump)
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,pipeReady,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,pipeReady,in.pipe.pc		)
 	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,pipeReady,in.pipe.instr	)
-	empty := pipeRes === IfuRes.Null
+	pipeReady := (in.imme.back===Back.Ready && in.imme.valid) || pipeRes === IfuRes.Null
 
 	//默认值
 	out.pipe.valid	:= false.B
@@ -39,7 +38,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.in1	:= ExuIn1.R1
 	out.pipe.in2	:= ExuIn2.R2
 
-	out.imme.back	:= Mux(in.imme.back===Back.Wait,Mux(empty,Back.Ready,in.imme.back),in.imme.back)
+	out.imme.back	:= Mux(in.imme.back===Back.Wait && pipeReady,Back.Ready,in.imme.back)
 	out.imme.addr	:= in.imme.addr
 
 	in.imme.r1Addr	:= 0.U

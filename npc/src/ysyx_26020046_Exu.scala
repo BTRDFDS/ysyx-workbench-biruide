@@ -11,8 +11,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val imme = new ImmeAfter()
 		val pipe = new PipeExLs()
 	})
-	val empty		= Wire(Bool())
-	val pipeReady	= in.imme.back===Back.Ready || empty
+	// val pipeReady	= in.imme.back===Back.Ready || empty
+	val pipeReady	= Wire(Bool())
 	val pipeReset	= reset.asBool||(in.imme.back===Back.Error)
 	val pipeValid	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.fenceI	)
@@ -33,7 +33,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val pipeRes		= PipeReg(pipeReset,ExuRes.Alu			,pipeReady,in.pipe.res		)
 	val pipeIn1		= PipeReg(pipeReset,ExuIn1.R1			,pipeReady,in.pipe.in1		)
 	val pipeIn2		= PipeReg(pipeReset,ExuIn2.R2			,pipeReady,in.pipe.in2		)
-	empty := ~pipeValid
+	pipeReady := in.imme.back===Back.Ready || ~pipeValid
 
 	out.pipe.lsuAddr:= pipeLsuAddr
 	out.pipe.lsuOp	:= pipeLsuOp
@@ -47,7 +47,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	out.pipe.result := 0.U
 	out.pipe.csrMesg:= pipeCsrMesg
 	
-	out.imme.back	:= Mux(in.imme.back===Back.Wait,Mux(empty,Back.Ready,in.imme.back),in.imme.back)
+	// out.imme.back	:= Mux(in.imme.back===Back.Wait,Mux(empty,Back.Ready,in.imme.back),in.imme.back)
+	out.imme.back	:= Mux(in.imme.back===Back.Error,Back.Error,Back.Ready)
 	out.imme.addr	:= 0.U
 	out.imme.r1Out	:= in.imme.r1Out
 	out.imme.r2Out	:= in.imme.r2Out
@@ -98,7 +99,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 				when(out.imme.back===Back.Jump)	{hasJump := true.B}
 				.otherwise						{hasJump := false.B}
 				out.imme.addr := result
-				out.imme.back := Mux(hasJump,Mux(in.pipe.valid||in.imme.back=/=Back.Wait,in.imme.back,Back.Ready),Back.Jump)
+				out.imme.back := Mux(hasJump,in.imme.back,Back.Jump)
 			}.otherwise{out.imme.back := in.imme.back}
 		}
 		switch(pipeRes){
