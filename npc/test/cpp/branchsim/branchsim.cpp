@@ -18,14 +18,21 @@ bool BPB1(bool result){
 	b1 = result;
 	return res;
 }
-
-
-
+bool BPB2(bool result){
+	static uint8_t b2{2};
+	bool res = b2>=2;
+	if(result){
+		if(b2<3){b2++;}
+	}else{
+		if(b2>0){b2--;}
+	}
+	return res;
+}
 
 int main() {
 	file.open("./bin/Bdiv.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t bij{},bnj{},btf{},btb{},hitBTFN{},hitBPB1{};
+	uint64_t bij{},bnj{},btf{},btb{},hitBTFN{},hitBPB1{},hitBPB2{};
 	uint32_t addr,pc;
 	uint8_t state;
 	for(uint64_t cnt=0;;cnt++){
@@ -39,6 +46,7 @@ int main() {
 			);
 			printf("hitBTFN= %ld[%f]\n",hitBTFN,hitBTFN/(float)cnt);
 			printf("hitBPB1= %ld[%f]\n",hitBPB1,hitBPB1/(float)cnt);
+			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)cnt);
 			break;
 		}
 		file.read((char*)&state, sizeof(state));
@@ -49,6 +57,7 @@ int main() {
 		}else{btb++;}
 		if((state&0x7f)==BTFN(state>>7)){hitBTFN++;}
 		if((state&0x7f)==BPB1(state>>7)){hitBPB1++;}
+		if((state&0x7f)==BPB2(state>>7)){hitBPB2++;}
 	}
 	file.close();
 }
