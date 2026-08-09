@@ -13,7 +13,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	})
 	// val pipeReady	= in.imme.back===Back.Ready || empty
 	val pipeReady	= Wire(Bool())
-	val pipeReset	= reset.asBool||(in.imme.back===Back.Error)
+	val pipeReset	= reset.asBool||(in.imme.back===Back.Error ||out.imme.back===Back.Jump)
 	val pipeValid	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.fenceI	)
 	val pipeEnJcod	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.enJcod	)
@@ -33,7 +33,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val pipeRes		= PipeReg(pipeReset,ExuRes.Alu			,pipeReady,in.pipe.res		)
 	val pipeIn1		= PipeReg(pipeReset,ExuIn1.R1			,pipeReady,in.pipe.in1		)
 	val pipeIn2		= PipeReg(pipeReset,ExuIn2.R2			,pipeReady,in.pipe.in2		)
-	pipeReady := out.imme.back===Back.Ready || ~pipeValid
+	pipeReady := in.imme.back===Back.Ready || ~pipeValid
 
 	out.pipe.lsuAddr:= pipeLsuAddr
 	out.pipe.lsuOp	:= pipeLsuOp
