@@ -48,7 +48,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		bar.valid	:= false.B
 		bar.addr	:= 0.U
 		cnt			:= 0.U
-		foreach(burstValid){_ := false.B}
+		burstValid.foreach(_ := false.B)
 	}
 	ifu.ready	:= false.B
 	ifu.data	:= data(addrIdx)(addrOffset)
