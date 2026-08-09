@@ -197,8 +197,8 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 	#ifdef NPC_M_TRACE
 	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#endif
-	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){NpcFinish("flash read error",addrX);}
-	if(addrX>=flashSize)NpcFinish("flash read error",addrX);
+	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){return NpcFinish("flash read error",addrX);}
+	if(addrX>=flashSize)return NpcFinish("flash read error",addrX);
 	uint32_t temp=
 		((uint32_t)flash[addrX+0]<< 0)|
 		((uint32_t)flash[addrX+1]<< 8)|
@@ -211,7 +211,7 @@ extern "C" void flash_read(int32_t addr, int32_t *data) {
 	}
 extern "C" void mrom_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
-	if(addrX-mromAddr>=mromSize|addrX<mromAddr){NpcFinish("mrom read",-2);}
+	if(addrX-mromAddr>=mromSize|addrX<mromAddr){return NpcFinish("mrom read",-2);}
 	uint32_t temp=
 		((uint32_t)mrom[addrX-mromAddr+0]<< 0)|
 		((uint32_t)mrom[addrX-mromAddr+1]<< 8)|
@@ -230,7 +230,7 @@ extern "C" int psram_read(int32_t addr){
 		// if(numCycle >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
 		// if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#endif
-	if(addrX>=psramSize)NpcFinish("psram read error",addrX);
+	if(addrX>=psramSize){NpcFinish("psram read error",addrX);return 0;}
 	uint32_t temp=
 		((uint32_t)psram[addrX+0]<< 0)|
 		((uint32_t)psram[addrX+1]<< 8)|
@@ -263,7 +263,7 @@ extern "C" int sdram_read(int32_t addr){
 		if(numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<getRegPc(0)<<"\n";
 		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
 	#endif
-	if(addrX>=sdramSize)NpcFinish("sdram read error",addrX);
+	if(addrX>=sdramSize){NpcFinish("sdram read error",addrX);return 0;}
 	uint32_t temp=
 		((uint32_t)sdram[addrX+0]<< 0)|
 		((uint32_t)sdram[addrX+1]<< 8)|
@@ -296,12 +296,12 @@ extern "C" int getNextPc();
 extern "C" void ebreak(){
 	numInst++;numIduCsr++;
 	iCacheTraceFileWrite(getRegPc(0));
-	NpcFinish("ebreak",getRegPc(10)!=0);
+	return NpcFinish("ebreak",getRegPc(10)!=0);
 	}
 extern "C" void wbuCheck(){
 	numInst++;
 	iCacheTraceFileWrite(getRegPc(0));
-	if(NpcDifftestCheck(getRegPc(0)))NpcFinish("difftest end",-1);
+	if(NpcDifftestCheck(getRegPc(0)))return NpcFinish("difftest end",-1);
 	}
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr){
