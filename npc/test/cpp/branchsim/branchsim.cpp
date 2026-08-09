@@ -3,35 +3,52 @@
 #include <stdio.h>
 #include <fstream>
 #include <stdint.h>
-
-
 std::fstream file;
+
+bool BTFN(bool forward){
+	if(forward){
+		return true;
+	}else{
+		return false;
+	}
+}
+bool BPB1(bool result){
+	static bool b1{1};
+	bool res = b1;
+	b1 = result;
+	return res;
+}
+
+
+
+
 int main() {
 	file.open("./bin/Bdiv.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t bij{},bnj{},btf{},btb{};
+	uint64_t bij{},bnj{},btf{},btb{},hitBTFN{},hitBPB1{};
 	uint32_t addr,pc;
 	uint8_t state;
 	for(uint64_t cnt=0;;cnt++){
 		if(!file.read((char*)&pc, sizeof(pc))){
-			printf("cnt= %ld bij= %ld[%f] bnj= %ld[%f] btf= %ld[%f] btb= %ld[%f] \n",cnt,bij,bij/(float)cnt,bnj,bnj/(float)cnt,btf,btf/(float)cnt,btb,btb/(float)cnt);
+			printf("cnt= %ld bij= %ld[%f] bnj= %ld[%f] btf= %ld[%f] btb= %ld[%f]\n",
+				cnt,
+				bij,bij/(float)cnt,
+				bnj,bnj/(float)cnt,
+				btf,btf/(float)cnt,
+				btb,btb/(float)cnt
+			);
+			printf("hitBTFN= %ld[%f]\n",hitBTFN,hitBTFN/(float)cnt);
+			printf("hitBPB1= %ld[%f]\n",hitBPB1,hitBPB1/(float)cnt);
 			break;
 		}
 		file.read((char*)&state, sizeof(state));
-		if((state&0x7f)==1){
-			file.read((char*)&addr, sizeof(addr));
-			bij++;
-		}else if((state&0x7f)==0){
-			bnj++;
-		}else{
-			printf("state= %d\n",state);
-			break;
-		}
-		if(state>>7){
-			btf++;
-		}else{
-			btb++;
-		}
+		if((state&0x7f)==1){file.read((char*)&addr, sizeof(addr));bij++;
+		}else if((state&0x7f)==0){bnj++;
+		}else{printf("state= %d\n",state);break;}
+		if(state>>7){btf++;
+		}else{btb++;}
+		if((state&0x7f)==BTFN(state>>7)){hitBTFN++;}
+		if((state&0x7f)==BPB1(state>>7)){hitBPB1++;}
 	}
 	file.close();
 }
