@@ -49,7 +49,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	// }.otherwise{//in.imme.back===Back.Wait
 	// 	out.imme.back := Back.Wait
 	// }
-	when(in.imme.back===Back.Ready){
+	when(in.imme.back===Back.Ready || in.imme.back===Back.Wait){
 				out.imme.back := Mux(pipeReady,Back.Ready,Back.Wait)
 	}.otherwise{out.imme.back := in.imme.back}
 	out.imme.addr	:= in.imme.addr
