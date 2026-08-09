@@ -124,6 +124,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		exuChk.bij	:= pipeValid&&pipeBfu=/=ExuBfu.Null&&  enBfun && out.imme.back===Back.Jump
 		exuChk.addr := out.imme.addr
 		exuChk.pc 	:= Cat(pipePc,0.U(2.W))
+		exuChk.sext	:= pipeResult(31)
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
@@ -131,6 +132,7 @@ class ysyx_26020046_ExuChk extends ExtModule{
 	val bij = IO(Input(Bool()))
 	val addr= IO(Input(UInt(32.W)))
 	val pc	= IO(Input(UInt(32.W)))
+	val sext= IO(Input(UInt( 1.W)))
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_ExuChk.sv",
 	"""
@@ -139,20 +141,19 @@ class ysyx_26020046_ExuChk extends ExtModule{
 		input logic bij,
 		input logic [31:0]addr,
 		input logic [31:0]pc,
+		input logic sext,
 		input logic clock
 	);
 	import "DPI-C" function void exuBnj();
 	import "DPI-C" function void exuBij();
-	import "DPI-C" function void exuBnTrace(int pc);
-	import "DPI-C" function void exuBiTrace(int pc,int addr);
+	import "DPI-C" function void exuBnTrace(int pc,bit state);
+	import "DPI-C" function void exuBiTrace(int pc,bit state,int addr);
 	always_ff@(posedge clock)begin
 		if(bnj) exuBnj();
 		if(bij) exuBij();
-		if(bnj) exuBnTrace(pc);
-		if(bij) exuBiTrace(pc,addr);
+		if(bnj) exuBnTrace(pc,{sext,6'b0,1'b0});
+		if(bij) exuBiTrace(pc,{sext,6'b0,1'b1},addr);
 	end
-	// always_ff@(posedge bnj)exuBnj(pc);
-	// always_ff@(posedge bij)exuBij(pc);
 	endmodule
 	"""
 	)
