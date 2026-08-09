@@ -159,7 +159,7 @@ void exuBnTrace(int pc){
 	#if defined(NPC_BRACHE_TRACE)
 	uint32_t pcX=(uint32_t)pc;
 	branchTraceFile.write((const char*)&pcX, 4);
-	const uint8_t nJump = 0;
+	const uint8_t nJump = 0b10000000;
 	branchTraceFile.write((const char*)&nJump, 1);
 	#endif
 	}
@@ -167,7 +167,7 @@ void exuBiTrace(int pc,int addr){
 	#if defined(NPC_BRACHE_TRACE)
 	uint32_t pcX=(uint32_t)pc;
 	branchTraceFile.write((const char*)&pcX, 4);
-	const uint8_t iJump = 1;
+	const uint8_t iJump = 0b10000001;
 	branchTraceFile.write((const char*)&iJump, 1);
 	uint32_t addrX=(uint32_t)addr;
 	branchTraceFile.write((const char*)&addrX, 4);
