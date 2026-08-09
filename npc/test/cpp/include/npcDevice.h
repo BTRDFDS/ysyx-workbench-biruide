@@ -155,13 +155,13 @@ void branchTraceFileInit(){
 	}
 	#endif
 	}
-void exuBnTrace(int pc,unsigned char state){
+void exuBnTrace(int pc,char state){
 	#if defined(NPC_BRACHE_TRACE)
 	branchTraceFile.write((const char*)&pc,		4);
 	branchTraceFile.write((const char*)&state,	1);
 	#endif
 	}
-void exuBiTrace(int pc,unsigned char state,int addr){
+void exuBiTrace(int pc,char state,int addr){
 	#if defined(NPC_BRACHE_TRACE)
 	branchTraceFile.write((const char*)&pc,		4);
 	branchTraceFile.write((const char*)&state,	1);
