@@ -19,11 +19,7 @@ void NpcFinish(const char* msg,int code){
 uint64_t numCycle		=0;
 uint64_t numInst		=0;
 uint64_t numIchHit		=0;
-uint64_t numIchWait		=0;
 uint64_t numIchMiss		=0;
-uint64_t numIchAccess	=0;
-uint64_t numIchReady	=0;
-uint64_t numIchPenalty	=0;
 uint64_t numIfuInst		=0;
 uint64_t numIfuStall 	=0;
 uint64_t numIfuJaB		=0;
@@ -35,18 +31,14 @@ uint64_t numIduImm		=0;
 uint64_t numIduLs		=0;
 uint64_t numIduCsr		=0;
 uint64_t numIduBr		=0;
-uint64_t numExuDone		=0;
+uint64_t numExuBnj		=0;
 uint64_t numLsuLoad		=0;
 uint64_t numLsuLoadWait	=0;
 uint64_t numLsuStore	=0;
 uint64_t numLsuStoreWait=0;
 
 extern "C" void ichHit()		{numIchHit++;		}
-extern "C" void ichWait()		{numIchWait++;		}
 extern "C" void ichMiss()		{numIchMiss++;		}
-extern "C" void ichAccess()		{numIchAccess++;	}
-extern "C" void ichReady()		{numIchReady++;		}
-extern "C" void ichPenalty()	{numIchPenalty++;	}
 extern "C" void ifuInst()		{numIfuInst++;		}
 extern "C" void ifuStall()		{numIfuStall++;		}
 extern "C" void ifuJaB()		{numIfuJaB++;		}
@@ -58,7 +50,7 @@ extern "C" void iduImm()		{numIduImm++;		}
 extern "C" void iduLs()			{numIduLs++;		}
 extern "C" void iduCsr()		{numIduCsr++;		}
 extern "C" void iduBr()			{numIduBr++;		}
-extern "C" void exuDone()		{numExuDone++;		}
+extern "C" void exuBnj()		{numExuBnj++;		}
 extern "C" void lsuLoad()		{numLsuLoad++;		}
 extern "C" void lsuLoadWait()	{numLsuLoadWait++;	}
 extern "C" void lsuStore()		{numLsuStore++;		}
@@ -66,17 +58,7 @@ extern "C" void lsuStoreWait()	{numLsuStoreWait++;	}
 
 void printCounter(){
 	printf("cycle= %ld inst= %ld IPC= %f CPI= %f\n",numCycle,numInst,((float)numInst)/((float)numCycle),((float)numCycle)/((float)numInst));//实质上是已经是next pc了
-	printf("ich hit= %ld wait= %ld miss= %ld Hp= %f Mp= %f Access= %ld Ready= %ld Penalty= %ld ApH= %f PpM= %f AMAT =%f\n",numIchHit,numIchWait,numIchMiss,
-	((float)numIchHit)/((float)numIfuInst),((float)numIchMiss)/((float)numIfuInst),
-	numIchAccess,numIchReady,numIchPenalty,
-	((float)numIchAccess)/((float)numIchHit),((float)numIchPenalty)/((float)numIchMiss),
-	(numIchAccess+numIchPenalty)/((float)numIfuInst)
-	);
-	printf("ich ture hit= %ld miss= %ld Hp= %f Mp= %f Access= %ld Penalty= %ld \n",
-		numIchHit-numIchWait,numIchMiss+numIchWait,
-	((float)(numIchHit-numIchWait))/((float)numIfuInst),((float)(numIchMiss+numIchWait))/((float)numIfuInst),
-	numIchAccess-numIchWait,numIchPenalty+numIchWait
-	);
+	printf("ich hit= %ld miss= %ld sum= %ld Hp= %f Mp= %f \n",numIchHit,numIchMiss,numIchHit+numIchMiss,numIchHit/(float)numIfuInst,numIchHit/(float)numIfuInst);
 	printf("ifu inst = %ld wait= %ld WpI= %f unable= %ld JaB= %ld JaC= %ld\n",
 		numIfuInst,numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst),
 		numIfuUnable,numIfuJaB,numIfuJaC
@@ -85,7 +67,7 @@ void printCounter(){
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
 		numIduCal+numIduJump+numIduImm+numIduLs+numIduCsr+numIduBr
 	);
-	printf("exu done= %ld\n",numExuDone);
+	printf("exu bnj= %ld jpb= %f\n",numExuBnj,numExuBnj/(float)numIduBr);
 	printf("lsu load= %ld loadWait= %ld WpL= %f\n",numLsuLoad,numLsuLoadWait,(float)((float)numLsuLoadWait)/((float)numLsuLoad));
 	printf("lsu store= %ld storeWait= %ld WpS= %f\n",numLsuStore,numLsuStoreWait,(float)((float)numLsuStoreWait)/((float)numLsuStore));
 }

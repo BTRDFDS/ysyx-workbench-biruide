@@ -119,7 +119,7 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 	make sim
 
-YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=icsprout55
+YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 # nangate45 icsprout55
 
 srcVerilogSta += $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv")
