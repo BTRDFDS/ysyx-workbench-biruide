@@ -73,8 +73,8 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		dontTouch(addrIdx)
 		dontTouch(addrOffset)
 		dontTouch(addrTag)
-		ichChk.hit	:= ifu.valid && ~ifu.ready &&  pipeValid
-		ichChk.miss := ifu.valid && ~ifu.ready && ~pipeValid
+		ichChk.hit	:= ifu.valid
+		ichChk.miss := ifu.valid && ~ifu.ready
 		ichChk.clock:= clock
 	}
 }
