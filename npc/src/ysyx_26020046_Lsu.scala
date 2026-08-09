@@ -16,7 +16,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val state	= RegInit(MemStatus.Call)
 
 	val pipeReady 	= WireInit(true.B)
-	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)||(out.imme.back===Back.Jump&&in.imme.back===Back.Ready)
+	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)
 	val pipeValid	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.fenceI	)
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,pipeReady,in.pipe.rdAddr	)
