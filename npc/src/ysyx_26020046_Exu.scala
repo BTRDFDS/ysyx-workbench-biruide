@@ -33,7 +33,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val pipeRes		= PipeReg(pipeReset,ExuRes.Alu			,pipeReady,in.pipe.res		)
 	val pipeIn1		= PipeReg(pipeReset,ExuIn1.R1			,pipeReady,in.pipe.in1		)
 	val pipeIn2		= PipeReg(pipeReset,ExuIn2.R2			,pipeReady,in.pipe.in2		)
-	pipeReady := in.imme.back===Back.Ready || ~pipeValid
+	pipeReady := out.imme.back===Back.Ready || ~pipeValid
 
 	out.pipe.lsuAddr:= pipeLsuAddr
 	out.pipe.lsuOp	:= pipeLsuOp
