@@ -178,13 +178,17 @@ void branchTraceFileClose(){
 		branchTraceFile.close();
 	#endif
 	}
-
-	////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 #if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 	#endif
 ////////////////////////////////////////////////////////////////////////////////////////
+void TraceInit(){
+	iCacheTraceFileInit();
+	dCacheTraceFileInit();
+	branchTraceFileInit();
+	}
 void printOver(){
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		tfp->close();
