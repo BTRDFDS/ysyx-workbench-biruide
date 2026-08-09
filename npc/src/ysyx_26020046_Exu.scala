@@ -137,7 +137,7 @@ class ysyx_26020046_ExuChk extends ExtModule{
 		input logic bnj,
 		input logic clock
 	);
-	import "DPI-C" function void exuDone();
+	import "DPI-C" function void exuBnj();
 	always_ff@(posedge clock)begin
 		if(bnj)	exuBnj();
 	end
