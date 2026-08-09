@@ -69,7 +69,7 @@ void printCounter(){
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
 		numIduCal+numIduJump+numIduImm+numIduLs+numIduCsr+numIduBr
 	);
-	printf("exu bnj= %ld npb= %f bij= %ld sum= %ld\n",numExuBnj,numExuBnj/(float)numIduBr,numExuBnj,numExuBnj+numExuBij);
+	printf("exu bnj= %ld npb= %f bij= %ld sum= %ld\n",numExuBnj,numExuBnj/(float)numIduBr,numExuBij,numExuBnj+numExuBij);
 	printf("lsu load= %ld loadWait= %ld WpL= %f\n",numLsuLoad,numLsuLoadWait,(float)((float)numLsuLoadWait)/((float)numLsuLoad));
 	printf("lsu store= %ld storeWait= %ld WpS= %f\n",numLsuStore,numLsuStoreWait,(float)((float)numLsuStoreWait)/((float)numLsuStore));
 }
