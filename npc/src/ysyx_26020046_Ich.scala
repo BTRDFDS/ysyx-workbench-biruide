@@ -48,6 +48,8 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 			when(bar.res === BurstRes.Read && cnt=== 0.U){
 				valid(burstIdx) := true.B
 				tag(burstIdx)	:= burstTag
+			}.elsewhen(bar.res === BurstRes.Idle && cnt=== 0.U){
+				valid(burstIdx) := false.B
 			}
 			when(bar.res === BurstRes.Done || bar.res === BurstRes.Read){
 				data(burstIdx)(burstOffset+cnt) := bar.data
