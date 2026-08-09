@@ -96,8 +96,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		}.otherwise{
 			when(pipeEnJcod || enBfun){
 				val hasJump = RegInit(false.B)
-				when(out.imme.back===Back.Jump)	{hasJump := true.B}
-				.elsewhen(pipeReady)			{hasJump := false.B}
+				when(pipeReady)						{hasJump := false.B}
+				.elsewhen(out.imme.back===Back.Jump){hasJump := true.B}
 				out.imme.addr := result
 				out.imme.back := Mux(hasJump,in.imme.back,Back.Jump)
 			}.otherwise{out.imme.back := in.imme.back}
