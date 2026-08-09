@@ -1,7 +1,6 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-object IchState extends ChiselEnum{val Imm,Out=Value}
 class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val ifu = IO(Flipped(new InstrBus()))
 	val bar = IO(new BurstBus())
@@ -74,72 +73,11 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 
 	if(Yosys == false){
 		val ichChk = Module(new ysyx_26020046_IchChk)
-		ichChk.hit	:= ifu.valid && ifu.ready
-		ichChk.waits:= ifu.valid && ~ifu.ready && pipeValid && burstIdx===addrIdx
-		ichChk.miss	:= ifu.valid && ~ifu.ready
+		ichChk.hit	:= ifu.valid && ifu.ready//TODO:剩下两个都是不对的，但我目前真的想不出来更好的办法了
+		ichChk.waits:= ifu.valid && ~ifu.ready && pipeValid
+		ichChk.miss	:= ifu.valid && ~ifu.ready && ~pipeValid
 		ichChk.clock:= clock
 	}
-
-	// val state	= RegInit(IchState.Imm)
-	// switch(state){
-	// 	is(IchState.Imm){when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag))					{state := IchState.Out}}
-	// 	is(IchState.Out){when((cnt === CacheDone.U) & (bar.res===BurstRes.Done | bar.res===BurstRes.Erro))	{state := IchState.Imm}}
-	// }
-	// switch(state){
-	// 	is(IchState.Imm){
-	// 		cnt := 0.U
-	// 		// when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag) && ~lsu.fenceI){valid(burstIdx) := true.B}
-	// 	}
-	// 	is(IchState.Out){
-	// 		when(bar.res === BurstRes.Read && cnt=== 0.U){
-	// 			valid(burstIdx) := true.B
-	// 			tag(burstIdx)	:= burstTag
-	// 		}
-	// 		when(bar.res === BurstRes.Done || bar.res === BurstRes.Read){
-	// 			data(burstIdx)(burstOffset+cnt) := bar.data
-	// 			tag(burstIdx)	:= burstTag
-	// 		}
-	// 		when(bar.res === BurstRes.Read){
-	// 			cnt := cnt + 1.U
-	// 		}
-	// 	}
-	// }
-	// when(ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag) && state === IchState.Imm){
-	// 	burstTag	:= addrTag
-	// 	burstIdx	:= addrIdx
-	// 	burstOffset	:= addrOffset
-	// }
-	// when(ifu.valid){
-	// 	when(valid(addrIdx) && tag(addrIdx) === addrTag){
-	// 		ifu.data 	:= data(addrIdx)(addrOffset)
-	// 		ifu.ready	:= state === IchState.Imm || (state === IchState.Out && cnt > addrOffset-burstOffset && addrOffset >= burstOffset)
-	// 		ifu.error	:= false.B
-	// 		bar.valid	:= false.B
-	// 		bar.addr	:= 0.U
-	// 	}.otherwise{
-	// 		bar.valid	:= true.B
-	// 		bar.addr	:= ifu.addr
-	// 		ifu.data	:= Mux(bar.res === BurstRes.Read,bar.data,0.U)
-	// 		// ifu.ready	:= bar.res === BurstRes.Read && cnt === 0.U
-	// 		ifu.ready	:= false.B
-	// 		ifu.error	:= bar.res===BurstRes.Erro || (bar.res===BurstRes.Done && cnt =/= CacheDone.U)
-	// 	}
-	// }.otherwise{
-	// 	ifu.ready	:= false.B
-	// 	ifu.data	:= 0.U
-	// 	ifu.error	:= false.B
-	// 	bar.valid	:= false.B
-	// 	bar.addr	:= 0.U
-	// }
-	// when(lsu.fenceI){valid.foreach(_ := false.B)}
-
-	// if(Yosys == false){
-	// 	val ichChk = Module(new ysyx_26020046_IchChk)
-	// 	ichChk.hit	:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag)
-	// 	ichChk.waits:= ifu.valid && (valid(addrIdx) && tag(addrIdx) === addrTag) && (state === IchState.Out && ~(cnt > addrOffset-burstOffset && addrOffset >= burstOffset))
-	// 	ichChk.miss	:= ifu.valid && ~(valid(addrIdx) && tag(addrIdx) === addrTag)
-	// 	ichChk.clock:= clock
-	// }
 }
 class ysyx_26020046_IchChk extends ExtModule{
 	val hit		= IO(Input(Bool()))
