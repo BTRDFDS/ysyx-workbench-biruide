@@ -45,17 +45,18 @@ bool GSHA(bool result,uint32_t pc){//全局历史预测器
 	uint32_t idx = ((pc >> 2) ^ ghr) & GSHAmask;
 	bool res = (pht[idx] >= 2);
 	if (result) {
-		if (pht[idx] < 3) ++pht[idx];
+		if (pht[idx] < 3) pht[idx]++;
 	} else {
-		if (pht[idx] > 0) --pht[idx];
+		if (pht[idx] > 0) pht[idx]--;
 	}
-	ghr = ((ghr << 1) | (result ? 1u : 0u)) & GSHAmask;
+	ghr = ((ghr << 1) | (result ? 1 : 0)) & GSHAmask;
 	
     return res;
 }
 
 int main() {
-	file.open("./bin/Bmicrobench-test.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/Bmicrobench-test.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/Bdiv.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint64_t bij{},bnj{},btf{},btb{},hitBTFN{},hitBPB1{},hitBPB2{},hitGSHA{};
 	uint32_t addr,pc;
