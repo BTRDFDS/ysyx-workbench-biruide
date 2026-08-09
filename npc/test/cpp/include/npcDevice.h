@@ -212,6 +212,7 @@ void printOver(){
 	logFileClose();
 	iCacheTraceFileClose();
 	dCacheTraceFileClose();
+	branchTraceFileClose();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
