@@ -172,6 +172,8 @@ buildDcachesim:./test/cpp/dcachesim/dcachesim.cpp
 	clang++ ./test/cpp/dcachesim/dcachesim.cpp -o ./test/cpp/dcachesim/dcachesim
 dcachesim:./test/cpp/dcachesim/dcachesim
 	time ./test/cpp/dcachesim/dcachesim
+branchesim:./test/cpp/branchesim/branchesim
+	time ./test/cpp/branchesim/branchesim
 
 coverager:
 	lcov --list --rc branch_coverage=1 --rc function_coverage=0 /home/biruide/ysyx-workbench/npc/log/merged.info
