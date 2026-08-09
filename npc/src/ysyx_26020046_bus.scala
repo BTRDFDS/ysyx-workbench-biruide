@@ -3,7 +3,7 @@ import chisel3.util._
 
 object  WidthConsts{//const
 	val BitWidth	= 32
-	val RegNum		= 32
+	val RegNum		= 16
     val RegWidth	= log2Ceil(RegNum)
 	val CsrWidth	= 12
 	val RespWidth	= 2
