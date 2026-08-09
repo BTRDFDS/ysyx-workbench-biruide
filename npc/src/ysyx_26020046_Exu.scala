@@ -126,7 +126,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		// 	pipeCsr === ExuCsr.Null)
 		// exuChk.done := pipeValid&&in.pipe.valid&&(pipeEnJcod || enBfun)
 		exuChk.bnj := pipeValid&&pipeBfu=/=ExuBfu.Null&& enBfun
-		exuChk.bij := pipeValid&&pipeBfu=/=ExuBfu.Null//&& ~enBfun
+		exuChk.bij := pipeValid&&pipeBfu=/=ExuBfu.Null&& ~enBfun
 		// val mychk = exuChk.bnj &&exuChk.bij;dontTouch(mychk)
 	}
 }

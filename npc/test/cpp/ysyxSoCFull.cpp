@@ -105,6 +105,7 @@ int main(int argc, char** argv) {
 		NpcWave();
 		top->clock=0;top->eval();
 		numCycle++;
+		if(numIduBr<numExuBij)break;
 	}
 	NpcWave();
 	printOver();
