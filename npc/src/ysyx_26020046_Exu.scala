@@ -129,7 +129,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
-	val done	= IO(Input(Bool()))
+	val bnj	= IO(Input(Bool()))
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_ExuChk.sv",
 	"""
