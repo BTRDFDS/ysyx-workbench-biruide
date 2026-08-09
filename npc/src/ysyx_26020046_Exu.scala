@@ -119,20 +119,18 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	if(Yosys == false){
 		val exuPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(exuPc)
 		val exuChk = Module(new ysyx_26020046_ExuChk)
-		exuChk.clock := clock
-		// exuChk.done := out.pipe.valid && in.imme.back =/= Back.Wait && ~(
-		// 	pipeAlu === ExuAlu.Null &&
-		// 	pipeBfu === ExuBfu.Null &&
-		// 	pipeCsr === ExuCsr.Null)
-		// exuChk.done := pipeValid&&in.pipe.valid&&(pipeEnJcod || enBfun)
-		exuChk.bnj := pipeValid&&pipeBfu=/=ExuBfu.Null&& enBfun
-		exuChk.bij := pipeValid&&pipeBfu=/=ExuBfu.Null&& ~enBfun
-		// val mychk = exuChk.bnj &&exuChk.bij;dontTouch(mychk)
+		exuChk.clock:= clock
+		exuChk.bnj	:= pipeValid&&pipeBfu=/=ExuBfu.Null&& ~enBfun
+		exuChk.bij	:= pipeValid&&pipeBfu=/=ExuBfu.Null&& enBfun && out.imme.back===Back.Jump
+		exuChk.addr := out.imme.addr
+		exuChk.pc 	:= exuPc
 	}
 }
 class ysyx_26020046_ExuChk extends ExtModule{
 	val bnj	= IO(Input(Bool()))
 	val bij = IO(Input(Bool()))
+	val addr= IO(Input(UInt(32.W)))
+	val pc	= IO(Input(UInt(32.W)))
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_ExuChk.sv",
 	"""
@@ -143,12 +141,12 @@ class ysyx_26020046_ExuChk extends ExtModule{
 	);
 	import "DPI-C" function void exuBnj();
 	import "DPI-C" function void exuBij();
-	// always_ff@(posedge clock)begin
-	// 	if(bnj)	exuBnj();
-	// 	if(bij) exuBij();
-	// end
+	always_ff@(posedge clock)begin
+		// if(bnj)	exuBnj();
+		if(bij) exuBij();
+	end
 	always_ff@(posedge bnj)exuBnj();
-	always_ff@(posedge bij)exuBij();
+	// always_ff@(posedge bij)exuBij();
 	endmodule
 	"""
 	)
