@@ -135,13 +135,51 @@ extern "C" void lsuTrace(int addr){
 	uint32_t addrX=(uint32_t)addr;
 		dCacheTraceFile.write((const char*)&addrX, 4);
 	#endif
-}
+	}
 void dCacheTraceFileClose(){
 	#if defined(NPC_D_CACHE_TRACE)
 		dCacheTraceFile.close();
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
+#if defined(NPC_BRACHE_TRACE)
+	std::fstream branchTraceFile;//输出日志文件：
+	#endif
+void branchTraceFileInit(){
+	#if defined(NPC_BRACHE_TRACE)
+	branchTraceFile.open("./bin/branchTrace.bin",std::ios::out | std::ios::binary);
+	printf("./bin/branchTrace.bin\n");
+	if(!branchTraceFile.is_open()) {
+	printf("Failed to open branchTrace file!\n");
+	exit(-1);
+	}
+	#endif
+	}
+void exuBnTrace(int pc){
+	#if defined(NPC_BRACHE_TRACE)
+	uint32_t pcX=(uint32_t)pc;
+	branchTraceFile.write((const char*)&pcX, 4);
+	const uint8_t nJump = 0;
+	branchTraceFile.write((const char*)&nJump, 1);
+	#endif
+	}
+void exuBiTrace(int pc,int addr){
+	#if defined(NPC_BRACHE_TRACE)
+	uint32_t pcX=(uint32_t)pc;
+	branchTraceFile.write((const char*)&pcX, 4);
+	const uint8_t iJump = 1;
+	branchTraceFile.write((const char*)&iJump, 1);
+	uint32_t addrX=(uint32_t)addr;
+	branchTraceFile.write((const char*)&addrX, 4);
+	#endif
+	}
+void branchTraceFileClose(){
+	#if defined(NPC_BRACHE_TRACE)
+		branchTraceFile.close();
+	#endif
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////
 #if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
