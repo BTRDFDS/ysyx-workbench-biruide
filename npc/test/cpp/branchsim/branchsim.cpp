@@ -82,9 +82,9 @@ int main() {
 		if(state>>7){btb++;
 		}else{btf++;}
 		if((state&0x7f)==BTFN(state>>7)){hitBTFN++;}
-		if((state&0x7f)==BPB1(state>>7)){hitBPB1++;}
-		if((state&0x7f)==BPB2(state>>7)){hitBPB2++;}
-		if((state&0x7f)==GSHA(state>>7,pc)){hitGSHA++;}
+		if((state&0x7f)==BPB1(state&0x7f)){hitBPB1++;}
+		if((state&0x7f)==BPB2(state&0x7f)){hitBPB2++;}
+		if((state&0x7f)==GSHA(state&0x7f,pc)){hitGSHA++;}
 	}
 	file.close();
 }
