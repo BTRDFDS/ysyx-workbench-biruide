@@ -32,6 +32,7 @@ uint64_t numIduLs		=0;
 uint64_t numIduCsr		=0;
 uint64_t numIduBr		=0;
 uint64_t numExuBnj		=0;
+uint64_t numExuBij		=0;
 uint64_t numLsuLoad		=0;
 uint64_t numLsuLoadWait	=0;
 uint64_t numLsuStore	=0;
@@ -51,6 +52,7 @@ extern "C" void iduLs()			{numIduLs++;		}
 extern "C" void iduCsr()		{numIduCsr++;		}
 extern "C" void iduBr()			{numIduBr++;		}
 extern "C" void exuBnj()		{numExuBnj++;		}
+extern "C" void exuBij()		{numExuBij++;		}
 extern "C" void lsuLoad()		{numLsuLoad++;		}
 extern "C" void lsuLoadWait()	{numLsuLoadWait++;	}
 extern "C" void lsuStore()		{numLsuStore++;		}
@@ -67,7 +69,7 @@ void printCounter(){
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
 		numIduCal+numIduJump+numIduImm+numIduLs+numIduCsr+numIduBr
 	);
-	printf("exu bnj= %ld jpb= %f\n",numExuBnj,numExuBnj/(float)numIduBr);
+	printf("exu bnj= %ld npb= %f bij= %ld sum= %ld\n",numExuBnj,numExuBnj/(float)numIduBr,numExuBnj,numExuBnj+numExuBij);
 	printf("lsu load= %ld loadWait= %ld WpL= %f\n",numLsuLoad,numLsuLoadWait,(float)((float)numLsuLoadWait)/((float)numLsuLoad));
 	printf("lsu store= %ld storeWait= %ld WpS= %f\n",numLsuStore,numLsuStoreWait,(float)((float)numLsuStoreWait)/((float)numLsuStore));
 }
