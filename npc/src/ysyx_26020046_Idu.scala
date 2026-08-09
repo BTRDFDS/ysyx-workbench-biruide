@@ -229,12 +229,12 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val iduInstr = Mux(pipeRes=== IfuRes.Valid,pipeInstr,0.U(32.W));dontTouch(iduInstr)
 		val iduChk = Module(new ysyx_26020046_IduChk)
 		iduChk.clock := clock
-		iduChk.io.cal	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
-		iduChk.io.jump	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Jal		|| opEnum === Op.Ijalr	)
-		iduChk.io.imm	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Uauipc	|| opEnum === Op.Ului	)
-		iduChk.io.ls	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Store	|| opEnum === Op.Iload	)
-		iduChk.io.csr	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Icsr)
-		iduChk.io.br	:= pipeRes === IfuRes.Valid && in.imme.back =/= Back.Wait && (opEnum === Op.Branch)
+		iduChk.io.cal	:= pipeReady && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
+		iduChk.io.jump	:= pipeReady && (opEnum === Op.Jal		|| opEnum === Op.Ijalr	)
+		iduChk.io.imm	:= pipeReady && (opEnum === Op.Uauipc	|| opEnum === Op.Ului	)
+		iduChk.io.ls	:= pipeReady && (opEnum === Op.Store	|| opEnum === Op.Iload	)
+		iduChk.io.csr	:= pipeReady && (opEnum === Op.Icsr)
+		iduChk.io.br	:= pipeReady && (opEnum === Op.Branch)
 
 	}
 
