@@ -252,6 +252,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 110 ????? 0110011", or       , R, R(rd) = (uint32_t)src1 | (uint32_t)src2);
   INSTPAT("0000000 ????? ????? 111 ????? 0110011", and      , R, R(rd) = (uint32_t)src1 & (uint32_t)src2);
   // INSTPAT("??????? ????? ????? 000 ????? 0001111", fence    ,);
+  INSTPAT("0000000 00000 00000 001 00000 0001111", fence.i  , I,);
   // INSTPAT("1000001 10011 00000 000 00000 0001111", fence.tso,);
   // INSTPAT("0000000 10000 00000 000 00000 0001111", pause    ,);
   INSTPAT("0000000 00000 00000 000 00000 1110011", ecall    , N, s->dnpc=riscv32ecall(s->pc));
