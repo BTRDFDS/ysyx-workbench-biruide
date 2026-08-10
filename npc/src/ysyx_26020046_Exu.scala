@@ -160,7 +160,7 @@ class ysyx_26020046_ExuChk extends ExtModule{
 		if(bnj) exuBnTrace(pc,{5'b0,sext,2'b01});
 		if(bij) exuBiTrace(pc,{5'b0,sext,2'b11},addr);
 		if(jum) exuBiTrace(pc,{5'b0,1'b0,2'b10},addr);
-		if(jum) exuBiTrace(pc,{5'b0,1'b1,2'b10},addr);
+		if(jlr) exuBiTrace(pc,{5'b0,1'b1,2'b10},addr);
 	end
 	endmodule
 	"""
