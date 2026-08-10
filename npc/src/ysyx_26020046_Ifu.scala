@@ -15,7 +15,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 
 		when(in.imme.error || in.imme.jump)	{pc := in.imme.addr(31,2)}
-		elsewhen(in.imme.ready)				{pc := pc + 1.U}
+		.elsewhen(in.imme.ready)			{pc := pc + 1.U}
 
 		ich.valid	:= true.B
 		ich.addr	:= pc
@@ -59,12 +59,12 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 
 	if(Yosys == false){
-		val ifuPc = Mux(res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
-		val ifuInst = Mux(res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
+		val ifuPc	= Mux(out.pipe.res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
+		val ifuInst	= Mux(out.pipe.res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= ich.ready
-		ifuChk.stall	:= out.pipe.res := IfuRes.Null
+		ifuChk.stall	:= out.pipe.res === IfuRes.Null
 		ifuChk.unable	:= false.B
 		ifuChk.jAb		:= false.B
 		ifuChk.jAC		:= false.B

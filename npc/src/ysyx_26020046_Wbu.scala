@@ -73,7 +73,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	when((pipeValid === false.B & pipeCsrOp === CsrOp.Trap) || error){//TODO:mstatus
 		mcause			:= Mux(error,ErrorMesg,pipeCsrMesg)
 		mepc 			:= Cat(pipePc,0.U(2.W))
-		out.immme.error	:= true.B
+		out.imme.error	:= true.B
 		out.imme.addr	:= mtvec
 		if(Yosys == false){
 			printf("error,stop!!! %x tval: %x ",pipeCsrMesg,pipeCsrAddr)//tval
