@@ -111,7 +111,6 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	if(Yosys == false){
 		val wbuPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(wbuPc)
 		val wbuChk = Module(new ysyx_26020046_WbuChk)
-		wbuChk.io.reg := gpr
 		wbuChk.clock	:= clock
 		wbuChk.io.ebreak := (pipeCsrOp === CsrOp.Trap)&(pipeValid)&(pipeCsrMesg === 0x3L.U) ||error
 		// val noFirst	=RegInit(false.B)			;when(~noFirst){noFirst := in.pipe.valid}
@@ -119,7 +118,13 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		// val pc		= RegInit(0.U(BitWidth.W))	;pc		:= Cat(in.pipe.pc,0.U(2.W))
 		// wbuChk.io.check	:= check
 		// wbuChk.io.pc	:= pc
-			wbuChk.io.pc	:= Cat(in.pipe.pc,0.U(2.W))
+		when(pipeValid){
+			for(i <- 0 until RegNum){
+			wbuChk.io.reg(i) := Mux((i.U === pipeRdAddr && i.U =/= 0.U), pipeResult, gpr(i))
+			}
+		}.otherwise{wbuChk.io.reg := gpr}
+	
+		wbuChk.io.pc	:= Cat(in.pipe.pc,0.U(2.W))
 		val hasValid = RegInit(false.B);dontTouch(hasValid)
 		when(pipeValid && in.pipe.valid){
 			wbuChk.io.check	:= true.B
