@@ -15,7 +15,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 
 		when(in.imme.error || in.imme.jump)		{pc := in.imme.addr(31,2)}
-		.elsewhen(in.imme.ready && ich.ready)	{pc := pc + 1.U}
+		.elsewhen(in.imme.ready && ich.ready && ~hasChange)	{pc := pc + 1.U}
 
 		when(in.imme.error || in.imme.jump || (in.imme.ready && ~hasChange)){hasChange := true.B}
 		.elsewhen(out.pipe.res === IfuRes.Valid)							{hasChange := false.B}
