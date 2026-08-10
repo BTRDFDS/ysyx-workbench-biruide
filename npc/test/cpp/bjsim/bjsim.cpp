@@ -24,28 +24,29 @@ uint32_t BTBaddr[BTBsize]{};
 uint32_t BTBr(uint32_t pc){
 	uint32_t BTBidx = (pc>>2)&BTBmask;
 	uint32_t res{};
-	if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
-		res = BTBaddr[BTBidx];
-	}
-	// for(uint32_t i=0;i<BTBsize;i++){
-	// 	if(BTBtags[i]==(pc>>2)){
-	// 		res = BTBaddr[i];
-	// 		break;
-	// 	}
+	// if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
+	// 	res = BTBaddr[BTBidx];
 	// }
+	for(uint32_t i=0;i<BTBsize;i++){
+		if(BTBtags[i]==(pc>>2)){
+			res = BTBaddr[i];
+			break;
+		}
+	}
 	return res;
 }
-void BTBw(uint32_t pc,uint32_t addr){
-	uint32_t BTBidx = (pc>>2)&BTBmask;
-	BTBtags[BTBidx] = (pc>>(BTBbits+2));
-	BTBaddr[BTBidx] = addr;
+void BTBw(uint32_t pc,uint32_t addr,bool write){
+	// uint32_t BTBidx = (pc>>2)&BTBmask;
+	// BTBtags[BTBidx] = (pc>>(BTBbits+2));
+	// BTBaddr[BTBidx] = addr;
 	static uint32_t cnt{};
-	// BTBtags[cnt] = pc>>2;
-	// BTBaddr[cnt] = addr;
-	// cnt = (cnt+1)%BTBsize;
+	BTBtags[cnt] = pc>>2;
+	BTBaddr[cnt] = addr;
+	cnt = (cnt+1)%BTBsize;
 }
 int main() {
-	file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJmicrobench-test.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint64_t ju{},bi{},bn{},btf{},btb{},hitBTFN{},hitBPB2{},hitBTFN_BTB{},hitBPB2_BTB{};
 	for(uint64_t cnt=0;;cnt++){
@@ -98,9 +99,11 @@ int main() {
 			if(jump == btfn && (jump?btb:1))hitBTFN_BTB++;
 			if(jump == bpb2 && (jump?btb:1))hitBPB2_BTB++;
 		}
-		if(!branch && btb){
+		if(!branch){
 			hitBTFN++;
 			hitBPB2++;
+		}
+		if(!branch && btb){
 			hitBTFN_BTB++;
 			hitBPB2_BTB++;
 		}
