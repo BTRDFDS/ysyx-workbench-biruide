@@ -13,9 +13,9 @@
 // #define NPC_MIN_TRACE
 // #define NPC_M_TRACE
 #define NPC_DIFFTEST
-#define NPC_WAVE
+// #define NPC_WAVE
 
-const uint64_t runstopTime = 50000;
+const uint64_t runstopTime = 100000;
 const uint64_t NpcMinTraceBegin = 464529400L;
 
 #endif
