@@ -23,47 +23,84 @@ bool TPF2(bool forward,bool result){
 	else		if(tp>0)tp--;
 	return res;
 }
-const uint32_t BTBbits = 3;
-const uint32_t BTBsize = 1<<BTBbits;
-const uint32_t BTBmask = BTBsize-1;
-uint32_t BTBtags[BTBsize]{};
-uint32_t BTBaddr[BTBsize]{};
-uint32_t use[BTBsize]{};
-uint32_t BTBr(uint32_t pc,uint32_t addr=0,bool write=false){
-	uint32_t res{};
-	uint32_t BTBidx = (pc>>2)&BTBmask;
-	// if(write){
-	// 	BTBtags[BTBidx] = (pc>>(BTBbits+2));
-	// 	BTBaddr[BTBidx] = addr;
-	// }else{
-	// 	if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
-	// 		res = BTBaddr[BTBidx];
-	// 	}
-	// }
-	if(write){
-		// uint32_t min{};
-		// for(int i=0;i<BTBsize;i++)if(use[min]>use[i])min = i;
-		// // printf("%d : %d\n",min,use[min]);
-		// BTBtags[min] = pc>>2;
-		// BTBaddr[min] = addr;
-		// use[min] = 0;
-		// for(int i=0;i<BTBsize;i++)use[i] /= 2;
-		static uint32_t cnt{};
-		BTBtags[cnt] = pc>>2;
-		BTBaddr[cnt] = addr;
-		cnt = (cnt+1)%BTBsize;
-	}else{
-		for(uint32_t i=0;i<BTBsize;i++){
-			if(BTBtags[i]==(pc>>2)){
-				res = BTBaddr[i];
-				use[i]++;
-				break;
+// uint32_t BTBbits = 4;
+// uint32_t BTBsize = 1<<BTBbits;
+// uint32_t BTBmask = BTBsize-1;
+// uint32_t BTBtags[BTBsize]{};
+// uint32_t BTBaddr[BTBsize]{};
+// uint32_t use[BTBsize]{};
+// uint32_t BTB(uint32_t pc,uint32_t addr=0,bool write=false){
+// 	uint32_t res{};
+// 	uint32_t BTBidx = (pc>>2)&BTBmask;
+// 	// if(write){
+// 	// 	BTBtags[BTBidx] = (pc>>(BTBbits+2));
+// 	// 	BTBaddr[BTBidx] = addr;
+// 	// }else{
+// 	// 	if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
+// 	// 		res = BTBaddr[BTBidx];
+// 	// 	}
+// 	// }
+// 	if(write){
+// 		// uint32_t min{};
+// 		// for(int i=0;i<BTBsize;i++)if(use[min]>use[i])min = i;
+// 		// // printf("%d : %d\n",min,use[min]);
+// 		// BTBtags[min] = pc>>2;
+// 		// BTBaddr[min] = addr;
+// 		// use[min] = 0;
+// 		// for(int i=0;i<BTBsize;i++)use[i] /= 2;
+// 		static uint32_t cnt{};
+// 		BTBtags[cnt] = pc>>2;
+// 		BTBaddr[cnt] = addr;
+// 		cnt = (cnt+1)%BTBsize;
+// 	}else{
+// 		for(uint32_t i=0;i<BTBsize;i++){
+// 			if(BTBtags[i]==(pc>>2)){
+// 				res = BTBaddr[i];
+// 				use[i]++;
+// 				break;
+// 			}
+// 		}
+// 	}
+// 	return res;
+// }
+class BTB{
+	const uint32_t bits,size,mask;
+	uint32_t tags[size]{};
+	uint32_t addr[size]{};
+	uint32_t uses[size]{};
+	public:
+		BTB(uint32_t bit= 4){bits = bit;size = 1<<bits;mask = size-1;}
+		pcl(uint32_t pc,uint32_t addr=0,bool write=false){
+			uint32_t res{};
+			uint32_t idx = (pc>>2)&mask;
+			if(write){
+				tags[idx] = (pc>>(bits+2));
+				addr[idx] = addr;
+			}else{
+				if(tags[idx]==(pc>>(bits+2))){
+					res =addr[idx];
+				}
 			}
 		}
-	}
-	return res;
-}
+		all(uint32_t pc,uint32_t addr=0,bool write=false){
+			if(write){
+				static uint32_t cnt{};
+				tags[cnt] = pc>>2;
+				addr[cnt] = addr;
+				cnt = (cnt+1)%size;
+			}else{
+				for(uint32_t i=0;i<size;i++){
+					if(tags[i]==(pc>>2)){
+						res = addr[i];
+						use[i]++;
+						break;
+					}
+				}
+			}
+		}
+	};
 int main() {
+	BTB btb0(4);
 	file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdummy.bin", std::ios::in | std::ios::binary);
@@ -117,7 +154,7 @@ int main() {
 			tpf2 = TPF2(sext,jump);
 		}
 		if(!branch || btfn || bpb2 || tpf2){
-			btb = BTBr(pc)==addr && addr!=0;
+			btb = btb0.pcl(pc)==addr && addr!=0;
 		}
 		if(branch){
 			if(jump == btfn)hitBTFN++;
@@ -137,7 +174,7 @@ int main() {
 			hitBPB2_BTB++;
 			hitTPF2_BTB++;
 		}
-		if(jump && !btb)BTBr(pc,addr,true);
+		if(jump && !btb)btb0.pcl(pc,addr,true);
 	}
 	file.close();
 }
