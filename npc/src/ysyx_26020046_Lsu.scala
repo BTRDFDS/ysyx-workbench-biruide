@@ -15,19 +15,18 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val ich		= IO(new FecneBus())
 	val state	= RegInit(MemStatus.Call)
 
-	val pipeReady 	= WireInit(true.B)
-	val pipeReset	= reset.asBool||(out.imme.back===Back.Error)
-	val pipeValid	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.valid	)
-	val pipeFenceI	= PipeReg(pipeReset,false.B				,pipeReady,in.pipe.fenceI	)
-	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,pipeReady,in.pipe.rdAddr	)
-	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,pipeReady,in.pipe.result	)
-	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,pipeReady,in.pipe.pc		)
-	val pipeCsrAddr	= PipeReg(pipeReset,0.U(BitWidth.W)		,pipeReady,in.pipe.csrAddr	)
-	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)		,pipeReady,in.pipe.csrMesg	)
-	val pipeR2		= PipeReg(pipeReset,0.U(BitWidth.W)		,pipeReady,in.pipe.r2		)
-	val pipeLsuOp	= PipeReg(pipeReset,LsuOp.Null			,pipeReady,in.pipe.lsuOp	)
-	val pipeLsuAddr	= PipeReg(pipeReset,LsuAddr.B			,pipeReady,in.pipe.lsuAddr	)
-	val pipeCsrOp	= PipeReg(pipeReset,CsrOp.Null			,pipeReady,in.pipe.csrOp	)
+	val pipeReset	= reset.asBool||in.imme.error
+	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
+	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
+	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
+	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
+	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
+	val pipeCsrAddr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.csrAddr	)
+	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.csrMesg	)
+	val pipeR2		= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.r2		)
+	val pipeLsuOp	= PipeReg(pipeReset,LsuOp.Null			,out.imme.ready,in.pipe.lsuOp	)
+	val pipeLsuAddr	= PipeReg(pipeReset,LsuAddr.B			,out.imme.ready,in.pipe.lsuAddr	)
+	val pipeCsrOp	= PipeReg(pipeReset,CsrOp.Null			,out.imme.ready,in.pipe.csrOp	)
 
 	out.pipe.valid	:= false.B
 	out.pipe.rdAddr	:= pipeRdAddr
@@ -36,19 +35,6 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	out.pipe.csrOp	:= pipeCsrOp
 	out.pipe.csrAddr:= pipeCsrAddr
 	out.pipe.csrMesg:= pipeCsrMesg
-	ich.fenceI		:= pipeFenceI
-
-	//处理回传
-	out.imme.csrOut	:= in.imme.csrOut
-	out.imme.addr	:= in.imme.addr
-	out.imme.back	:= in.imme.back
-	out.imme.r1Out	:= in.imme.r1Out//这三都是默认值
-	out.imme.r2Out	:= in.imme.r2Out
-	out.imme.valid	:= in.imme.valid
-
-	in.imme.r1Addr	:= out.imme.r1Addr
-	in.imme.r2Addr	:= out.imme.r2Addr
-	in.imme.csrAddr	:= out.imme.csrAddr
 
 	val addrError = WireInit(false.B)
 	when(pipeValid & pipeLsuOp =/= LsuOp.Null){
@@ -58,8 +44,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			is(LsuAddr.W ){when(pipeResult(1,0) =/= 0.U){addrError := true.B}}
 		}
 	}
-	//状态机
-	when(pipeValid && ~addrError){
+	when(pipeValid && ~addrError){//状态机
 		switch(state){
 			is(MemStatus.Call){switch(pipeLsuOp){
 				is(LsuOp.Load)	{when(bar.ready){state := MemStatus.Back}}
@@ -68,11 +53,13 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			is(MemStatus.Back){state := MemStatus.Call}//WBU无需等待
 		}
 	}
+
 	bar.size	:= 0b11.U
 	bar.wdata	:= 0.U
 	bar.wstrb	:= 0.U
 	bar.write	:= false.B
-	bar.addr	:= 0.U 
+	bar.addr	:= 0.U
+	ich.fenceI	:= pipeFenceI
 	when(pipeValid && ~addrError && state === MemStatus.Call){//发出
 		when(pipeLsuOp === LsuOp.Load){
 			switch(pipeLsuAddr){
@@ -104,10 +91,10 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			}
 		}
 	}
-	when(pipeValid && ~addrError){//接收
+	val backError = bar.error && bar.ready
+	when(pipeValid && ~addrError && ~backError){//接收
 		when(pipeLsuOp === LsuOp.Load){
 			val rdata = RegInit(0.U(BitWidth.W))
-			// val result = RegInit(0.U(BitWidth.W))
 			when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> (8.U * pipeResult(1,0))}
 			switch(pipeLsuAddr){
 				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
@@ -116,25 +103,14 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 				is(LsuAddr.Bu){out.pipe.result := Cat(0.U((BitWidth- 8).W),rdata( 7,0))}
 				is(LsuAddr.Hu){out.pipe.result := Cat(0.U((BitWidth-16).W),rdata(15,0))}
 			}
-			when(pipeRdAddr=/=0.U & (out.imme.r1Addr === pipeRdAddr | out.imme.r2Addr === pipeRdAddr)){
-				out.imme.valid := state === MemStatus.Back
-			}
-		}//旁路转发无需load
-		when(out.imme.r1Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r1Out := out.pipe.result}
-		when(out.imme.r2Addr === pipeRdAddr & pipeRdAddr=/=0.U){out.imme.r2Out := out.pipe.result}
+		}
 	}
-	val backError = bar.error && bar.ready
+	//错误处理
 	when(addrError || backError){
 		out.pipe.valid	:= false.B
 		out.pipe.csrOp	:= CsrOp.Trap
-		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
-		.otherwise{out.imme.back	:= Back.Wait}
-	}otherwise{
-		pipeReady := Mux((pipeLsuOp === LsuOp.Null)||(~pipeValid),true.B,state === MemStatus.Back)
-		out.pipe.valid:= pipeReady & pipeValid
-		when(in.imme.back === Back.Error){out.imme.back	:= Back.Error}
-		.elsewhen(pipeReady & in.imme.back === Back.Ready){out.imme.back	:= Back.Ready}
-		.otherwise{out.imme.back	:= Back.Wait}
+	}.otherwise{
+		out.pipe.valid:= (pipeLsuOp === LsuOp.Null || state === MemStatus.Back) && pipeValid
 	}
 	when(addrError){switch(pipeLsuOp){
 		is(LsuOp.Load)	{out.pipe.csrMesg := 4.U;out.pipe.csrAddr := pipeResult}//读取地址不对齐
@@ -144,6 +120,28 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		is(LsuOp.Load)	{out.pipe.csrMesg := 5.U;out.pipe.csrAddr := pipeResult}//读取故障
 		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U;out.pipe.csrAddr := pipeResult}//写入故障
 	}}
+	//处理回传
+	out.imme.addr	:= in.imme.addr
+	out.imme.pc		:= in.imme.pc
+	out.imme.error	:= in.imme.error
+	out.imme.ready	:= (~pipeValid) || pipeLsuOp === LsuOp.Null || state === MemStatus.Back//WBU就是true
+	out.imme.jump	:= false.B//LSU和WBU不可能
+
+	 in.imme.r1Addr	:= out.imme.r1Addr
+	 in.imme.r2Addr	:= out.imme.r2Addr
+	 in.imme.csrAddr:= out.imme.csrAddr
+	out.imme.valid	:=  in.imme.valid
+	out.imme.csrOut	:=  in.imme.csrOut
+	out.imme.r1Out	:=  in.imme.r1Out
+	out.imme.r2Out	:=  in.imme.r2Out
+	when(pipeValid && ~addrError && ~backError && pipeRdAddr=/=0.U){
+		when(out.imme.r1Addr === pipeRdAddr){out.imme.r1Out := out.pipe.result}
+		when(out.imme.r2Addr === pipeRdAddr){out.imme.r2Out := out.pipe.result}
+		when(out.imme.csrAddr===pipeCsrAddr){out.imme.csrOut:= out.pipe.csrMesg}
+		when(out.imme.r1Addr === pipeRdAddr || out.imme.r2Addr === pipeRdAddr){
+			out.imme.valid := state === MemStatus.Back
+		}
+	}
 
 	if(Yosys == false){
 		val lsuPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(lsuPc)

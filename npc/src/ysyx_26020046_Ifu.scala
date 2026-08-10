@@ -6,53 +6,71 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val ich	= IO(new InstrBus())
 	//pc更新
+		val hasChange= RegInit(false.B)
 		val pc		= RegInit(PcInit(31,2))
-		val state	= RegInit(MemStatus.Call)
-		val error	= RegInit(false.B)//特指地址错误
-		val res		= RegInit(IfuRes.Null)
-		val instr = RegInit(0.U(BitWidth.W))
+		// val state	= RegInit(MemStatus.Call)
+		// val error	= RegInit(false.B)//特指地址错误
+		// val res		= RegInit(IfuRes.Null)
+		// val instr = RegInit(0.U(BitWidth.W))
 
-		ich.addr		:= pc
-		out.pipe.instr	:= instr
+
+		when(in.imme.error || in.imme.jump)	{pc := in.imme.addr(31,2)}
+		elsewhen(in.imme.ready)				{pc := pc + 1.U}
+
+		ich.valid	:= true.B
+		ich.addr	:= pc
+
+		out.pipe.instr	:= ich.data
 		out.pipe.pc		:= pc
-		out.pipe.res 	:= res
-		switch(state){
-			is(MemStatus.Call){when((ich.ready & (in.imme.back === Back.Ready || in.imme.back === Back.Wait)) || error)
-																	{state := MemStatus.Back}}
-			is(MemStatus.Back){when(in.imme.back =/= Back.Wait)		{state := MemStatus.Call}}
-		}
-		when(state === MemStatus.Call){
-			ich.valid	:= ~error
-			when(ich.ready){instr := ich.data}
+		when(in.imme.addr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
+		.elsewhen(ich.ready)				{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
+		.otherwise							{out.pipe.res := IfuRes.Null}
 
-			when(error)						{res := IfuRes.Un4b}
-			.elsewhen(ich.ready &&(in.imme.back === Back.Ready || in.imme.back === Back.Wait))
-											{res :=Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
-			.otherwise						{res := IfuRes.Null}
-		}.otherwise{
-			ich.valid := false.B
-			when(in.imme.back =/= Back.Wait){res := IfuRes.Null}
-		}
-		switch(in.imme.back){
-			is(Back.Jump)	{pc := in.imme.addr(31,2)}
-			is(Back.Error)	{pc := in.imme.addr(31,2)}
-			is(Back.Ready)	{when(state===MemStatus.Back)(pc := pc + 1.U)}
-		}
-		when(in.imme.back === Back.Error || in.imme.back === Back.Jump){
-			error := in.imme.addr(1,0) =/= 0.U
-		}
+
+
+
+
+
+		// switch(state){
+		// 	is(MemStatus.Call){when((ich.ready & (in.imme.back === Back.Ready || in.imme.back === Back.Wait)) || error)
+		// 															{state := MemStatus.Back}}
+		// 	is(MemStatus.Back){when(in.imme.back =/= Back.Wait)		{state := MemStatus.Call}}
+		// }
+		// when(state === MemStatus.Call){
+		// 	ich.valid	:= ~error
+		// 	when(ich.ready){instr := ich.data}
+
+		// 	when(error)						{res := IfuRes.Un4b}
+		// 	.elsewhen(ich.ready &&(in.imme.back === Back.Ready || in.imme.back === Back.Wait))
+		// 									{res :=Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
+		// 	.otherwise						{res := IfuRes.Null}
+		// }.otherwise{
+		// 	ich.valid := false.B
+		// 	when(in.imme.back =/= Back.Wait){res := IfuRes.Null}
+		// }
+		// switch(in.imme.back){
+		// 	is(Back.Jump)	{pc := in.imme.addr(31,2)}
+		// 	is(Back.Error)	{pc := in.imme.addr(31,2)}
+		// 	is(Back.Ready)	{when(state===MemStatus.Back)(pc := pc + 1.U)}
+		// }
+		// when(in.imme.back === Back.Error || in.imme.back === Back.Jump){
+		// 	error := in.imme.addr(1,0) =/= 0.U
+		// }
 
 
 	if(Yosys == false){
-		val ifuPc = Mux(res === IfuRes.Valid,Cat(pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
-		val ifuInst = Mux(res === IfuRes.Valid,instr,0.U(BitWidth.W));dontTouch(ifuInst)
+		val ifuPc = Mux(res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
+		val ifuInst = Mux(res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
-		ifuChk.inst		:= state === MemStatus.Call && ich.ready
-		ifuChk.unable	:= state === MemStatus.Call && ich.ready && (in.imme.back === Back.Jump || in.imme.back === Back.Error)
-		ifuChk.stall	:= state === MemStatus.Call
-		ifuChk.jAb		:= in.imme.back === Back.Jump && state === MemStatus.Back
-		ifuChk.jAC		:= (state === MemStatus.Call && ich.ready) =/= (state === MemStatus.Call && ich.ready & (in.imme.back === Back.Ready || in.imme.back === Back.Wait))
+		ifuChk.inst		:= ich.ready
+		ifuChk.stall	:= out.pipe.res := IfuRes.Null
+		ifuChk.unable	:= false.B
+		ifuChk.jAb		:= false.B
+		ifuChk.jAC		:= false.B
+		// ifuChk.unable	:= ich.ready && (in.imme.back === Back.Jump || in.imme.back === Back.Error)
+		// ifuChk.jAb		:= in.imme.back === Back.Jump && state === MemStatus.Back
+		// ifuChk.jAC		:= (state === MemStatus.Call && ich.ready) =/= (state === MemStatus.Call && ich.ready & (in.imme.back === Back.Ready || in.imme.back === Back.Wait))
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
@@ -80,11 +98,12 @@ class ysyx_26020046_IfuChk extends ExtModule{
 
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
-		if(inst)	ifuInst();
+		// if(inst)	ifuInst();
 		if(jAb)		ifuJaB();
 		if(jAC)		ifuJaC();
 		if(unable)	ifuUnable();
 	end
+	always_ff@(posedge inst)	ifuInst();
 	endmodule
 	"""
 	)

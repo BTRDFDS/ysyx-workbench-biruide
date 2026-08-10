@@ -10,12 +10,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val pipe	= new PipeIdEx()
 		val imme	= new ImmeBefore()
 	})
-	val pipeReady	= Wire(Bool())
-	val pipeReset	= reset.asBool||(in.imme.back===Back.Error)||(in.imme.back===Back.Jump)
-	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,pipeReady,in.pipe.res		)
-	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,pipeReady,in.pipe.pc		)
-	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,pipeReady,in.pipe.instr	)
-	pipeReady := (in.imme.back===Back.Ready && in.imme.valid) || pipeRes === IfuRes.Null
+	val pipeReset	= reset.asBool||in.imme.error||out.imme.jump
+	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,out.imme.ready,in.pipe.res		)
+	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
+	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.instr	)
 
 	//默认值
 	out.pipe.valid	:= false.B
@@ -37,22 +35,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.res	:= ExuRes.Alu
 	out.pipe.in1	:= ExuIn1.R1
 	out.pipe.in2	:= ExuIn2.R2
-
-	// out.imme.back	:= Mux(in.imme.back===Back.Wait && pipeReady,Back.Ready,in.imme.back)
-	// when(in.imme.back===Back.Error){
-	// 	out.imme.back	:= Back.Error
-	// }.elsewhen(in.imme.back===Back.Ready){
-	// 	when(pipeReady)	{out.imme.back := Back.Ready}
-	// 	.otherwise		{out.imme.back := Back.Wait	}
-	// }.elsewhen(in.imme.back===Back.Jump){
-	// 	out.imme.back	:= Back.Jump
-	// }.otherwise{//in.imme.back===Back.Wait
-	// 	out.imme.back := Back.Wait
-	// }
-	when(in.imme.back===Back.Ready || in.imme.back===Back.Wait){
-				out.imme.back := Mux(pipeReady,Back.Ready,Back.Wait)
-	}.otherwise{out.imme.back := in.imme.back}
-	out.imme.addr	:= in.imme.addr
 
 	in.imme.r1Addr	:= 0.U
 	in.imme.r2Addr	:= 0.U
@@ -224,17 +206,24 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U;out.pipe.csrAddr := Cat(pipePc,0.U(2.W))}//Instruction address misaligned
 		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;out.pipe.csrAddr := Cat(pipePc,0.U(2.W))}//Instruction access fault
 	}
+
+	out.imme.addr	:= in.imme.addr
+	out.imme.pc		:= in.imme.pc
+	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
+	out.imme.jump	:= in.imme.jump && in.imme.addr=/=in.pipe.pc
+	out.imme.error	:= in.imme.error
+
 	if(Yosys == false){
 		val iduPc = Mux(pipeRes=== IfuRes.Valid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)
 		val iduInstr = Mux(pipeRes=== IfuRes.Valid,pipeInstr,0.U(32.W));dontTouch(iduInstr)
 		val iduChk = Module(new ysyx_26020046_IduChk)
 		iduChk.clock := clock
-		iduChk.io.cal	:= (in.imme.back===Back.Ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
-		iduChk.io.jump	:= (in.imme.back===Back.Ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Jal	|| opEnum === Op.Ijalr	)
-		iduChk.io.imm	:= (in.imme.back===Back.Ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Uauipc|| opEnum === Op.Ului	)
-		iduChk.io.ls	:= (in.imme.back===Back.Ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
-		iduChk.io.csr	:= (in.imme.back===Back.Ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Icsr)
-		iduChk.io.br	:= (in.imme.back===Back.Ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Branch)
+		iduChk.io.cal	:= (in.imme.ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
+		iduChk.io.jump	:= (in.imme.ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Jal	|| opEnum === Op.Ijalr	)
+		iduChk.io.imm	:= (in.imme.ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Uauipc|| opEnum === Op.Ului	)
+		iduChk.io.ls	:= (in.imme.ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
+		iduChk.io.csr	:= (in.imme.ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Icsr)
+		iduChk.io.br	:= (in.imme.ready && in.imme.valid) && pipeRes === IfuRes.Valid && (opEnum === Op.Branch)
 
 	}
 

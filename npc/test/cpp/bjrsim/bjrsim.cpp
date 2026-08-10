@@ -109,8 +109,8 @@ class BTB{
 		}
 	};
 int main() {
-	BTB btb0(4);
-	BTB btb1(3);
+	BTB btb0(3);
+	BTB btb1(1);
 	file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdummy.bin", std::ios::in | std::ios::binary);
