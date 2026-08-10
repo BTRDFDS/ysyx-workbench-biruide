@@ -120,7 +120,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		// wbuChk.io.check	:= check
 		// wbuChk.io.pc	:= pc
 			wbuChk.io.pc	:= Cat(in.pipe.pc,0.U(2.W))
-		val hasValid = RegInit(false.B)
+		val hasValid = RegInit(false.B);dontTouch(hasValid)
 		when(pipeValid && in.pipe.valid){
 			wbuChk.io.check	:= true.B
 		}.elsewhen(pipeValid && ~in.pipe.valid){
