@@ -26,7 +26,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		out.pipe.instr	:= ich.data
 		out.pipe.pc		:= pc
 		when(in.imme.addr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
-		.elsewhen(ich.ready)				{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
+		.elsewhen(ich.ready&& hasChange)	{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 		.otherwise							{out.pipe.res := IfuRes.Null}
 
 
