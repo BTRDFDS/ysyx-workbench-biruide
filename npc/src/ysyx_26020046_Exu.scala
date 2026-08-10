@@ -11,7 +11,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val imme = new ImmeAfter()
 		val pipe = new PipeExLs()
 	})
-	val pipeReset	= reset.asBool||in.imme.error||out.imme.jump
+	val pipeReset	= reset.asBool||in.imme.error||(out.imme.jump&&in.imme.ready)
 	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
 	val pipeEnJcod	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.enJcod	)
