@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <stdint.h>
+#include <vector>
 std::fstream file;
 
 bool BTFN(bool forward){return forward;}
@@ -64,43 +65,52 @@ bool TPF2(bool forward,bool result){
 // 	return res;
 // }
 class BTB{
-	const uint32_t bits,size,mask;
-	uint32_t tags[size]{};
-	uint32_t addr[size]{};
-	uint32_t uses[size]{};
+	uint32_t bits,size,mask,cnt;
+	std::vector<uint32_t> tags,addr,uses;
 	public:
-		BTB(uint32_t bit= 4){bits = bit;size = 1<<bits;mask = size-1;}
-		pcl(uint32_t pc,uint32_t addr=0,bool write=false){
+		BTB(uint32_t bit= 4){
+			bits = bit;
+			size = 1<<bits;
+			mask = size-1;
+			cnt = 0;
+			tags.resize(size);
+			addr.resize(size);
+			uses.resize(size);
+		}
+		uint32_t pcl(uint32_t pc,uint32_t tobe=0,bool write=false){
 			uint32_t res{};
 			uint32_t idx = (pc>>2)&mask;
 			if(write){
 				tags[idx] = (pc>>(bits+2));
-				addr[idx] = addr;
+				addr[idx] = tobe;
 			}else{
 				if(tags[idx]==(pc>>(bits+2))){
 					res =addr[idx];
 				}
 			}
+			return res;
 		}
-		all(uint32_t pc,uint32_t addr=0,bool write=false){
+		uint32_t all(uint32_t pc,uint32_t tobe=0,bool write=false){
+			uint32_t res{};
 			if(write){
-				static uint32_t cnt{};
 				tags[cnt] = pc>>2;
-				addr[cnt] = addr;
+				addr[cnt] = tobe;
 				cnt = (cnt+1)%size;
 			}else{
 				for(uint32_t i=0;i<size;i++){
 					if(tags[i]==(pc>>2)){
 						res = addr[i];
-						use[i]++;
+						uses[i]++;
 						break;
 					}
 				}
 			}
+			return res;
 		}
 	};
 int main() {
 	BTB btb0(4);
+	BTB btb1(3);
 	file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdummy.bin", std::ios::in | std::ios::binary);
@@ -154,7 +164,8 @@ int main() {
 			tpf2 = TPF2(sext,jump);
 		}
 		if(!branch || btfn || bpb2 || tpf2){
-			btb = btb0.pcl(pc)==addr && addr!=0;
+			if(!branch && sext)	btb = btb1.all(pc)==addr && addr!=0;
+			else				btb = btb0.all(pc)==addr && addr!=0;
 		}
 		if(branch){
 			if(jump == btfn)hitBTFN++;
@@ -174,7 +185,10 @@ int main() {
 			hitBPB2_BTB++;
 			hitTPF2_BTB++;
 		}
-		if(jump && !btb)btb0.pcl(pc,addr,true);
+		if(jump && !btb){
+			if(!branch && sext)	btb1.all(pc,addr,true);
+			else				btb0.all(pc,addr,true);
+		}
 	}
 	file.close();
 }
