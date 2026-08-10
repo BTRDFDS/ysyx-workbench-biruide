@@ -174,6 +174,8 @@ dcachesim:./test/cpp/dcachesim/dcachesim
 	time ./test/cpp/dcachesim/dcachesim
 branchsim:./test/cpp/branchsim/branchsim
 	time ./test/cpp/branchsim/branchsim
+bjsim:./test/cpp/bjsim/bjsim
+	time ./test/cpp/bjsim/bjsim
 
 coverager:
 	lcov --list --rc branch_coverage=1 --rc function_coverage=0 /home/biruide/ysyx-workbench/npc/log/merged.info

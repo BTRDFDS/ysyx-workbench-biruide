@@ -237,18 +237,29 @@ bool TAGE(bool actual,uint32_t pc) {//也是从deepseek搞来的
     return final_pred;
 }
 uint32_t BTB(uint32_t pc,uint32_t addr){
-	static const uint32_t BTBbits = 3;
+	static const uint32_t BTBbits = 4;
 	static const uint32_t BTBsize = 1<<BTBbits;
 	static const uint32_t BTBmask = BTBsize-1;
 	static uint32_t BTBtags[BTBsize]{};
 	static uint32_t BTBaddr[BTBsize]{};
+	static uint32_t cnt{};
 	uint32_t BTBidx = (pc>>2)&BTBmask;
 	uint32_t res{};
-	if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
-		res = BTBaddr[BTBidx];
-	}else if(addr!=0){
-		BTBtags[BTBidx] = (pc>>(BTBbits+2));
-		BTBaddr[BTBidx] = addr;
+	// if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
+	// 	res = BTBaddr[BTBidx];
+	// }else 
+	for(uint32_t i=0;i<BTBsize;i++){
+		if(BTBtags[i]==(pc>>2)){
+			res = BTBaddr[i];
+			break;
+		}
+	}
+	if(res==0 && addr!=0){
+		// BTBtags[BTBidx] = (pc>>(BTBbits+2));
+		// BTBaddr[BTBidx] = addr;
+		BTBtags[cnt] = pc>>2;
+		BTBaddr[cnt] = addr;
+		cnt = (cnt+1)%BTBsize;
 	}
 	return res;
 }
