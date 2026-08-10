@@ -130,10 +130,10 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 			wbuChk.io.check	:= true.B
 		}.elsewhen(pipeValid && ~in.pipe.valid){
 			hasValid := true.B
-			wbuChk.io.check	:= true.B
+			wbuChk.io.check	:= false.B
 		}.elsewhen(~pipeValid && in.pipe.valid){
-			wbuChk.io.check	:= hasValid
 		    hasValid := false.B
+			wbuChk.io.check	:= hasValid
 		}.otherwise{
 			wbuChk.io.check	:= false.B
 		}
