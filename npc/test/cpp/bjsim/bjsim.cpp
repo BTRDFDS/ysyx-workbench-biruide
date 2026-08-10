@@ -17,7 +17,7 @@ bool BPB2(bool result){
 	return res;
 }
 bool TPF2(bool forward,bool result){
-	static uint8_t tpb2{2},tp{2};
+	static uint8_t tpb2{2},tp{1};
 	bool resBTFN = forward;
 	bool resBPB2 = tpb2>=2;
 	bool res = (tp>=2)?resBTFN:resBPB2;
@@ -37,35 +37,43 @@ const uint32_t BTBsize = 1<<BTBbits;
 const uint32_t BTBmask = BTBsize-1;
 uint32_t BTBtags[BTBsize]{};
 uint32_t BTBaddr[BTBsize]{};
+uint32_t use[BTBsize]{};
 uint32_t BTBr(uint32_t pc,uint32_t addr=0,bool write=false){
 	uint32_t res{};
 	uint32_t BTBidx = (pc>>2)&BTBmask;
-	if(write){
-		BTBtags[BTBidx] = (pc>>(BTBbits+2));
-		BTBaddr[BTBidx] = addr;
-	}else{
-		if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
-			res = BTBaddr[BTBidx];
-		}
-	}
 	// if(write){
-	// 	static uint32_t cnt{};
-	// 	BTBtags[cnt] = pc>>2;
-	// 	BTBaddr[cnt] = addr;
-	// 	cnt = (cnt+1)%BTBsize;
+	// 	BTBtags[BTBidx] = (pc>>(BTBbits+2));
+	// 	BTBaddr[BTBidx] = addr;
 	// }else{
-	// 	for(uint32_t i=0;i<BTBsize;i++){
-	// 		if(BTBtags[i]==(pc>>2)){
-	// 			res = BTBaddr[i];
-	// 			break;
-	// 		}
+	// 	if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
+	// 		res = BTBaddr[BTBidx];
 	// 	}
 	// }
+	if(write){
+		uint32_t min{};
+		for(int i=0;i<BTBsize;i++)if(use[min]>use[i])min = i;
+		printf("%d : \n",min,use[min]);
+		BTBtags[min] = pc>>2;
+		BTBaddr[min] = addr;
+		use[min] = 0;
+		// static uint32_t cnt{};
+		// BTBtags[cnt] = pc>>2;
+		// BTBaddr[cnt] = addr;
+		// cnt = (cnt+1)%BTBsize;
+	}else{
+		for(uint32_t i=0;i<BTBsize;i++){
+			if(BTBtags[i]==(pc>>2)){
+				res = BTBaddr[i];
+				use[i]++;
+				break;
+			}
+		}
+	}
 	return res;
 }
 int main() {
-	file.open("./bin/BJmicrobench-train.bin", std::ios::in | std::ios::binary);
-	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJmicrobench-train.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint64_t ju{},bi{},bn{},btf{},btb{},hitBTFN{},hitBPB2{},hitTPF2{},hitBTFN_BTB{},hitBPB2_BTB{},hitTPF2_BTB{};
 	for(uint64_t cnt=0;;cnt++){
@@ -83,10 +91,10 @@ int main() {
 			);
 			printf("hitBTFN= %ld[%f]\n",hitBTFN,hitBTFN/(float)br);
 			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)br);
-			printf("hitTPF2= %ld[%f]\n",hitTPF2,hitTPF2/(float)br);
+			// printf("hitTPF2= %ld[%f]\n",hitTPF2,hitTPF2/(float)br);
 			printf("hitBTFN_BTB= %ld[%f]\n",hitBTFN_BTB,hitBTFN_BTB/(float)cnt);
 			printf("hitBPB2_BTB= %ld[%f]\n",hitBPB2_BTB,hitBPB2_BTB/(float)cnt);
-			printf("hitTPF2_BTB= %ld[%f]\n",hitTPF2_BTB,hitTPF2_BTB/(float)cnt);
+			// printf("hitTPF2_BTB= %ld[%f]\n",hitTPF2_BTB,hitTPF2_BTB/(float)cnt);
 			break;
 		}
         bool branch{},jump{},sext{};
@@ -122,7 +130,7 @@ int main() {
 			if(jump == tpf2)hitTPF2++;
 			if(jump == btfn && (jump?btb:1))hitBTFN_BTB++;
 			if(jump == bpb2 && (jump?btb:1))hitBPB2_BTB++;
-			if(jump == tpf2 && (jump?btb:1))hitTPF2_BTB++
+			if(jump == tpf2 && (jump?btb:1))hitTPF2_BTB++;
 		}
 		if(!branch){
 			hitBTFN++;
