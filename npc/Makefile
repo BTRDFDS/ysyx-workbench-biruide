@@ -176,6 +176,8 @@ branchsim:./test/cpp/branchsim/branchsim
 	time ./test/cpp/branchsim/branchsim
 bjsim:./test/cpp/bjsim/bjsim
 	time ./test/cpp/bjsim/bjsim
+bjrsim:./test/cpp/bjrsim/bjrsim
+	time ./test/cpp/bjrsim/bjrsim
 
 coverager:
 	lcov --list --rc branch_coverage=1 --rc function_coverage=0 /home/biruide/ysyx-workbench/npc/log/merged.info
