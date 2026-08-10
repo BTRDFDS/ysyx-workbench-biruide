@@ -123,6 +123,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		exuChk.bnj	:= pipeValid&&pipeBfu=/=ExuBfu.Null&& ~enBfun && out.imme.back===Back.Ready
 		exuChk.bij	:= pipeValid&&pipeBfu=/=ExuBfu.Null&&  enBfun && out.imme.back===Back.Jump
 		exuChk.jum	:= pipeValid&&pipeBfu===ExuBfu.Null&& pipeEnJcod && out.imme.back===Back.Jump && pipeAlu=/=ExuAlu.Jalr
+		exuChk.jlr	:= pipeValid&&pipeBfu===ExuBfu.Null&& pipeEnJcod && out.imme.back===Back.Jump && pipeAlu===ExuAlu.Jalr
 		exuChk.addr := out.imme.addr
 		exuChk.pc 	:= Cat(pipePc,0.U(2.W))
 		exuChk.sext	:= pipeResult(31)
@@ -132,6 +133,7 @@ class ysyx_26020046_ExuChk extends ExtModule{
 	val bnj	= IO(Input(Bool()))
 	val bij = IO(Input(Bool()))
 	val jum = IO(Input(Bool()))
+	val jlr = IO(Input(Bool()))
 	val addr= IO(Input(UInt(32.W)))
 	val pc	= IO(Input(UInt(32.W)))
 	val sext= IO(Input(UInt( 1.W)))
@@ -142,6 +144,7 @@ class ysyx_26020046_ExuChk extends ExtModule{
 		input logic bnj,
 		input logic bij,
 		input logic jum,
+		input logic jlr,
 		input logic [31:0]addr,
 		input logic [31:0]pc,
 		input logic sext,
@@ -156,7 +159,8 @@ class ysyx_26020046_ExuChk extends ExtModule{
 		if(bij) exuBij();
 		if(bnj) exuBnTrace(pc,{5'b0,sext,2'b01});
 		if(bij) exuBiTrace(pc,{5'b0,sext,2'b11},addr);
-		if(jum) exuBiTrace(pc,{5'b0,sext,2'b10},addr);
+		if(jum) exuBiTrace(pc,{5'b0,1'b0,2'b10},addr);
+		if(jum) exuBiTrace(pc,{5'b0,1'b1,2'b10},addr);
 	end
 	endmodule
 	"""

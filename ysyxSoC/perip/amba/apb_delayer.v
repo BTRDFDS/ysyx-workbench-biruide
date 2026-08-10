@@ -1,4 +1,4 @@
-`define Delay
+// `define Delay
 module apb_delayer(
 	input         clock,
 	input         reset,
