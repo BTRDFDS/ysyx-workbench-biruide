@@ -236,11 +236,26 @@ bool TAGE(bool actual,uint32_t pc) {//也是从deepseek搞来的
 
     return final_pred;
 }
+uint32_t BTB(uint32_t pc,uint32_t addr){
+	static const uint32_t BTBbits = 3;
+	static const uint32_t BTBsize = 1<<BTBbits;
+	static const uint32_t BTBmask = BTBsize-1;
+	static uint32_t BTBtags[BTBsize]{};
+	static uint32_t BTBaddr[BTBsize]{};
+	uint32_t BTBidx = (pc>>2)&BTBmask;
+	uint32_t res{};
+	if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
+		res = BTBaddr[BTBidx];
+	}else{
+		BTBtags[BTBidx] = (pc>>(BTBbits+2));
+		BTBaddr[BTBidx] = addr;
+	}
+}
 int main() {
 	file.open("./bin/Bmicrobench-train.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/Bdiv.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t bij{},bnj{},btf{},btb{},hitBTFN{},hitBPB1{},hitBPB2{},hitGSHA{},hitTPGL{},hitTAGE{};
+	uint64_t bij{},bnj{},btf{},btb{},hitBTFN{},hitBPB1{},hitBPB2{},hitGSHA{},hitTPGL{},hitTAGE{},hitBTB{};
 	uint32_t addr,pc;
 	uint8_t state;
 	for(uint64_t cnt=0;;cnt++){
@@ -258,10 +273,14 @@ int main() {
 			printf("hitGSHA= %ld[%f]\n",hitGSHA,hitGSHA/(float)cnt);
 			printf("hitTPGL= %ld[%f]\n",hitTPGL,hitTPGL/(float)cnt);
 			printf("hitTAGE= %ld[%f]\n",hitTAGE,hitTAGE/(float)cnt);
+			printf("hitBTB= %ld[%f]\n",hitBTB,hitBTB/(float)cnt);
 			break;
 		}
 		file.read((char*)&state, sizeof(state));
-		if((state&0x7f)==1){file.read((char*)&addr, sizeof(addr));bij++;
+		if((state&0x7f)==1){
+			file.read((char*)&addr, sizeof(addr));
+			bij++;
+			if(addr==BTB(pc,addr)){hitBTB++;}
 		}else if((state&0x7f)==0){bnj++;
 		}else{printf("state= %d\n",state);break;}
 		if(state>>7){btb++;
