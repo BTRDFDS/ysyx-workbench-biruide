@@ -6,7 +6,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val ich	= IO(new InstrBus())
 	//pc更新
-		val hasChange= RegInit(true.B);dontTouch(hasChange)
+		val hasChange= RegInit(true.B);
 		val pc		= RegInit(PcInit(31,2))
 		// val state	= RegInit(MemStatus.Call)
 		// val error	= RegInit(false.B)//特指地址错误
@@ -62,6 +62,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 
 	if(Yosys == false){
+		dontTouch(hasChange)
 		val ifuPc	= Mux(out.pipe.res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
 		val ifuInst	= Mux(out.pipe.res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
