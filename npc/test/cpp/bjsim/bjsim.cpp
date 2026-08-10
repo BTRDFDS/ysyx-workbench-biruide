@@ -45,9 +45,9 @@ void BTBw(uint32_t pc,uint32_t addr){
 	// cnt = (cnt+1)%BTBsize;
 }
 int main() {
-	file.open("./bin/Bmicrobench-train.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t ju{},bi{},bn{},btf{},btb{},hitBTFN{},hitBPB2{},hitBTB{},hitBTFN_BTB{},hitBPB2_BTB{};
+	uint64_t ju{},bi{},bn{},btf{},btb{},hitBTFN{},hitBPB2{},hitBTFN_BTB{},hitBPB2_BTB{};
 	for(uint64_t cnt=0;;cnt++){
 		uint32_t addr{},pc{};
 		uint8_t state{};
@@ -55,7 +55,7 @@ int main() {
 			uint64_t br = bi+bn;
 			printf("cnt= %ld ju= %ld[%f] bi= %ld[%f] bn= %ld[%f] btf= %ld[%f] btb= %ld[%f]\n",
 				cnt,
-				ju.ju/float(cnt),
+				ju,ju/float(cnt),
 				bi,bi/(float)br,
 				bn,bn/(float)br,
 				btf,btf/(float)br,
@@ -63,7 +63,6 @@ int main() {
 			);
 			printf("hitBTFN= %ld[%f]\n",hitBTFN,hitBTFN/(float)br);
 			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)br);
-			printf("hitBTB= %ld[%f]\n",hitBTB,hitBTB/(float)cnt);
 			printf("hitBTFN_BTB= %ld[%f]\n",hitBTFN_BTB,hitBTFN_BTB/(float)cnt);
 			printf("hitBPB2_BTB= %ld[%f]\n",hitBPB2_BTB,hitBPB2_BTB/(float)cnt);
 			break;
@@ -90,14 +89,20 @@ int main() {
 			btfn = BTFN(sext);
 			bpb2 = BPB2(jump);
 		}
-		if(jump && (!branch || btfn || bpb2)){
-			btb = BTBr(pc)==addr
+		if(!branch || btfn || bpb2){
+			btb = BTBr(pc)==addr && addr!=0;
 		}
-		if(jump == btfn && jump?btb:1)hitBTFN++;
-		if(jump == bpb2 && jump?btb:1)hitBPB2++;
+		if(branch){
+			if(jump == btfn)hitBTFN++;
+			if(jump == bpb2)hitBPB2++;
+			if(jump == btfn && (jump?btb:1))hitBTFN_BTB++;
+			if(jump == bpb2 && (jump?btb:1))hitBPB2_BTB++;
+		}
 		if(!branch && btb){
 			hitBTFN++;
 			hitBPB2++;
+			hitBTFN_BTB++;
+			hitBPB2_BTB++;
 		}
 		if(jump && !btb)BTBw(pc,addr);
 	}
