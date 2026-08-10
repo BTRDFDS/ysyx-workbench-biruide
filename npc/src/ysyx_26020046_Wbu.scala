@@ -118,11 +118,8 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		// val pc		= RegInit(0.U(BitWidth.W))	;pc		:= Cat(in.pipe.pc,0.U(2.W))
 		// wbuChk.io.check	:= check
 		// wbuChk.io.pc	:= pc
-		when(pipeValid){
-			for(i <- 0 until RegNum){
-			wbuChk.io.reg(i) := Mux((i.U === pipeRdAddr && i.U =/= 0.U), pipeResult, gpr(i))
-			}
-		}.otherwise{wbuChk.io.reg := gpr}
+		when(pipeValid){for(i <- 0 until RegNum){wbuChk.io.reg(i) := Mux((i.U === pipeRdAddr && i.U =/= 0.U), pipeResult, gpr(i))}}
+		.otherwise{wbuChk.io.reg := gpr}
 	
 		wbuChk.io.pc	:= Cat(in.pipe.pc,0.U(2.W))
 		val hasValid = RegInit(false.B);dontTouch(hasValid)
