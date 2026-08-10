@@ -130,7 +130,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 			wbuChk.io.check	:= true.B
 		    hasValid := false.B
 		}.otherwise{
-			wbuChk.io.check	:= false;
+			wbuChk.io.check	:= false.B
 		}
 	}
 }
