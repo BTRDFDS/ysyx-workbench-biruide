@@ -246,19 +246,20 @@ uint32_t BTB(uint32_t pc,uint32_t addr){
 	uint32_t res{};
 	if(BTBtags[BTBidx]==(pc>>(BTBbits+2))){
 		res = BTBaddr[BTBidx];
-	}else{
+	}else if(addr!=0){
 		BTBtags[BTBidx] = (pc>>(BTBbits+2));
 		BTBaddr[BTBidx] = addr;
 	}
+	return res;
 }
 int main() {
 	file.open("./bin/Bmicrobench-train.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/Bdiv.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t bij{},bnj{},btf{},btb{},hitBTFN{},hitBPB1{},hitBPB2{},hitGSHA{},hitTPGL{},hitTAGE{},hitBTB{};
-	uint32_t addr,pc;
-	uint8_t state;
+	uint64_t bij{},bnj{},btf{},btb{},hitBTFN{},hitBPB1{},hitBPB2{},hitGSHA{},hitTPGL{},hitTAGE{},hitBTB{},hitBTFN_BTB{},hitBPB2_BTB{};
 	for(uint64_t cnt=0;;cnt++){
+		uint32_t addr{},pc{};
+		uint8_t state{};
 		if(!file.read((char*)&pc, sizeof(pc))){
 			printf("cnt= %ld bij= %ld[%f] bnj= %ld[%f] btf= %ld[%f] btb= %ld[%f]\n",
 				cnt,
@@ -268,29 +269,39 @@ int main() {
 				btb,btb/(float)cnt
 			);
 			printf("hitBTFN= %ld[%f]\n",hitBTFN,hitBTFN/(float)cnt);
-			printf("hitBPB1= %ld[%f]\n",hitBPB1,hitBPB1/(float)cnt);
+			// printf("hitBPB1= %ld[%f]\n",hitBPB1,hitBPB1/(float)cnt);
 			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)cnt);
-			printf("hitGSHA= %ld[%f]\n",hitGSHA,hitGSHA/(float)cnt);
-			printf("hitTPGL= %ld[%f]\n",hitTPGL,hitTPGL/(float)cnt);
-			printf("hitTAGE= %ld[%f]\n",hitTAGE,hitTAGE/(float)cnt);
+			// printf("hitGSHA= %ld[%f]\n",hitGSHA,hitGSHA/(float)cnt);
+			// printf("hitTPGL= %ld[%f]\n",hitTPGL,hitTPGL/(float)cnt);
+			// printf("hitTAGE= %ld[%f]\n",hitTAGE,hitTAGE/(float)cnt);
 			printf("hitBTB= %ld[%f]\n",hitBTB,hitBTB/(float)cnt);
+			printf("hitBTFN_BTB= %ld[%f]\n",hitBTFN_BTB,hitBTFN_BTB/(float)cnt);
+			printf("hitBPB2_BTB= %ld[%f]\n",hitBPB2_BTB,hitBPB2_BTB/(float)cnt);
 			break;
 		}
 		file.read((char*)&state, sizeof(state));
+		bool State_btfn = false;
+		bool State_btb = false;
+		bool State_bpb2 = false;
 		if((state&0x7f)==1){
 			file.read((char*)&addr, sizeof(addr));
 			bij++;
-			if(addr==BTB(pc,addr)){hitBTB++;}
+			if(addr==BTB(pc,addr)){
+				hitBTB++;
+				State_btb = true;
+			}
 		}else if((state&0x7f)==0){bnj++;
 		}else{printf("state= %d\n",state);break;}
 		if(state>>7){btb++;
 		}else{btf++;}
-		if((state&0x7f)==BTFN(state>>7)){hitBTFN++;}
-		if((state&0x7f)==BPB1(state&0x7f)){hitBPB1++;}
-		if((state&0x7f)==BPB2(state&0x7f)){hitBPB2++;}
-		if((state&0x7f)==GSHA(state&0x7f,pc)){hitGSHA++;}
-		if((state&0x7f)==TPGL(state&0x7f,pc)){hitTPGL++;}
-		if((state&0x7f)==TAGE(state&0x7f,pc)){hitTAGE++;}
+		if((state&0x7f)==BTFN(state>>7)){hitBTFN++;State_btfn=true;}
+		// if((state&0x7f)==BPB1(state&0x7f)){hitBPB1++;}
+		if((state&0x7f)==BPB2(state&0x7f)){hitBPB2++;State_bpb2=true;}
+		// if((state&0x7f)==GSHA(state&0x7f,pc)){hitGSHA++;}
+		// if((state&0x7f)==TPGL(state&0x7f,pc)){hitTPGL++;}
+		// if((state&0x7f)==TAGE(state&0x7f,pc)){hitTAGE++;}
+		if(State_btfn&&State_btb)hitBTFN_BTB++;
+		if(State_bpb2&&State_btb)hitBPB2_BTB++;
 	}
 	file.close();
 }
