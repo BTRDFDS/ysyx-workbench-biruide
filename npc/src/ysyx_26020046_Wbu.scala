@@ -114,11 +114,24 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		wbuChk.io.reg := gpr
 		wbuChk.clock	:= clock
 		wbuChk.io.ebreak := (pipeCsrOp === CsrOp.Trap)&(pipeValid)&(pipeCsrMesg === 0x3L.U) ||error
-		val noFirst	=RegInit(false.B)			;when(~noFirst){noFirst := in.pipe.valid}
-		val check	= RegInit(false.B)			;check	:= noFirst && (in.pipe.valid)
-		val pc		= RegInit(0.U(BitWidth.W))	;pc		:= Cat(in.pipe.pc,0.U(2.W))
-		wbuChk.io.check	:= check
-		wbuChk.io.pc	:= pc
+		// val noFirst	=RegInit(false.B)			;when(~noFirst){noFirst := in.pipe.valid}
+		// val check	= RegInit(false.B)			;check	:= noFirst && (in.pipe.valid)
+		// val pc		= RegInit(0.U(BitWidth.W))	;pc		:= Cat(in.pipe.pc,0.U(2.W))
+		// wbuChk.io.check	:= check
+		// wbuChk.io.pc	:= pc
+			wbuChk.io.pc	:= in.pipe.pc
+		val hasValid = RegInit(false.B)
+		when(pipeValid && in.pipe.valid){
+			wbuChk.io.check	:= true.B
+		}.elsewhen(pipeValid && ~in.pipe.valid){
+			hasValid := true.B
+			wbuChk.io.check	:= true.B
+		}.elsewhen(~pipeValid && in.pipe.valid){
+			wbuChk.io.check	:= true.B
+		    hasValid := false.B
+		}.otherwise{
+			wbuChk.io.check	:= false;
+		}
 	}
 }
 class ysyx_26020046_WbuChk extends ExtModule{
