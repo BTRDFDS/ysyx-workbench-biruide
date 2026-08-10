@@ -17,19 +17,10 @@ bool BPB2(bool result){
 	return res;
 }
 bool TPF2(bool forward,bool result){
-	static uint8_t tpb2{2},tp{1};
-	bool resBTFN = forward;
-	bool resBPB2 = tpb2>=2;
-	bool res = (tp>=2)?resBTFN:resBPB2;
-	if(result)	if(tpb2<3){tpb2++;}
-	else		if(tpb2>0){tpb2--;}
-	if(tp>=2){
-		if(result==resBTFN)	if(tp<3){tp++;}
-		else				if(tp>0){tp--;}
-	}else{
-		if(result==resBPB2)	if(tp<3){tp++;}
-		else				if(tp>0){tp--;}
-	}
+	static uint8_t tp{2};
+	bool res= (tp==2)?forward:tp>2;
+	if(result)	if(tp<3)tp++;
+	else		if(tp>0)tp--;
 	return res;
 }
 const uint32_t BTBbits = 3;
@@ -50,16 +41,17 @@ uint32_t BTBr(uint32_t pc,uint32_t addr=0,bool write=false){
 	// 	}
 	// }
 	if(write){
-		uint32_t min{};
-		for(int i=0;i<BTBsize;i++)if(use[min]>use[i])min = i;
-		printf("%d : \n",min,use[min]);
-		BTBtags[min] = pc>>2;
-		BTBaddr[min] = addr;
-		use[min] = 0;
-		// static uint32_t cnt{};
-		// BTBtags[cnt] = pc>>2;
-		// BTBaddr[cnt] = addr;
-		// cnt = (cnt+1)%BTBsize;
+		// uint32_t min{};
+		// for(int i=0;i<BTBsize;i++)if(use[min]>use[i])min = i;
+		// // printf("%d : %d\n",min,use[min]);
+		// BTBtags[min] = pc>>2;
+		// BTBaddr[min] = addr;
+		// use[min] = 0;
+		// for(int i=0;i<BTBsize;i++)use[i] /= 2;
+		static uint32_t cnt{};
+		BTBtags[cnt] = pc>>2;
+		BTBaddr[cnt] = addr;
+		cnt = (cnt+1)%BTBsize;
 	}else{
 		for(uint32_t i=0;i<BTBsize;i++){
 			if(BTBtags[i]==(pc>>2)){
@@ -72,8 +64,9 @@ uint32_t BTBr(uint32_t pc,uint32_t addr=0,bool write=false){
 	return res;
 }
 int main() {
-	// file.open("./bin/BJmicrobench-train.bin", std::ios::in | std::ios::binary);
-	file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJmicrobench-train.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint64_t ju{},bi{},bn{},btf{},btb{},hitBTFN{},hitBPB2{},hitTPF2{},hitBTFN_BTB{},hitBPB2_BTB{},hitTPF2_BTB{};
 	for(uint64_t cnt=0;;cnt++){
