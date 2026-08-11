@@ -26,7 +26,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val btbCnt	= RegInit(0.U(BtbBits.W))
 	val btbPc	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
 	val btbAddr	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
-	val btbMatch= VecInit(btbPc.map(_ === in.imme.addr(31,2))).asUInt
+	val btbMatch= VecInit(btbPc.map(_ === in.imme.pc)).asUInt
 	val btbIndex= PriorityEncoder(btbMatch)
 	val btbHit	= btbMatch.orR
 
@@ -66,7 +66,6 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 				btbAddr(btbCnt) := in.imme.addr(31,2)
 				btbCnt := btbCnt + 1.U
 			}
-
 		}
 	}
 
