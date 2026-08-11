@@ -59,8 +59,7 @@ class PipeIdEx extends PipeExLs(){
 	val r1		=Output(UInt(BitWidth.W))
 }
 class ImmeBefore extends Bundle{
-	val jump	= Output(Bool())
-	val error	= Output(Bool())
+	val back	= Output(Jump())
 	val ready	= Output(Bool())
 	val addr	= Output(UInt((BitWidth).W))
 	val pc		= Output(UInt((BitWidth-2).W))

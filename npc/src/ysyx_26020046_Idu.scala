@@ -10,7 +10,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val pipe	= new PipeIdEx()
 		val imme	= new ImmeBefore()
 	})
-	val pipeReset	= reset.asBool||in.imme.error||out.imme.jump
+	val pipeReset	= reset.asBool||in.imme.back===Back.Error||out.imme.back===Back.Jump
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,out.imme.ready,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
 	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.instr	)
@@ -210,8 +210,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.addr	:= in.imme.addr
 	out.imme.pc		:= in.imme.pc
 	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
-	out.imme.jump	:= in.imme.jump && in.imme.addr=/=in.pipe.pc
-	out.imme.error	:= in.imme.error
+	when(in.imme.back===Back.Jump){out.imme.back := Mux(in.imme.addr===Cat(in.pipe.pc,0.U(2.W)),Back.Suce,Back.Jump)}
+	.otherwise{out.imme.back := in.imme.back}
 
 	if(Yosys == false){
 		val iduPc = Mux(pipeRes=== IfuRes.Valid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)

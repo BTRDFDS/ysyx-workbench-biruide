@@ -7,59 +7,73 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val ich	= IO(new InstrBus())
 	//pc更新
 		val hasChange= RegInit(true.B);
-		val pc		= RegInit(PcInit(31,2))
-		// val state	= RegInit(MemStatus.Call)
-		// val error	= RegInit(false.B)//特指地址错误
-		// val res		= RegInit(IfuRes.Null)
-		// val instr = RegInit(0.U(BitWidth.W))
+		val pipePc		= RegInit(PcInit(31,2))
+		val dnpc	= Wire(UInt((BitWidth-2).W))
 
-
-		when(in.imme.error || in.imme.jump)		{pc := in.imme.addr(31,2)}
-		.elsewhen(in.imme.ready && ich.ready && ~hasChange)	{pc := pc + 1.U}
-
-		when(in.imme.error || in.imme.jump || (in.imme.ready && ~hasChange)){hasChange := true.B}
-		.elsewhen(out.pipe.res === IfuRes.Valid)							{hasChange := false.B}
+		when(in.imme.back===Back.Error || in.imme.back===Back.Jump || (in.imme.ready && ~hasChange)){hasChange := true.B}
+		.elsewhen(out.pipe.res === IfuRes.Valid)													{hasChange := false.B}
 
 		ich.valid	:= true.B
-		ich.addr	:= pc
+		ich.addr	:= pipePc
 
 		out.pipe.instr	:= ich.data
-		out.pipe.pc		:= pc
+		out.pipe.pc		:= pipePc
 		when(in.imme.addr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
 		.elsewhen(ich.ready&& hasChange)	{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 		.otherwise							{out.pipe.res := IfuRes.Null}
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+	val bp2Cnt	= RegInit(2.U(2.W))
+	val bp2Hit = bp2Cnt >= 2.U
 
+	val BtbBits	= 3
+	val BtbSize	= 1 << BtbBits
+	val btbCnt	= RegInit(0.U(BtbBits.W))
+	val btbPc	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
+	val btbAddr	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
+	val btbMatch= VecInit(btbPc.map(_ === in.imme.addr(31,2))).asUInt
+	val btbIndex= PriorityEncoder(btbMatch)
+	val btbHit	= btbMatch.orR
 
+	val PerdBits= 2
+	val PerdSize= 1 << PerdBits
+	val predRcnt= RegInit(0.U(PerSize.W))
+	val predWcnt= RegInit(0.U(PerSize.W))
+	val predBp2	= RegInit(VecInit(Seq.fill(PerdSize)(false.B)))
+	val predBtb	= RegInit(VecInit(Seq.fill(PerdSize)(false.B)))
 
+	val isBranch= out.pipe.instr(6,0)===Op.Branch.asUInt
+	val isJal	= out.pipe.instr(6,0)===Op.Jal.asUInt
+	val isJalr	= out.pipe.instr(6,0)===Op.Ijalr.asUInt
 
+	when(in.imme.back===Back.Error||in.imme.back===Back.Jump){
+		pipePc := in.imme.addr(31,2)
+	}.elsewhen(in.imme.ready&&ich.ready){
+		when((isBranch||isJal||isJalr) && bp2Hit&&btbHit){
+					pipePc := btbAddr(btbIndex)
+		}.otherwise{pipePc := pipePc+1.U}
+	}
+	switch(in.imme.back){
+		is(Back.Null){when(ich.ready && (isBranch||isJal||isJalr)){
+			predBp2(predWcnt) := bp2Hit
+			predBtb(predWcnt) := btbHit
+			predWcnt := predWcnt + 1.U
+		}}
+		is(Back.Suce){predRcnt := predRcnt + 1.U}
+		is(Back.Jump){
+			predWcnt := predRcnt
+			val shouldNotJump = Cat(in.imme.pc+1.U,0.U(2.W)) === in.imme.addr
+			when(shouldNotJump){
+				when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}
+			}.otherwise{
+				when(bp2Cnt<=3.U){bp2Cnt := bp2Cnt + 1.U}
+				btbPc(btbCnt)	:= in.imme.pc
+				btbAddr(btbCnt) := in.imme.addr(31,2)
+				btbCnt := btbCnt + 1.U
+			}
 
-		// switch(state){
-		// 	is(MemStatus.Call){when((ich.ready & (in.imme.back === Back.Ready || in.imme.back === Back.Wait)) || error)
-		// 															{state := MemStatus.Back}}
-		// 	is(MemStatus.Back){when(in.imme.back =/= Back.Wait)		{state := MemStatus.Call}}
-		// }
-		// when(state === MemStatus.Call){
-		// 	ich.valid	:= ~error
-		// 	when(ich.ready){instr := ich.data}
-
-		// 	when(error)						{res := IfuRes.Un4b}
-		// 	.elsewhen(ich.ready &&(in.imme.back === Back.Ready || in.imme.back === Back.Wait))
-		// 									{res :=Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
-		// 	.otherwise						{res := IfuRes.Null}
-		// }.otherwise{
-		// 	ich.valid := false.B
-		// 	when(in.imme.back =/= Back.Wait){res := IfuRes.Null}
-		// }
-		// switch(in.imme.back){
-		// 	is(Back.Jump)	{pc := in.imme.addr(31,2)}
-		// 	is(Back.Error)	{pc := in.imme.addr(31,2)}
-		// 	is(Back.Ready)	{when(state===MemStatus.Back)(pc := pc + 1.U)}
-		// }
-		// when(in.imme.back === Back.Error || in.imme.back === Back.Jump){
-		// 	error := in.imme.addr(1,0) =/= 0.U
-		// }
-
+		}
+	}
 
 	if(Yosys == false){
 		dontTouch(hasChange)

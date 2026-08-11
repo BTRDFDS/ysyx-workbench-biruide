@@ -15,7 +15,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val ich		= IO(new FecneBus())
 	val state	= RegInit(MemStatus.Call)
 
-	val pipeReset	= reset.asBool||in.imme.error
+	val pipeReset	= reset.asBool||in.imme.back===Back.Error
 	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
@@ -123,9 +123,8 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	//处理回传
 	out.imme.addr	:= in.imme.addr
 	out.imme.pc		:= in.imme.pc
-	out.imme.error	:= in.imme.error
+	out.imme.back	:= in.imme.back
 	out.imme.ready	:= (~pipeValid) || pipeLsuOp === LsuOp.Null || state === MemStatus.Back//WBU就是true
-	out.imme.jump	:= false.B//LSU和WBU不可能
 
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr
