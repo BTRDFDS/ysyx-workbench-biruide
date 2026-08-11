@@ -214,6 +214,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	.otherwise{out.imme.back := in.imme.back}
 
 	if(Yosys == false){
+		dontTouch(pipeReset)
 		val iduPc = Mux(pipeRes=== IfuRes.Valid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)
 		val iduInstr = Mux(pipeRes=== IfuRes.Valid,pipeInstr,0.U(32.W));dontTouch(iduInstr)
 		val iduChk = Module(new ysyx_26020046_IduChk)
