@@ -76,6 +76,9 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 	if(Yosys == false){
 		dontTouch(hasChange)
+		dontTouch(isBranch)
+		dontTouch(isJal)
+		dontTouch(isJalr)
 		val ifuPc	= Mux(out.pipe.res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
 		val ifuInst	= Mux(out.pipe.res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
