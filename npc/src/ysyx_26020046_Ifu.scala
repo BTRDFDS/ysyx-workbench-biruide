@@ -122,12 +122,12 @@ class ysyx_26020046_IfuChk extends ExtModule{
 
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
-		// if(inst)	ifuInst();
+		if(inst)	ifuInst();
 		if(jAb)		ifuJaB();
 		if(jAC)		ifuJaC();
 		if(unable)	ifuUnable();
 	end
-	always_ff@(posedge inst)	ifuInst();
+	// always_ff@(posedge inst)ifuInst();
 	endmodule
 	"""
 	)
