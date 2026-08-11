@@ -30,7 +30,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val btbIndex= PriorityEncoder(btbMatch)
 	val btbHit	= btbMatch.orR
 
-	val PerdBits= 2
+	val PerdBits= 3
 	val PerdSize= 1 << PerdBits
 	val predRcnt= RegInit(0.U(PerdBits.W))
 	val predWcnt= RegInit(0.U(PerdBits.W))
