@@ -92,8 +92,8 @@ class ysyx_26020046_IchChk extends ExtModule{
 	import "DPI-C" function void ichHit();
 	import "DPI-C" function void ichMiss();
 
-	always_ff@(negedge hit)	ichHit();
-	always_ff@(posedge miss)ichMiss();
+	always_ff@(posedge hit)	ichHit();
+	always_ff@(negedge miss)ichMiss();
 	endmodule
 	"""
 	)
