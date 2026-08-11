@@ -84,8 +84,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready
 		ifuChk.stall	:= out.pipe.res === IfuRes.Null
-		ifuChk.jbMiss		:= in.imme.back===Back.Jump
-		ifuChk.jbHit		:= in.imme.back===Back.Suce
+		ifuChk.jbMiss	:= in.imme.back===Back.Jump
+		ifuChk.jbHit	:= in.imme.back===Back.Suce
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
