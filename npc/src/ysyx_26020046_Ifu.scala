@@ -8,7 +8,6 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	//pc更新
 		val hasChange= RegInit(true.B);
 		val pipePc		= RegInit(PcInit(31,2))
-		val dnpc	= Wire(UInt((BitWidth-2).W))
 
 		when(in.imme.back===Back.Error || in.imme.back===Back.Jump || (in.imme.ready && ~hasChange)){hasChange := true.B}
 		.elsewhen(out.pipe.res === IfuRes.Valid)													{hasChange := false.B}
@@ -37,8 +36,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 	val PerdBits= 2
 	val PerdSize= 1 << PerdBits
-	val predRcnt= RegInit(0.U(PerSize.W))
-	val predWcnt= RegInit(0.U(PerSize.W))
+	val predRcnt= RegInit(0.U(PerdBits.W))
+	val predWcnt= RegInit(0.U(PerdBits.W))
 	val predBp2	= RegInit(VecInit(Seq.fill(PerdSize)(false.B)))
 	val predBtb	= RegInit(VecInit(Seq.fill(PerdSize)(false.B)))
 

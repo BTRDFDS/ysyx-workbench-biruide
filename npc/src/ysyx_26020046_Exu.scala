@@ -11,7 +11,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val imme = new ImmeAfter()
 		val pipe = new PipeExLs()
 	})
-	val pipeReset	= reset.asBool||(in.imme.back===Back.Error)||(out.imme.back===Back.Jummp&&in.imme.ready)
+	val pipeReset	= reset.asBool||(in.imme.back===Back.Error)||(out.imme.back===Back.Jump && in.imme.ready)
 	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
 	val pipeEnJcod	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.enJcod	)
@@ -88,15 +88,15 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val hasSend = RegInit(false.B)
 	when(in.imme.back===Back.Error){out.imme.back := Back.Error}
 	.otherwise{
-		when(pipeValid&&(pipeEnJcod||pipeBfu=/=ExuBfu.Null)&&~hasSend){
+		when(pipeValid&&(pipeEnJcod||pipeBfu=/=ExuBfu.Null)&& ~hasSend){
 					out.imme.back := Mux(Cat(in.pipe.pc,0.U(2.W))===shouldBe,Back.Suce,Back.Jump)
 		}.otherwise{out.imme.back := Back.Null}
 	}
 	when(out.imme.ready){hasSend := false.B}
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeBfu=/=ExuBfu.Null)){hasSend := true.B}
 	out.imme.ready	:= in.imme.ready || ~pipeValid
-	out.imme.addr	:= Mux(in.imme.back=Back.Error,in.imme.addr	,Mux((pipeEnJcod || enBfun),result,Cat(pipePc+1.U,0.U(2.W))))
-	out.imme.pc		:= Mux(in.imme.back=Back.Error,in.imme.pc	,pipePc)
+	out.imme.addr	:= Mux(in.imme.back===Back.Error,in.imme.addr	,Mux((pipeEnJcod || enBfun),result,Cat(pipePc+1.U,0.U(2.W))))
+	out.imme.pc		:= Mux(in.imme.back===Back.Error,in.imme.pc	,pipePc)
 
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr
@@ -119,8 +119,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		exuChk.clock:= clock
 		exuChk.bnj	:= pipeValid&&pipeBfu=/=ExuBfu.Null&& ~enBfun && out.imme.ready//TODO:有待验证
 		exuChk.bij	:= pipeValid&&pipeBfu=/=ExuBfu.Null&&  enBfun && out.imme.ready//TODO:有待验证
-		exuChk.jum	:= pipeValid&&pipeBfu===ExuBfu.Null&& pipeEnJcod && out.imme.back && pipeAlu=/=ExuAlu.Jalr
-		exuChk.jlr	:= pipeValid&&pipeBfu===ExuBfu.Null&& pipeEnJcod && out.imme.back && pipeAlu===ExuAlu.Jalr
+		exuChk.jum	:= pipeValid&&pipeBfu===ExuBfu.Null&& pipeEnJcod && out.imme.back===Back.Jump && pipeAlu=/=ExuAlu.Jalr
+		exuChk.jlr	:= pipeValid&&pipeBfu===ExuBfu.Null&& pipeEnJcod && out.imme.back===Back.Jump && pipeAlu===ExuAlu.Jalr
 		exuChk.addr := out.imme.addr
 		exuChk.pc 	:= Cat(pipePc,0.U(2.W))
 		exuChk.sext	:= pipeResult(31)

@@ -13,7 +13,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	val out = IO(new Bundle {
 		val imme = new ImmeAfter()
 	})
-	val pipeReset	= reset.asBool||out.imme.error
+	val pipeReset	= reset.asBool||out.imme.back===Back.Error
 	val pipeValid	= PipeReg(pipeReset,false.B				,true.B,in.pipe.valid	)
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,true.B,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.result	)
