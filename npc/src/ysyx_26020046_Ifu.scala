@@ -54,10 +54,11 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 			btbAddr(btbCnt) := in.imme.addr(31,2)
 			btbCnt := btbCnt + 1.U
 		}
-	}.elsewhen(ich.ready && (isBranch||isJal||isJalr)){
-		pipeBp2 := bp2Hit
-		pipeBtb := btbHit
 	}
+	// .elsewhen(ich.ready && (isBranch||isJal||isJalr)){
+	// 	pipeBp2 := bp2Hit
+	// 	pipeBtb := btbHit
+	// }
 	if(Yosys == false){
 		dontTouch(isBranch)
 		dontTouch(isJal)
