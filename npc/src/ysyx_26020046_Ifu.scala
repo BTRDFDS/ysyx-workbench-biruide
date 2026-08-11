@@ -84,43 +84,35 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready
 		ifuChk.stall	:= out.pipe.res === IfuRes.Null
-		ifuChk.unable	:= false.B
-		ifuChk.jAb		:= in.imme.back===Back.Jump
-		ifuChk.jAC		:= in.imme.back===Back.Suce
-		// ifuChk.unable	:= ich.ready && (in.imme.back === Back.Jump || in.imme.back === Back.Error)
-		// ifuChk.jAb		:= in.imme.back === Back.Jump && state === MemStatus.Back
-		// ifuChk.jAC		:= (state === MemStatus.Call && ich.ready) =/= (state === MemStatus.Call && ich.ready & (in.imme.back === Back.Ready || in.imme.back === Back.Wait))
+		ifuChk.jbMiss		:= in.imme.back===Back.Jump
+		ifuChk.jbHit		:= in.imme.back===Back.Suce
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
 	val inst	= IO(Input(Bool()))
 	val stall	= IO(Input(Bool()))
-	val jAb		= IO(Input(Bool()))
-	val jAC		= IO(Input(Bool()))
-	val unable	= IO(Input(Bool()))
+	val jbMiss	= IO(Input(Bool()))
+	val jbHit	= IO(Input(Bool()))
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_IfuChk.sv",
 	"""
 	module ysyx_26020046_IfuChk(
 		input logic inst,
 		input logic stall,
-		input logic jAb	,
-		input logic jAC,
-		input logic unable,
+		input logic jbMiss,
+		input logic jbHit,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
 	import "DPI-C" function void ifuStall();
-	import "DPI-C" function void ifuJaB();
-	import "DPI-C" function void ifuJaC();
-	import "DPI-C" function void ifuUnable();
+	import "DPI-C" function void ifuJbMiss();
+	import "DPI-C" function void ifuJbHit();
 
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
 		if(inst)	ifuInst();
-		if(jAb)		ifuJaB();
-		if(jAC)		ifuJaC();
-		if(unable)	ifuUnable();
+		if(jbMiss)		ifujbMiss();
+		if(jbHit)		ifujbHit();
 	end
 	endmodule
 	"""

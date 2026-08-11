@@ -147,13 +147,9 @@ class ysyx_26020046_ExuChk extends ExtModule{
 		input logic sext,
 		input logic clock
 	);
-	import "DPI-C" function void exuBnj();
-	import "DPI-C" function void exuBij();
 	import "DPI-C" function void exuBnTrace(int pc,byte state);
 	import "DPI-C" function void exuBiTrace(int pc,byte state,int addr);
 	always_ff@(posedge clock)begin
-		if(bnj) exuBnj();
-		if(bij) exuBij();
 		if(bnj) exuBnTrace(pc,{5'b0,sext,2'b01});
 		if(bij) exuBiTrace(pc,{5'b0,sext,2'b11},addr);
 		if(jum) exuBiTrace(pc,{5'b0,1'b0,2'b10},addr);
