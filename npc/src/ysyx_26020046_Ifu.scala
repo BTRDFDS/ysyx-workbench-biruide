@@ -61,7 +61,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 			when(shouldNotJump){
 				when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}
 			}.otherwise{
-				when(bp2Cnt<=3.U){bp2Cnt := bp2Cnt + 1.U}
+				when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}
 				btbPc(btbCnt)	:= in.imme.pc
 				btbAddr(btbCnt) := in.imme.addr(31,2)
 				btbCnt := btbCnt + 1.U
