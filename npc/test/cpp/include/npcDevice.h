@@ -55,7 +55,7 @@ extern "C" void lsuStoreWait()	{numLsuStoreWait++;	}
 void printCounter(){
 	printf("cycle= %ld inst= %ld IPC= %f CPI= %f\n",numCycle,numInst,((float)numInst)/((float)numCycle),((float)numCycle)/((float)numInst));//实质上是已经是next pc了
 	printf("ich hit= %ld[%f] miss= %ld[%f] sum= %ld\n",
-		numIfuInst-numIchMiss,(numIfuInst-numIchMiss)/(float)numIfuInst,
+		numIchHit ,numIchHit /(float)numIfuInst,
 		numIchMiss,numIchMiss/(float)numIfuInst,
 		numIchHit+numIchMiss);
 	printf("ifu inst = %ld wait= %ld AMAT= %f jbHit= %ld[%f] jbMiss= %ld[%f]\n",
