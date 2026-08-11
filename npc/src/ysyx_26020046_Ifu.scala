@@ -6,11 +6,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val ich	= IO(new InstrBus())
 	//pc更新
-		val hasChange= RegInit(true.B);
 		val pipePc		= RegInit(PcInit(31,2))
-
-		when(in.imme.back===Back.Error || in.imme.back===Back.Jump || (in.imme.ready && ~hasChange)){hasChange := true.B}
-		.elsewhen(out.pipe.res === IfuRes.Valid)													{hasChange := false.B}
 
 		ich.valid	:= true.B
 		ich.addr	:= pipePc
@@ -75,7 +71,6 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	}
 
 	if(Yosys == false){
-		dontTouch(hasChange)
 		dontTouch(isBranch)
 		dontTouch(isJal)
 		dontTouch(isJalr)
@@ -87,7 +82,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val ifuInst	= Mux(out.pipe.res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
 		ifuChk.clock	:= clock
-		ifuChk.inst		:= ich.ready
+		ifuChk.inst		:= ich.ready && out.pipe.res === IfuRes.Valid
 		ifuChk.stall	:= out.pipe.res === IfuRes.Null
 		ifuChk.unable	:= false.B
 		ifuChk.jAb		:= false.B
@@ -127,8 +122,6 @@ class ysyx_26020046_IfuChk extends ExtModule{
 		if(jAC)		ifuJaC();
 		if(unable)	ifuUnable();
 	end
-	// always_ff@(posedge inst)ifuInst();
-	final $display("ddddddddddddddddd");
 	endmodule
 	"""
 	)
