@@ -332,7 +332,7 @@ extern "C" void sdram_write(int addr,int data){
 extern "C" int getRegPc(int addr);
 extern "C" int getNextPc();
 extern "C" void ebreak(){
-	numInst++;numIduCsr++;
+	numInst++;
 	iCacheTraceFileWrite(getRegPc(0));
 	return NpcFinish("ebreak",getRegPc(10)!=0);
 	}
