@@ -22,7 +22,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.rdAddr	:= 0.U
 	out.pipe.result	:= 0.U
 	out.pipe.pc		:= pipePc
-	out.pipe.Bp2	:= pipeBp2
+	out.pipe.bp2	:= pipeBp2
 	out.pipe.btb	:= pipeBtb
 	out.pipe.csrOp	:= CsrOp.Null
 	out.pipe.csrAddr:= 0.U//Illegal Instruction
@@ -217,7 +217,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.bp2	:= in.imme.bp2
 	out.imme.btb	:= in.imme.btb
 	out.imme.jbpu	:= in.imme.jbpu
-	out.imme.jump	:= in.imme.jump && (in.imme.addr(31:2)=/=in.pipe.pc || pipeRes===IfuRes.Valid || ~in.imme.jbpu)
+	out.imme.jump	:= in.imme.jump && (in.imme.addr(31,2)=/=in.pipe.pc || pipeRes===IfuRes.Valid || ~in.imme.jbpu)
 	// when(in.imme.jump){
 	// 	when(in.imme.jbpu){
 	// 		out.imme.jump := in.imme.addr(31:2)=/=in.pipe.pc || pipeRes===IfuRes.Valid

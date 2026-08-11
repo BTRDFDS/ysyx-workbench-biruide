@@ -12,7 +12,7 @@
 // #define NPC_BRACHE_TRACE
 // #define NPC_MIN_TRACE
 // #define NPC_M_TRACE
-// #define NPC_DIFFTEST
+#define NPC_DIFFTEST
 #define NPC_WAVE
 
 const uint64_t runstopTime = 00000;

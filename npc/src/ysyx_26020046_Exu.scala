@@ -4,7 +4,7 @@ import WidthConsts._
 
 class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val in = IO(new Bundle {
-		val imme = Flipped(new ImmeAfter())
+		val imme = Flipped(new ImmeLsEx())
 		val pipe = Flipped(new PipeIdEx())
 	})
 	val out = IO(new Bundle {
@@ -86,7 +86,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		}
 	}
 
-	val shouldBe = Mux(pipeEnJcod || enBfun, result(31:2), pipePc+1.U)
+	val shouldBe = Mux(pipeEnJcod || enBfun, result(31,2), pipePc+1.U)
 	val hasSend = RegInit(false.B)
 	when(out.imme.ready){hasSend := false.B}
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeBfu=/=ExuBfu.Null)){hasSend := true.B}
@@ -97,7 +97,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	out.imme.addr	:= Mux(in.imme.error,in.imme.addr,Mux((pipeEnJcod || enBfun),result,Cat(pipePc+1.U,0.U(2.W))))
 	out.imme.pc		:= Mux(in.imme.error,in.imme.pc	,pipePc)
 	out.imme.bp2	:= pipeBp2
-	out.imme.btb	:= pipebtb
+	out.imme.btb	:= pipeBtb
 
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr
