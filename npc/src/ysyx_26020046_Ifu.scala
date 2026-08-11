@@ -2,17 +2,22 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
-	val in	= IO(new Bundle{val imme = Flipped(new ImmeBefore())})
+	val in	= IO(new Bundle{val imme = Flipped(new ImmeIdIf())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val ich	= IO(new InstrBus())
 	//pc更新
-		val pipePc		= RegInit(PcInit(31,2))
+		val pipePc	= RegInit(PcInit(31,2))
+		val pipeBp2	= RegInit(false.B)
+		val pipeBtb	= RegInit(false.B)
 
 		ich.valid	:= true.B
 		ich.addr	:= pipePc
 
 		out.pipe.instr	:= ich.data
 		out.pipe.pc		:= pipePc
+		out.pipe.bp2	:= pipeBp2
+		out.pipe.btb	:= pipeBtb
+
 		when(in.imme.addr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
 		.elsewhen(ich.ready)	{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 		.otherwise							{out.pipe.res := IfuRes.Null}
@@ -30,53 +35,33 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val btbIndex= PriorityEncoder(btbMatch)
 	val btbHit	= btbMatch.orR
 
-	val PerdBits= 2
-	val PerdSize= 1 << PerdBits
-	val predRcnt= RegInit(0.U(PerdBits.W))
-	val predWcnt= RegInit(0.U(PerdBits.W))
-	val predBp2	= RegInit(VecInit(Seq.fill(PerdSize)(false.B)))
-	val predBtb	= RegInit(VecInit(Seq.fill(PerdSize)(false.B)))
-
 	val isBranch= out.pipe.instr(6,0)===Op.Branch.asUInt
 	val isJal	= out.pipe.instr(6,0)===Op.Jal.asUInt
 	val isJalr	= out.pipe.instr(6,0)===Op.Ijalr.asUInt
 
-	when(in.imme.back===Back.Error||in.imme.back===Back.Jump){
+	when(in.imme.jump){
 		pipePc := in.imme.addr(31,2)
 	}.elsewhen(in.imme.ready&&ich.ready){
 		when((isBranch||isJal||isJalr) && bp2Hit&&btbHit){
 					pipePc := btbAddr(btbIndex)
 		}.otherwise{pipePc := pipePc+1.U}
 	}
-	switch(in.imme.back){
-		is(Back.Null){when(ich.ready && (isBranch||isJal||isJalr)){
-			predBp2(predWcnt) := bp2Hit
-			predBtb(predWcnt) := btbHit
-			predWcnt := predWcnt + 1.U
-		}}
-		is(Back.Suce){predRcnt := predRcnt + 1.U}
-		is(Back.Jump){
-			predWcnt := predRcnt
-			val shouldNotJump = Cat(in.imme.pc+1.U,0.U(2.W)) === in.imme.addr
-			when(shouldNotJump){
-				when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}
-			}.otherwise{
-				when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}
-				btbPc(btbCnt)	:= in.imme.pc
-				btbAddr(btbCnt) := in.imme.addr(31,2)
-				btbCnt := btbCnt + 1.U
-			}
+	when(in.imme.jump && in.imme.jbpu){
+		val shouldNotJump = in.imme.pc+1.U === in.imme.addr(31,2)
+		when(shouldNotJump){when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}
+		}.otherwise{		when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}
+			btbPc(btbCnt)	:= in.imme.pc
+			btbAddr(btbCnt) := in.imme.addr(31,2)
+			btbCnt := btbCnt + 1.U
 		}
+	}.elsewhen(ich.ready && (isBranch||isJal||isJalr)){
+		pipeBp2 := bp2Hit
+		pipeBtb := btbHit
 	}
-
 	if(Yosys == false){
 		dontTouch(isBranch)
 		dontTouch(isJal)
 		dontTouch(isJalr)
-		dontTouch(predBp2)
-		dontTouch(predBtb)
-		dontTouch(predRcnt)
-		dontTouch(predWcnt)
 		dontTouch(btbCnt)
 		dontTouch(btbPc)
 		dontTouch(btbAddr)
@@ -91,8 +76,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready
 		ifuChk.stall	:= out.pipe.res === IfuRes.Null
-		ifuChk.jbMiss	:= in.imme.back===Back.Jump
-		ifuChk.jbHit	:= in.imme.back===Back.Suce
+		ifuChk.jbMiss	:= in.imme.jump
+		ifuChk.jbHit	:= false.B
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{

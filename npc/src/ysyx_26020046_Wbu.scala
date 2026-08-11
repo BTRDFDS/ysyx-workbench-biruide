@@ -11,7 +11,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		val pipe = Flipped(new PipeLsWb())
 	})
 	val out = IO(new Bundle {
-		val imme = new ImmeAfter()
+		val imme = new ImmeWbLs()
 	})
 	val pipeReset	= reset.asBool||out.imme.back===Back.Error
 	val pipeValid	= PipeReg(pipeReset,false.B				,true.B,in.pipe.valid	)
@@ -65,15 +65,13 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	}
 	mcycle := nextMcycle;mcycleh := nextMcycleh
 
-	out.imme.addr	:= 0.U
+	out.imme.addr	:= mtvec
 	out.imme.pc		:= pipePc
-	out.imme.back	:= Back.Null
-	out.imme.ready	:= true.B
+	out.imme.error	:= false.B
 	when((pipeValid === false.B & pipeCsrOp === CsrOp.Trap) || error){//TODO:mstatus
 		mcause			:= Mux(error,ErrorMesg,pipeCsrMesg)
 		mepc 			:= Cat(pipePc,0.U(2.W))
-		out.imme.back	:= Back.Error
-		out.imme.addr	:= mtvec
+		out.imme.error	:= true.B
 		if(Yosys == false){
 			printf("error,stop!!! %x tval: %x ",pipeCsrMesg,pipeCsrAddr)//tval
 			switch(pipeCsrMesg){

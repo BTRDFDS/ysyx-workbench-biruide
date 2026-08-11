@@ -4,13 +4,15 @@ import WidthConsts._
 class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	val in = IO(new Bundle{
 		val pipe	= Flipped(new PipeIfId())
-		val imme	= Flipped(new ImmeAfter())
+		val imme	= Flipped(new ImmeExId())
 	})
 	val out = IO(new Bundle{
 		val pipe	= new PipeIdEx()
-		val imme	= new ImmeBefore()
+		val imme	= new ImmeIdIf()
 	})
-	val pipeReset	= reset.asBool||in.imme.back===Back.Error||in.imme.back===Back.Jump
+	val pipeReset	= reset.asBool||in.imme.jump
+	val pipeBp2		= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.bp2		)
+	val pipeBtb		= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.btb		)
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,out.imme.ready,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
 	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.instr	)
@@ -20,6 +22,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.rdAddr	:= 0.U
 	out.pipe.result	:= 0.U
 	out.pipe.pc		:= pipePc
+	out.pipe.Bp2	:= pipeBp2
+	out.pipe.btb	:= pipeBtb
 	out.pipe.csrOp	:= CsrOp.Null
 	out.pipe.csrAddr:= 0.U//Illegal Instruction
 	out.pipe.lsuAddr:= LsuAddr.B//000
@@ -210,8 +214,17 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.addr	:= in.imme.addr
 	out.imme.pc		:= in.imme.pc
 	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
-	when(in.imme.back===Back.Jump){out.imme.back := Mux(in.imme.addr===Cat(in.pipe.pc,0.U(2.W)) && pipeRes=/=IfuRes.Valid,Back.Suce,Back.Jump)}
-	.otherwise{out.imme.back := in.imme.back}
+	out.imme.bp2	:= in.imme.bp2
+	out.imme.btb	:= in.imme.btb
+	out.imme.jbpu	:= in.imme.jbpu
+	out.imme.jump	:= in.imme.jump && (in.imme.addr(31:2)=/=in.pipe.pc || pipeRes===IfuRes.Valid || ~in.imme.jbpu)
+	// when(in.imme.jump){
+	// 	when(in.imme.jbpu){
+	// 		out.imme.jump := in.imme.addr(31:2)=/=in.pipe.pc || pipeRes===IfuRes.Valid
+	// 	}.otherwise{
+	// 		out.imme.jump := true.B
+	// 	}
+	// }.otherwise{out.imme.jump := false.B}
 
 	if(Yosys == false){
 		dontTouch(pipeReset)
@@ -219,12 +232,12 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val iduInstr = Mux(pipeRes=== IfuRes.Valid,pipeInstr,0.U(32.W));dontTouch(iduInstr)
 		val iduChk = Module(new ysyx_26020046_IduChk)
 		iduChk.clock := clock
-		iduChk.io.cal	:= in.imme.ready && (in.imme.back===Back.Null || in.imme.back===Back.Suce) && out.pipe.valid && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
-		iduChk.io.jump	:= in.imme.ready && (in.imme.back===Back.Null || in.imme.back===Back.Suce) && out.pipe.valid && (opEnum === Op.Jal	|| opEnum === Op.Ijalr	)
-		iduChk.io.imm	:= in.imme.ready && (in.imme.back===Back.Null || in.imme.back===Back.Suce) && out.pipe.valid && (opEnum === Op.Uauipc	|| opEnum === Op.Ului	)
-		iduChk.io.ls	:= in.imme.ready && (in.imme.back===Back.Null || in.imme.back===Back.Suce) && out.pipe.valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
-		iduChk.io.csr	:= in.imme.ready && (in.imme.back===Back.Null || in.imme.back===Back.Suce) && out.pipe.valid && (opEnum === Op.Icsr	)
-		iduChk.io.br	:= in.imme.ready && (in.imme.back===Back.Null || in.imme.back===Back.Suce) && out.pipe.valid && (opEnum === Op.Branch	)
+		iduChk.io.cal	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
+		iduChk.io.jump	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Jal		|| opEnum === Op.Ijalr	)
+		iduChk.io.imm	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Uauipc	|| opEnum === Op.Ului	)
+		iduChk.io.ls	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
+		iduChk.io.csr	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Icsr	)
+		iduChk.io.br	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Branch	)
 
 	}
 
