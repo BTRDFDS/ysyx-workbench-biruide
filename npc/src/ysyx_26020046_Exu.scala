@@ -84,7 +84,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		}
 	}
 
-	val shouldBe = Mux(enBfun, result, Cat(pipePc+1.U,0.U(2.W)))
+	val shouldBe = Mux(pipeEnJcod || enBfun, result, Cat(pipePc+1.U,0.U(2.W)))
 	val hasSend = RegInit(false.B)
 	when(in.imme.back===Back.Error){out.imme.back := Back.Error}
 	.otherwise{
