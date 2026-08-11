@@ -111,8 +111,8 @@ class ysyx_26020046_IfuChk extends ExtModule{
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
 		if(inst)	ifuInst();
-		if(jbMiss)		ifujbMiss();
-		if(jbHit)		ifujbHit();
+		if(jbMiss)	ifuJbMiss();
+		if(jbHit)	ifuJbHit();
 	end
 	endmodule
 	"""
