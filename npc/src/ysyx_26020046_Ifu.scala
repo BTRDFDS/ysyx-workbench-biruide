@@ -128,6 +128,7 @@ class ysyx_26020046_IfuChk extends ExtModule{
 		if(unable)	ifuUnable();
 	end
 	// always_ff@(posedge inst)ifuInst();
+	final $display("ddddddddddddddddd");
 	endmodule
 	"""
 	)
