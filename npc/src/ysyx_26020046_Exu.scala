@@ -94,7 +94,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	//BJ
 
 	out.imme.jbpu := ~in.imme.error && (pipeValid && (pipeBfu=/=ExuBfu.Null || (pipeEnJcod && pipeAlu=/=ExuAlu.Jalr)))
-	out.imme.jump :=  in.imme.error || (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod)&& ~hasSend && (shouldBe=/=in.pipe.pc || ~out.imme.jbpu))
+	out.imme.jump :=  in.imme.error || (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod)&& ~hasSend && (shouldBe=/=in.pipe.pc || pipeAlu===ExuAlu.Jalr))
 
 	out.imme.ready	:= in.imme.ready || ~pipeValid
 	out.imme.addr	:= Mux(in.imme.error,in.imme.addr,Mux((pipeEnJcod || enBfun),result,Cat(pipePc+1.U,0.U(2.W))))
