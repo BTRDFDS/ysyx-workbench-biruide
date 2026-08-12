@@ -90,7 +90,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val hasSend = RegInit(false.B)
 	when(out.imme.ready){hasSend := false.B}
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeBfu=/=ExuBfu.Null)){hasSend := true.B}
-	out.imme.jbpu := ~in.imme.error && (pipeValid && (pipeBfu=/=ExuBfu.Null))// || pipeEnJcod
+	out.imme.jbpu := ~in.imme.error && (pipeValid && (pipeBfu=/=ExuBfu.Null || (pipeEnJcod && pipeAlu=/=ExuAlu.Jalr )))// || pipeEnJcod
 	out.imme.jump :=  in.imme.error || (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod)&& ~hasSend && (shouldBe=/=in.pipe.pc || ~out.imme.jbpu))
 
 	out.imme.ready	:= in.imme.ready || ~pipeValid
