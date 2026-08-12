@@ -225,7 +225,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		iduChk.ls		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
 		iduChk.csr		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Icsr	)
 		iduChk.br		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Branch	)
-		val noEbreak = RegInit(true.B);when(pipeInstr === 0x00100073L.U){noEbreak := false.B}
+		val noEbreak = RegInit(true.B);when(pipeInstr === 0x00100073L.U){noEbreak := false.B};dontTouch(noEbreak)
 		iduChk.miss		:= noEbreak && in.imme.jump && pipeRes === IfuRes.Valid
 		iduChk.ifuMiss	:= noEbreak && out.imme.jump && in.pipe.res === IfuRes.Valid
 	}
