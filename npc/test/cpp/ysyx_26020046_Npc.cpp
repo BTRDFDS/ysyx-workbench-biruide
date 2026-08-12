@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
 		numCycle++;
 		if(numIfuInst < numInst+numIfuJbMiss)break;
 	}
-	printf("%ld %ld %ld %ld\n",numIfuInst,numInst,numIfuJbMiss,numIfuJbHit);
+	printf("%ld %ld %ld %ld\n",numIfuInst,numInst,numIfuJbMiss,numInst+numIfuJbMiss);
 	// NpcWave();
 	printOver();
 	contextp->statsPrintSummary();
