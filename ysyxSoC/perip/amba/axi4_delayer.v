@@ -1,5 +1,5 @@
-// `define DelayW
-// `define DelayR
+`define DelayW
+`define DelayR
 module axi4_delayer(
 	input         clock,
 	input         reset,
@@ -95,7 +95,7 @@ module axi4_delayer(
 	// assign in_bid = out_bid;
 	// assign in_bresp = out_bresp;
 
-localparam rs = 437;//(5.1118)*64
+localparam rs = 431;//(5.1118)*64
 
 `ifdef DelayW
 logic wHasAddr,wHasData,wDone;
