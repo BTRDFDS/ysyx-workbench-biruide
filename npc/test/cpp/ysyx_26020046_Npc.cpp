@@ -103,6 +103,7 @@ int main(int argc, char** argv) {
 		NpcWave();
 		top->clock=0;top->eval();
 		numCycle++;
+		if(numIfuInst < numInst+numIfuJbMiss)break;
 	}
 	// NpcWave();
 	printOver();
