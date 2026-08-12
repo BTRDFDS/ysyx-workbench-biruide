@@ -77,12 +77,12 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		dontTouch(btbBrMatch)
 		dontTouch(btbBrIndex)
 		dontTouch(btbBrHit)
-		dontTouch(btbJlCnt)
-		dontTouch(btbJlPc)
-		dontTouch(btbJlAddr)
-		dontTouch(btbJlMatch)
-		dontTouch(btbJlIndex)
-		dontTouch(btbJlHit)
+		// dontTouch(btbJlCnt)
+		// dontTouch(btbJlPc)
+		// dontTouch(btbJlAddr)
+		// dontTouch(btbJlMatch)
+		// dontTouch(btbJlIndex)
+		// dontTouch(btbJlHit)
 		dontTouch(bp2Cnt)
 		dontTouch(bp2Hit)
 		val ifuPc	= Mux(out.pipe.res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
@@ -91,7 +91,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready
 		ifuChk.stall	:= out.pipe.res === IfuRes.Null
-		ifuChk.jbMiss	:= in.imme.jump && (in.imme.btbb || in.imme.btbj)
+		ifuChk.jbMiss	:= in.imme.jump && (in.imme.btbb)// || in.imme.btbj
 		ifuChk.jbHit	:= in.imme.ready && ich.ready && (isBranch || isJal)// || isJalr
 	}
 }
