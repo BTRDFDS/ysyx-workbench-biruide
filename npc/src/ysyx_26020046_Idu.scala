@@ -259,7 +259,7 @@ class ysyx_26020046_IduChk extends ExtModule{
 	import "DPI-C" function void iduLs();
 	import "DPI-C" function void iduCsr();
 	import "DPI-C" function void iduBr();
-	impoer "DPI-C" function void iduMiss();
+	import "DPI-C" function void iduMiss();
 	always_ff@(posedge clock)begin
 		if(cal)		iduCal();
 		if(jump)	iduJump();
