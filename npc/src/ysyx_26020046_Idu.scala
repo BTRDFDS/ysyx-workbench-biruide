@@ -225,7 +225,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		iduChk.ls		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
 		iduChk.csr		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Icsr	)
 		iduChk.br		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Branch	)
-		iduChk.iduMiss	:= in.imme.jump && pipeRes === IfuRes.Valid
+		iduChk.miss		:= in.imme.jump && pipeRes === IfuRes.Valid
 		iduChk.ifuMiss	:= out.imme.jump && in.pipe.res === IfuRes.Valid
 	}
 
@@ -237,7 +237,7 @@ class ysyx_26020046_IduChk extends ExtModule{
 	val ls		= IO(Input(Bool()))
 	val csr		= IO(Input(Bool()))
 	val br		= IO(Input(Bool()))
-	val iduMiss = IO(Input(Bool()))
+	val miss	= IO(Input(Bool()))
 	val ifuMiss = IO(Input(Bool()))
 	val clock = IO(Input(Clock()))
 	setInline("ysyx_26020046_IduChk.sv",
@@ -249,7 +249,7 @@ class ysyx_26020046_IduChk extends ExtModule{
 		input logic ls,
 		input logic csr,
 		input logic br,
-		input logic iduMiss,
+		input logic miss,
 		input logic ifuMiss,
 		input logic clock
 	);
@@ -267,7 +267,7 @@ class ysyx_26020046_IduChk extends ExtModule{
 		if(ls)		iduLs();
 		if(csr)		iduCsr();
 		if(br)		iduBr();
-		if(iduMiss)	iduMiss();
+		if(miss)	iduMiss();
 		if(ifuMiss)	iduMiss();
 	end
 	endmodule
