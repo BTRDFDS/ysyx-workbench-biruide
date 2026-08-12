@@ -103,8 +103,9 @@ int main(int argc, char** argv) {
 		NpcWave();
 		top->clock=0;top->eval();
 		numCycle++;
+		when(numIfuInst > numInst+numIfuJbMiss+5)break;
 	}
-	NpcWave();
+	// NpcWave();
 	printOver();
 	contextp->statsPrintSummary();
 	contextp->coveragep()->write("./log/ysyx_26020046_Npc.dat");

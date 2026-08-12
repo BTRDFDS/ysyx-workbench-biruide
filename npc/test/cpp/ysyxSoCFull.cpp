@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
 		top->clock=0;top->eval();
 		numCycle++;
 	}
-	NpcWave();
+	// NpcWave();
 	printOver();
 	contextp->statsPrintSummary();
 	delete top;
