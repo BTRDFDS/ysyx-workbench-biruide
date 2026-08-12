@@ -70,7 +70,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.inst		:= ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready
 		ifuChk.stall	:= out.pipe.res === IfuRes.Null
 		ifuChk.jbMiss	:= in.imme.jump
-		ifuChk.jbHit	:= in.imme.ready && ich.ready && (isBranch || isJal)// || isJalr
+		ifuChk.jbHit	:= in.imme.ready && ich.ready && (isBranch || isJal || isJalr)
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
