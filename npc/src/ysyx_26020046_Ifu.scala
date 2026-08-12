@@ -42,7 +42,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	when(in.imme.jump){
 		pipePc := in.imme.addr(31,2)
 	}.elsewhen(in.imme.ready&&ich.ready){
-		when((isBranch||isJal||isJalr) && bp2Hit&&btbHit){
+		when((isBranch) && bp2Hit&&btbHit){//||isJal||isJalr
 					pipePc := btbAddr(btbIndex)
 		}.otherwise{pipePc := pipePc+1.U}
 	}
@@ -55,10 +55,6 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 			btbCnt := btbCnt + 1.U
 		}
 	}
-	// .elsewhen(ich.ready && (isBranch||isJal||isJalr)){
-	// 	pipeBp2 := bp2Hit
-	// 	pipeBtb := btbHit
-	// }
 	if(Yosys == false){
 		dontTouch(isBranch)
 		dontTouch(isJal)
@@ -78,7 +74,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.inst		:= ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready
 		ifuChk.stall	:= out.pipe.res === IfuRes.Null
 		ifuChk.jbMiss	:= in.imme.jump
-		ifuChk.jbHit	:= false.B
+		ifuChk.jbHit	:= in.imme.ready && ich.ready && (isBranch)// || isJal || isJalr
 	}
 }
 class ysyx_26020046_IfuChk extends ExtModule{
