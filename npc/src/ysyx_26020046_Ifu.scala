@@ -31,14 +31,14 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val btbBrIndex= PriorityEncoder(btbBrMatch)
 	val btbBrHit	= btbBrMatch.orR
 
-	val BtbJlBits	= 1
-	val BtbJlSize	= 1 << BtbJlBits
-	val btbJlCnt	= RegInit(0.U(BtbJlBits.W))
-	val btbJlPc	= RegInit(VecInit(Seq.fill(BtbJlSize)(0.U((BitWidth-2).W))))
-	val btbJlAddr	= RegInit(VecInit(Seq.fill(BtbJlSize)(0.U((BitWidth-2).W))))
-	val btbJlMatch= VecInit(btbJlPc.map(_ === pipePc)).asUInt
-	val btbJlIndex= PriorityEncoder(btbJlMatch)
-	val btbJlHit	= btbJlMatch.orR
+	// val BtbJlBits	= 1
+	// val BtbJlSize	= 1 << BtbJlBits
+	// val btbJlCnt	= RegInit(0.U(BtbJlBits.W))
+	// val btbJlPc	= RegInit(VecInit(Seq.fill(BtbJlSize)(0.U((BitWidth-2).W))))
+	// val btbJlAddr	= RegInit(VecInit(Seq.fill(BtbJlSize)(0.U((BitWidth-2).W))))
+	// val btbJlMatch= VecInit(btbJlPc.map(_ === pipePc)).asUInt
+	// val btbJlIndex= PriorityEncoder(btbJlMatch)
+	// val btbJlHit	= btbJlMatch.orR
 
 	val isBranch= out.pipe.instr(6,0)===Op.Branch.asUInt
 	val isJal	= out.pipe.instr(6,0)===Op.Jal.asUInt
@@ -48,7 +48,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		pipePc := in.imme.addr(31,2)
 	}.elsewhen(in.imme.ready&&ich.ready){
 		when((isBranch) &&btbBrHit && bp2Hit)	{pipePc := btbBrAddr(btbBrIndex)}
-		.elsewhen(isJal &&btbJlHit)				{pipePc := btbJlAddr(btbJlIndex)}
+		// .elsewhen(isJal &&btbJlHit)				{pipePc := btbJlAddr(btbJlIndex)}
 		.otherwise								{pipePc := pipePc+1.U}
 	}
 	when(in.imme.jump){
@@ -61,11 +61,11 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 				btbBrCnt			:= btbBrCnt + 1.U
 			}
 		}
-		when(in.imme.btbj){
-			btbJlPc(btbJlCnt)	:= in.imme.pc
-			btbJlAddr(btbJlCnt) := in.imme.addr(31,2)
-			btbJlCnt			:= btbJlCnt + 1.U
-		}
+		// when(in.imme.btbj){
+		// 	btbJlPc(btbJlCnt)	:= in.imme.pc
+		// 	btbJlAddr(btbJlCnt) := in.imme.addr(31,2)
+		// 	btbJlCnt			:= btbJlCnt + 1.U
+		// }
 	}
 	if(Yosys == false){
 		dontTouch(isBranch)
