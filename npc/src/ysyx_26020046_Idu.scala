@@ -210,53 +210,47 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.addr	:= in.imme.addr
 	out.imme.pc		:= in.imme.pc
 	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
-	// out.imme.bp2	:= in.imme.bp2
-	// out.imme.btb	:= in.imme.btb
 	out.imme.jbpu	:= in.imme.jbpu
 	out.imme.jump	:= in.imme.jump && (in.imme.addr(31,2)=/=in.pipe.pc || pipeRes===IfuRes.Valid || ~in.imme.jbpu)
-	// when(in.imme.jump){
-	// 	when(in.imme.jbpu){
-	// 		out.imme.jump := in.imme.addr(31:2)=/=in.pipe.pc || pipeRes===IfuRes.Valid
-	// 	}.otherwise{
-	// 		out.imme.jump := true.B
-	// 	}
-	// }.otherwise{out.imme.jump := false.B}
 
 	if(Yosys == false){
 		dontTouch(pipeReset)
 		val iduPc = Mux(pipeRes=== IfuRes.Valid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)
 		val iduInstr = Mux(pipeRes=== IfuRes.Valid,pipeInstr,0.U(32.W));dontTouch(iduInstr)
 		val iduChk = Module(new ysyx_26020046_IduChk)
-		iduChk.clock := clock
-		iduChk.io.cal	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
-		iduChk.io.jump	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Jal		|| opEnum === Op.Ijalr	)
-		iduChk.io.imm	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Uauipc	|| opEnum === Op.Ului	)
-		iduChk.io.ls	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
-		iduChk.io.csr	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Icsr	)
-		iduChk.io.br	:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Branch	)
-
+		iduChk.clock	:= clock
+		iduChk.cal		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
+		iduChk.jump		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Jal		|| opEnum === Op.Ijalr	)
+		iduChk.imm		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Uauipc	|| opEnum === Op.Ului	)
+		iduChk.ls		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
+		iduChk.csr		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Icsr	)
+		iduChk.br		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Branch	)
+		iduChk.iduMiss	:= in.imme.jump && pipeValid
+		iduChk.ifuMiss	:= out.imme.jump && in.pipe.res === IfuRes.Valid
 	}
 
 }
 class ysyx_26020046_IduChk extends ExtModule{
-	val io = IO(new Bundle{
-		val cal	= Input(Bool())
-		val jump= Input(Bool())
-		val imm	= Input(Bool())
-		val ls	= Input(Bool())
-		val csr	= Input(Bool())
-		val br	= Input(Bool())
-	})
+	val cal		= IO(Input(Bool()))
+	val jump	= IO(Input(Bool()))
+	val imm		= IO(Input(Bool()))
+	val ls		= IO(Input(Bool()))
+	val csr		= IO(Input(Bool()))
+	val br		= IO(Input(Bool()))
+	val iduMiss = IO(Input(Bool()))
+	val ifuMiss = IO(Input(Bool()))
 	val clock = IO(Input(Clock()))
 	setInline("ysyx_26020046_IduChk.sv",
 	"""
 	module ysyx_26020046_IduChk(
-		input logic io_cal,
-		input logic io_jump,
-		input logic io_imm,
-		input logic io_ls,
-		input logic io_csr,
-		input logic io_br,
+		input logic cal,
+		input logic jump,
+		input logic imm,
+		input logic ls,
+		input logic csr,
+		input logic br,
+		input logic iduMiss,
+		input logic ifuMiss,
 		input logic clock
 	);
 	import "DPI-C" function void iduCal();
@@ -265,13 +259,16 @@ class ysyx_26020046_IduChk extends ExtModule{
 	import "DPI-C" function void iduLs();
 	import "DPI-C" function void iduCsr();
 	import "DPI-C" function void iduBr();
+	impoer "DPI-C" function void iduMiss();
 	always_ff@(posedge clock)begin
-		if(io_cal)	iduCal();
-		if(io_jump)	iduJump();
-		if(io_imm)	iduImm();
-		if(io_ls)	iduLs();
-		if(io_csr)	iduCsr();
-		if(io_br)	iduBr();
+		if(cal)		iduCal();
+		if(jump)	iduJump();
+		if(imm)		iduImm();
+		if(ls)		iduLs();
+		if(csr)		iduCsr();
+		if(br)		iduBr();
+		if(iduMiss)	iduMiss();
+		if(ifuMiss)	iduMiss();
 	end
 	endmodule
 	"""

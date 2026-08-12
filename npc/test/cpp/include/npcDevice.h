@@ -30,6 +30,7 @@ uint64_t numIduImm		=0;
 uint64_t numIduLs		=0;
 uint64_t numIduCsr		=0;
 uint64_t numIduBr		=0;
+uint64_t numIduMiss		=0;
 uint64_t numLsuLoad		=0;
 uint64_t numLsuLoadWait	=0;
 uint64_t numLsuStore	=0;
@@ -47,6 +48,7 @@ extern "C" void iduImm()		{numIduImm++;		}
 extern "C" void iduLs()			{numIduLs++;		}
 extern "C" void iduCsr()		{numIduCsr++;		}
 extern "C" void iduBr()			{numIduBr++;		}
+extern "C" void iduMiss()		{numIduMiss++;		}
 extern "C" void lsuLoad()		{numLsuLoad++;		}
 extern "C" void lsuLoadWait()	{numLsuLoadWait++;	}
 extern "C" void lsuStore()		{numLsuStore++;		}
@@ -65,9 +67,10 @@ void printCounter(){
 		numIfuJbHit ,numIfuJbHit /(float)(numIfuJbHit+numIfuJbMiss),
 		numIfuJbMiss,numIfuJbMiss/(float)(numIfuJbHit+numIfuJbMiss)
 	);
-	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld\n",
+	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld miss= %ld\n",
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
-		numIduCal+numIduJump+numIduImm+numIduLs+numIduCsr+numIduBr
+		numIduCal+numIduJump+numIduImm+numIduLs+numIduCsr+numIduBr,
+		numIduMiss
 	);
 	printf("lsu load= %ld loadWait= %ld WpL= %f\n",numLsuLoad,numLsuLoadWait,(float)((float)numLsuLoadWait)/((float)numLsuLoad));
 	printf("lsu store= %ld storeWait= %ld WpS= %f\n",numLsuStore,numLsuStoreWait,(float)((float)numLsuStoreWait)/((float)numLsuStore));
