@@ -103,9 +103,8 @@ int main(int argc, char** argv) {
 		NpcWave();
 		top->clock=0;top->eval();
 		numCycle++;
-		if(numIfuInst < numInst+numIfuJbMiss)break;
+		if(numIfuInst < numInst+numIduMiss)break;
 	}
-	printf("%ld %ld %ld %ld\n",numIfuInst,numInst,numIfuJbMiss,numInst+numIfuJbMiss);
 	// NpcWave();
 	printOver();
 	contextp->statsPrintSummary();

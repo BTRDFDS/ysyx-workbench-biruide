@@ -66,7 +66,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		val ifuPc	= Mux(out.pipe.res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
 		val ifuInst	= Mux(out.pipe.res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
 		val ifuChk = Module(new ysyx_26020046_IfuChk)
-		val noEbreak = RegInit(true.B);when(ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready && out.pipe.instr === 0x00100073L.U){noEbreak := false.B}
+		val noEbreak = RegInit(true.B);when(ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready && out.pipe.instr === 0x00100073L.U && ~in.imme.jump){noEbreak := false.B}
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= noEbreak && ich.ready && out.pipe.res === IfuRes.Valid && (in.imme.ready || in.imme.jump)
 		ifuChk.stall	:= noEbreak && out.pipe.res === IfuRes.Null
