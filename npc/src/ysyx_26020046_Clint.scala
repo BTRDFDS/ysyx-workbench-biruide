@@ -5,14 +5,11 @@ import WidthConsts._
 
 object ClintAddr extends ChiselEnum{
 	val Mtime	= Value(0xBFF8L.U)
-	val mtimeh	= Value(0xBFFCL.U)
+	val Mtimeh	= Value(0xBFFCL.U)
 }
 object ClintStatus extends ChiselEnum{val Idle,Read=Value}//TODO:目前只读,没有,Write
 class ysyx_26020046_Clt extends Module{
 	val axi4 = IO(Flipped(new Axi4Master()))
-
-	// val mtime = RegInit(0.U((2*BitWidth).W))
-	// mtime := mtime + 1.U
 
 	val mtime  = RegInit(0.U((BitWidth).W))
 	val mtimeh = RegInit(0.U((BitWidth).W))
