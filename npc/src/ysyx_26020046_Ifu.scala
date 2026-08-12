@@ -91,7 +91,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		ifuChk.clock	:= clock
 		ifuChk.inst		:= ich.ready && out.pipe.res === IfuRes.Valid && in.imme.ready
 		ifuChk.stall	:= out.pipe.res === IfuRes.Null
-		ifuChk.jbMiss	:= in.imme.jump
+		ifuChk.jbMiss	:= in.imme.jump && (in.imme.btbb || in.imme.btbj)
 		ifuChk.jbHit	:= in.imme.ready && ich.ready && (isBranch || isJal)// || isJalr
 	}
 }
