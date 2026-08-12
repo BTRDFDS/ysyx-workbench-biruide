@@ -36,7 +36,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 
 	val error = WireInit(false.B)
 	val nextMcycle	= Wire(UInt(BitWidth.W));nextMcycle	:= mcycle + 1.U
-	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= Mux(mcycleh === (Fill(BitWidth,1.U)),mcycleh,mcycleh + 1.U)
+	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= Mux(mcycle === (Fill(BitWidth,1.U)),mcycleh,mcycleh + 1.U)
 	when(pipeValid){//合法处理
 		switch(pipeCsrOp){
 			is(CsrOp.Mret){mstatus := MstatuseReset}//TODO
