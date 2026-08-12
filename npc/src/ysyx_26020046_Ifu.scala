@@ -7,16 +7,12 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val ich	= IO(new InstrBus())
 	//pc更新
 		val pipePc	= RegInit(PcInit(31,2))
-		// val pipeBp2	= RegInit(false.B)
-		// val pipeBtb	= RegInit(false.B)
 
 		ich.valid	:= true.B
 		ich.addr	:= pipePc
 
 		out.pipe.instr	:= ich.data
 		out.pipe.pc		:= pipePc
-		// out.pipe.bp2	:= pipeBp2
-		// out.pipe.btb	:= pipeBtb
 
 		when(in.imme.addr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
 		.elsewhen(ich.ready)	{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}

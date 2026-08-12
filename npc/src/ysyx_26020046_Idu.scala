@@ -11,8 +11,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val imme	= new ImmeIdIf()
 	})
 	val pipeReset	= reset.asBool||in.imme.jump
-	// val pipeBp2		= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.bp2		)
-	// val pipeBtb		= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.btb		)
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,out.imme.ready,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
 	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.instr	)
@@ -22,8 +20,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.rdAddr	:= 0.U
 	out.pipe.result	:= 0.U
 	out.pipe.pc		:= pipePc
-	// out.pipe.bp2	:= pipeBp2
-	// out.pipe.btb	:= pipeBtb
 	out.pipe.csrOp	:= CsrOp.Null
 	out.pipe.csrAddr:= 0.U//Illegal Instruction
 	out.pipe.lsuAddr:= LsuAddr.B//000
