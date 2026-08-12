@@ -210,9 +210,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.addr	:= in.imme.addr
 	out.imme.pc		:= in.imme.pc
 	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
-	// out.imme.btbj	:= in.imme.btbj
-	out.imme.btbb	:= in.imme.btbb
-	out.imme.jump	:= in.imme.jump && (in.imme.addr(31,2)=/=in.pipe.pc || pipeRes===IfuRes.Valid || (~in.imme.btbb))// && ~in.imme.btbj
+	// out.imme.bp2	:= in.imme.bp2
+	// out.imme.btb	:= in.imme.btb
+	out.imme.jbpu	:= in.imme.jbpu
+	out.imme.jump	:= in.imme.jump && (in.imme.addr(31,2)=/=in.pipe.pc || pipeRes===IfuRes.Valid || ~in.imme.jbpu)
 	// when(in.imme.jump){
 	// 	when(in.imme.jbpu){
 	// 		out.imme.jump := in.imme.addr(31:2)=/=in.pipe.pc || pipeRes===IfuRes.Valid
