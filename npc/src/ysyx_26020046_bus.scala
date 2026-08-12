@@ -80,18 +80,16 @@ class ImmeLsEx extends ImmeWbLs{val ready = Output(Bool())}
 class ImmeExId extends ImmeData{
 	val ready	= Output(Bool())
 	val jump	= Output(Bool())
-	val jbpu	= Output(Bool())
-	// val bp2		= Output(Bool())
-	// val btb		= Output(Bool())
+	val btbj	= Output(Bool())
+	val btbb	= Output(Bool())
 }
 class ImmeIdIf extends Bundle{
 	val ready	= Output(Bool())
 	val jump	= Output(Bool())
-	val jbpu	= Output(Bool())
+	val btbj	= Output(Bool())
+	val btbb	= Output(Bool())
 	val addr	= Output(UInt((BitWidth).W))
 	val pc		= Output(UInt((BitWidth-2).W))
-	// val bp2		= Output(Bool())
-	// val btb		= Output(Bool())
 }
 
 class Axi4Master extends Bundle {
