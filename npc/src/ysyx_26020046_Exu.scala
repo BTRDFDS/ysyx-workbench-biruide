@@ -84,17 +84,17 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		}
 	}
 
-	val shouldBe = Mux(pipeEnJcod || enBfun, result(31,2)=/=in.pipe.pc, pipePc+1.U=/=in.pipe.pc)
+	val shouldBe = Mux(pipeEnJcod || enBfun, result(31,2), pipePc+1.U)
 	val hasSend = RegInit(false.B)
 	when(out.imme.ready){hasSend := false.B}
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeBfu=/=ExuBfu.Null)){hasSend := true.B}
 	//BJR
-	// out.imme.jbpu := ~in.imme.error && (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod))
-	// out.imme.jump :=  in.imme.error || (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod)&& ~hasSend && shouldBe=/=in.pipe.pc)//shouldBe其实还需要out.imme.jbpu，但是这里未进行拆分因此可以直接这样子
+	out.imme.jbpu := ~in.imme.error && (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod))
+	out.imme.jump :=  in.imme.error || (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod)&& ~hasSend && shouldBe=/=in.pipe.pc)//shouldBe其实还需要out.imme.jbpu，但是这里未进行拆分因此可以直接这样子
 	//BJ
 
-	out.imme.jbpu := ~in.imme.error && (pipeValid && (pipeBfu=/=ExuBfu.Null || (pipeEnJcod && pipeAlu=/=ExuAlu.Jalr)))
-	out.imme.jump :=  in.imme.error || (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod)&& ~hasSend && (shouldBe || pipeAlu===ExuAlu.Jalr))
+	// out.imme.jbpu := ~in.imme.error && (pipeValid && (pipeBfu=/=ExuBfu.Null || (pipeEnJcod && pipeAlu=/=ExuAlu.Jalr)))
+	// out.imme.jump :=  in.imme.error || (pipeValid && (pipeBfu=/=ExuBfu.Null || pipeEnJcod)&& ~hasSend && (shouldBe=/=in.pipe.pc || pipeAlu===ExuAlu.Jalr))
 
 	out.imme.ready	:= in.imme.ready || ~pipeValid
 	out.imme.addr	:= Mux(in.imme.error,in.imme.addr,Mux((pipeEnJcod || enBfun),result,Cat(pipePc+1.U,0.U(2.W))))
