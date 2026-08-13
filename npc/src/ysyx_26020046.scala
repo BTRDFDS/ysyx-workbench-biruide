@@ -89,3 +89,33 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		val debug = BoringUtils.bore(ifu.pipePc);dontTouch(debug)
 	}
 }
+// class ysyx_26020046_Chk extends ExtModule{
+// 	val inst	= IO(Input(Bool()))
+// 	val stall	= IO(Input(Bool()))
+// 	val jbMiss	= IO(Input(Bool()))
+// 	val jbHit	= IO(Input(Bool()))
+// 	val clock	= IO(Input(Clock()))
+// 	setInline("ysyx_26020046_Chk.sv",
+// 	"""
+// 	module ysyx_26020046_Chk(
+// 		input logic inst,
+// 		input logic stall,
+// 		input logic jbMiss,
+// 		input logic jbHit,
+// 		input logic clock
+// 	);
+// 	import "DPI-C" function void Inst();
+// 	import "DPI-C" function void Stall();
+// 	import "DPI-C" function void JbMiss();
+// 	import "DPI-C" function void JbHit();
+
+// 	always_ff@(posedge clock)begin
+// 		if(stall)	Stall();
+// 		if(inst)	Inst();
+// 		if(jbMiss)	JbMiss();
+// 		if(jbHit)	JbHit();
+// 	end
+// 	endmodule
+// 	"""
+// 	)
+// }
