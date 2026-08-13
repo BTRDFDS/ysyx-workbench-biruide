@@ -118,6 +118,21 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.store		:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Store	&& Get(lsu.bar.ready)
 		chk.storeWait	:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Store
 		chk.addr		:= Get(lsu.pipeResult)
+
+		chk.ebreak := (Get(wbu.pipeCsrOp) === CsrOp.Trap)&(Get(wbu.pipeValid))&(Get(wbu.pipeCsrMesg) === 0x3L.U) ||Get(wbu.error)
+		chk.check := Get(wbu.pipeValid)
+		chk.dnpc := 0.U(32.W)
+		when(Get(lsu.pipeValid)){chk.dnpc := Get(lsu.pipePc)}
+		.elsewhen(Get(exu.pipeValid)){chk.dnpc := Get(exu.pipePc)}
+		.elsewhen(Get(idu.pipeRes)===IfuRes.Valid){chk.dnpc := Get(idu.pipePc)}
+		.otherwise{chk.dnpc := Get(ifu.pipePc)}
+		chk.regValue := 0.U(32.W)
+		when(chk.regAddr = 0.U(8.W)){chk.regValue := Get(wbu.pipePc)}
+		.elsewhen(chk.regAddr(7,RegWidth)=/= 0.U){
+			printf("error regAddr=%d > %d \n",chk.regAddr,RegWidth)
+			stop()
+		}
+		.otherwise{chk.regValue := Get(wbu.gpr)(chk.regAddr(RegWidth-1,0))}
 	}
 }
 class ysyx_26020046_Chk extends ExtModule{
@@ -140,6 +155,12 @@ class ysyx_26020046_Chk extends ExtModule{
 	val store		= IO(Input(Bool()))
 	val storeWait	= IO(Input(Bool()))
 	val addr		= IO(Input(UInt(32.W)))
+
+	val regAddr	= IO(output(UInt(8.W)))
+	val regValue= IO(Input(UInt(BitWidth.W)))
+	val dnpc	= IO(Input(UInt(BitWidth.W)))
+	val ebreak	= IO(Input(Bool()))
+	val check	= IO(Input(Bool()))
 
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_Chk.sv",
@@ -165,6 +186,10 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic storeWait,
 		input logic [31:0] addr,
 
+		output logic [7:0] regAddr,
+		input logic [31:0] regValue,
+		input logic [31:0] dnpc,
+		input logic ebreak,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
@@ -186,6 +211,10 @@ class ysyx_26020046_Chk extends ExtModule{
 	import "DPI-C" function void lsuStoreWait();
 	import "DPI-C" function void lsuTrace(int addr);
 
+	import "DPI-C" function void ebreak();
+	import "DPI-C" function void wbuCheck(int pc);
+	export "DPI-C" function getRegPc;
+
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
 		if(inst)	ifuInst();
@@ -201,12 +230,20 @@ class ysyx_26020046_Chk extends ExtModule{
 		if(miss)	iduMiss();
 		if(ifuMiss)	iduMiss();
 		
-		if(load		)lsuLoad();
-		if(loadWait	)lsuLoadWait();
-		if(store	)lsuStore();
-		if(storeWait)lsuStoreWait();
+		if(load)		lsuLoad();
+		if(loadWait)	lsuLoadWait();
+		if(store)		lsuStore();
+		if(storeWait)	lsuStoreWait();
+
+		if(ebreak)	ebreak();
+		if(check)	wbuCheck(dnpc);
 	end
 	always_ff@(posedge load or posedge store)lsuTrace(addr);
+	
+	function int getRegPc(input byte rdAddr);
+		assign regAddr=rdAddr;
+		return regValue;
+	endfunction
 	endmodule
 	"""
 	)
