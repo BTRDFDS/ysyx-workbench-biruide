@@ -104,14 +104,14 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.jbMiss	:= noEbreak && Get(ifu.in.imme.jump)
 		chk.jbHit	:= false.B
 		////////////////////////////////////
-		iduChk.cal		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Ialu	|| Get(idu.opEnum) === Op.Ralu	)
-		iduChk.jump		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Jal		|| Get(idu.opEnum) === Op.Ijalr	)
-		iduChk.imm		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Uauipc	|| Get(idu.opEnum) === Op.Ului	)
-		iduChk.ls		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Store	|| Get(idu.opEnum) === Op.Iload	)
-		iduChk.csr		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Icsr	)
-		iduChk.br		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Branch	)
-		iduChk.miss		:= noEbreak && Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid
-		iduChk.ifuMiss	:= noEbreak && Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid
+		chk.cal		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Ialu	|| Get(idu.opEnum) === Op.Ralu	)
+		chk.jump	:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Jal		|| Get(idu.opEnum) === Op.Ijalr	)
+		chk.imm		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Uauipc	|| Get(idu.opEnum) === Op.Ului	)
+		chk.ls		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Store	|| Get(idu.opEnum) === Op.Iload	)
+		chk.csr		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Icsr	)
+		chk.br		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Branch	)
+		chk.miss	:= noEbreak && Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid
+		chk.ifuMiss	:= noEbreak && Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid
 
 		
 	}
@@ -121,7 +121,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	val stall	= IO(Input(Bool()))
 	val jbMiss	= IO(Input(Bool()))
 	val jbHit	= IO(Input(Bool()))
-///////////////////////////////////////////
+	
 	val cal		= IO(Input(Bool()))
 	val jump	= IO(Input(Bool()))
 	val imm		= IO(Input(Bool()))
@@ -130,7 +130,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	val br		= IO(Input(Bool()))
 	val miss	= IO(Input(Bool()))
 	val ifuMiss = IO(Input(Bool()))
-///////////////////////////////////////////
+
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_Chk.sv",
 	"""
