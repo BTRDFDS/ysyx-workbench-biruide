@@ -75,7 +75,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				opEnum === Op.Jal || opEnum === Op.Ijalr ||
 				(opEnum === Op.Icsr & funct3 === 0.U(3.W))
 			){out.pipe.enJcod := true.B}
-			when(opEnum === Op.Branch){out.pipe.enBpu := true.B}//opEnum === Op.Jal || 
+			when(opEnum === Op.Jal || opEnum === Op.Branch){out.pipe.enBpu := true.B}
 			switch(opEnum){
 				is(Op.Uauipc){out.pipe.alu := ExuAlu.Add}
 				is(Op.Ialu){
