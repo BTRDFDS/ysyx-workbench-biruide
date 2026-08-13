@@ -127,9 +127,9 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		.elsewhen(Get(idu.pipeRes)===IfuRes.Valid){chk.dnpc := Get(idu.pipePc)}
 		.otherwise{chk.dnpc := Get(ifu.pipePc)}
 		chk.regValue := 0.U(32.W)
-		when(chk.regAddr = 0.U(8.W)){chk.regValue := Get(wbu.pipePc)}
+		when(chk.regAddr === 0.U(8.W)){chk.regValue := Get(wbu.pipePc)}
 		.elsewhen(chk.regAddr(7,RegWidth)=/= 0.U){
-			printf("error regAddr=%d > %d \n",chk.regAddr,RegWidth)
+			printf("error regAddr=%d > %d \n",chk.regAddr,RegWidth.U)
 			stop()
 		}
 		.otherwise{chk.regValue := Get(wbu.gpr)(chk.regAddr(RegWidth-1,0))}
@@ -156,7 +156,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	val storeWait	= IO(Input(Bool()))
 	val addr		= IO(Input(UInt(32.W)))
 
-	val regAddr	= IO(output(UInt(8.W)))
+	val regAddr	= IO(Output(UInt(8.W)))
 	val regValue= IO(Input(UInt(BitWidth.W)))
 	val dnpc	= IO(Input(UInt(BitWidth.W)))
 	val ebreak	= IO(Input(Bool()))

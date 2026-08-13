@@ -334,9 +334,9 @@ extern "C" void sdram_write(int addr,int data){
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int getRegPc(int addr);
 extern "C" int getNextPc();
-extern "C" void ebreak(){
+extern "C" void ebreak(int pc){
 	numInst++;
-	iCacheTraceFileWrite(getRegPc(0));
+	iCacheTraceFileWrite(pc);
 	return NpcFinish("ebreak",getRegPc(10)!=0);
 	}
 extern "C" void wbuCheck(){
