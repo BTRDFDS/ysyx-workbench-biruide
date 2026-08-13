@@ -112,7 +112,15 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.br		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Branch	)
 		chk.miss	:= noEbreak && Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid
 		chk.ifuMiss	:= noEbreak && Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid
-		
+
+		chk.bnj		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&& ~Get(exu.enBfun) && Get(exu.out.imme.ready)
+		chk.bij		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&&  Get(exu.enBfun) && Get(exu.out.imme.ready)
+		chk.jum		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)===ExuBfu.Null&& Get(exu.out.imme.jump) && Get(exu.pipeEnJcod) && Get(exu.pipeAlu)=/=ExuAlu.Jalr
+		chk.jlr		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)===ExuBfu.Null&& Get(exu.out.imme.jump) && Get(exu.pipeEnJcod) && Get(exu.pipeAlu)===ExuAlu.Jalr
+		chk.jumpAddr:= Get(exu.out.imme.addr)
+		chk.jumpPc 	:= Cat(Get(exu.pipePc),0.U(2.W))
+		chk.sext	:= Get(exu.pipeResult(31))
+
 		chk.load		:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Load	&& Get(lsu.bar.ready)
 		chk.loadWait	:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Load
 		chk.store		:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Store	&& Get(lsu.bar.ready)
@@ -146,6 +154,14 @@ class ysyx_26020046_Chk extends ExtModule{
 	val br		= IO(Input(Bool()))
 	val miss	= IO(Input(Bool()))
 	val ifuMiss = IO(Input(Bool()))
+	
+	val bnj	= IO(Input(Bool()))
+	val bij = IO(Input(Bool()))
+	val jum = IO(Input(Bool()))
+	val jlr = IO(Input(Bool()))
+	val jumpAddr= IO(Input(UInt(32.W)))
+	val jumpPc	= IO(Input(UInt(32.W)))
+	val sext= IO(Input(UInt( 1.W)))
 
 	val load		= IO(Input(Bool()))
 	val loadWait	= IO(Input(Bool()))
@@ -177,6 +193,14 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic br,
 		input logic miss,
 		input logic ifuMiss,
+		
+		input logic bnj,
+		input logic bij,
+		input logic jum,
+		input logic jlr,
+		input logic [31:0]jumpAddr,
+		input logic [31:0]jumpPc,
+		input logic sext,
 	
 		input logic load,
 		input logic loadWait,
@@ -204,6 +228,9 @@ class ysyx_26020046_Chk extends ExtModule{
 	import "DPI-C" function void iduCsr();
 	import "DPI-C" function void iduBr();
 	import "DPI-C" function void iduMiss();
+	
+	import "DPI-C" function void exuBnTrace(int pc,byte state);
+	import "DPI-C" function void exuBiTrace(int pc,byte state,int addr);
 
 	import "DPI-C" function void lsuLoad();
 	import "DPI-C" function void lsuLoadWait();
@@ -229,6 +256,11 @@ class ysyx_26020046_Chk extends ExtModule{
 		if(miss)	iduMiss();
 		if(ifuMiss)	iduMiss();
 		
+		if(bnj) exuBnTrace(jumpPc,{5'b0,sext,2'b01});
+		if(bij) exuBiTrace(jumpPc,{5'b0,sext,2'b11},jumpAddr);
+		if(jum) exuBiTrace(jumpPc,{5'b0,1'b0,2'b10},jumpAddr);
+		if(jlr) exuBiTrace(jumpPc,{5'b0,1'b1,2'b10},jumpAddr);
+	
 		if(load)		lsuLoad();
 		if(loadWait)	lsuLoadWait();
 		if(store)		lsuStore();
