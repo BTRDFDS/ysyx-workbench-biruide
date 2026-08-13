@@ -125,7 +125,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 			}
 		}
 
-		val chkExu = Seq(chk.bnj,chk.bij,chk.jum,chk.jlr,chk.jumpAddr,chk.jumpPc,chk.sext);chkExu.foreach(_ := false.B)
+		val chkExu = Seq(chk.bnj,chk.bij,chk.jum,chk.jlr,chk.sext);chkExu.foreach(_ := false.B)
 		chk.bnj		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&& ~Get(exu.enBfun) && Get(exu.out.imme.ready)
 		chk.bij		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&&  Get(exu.enBfun) && Get(exu.out.imme.ready)
 		chk.jum		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)===ExuBfu.Null&& Get(exu.out.imme.jump) && Get(exu.pipeEnJcod) && Get(exu.pipeAlu)=/=ExuAlu.Jalr
