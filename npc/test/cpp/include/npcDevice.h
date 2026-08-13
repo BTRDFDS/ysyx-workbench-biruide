@@ -334,15 +334,15 @@ extern "C" void sdram_write(int addr,int data){
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" int getRegPc(int addr);
 extern "C" int getNextPc();
-extern "C" void ebreak(int pc){
-	numInst++;
-	iCacheTraceFileWrite(pc);
-	return NpcFinish("ebreak",getRegPc(10)!=0);
-	}
-extern "C" void wbuCheck(){
+extern "C" void ebreak(){
 	numInst++;
 	iCacheTraceFileWrite(getRegPc(0));
-	if(NpcDifftestCheck(getRegPc(0)))return NpcFinish("difftest end",-1);
+	return NpcFinish("ebreak",getRegPc(10)!=0);
+	}
+extern "C" void wbuCheck(int pc){
+	numInst++;
+	iCacheTraceFileWrite(getRegPc(0));
+	if(NpcDifftestCheck(pc))return NpcFinish("difftest end",-1);
 	}
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr){

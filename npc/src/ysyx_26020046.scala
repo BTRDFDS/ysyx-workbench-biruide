@@ -211,7 +211,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	import "DPI-C" function void lsuStoreWait();
 	import "DPI-C" function void lsuTrace(int addr);
 
-	import "DPI-C" function void ebreak();
+	import "DPI-C" function void stop();
 	import "DPI-C" function void wbuCheck(int pc);
 	export "DPI-C" function getRegPc;
 
@@ -235,7 +235,7 @@ class ysyx_26020046_Chk extends ExtModule{
 		if(store)		lsuStore();
 		if(storeWait)	lsuStoreWait();
 
-		if(ebreak)	ebreak();
+		if(ebreak)	stop();
 		if(check)	wbuCheck(dnpc);
 	end
 	always_ff@(posedge load or posedge store)lsuTrace(addr);
