@@ -122,7 +122,8 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.ebreak := (Get(wbu.pipeCsrOp) === CsrOp.Trap)&(Get(wbu.pipeValid))&(Get(wbu.pipeCsrMesg) === 0x3L.U) ||Get(wbu.error)
 		chk.check := Get(wbu.pipeValid)
 		chk.rdAddr	:= Get(wbu.pipeRdAddr)
-		chk.rdValue	:= Get(wbu.pipeRdValue)
+		chk.rdValue	:= Get(wbu.pipeResult)
+		chk.pc		:= Cat(Get(wbu.pipePc),0.U(2.W))
 		chk.dnpc := 0.U(32.W)
 		when(Get(lsu.pipeValid)){chk.dnpc := Cat(Get(lsu.pipePc),0.U(2.W))}
 		.elsewhen(Get(exu.pipeValid)){chk.dnpc := Cat(Get(exu.pipePc),0.U(2.W))}
