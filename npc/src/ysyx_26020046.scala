@@ -97,16 +97,19 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 
 		val chk = Module(new ysyx_26020046_Chk)
 		chk.clock	:= clock
-
+		val btbIdu = RegInit(false.B)when(Get(idu.out.imme.ready)){btbIdu := (Get(ifu.isBranch)&&Get(ifu.bp2Hit)) || Get(ifu.isJal)||Get(ifu.isJalr)}
+		val btbExu = RegInit(false.B)when(Get(exu.out.imme.ready)){btbExu := btbIdu}
 		val noEbreak = RegInit(true.B);when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && Get(ifu.in.imme.ready) && Get(ifu.out.pipe.instr) === 0x00100073L.U && ~Get(ifu.in.imme.jump)){noEbreak := false.B}
 		val chkIfu = Seq(chk.inst,chk.stall,chk.jbMiss,chk.miss,chk.ifuMiss);chkIfu.foreach(_ := false.B)
 		when(noEbreak){
 			when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && (Get(ifu.in.imme.ready) || Get(ifu.in.imme.jump))){chk.inst := true.B}
-			when(Get(ifu.out.pipe.res) === IfuRes.Null)			{chk.stall:= true.B}
-			when(Get(ifu.in.imme.jump))							{chk.jbMiss:= true.B}
+			when(Get(ifu.out.pipe.res) === IfuRes.Null)							{chk.stall	:= true.B}
+			when(Get(ifu.in.imme.jump))											{chk.jbMiss	:= true.B}
+			when(Get(ifu.in.imme.jump) && Get(ifu.shouldNotJump)=/=btbExu)		{chk.jbHit	:= true.B}
+
 
 			when(Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid)		{chk.miss	:= true.B}
-			when(Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid){chk.ifuMiss:= true.B}
+			when(Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid)	{chk.ifuMiss:= true.B}
 		}
 
 		val chkIdu = Seq(chk.cal,chk.jump,chk.imm,chk.ls,chk.csr,chk.br);chkIdu.foreach(_ := false.B)
@@ -195,6 +198,7 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic inst,
 		input logic stall,
 		input logic jbMiss,
+		input logic jbHit,
 
 		input logic cal,
 		input logic jump,
@@ -230,6 +234,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	import "DPI-C" function void ifuInst();
 	import "DPI-C" function void ifuStall();
 	import "DPI-C" function void ifuJbMiss();
+	import "DPI-C" function void ifuJbHit();
 	
 	import "DPI-C" function void iduCal();
 	import "DPI-C" function void iduJump();
@@ -255,6 +260,7 @@ class ysyx_26020046_Chk extends ExtModule{
 		if(stall)	ifuStall();
 		if(inst)	ifuInst();
 		if(jbMiss)	ifuJbMiss();
+		if(jbHit)	ifuJbHit();
 		
 		if(cal)		iduCal();
 		if(jump)	iduJump();
