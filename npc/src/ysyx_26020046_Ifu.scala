@@ -19,9 +19,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		.otherwise							{out.pipe.res := IfuRes.Null}
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-	// val bp2Cnt	= RegInit(2.U(2.W))
-	// val bp2Hit = bp2Cnt >= 2.U
-	val btfn = out.pipe.instr(31).asBool
+	val bp2Cnt	= RegInit(2.U(2.W))
+	val bp2Hit = bp2Cnt >= 2.U
 
 	val BtbBits	= 3
 	val BtbSize	= 1 << BtbBits
@@ -39,16 +38,16 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	when(in.imme.jump){
 		pipePc := in.imme.addr(31,2)
 	}.elsewhen(in.imme.ready&&ich.ready){
-		when(((isBranch&&btfn) || isJal)&&btbHit){//||isJalr
+		when(((isBranch&&bp2Hit) || isJal)&&btbHit){//||isJalr
 					pipePc := btbAddr(btbIndex)
 		}.otherwise{pipePc := pipePc+1.U}
 	}
 	val shouldNotJump = in.imme.pc+1.U === in.imme.addr(31,2)
-	// when(in.imme.jump && in.imme.jbpu){
-	// 	when(shouldNotJump){when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}}
-	// 	.otherwise{			when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}
+	when(in.imme.jump && in.imme.jbpu){
+		when(shouldNotJump){when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}}
+		.otherwise{			when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}
 
-	// }
+	}
 	when(in.imme.jump && in.imme.jbtb && ~shouldNotJump){
 		btbPc(btbCnt)	:= in.imme.pc
 		btbAddr(btbCnt) := in.imme.addr(31,2)
@@ -64,7 +63,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		dontTouch(btbMatch)
 		dontTouch(btbIndex)
 		dontTouch(btbHit)
-		// dontTouch(bp2Cnt)
-		// dontTouch(bp2Hit)
+		dontTouch(bp2Cnt)
+		dontTouch(bp2Hit)
 	}
 }

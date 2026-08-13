@@ -213,7 +213,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.pc		:= in.imme.pc
 	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
 	out.imme.jbtb	:= in.imme.jbtb
-	// out.imme.jbpu	:= in.imme.jbpu
+	out.imme.jbpu	:= in.imme.jbpu
 	out.imme.jump	:= in.imme.jump && (in.imme.addr(31,2)=/=in.pipe.pc || pipeRes===IfuRes.Valid || ~in.imme.jbtb)
 
 	if(Yosys == false){

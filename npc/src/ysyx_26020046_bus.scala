@@ -79,13 +79,13 @@ class ImmeExId extends ImmeData{
 	val ready	= Output(Bool())
 	val jump	= Output(Bool())
 	val jbtb	= Output(Bool())
-	// val jbpu	= Output(Bool())
+	val jbpu	= Output(Bool())
 }
 class ImmeIdIf extends Bundle{
 	val ready	= Output(Bool())
 	val jump	= Output(Bool())
 	val jbtb	= Output(Bool())
-	// val jbpu	= Output(Bool())
+	val jbpu	= Output(Bool())
 	val addr	= Output(UInt((BitWidth).W))
 	val pc		= Output(UInt((BitWidth-2).W))
 }
