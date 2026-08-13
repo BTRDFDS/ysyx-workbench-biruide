@@ -121,15 +121,13 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 
 		chk.ebreak := (Get(wbu.pipeCsrOp) === CsrOp.Trap)&(Get(wbu.pipeValid))&(Get(wbu.pipeCsrMesg) === 0x3L.U) ||Get(wbu.error)
 		chk.check := Get(wbu.pipeValid)
+		chk.rdAddr	:= Get(wbu.pipeRdAddr)
+		chk.rdValue	:= Get(wbu.pipeRdValue)
 		chk.dnpc := 0.U(32.W)
 		when(Get(lsu.pipeValid)){chk.dnpc := Cat(Get(lsu.pipePc),0.U(2.W))}
 		.elsewhen(Get(exu.pipeValid)){chk.dnpc := Cat(Get(exu.pipePc),0.U(2.W))}
 		.elsewhen(Get(idu.pipeRes)===IfuRes.Valid){chk.dnpc := Cat(Get(idu.pipePc),0.U(2.W))}
 		.otherwise{chk.dnpc := Cat(Get(ifu.pipePc),0.U(2.W))}
-		
-		when(chk.regAddr === 0.U(8.W)){chk.regValue := Get(wbu.pipePc)}
-		.elsewhen(chk.regAddr(7,RegWidth)=/= 0.U){chk.regValue := 0.U(32.W)}
-		.otherwise{chk.regValue := Get(wbu.gpr)(chk.regAddr(RegWidth-1,0))}
 	}
 }
 class ysyx_26020046_Chk extends ExtModule{
@@ -153,8 +151,9 @@ class ysyx_26020046_Chk extends ExtModule{
 	val storeWait	= IO(Input(Bool()))
 	val addr		= IO(Input(UInt(32.W)))
 
-	val regAddr	= IO(Output(UInt(8.W)))
-	val regValue= IO(Input(UInt(BitWidth.W)))
+	val rdAddr	= IO(Input(UInt(8.W)))
+	val rdValue	= IO(Input(UInt(BitWidth.W)))
+	val pc		= IO(Input(UInt(BitWidth.W)))
 	val dnpc	= IO(Input(UInt(BitWidth.W)))
 	val ebreak	= IO(Input(Bool()))
 	val check	= IO(Input(Bool()))
@@ -183,8 +182,8 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic storeWait,
 		input logic [31:0] addr,
 
-		output logic [7:0] regAddr,
-		input logic [31:0] regValue,
+		output logic [7:0] rdAddr,
+		input logic [31:0] rdValue,
 		input logic [31:0] dnpc,
 		input logic ebreak,
 		input logic check,
@@ -210,8 +209,7 @@ class ysyx_26020046_Chk extends ExtModule{
 	import "DPI-C" function void lsuTrace(int addr);
 
 	import "DPI-C" function void ebreakStop();
-	import "DPI-C" function void wbuCheck(int pc);
-	export "DPI-C" function getRegPc;
+	import "DPI-C" function void wbuCheck(int dnpc,int pc,byte addr,int value);
 
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
@@ -234,14 +232,10 @@ class ysyx_26020046_Chk extends ExtModule{
 		if(storeWait)	lsuStoreWait();
 
 		if(ebreak)	ebreakStop();
-		if(check)	wbuCheck(dnpc);
+		if(check)	wbuCheck(dnpc,pc,rdAddr,rdValue);
 	end
 	always_ff@(posedge load or posedge store)lsuTrace(addr);
-	
-	function int getRegPc(input byte rdAddr);
-		regAddr=rdAddr;
-		return regValue;
-	endfunction
+
 	endmodule
 	"""
 	)

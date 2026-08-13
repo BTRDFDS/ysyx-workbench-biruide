@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <npcDifftest.h>//我只需要difftest
 ////////////////////////////////////////////////////////////////////////////////////////
+uint32_t regs[32]{};
+////////////////////////////////////////////////////////////////////////////////////////
 bool stop=false;
 uint32_t returnCode=1;
 void NpcFinish(const char* msg,int code){
@@ -203,7 +205,7 @@ void printOver(){
 	};//A=10 B=11
 	if(returnCode!=0){
 		for(int i=0;i<32;i++){
-			printf("[%2d %s]%8x ",i,regsName[i],getRegPc(i));
+			printf("[%2d %s]%8x ",i,regsName[i],regs[i]);
 			if(i%8==7)printf("\n");
 		}
 	}
@@ -236,7 +238,7 @@ void NpcWave();
 extern "C" void flash_read(int32_t addr, int32_t *data) {
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#ifdef NPC_M_TRACE
-	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
+	logFile<<"flash	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
 	#endif
 	// if(addrX-flashAddr>=flashSize|addrX<flashAddr){return NpcFinish("flash read error",addrX);}
 	if(addrX>=flashSize)return NpcFinish("flash read error",addrX);
@@ -260,16 +262,16 @@ extern "C" void mrom_read(int32_t addr, int32_t *data) {
 		((uint32_t)mrom[addrX-mromAddr+3]<<24);
 	*data=temp;
 	#ifdef NPC_M_TRACE
-	logFile<<"mrom	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" => "<<std::hex<<temp<<std::endl;
+	logFile<<"mrom	R "<<std::hex<<addrX<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 	}
 extern "C" int psram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#if defined(NPC_M_TRACE)
-		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
+		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
 	#elif defined(NPC_MIN_TRACE)
-		// if(numCycle >= NpcMinTraceBegin)logFile<<std::hex<<getRegPc(0)<<"\n";
-		// if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
+		// if(numCycle >= NpcMinTraceBegin)logFile<<std::hex<<regs[0]<<"\n";
+		// if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
 	#endif
 	if(addrX>=psramSize){NpcFinish("psram read error",addrX);return 0;}
 	uint32_t temp=
@@ -285,9 +287,9 @@ extern "C" int psram_read(int32_t addr){
 extern "C" void psram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#if defined(NPC_M_TRACE)
-		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
+		logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
 	#elif defined(NPC_MIN_TRACE)
-		// if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
+		// if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<"Psram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
 	#endif
 	psram[addrX+0]=(uint8_t)(data&0xff);
 	#if defined(NPC_M_TRACE)
@@ -299,10 +301,10 @@ extern "C" void psram_write(int addr,int data){
 extern "C" int sdram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr);
 	#if defined(NPC_M_TRACE)
-		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
+		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
 	#elif defined(NPC_MIN_TRACE)
-		if(numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<getRegPc(0)<<"\n";
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle;
+		if(numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<regs[0]<<"\n";
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
 	#endif
 	if(addrX>=sdramSize){NpcFinish("sdram read error",addrX);return 0;}
 	uint32_t temp=
@@ -320,9 +322,9 @@ extern "C" int sdram_read(int32_t addr){
 extern "C" void sdram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#if defined(NPC_M_TRACE)
-		logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
+		logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
 	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<getRegPc(0)<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
+		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
 	#endif
 	sdram[addrX+0]=(uint8_t)(data&0xff);
 	#if defined(NPC_M_TRACE)
@@ -332,21 +334,21 @@ extern "C" void sdram_write(int addr,int data){
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
-extern "C" int getRegPc(char rdAddr);
-extern "C" int getNextPc();
 extern "C" void ebreakStop(){
 	numInst++;
-	iCacheTraceFileWrite(getRegPc(0));
-	return NpcFinish("ebreak",getRegPc(10)!=0);
+	iCacheTraceFileWrite(regs[0]);
+	return NpcFinish("ebreak",regs[10]!=0);
 	}
-extern "C" void wbuCheck(int pc){
+extern "C" void wbuCheck(int dnpc,int pc,char addr,int value){
 	numInst++;
-	iCacheTraceFileWrite(getRegPc(0));
-	if(NpcDifftestCheck(pc))return NpcFinish("difftest end",-1);
+	regs[addr]=value;
+	regs[0]=pc;
+	iCacheTraceFileWrite(regs[0]);
+	if(NpcDifftestCheck(dnpc))return NpcFinish("difftest end",-1);
 	}
 void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr){
-		for(uint32_t i=1;i<32;i++){gpr[i]=getRegPc(i);}
+		for(uint32_t i=1;i<32;i++){gpr[i]=regs[i];}
 		gpr[0]=0;
 	}else{
 		printf("difftest *gpr=Null");
