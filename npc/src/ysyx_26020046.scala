@@ -112,8 +112,6 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.br		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Branch	)
 		chk.miss	:= noEbreak && Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid
 		chk.ifuMiss	:= noEbreak && Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid
-
-		
 	}
 }
 class ysyx_26020046_Chk extends ExtModule{
