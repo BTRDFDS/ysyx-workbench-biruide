@@ -90,8 +90,9 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	when(out.imme.ready){hasSend := false.B}
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeEnBpu)){hasSend := true.B}
 	//BJR
-	out.imme.jbpu := (~in.imme.error && pipeValid) && (pipeEnBpu)
-	out.imme.jump :=  in.imme.error || (pipeValid && (pipeEnBpu || pipeEnJcod)&& ~hasSend && shouldBe=/=Cat(in.pipe.pc,0.U(2.W)))//shouldBe其实还需要out.imme.jbpu，但是这里未进行拆分因此可以直接这样子
+	out.imme.jbtb := (~in.imme.error && pipeValid) && (pipeEnBpu)
+	out.imme.jbpu := ~pipeEnJcod && ~in.imme.error
+	out.imme.jump :=  in.imme.error || (pipeValid && (pipeEnBpu || pipeEnJcod)&& ~hasSend && shouldBe=/=Cat(in.pipe.pc,0.U(2.W)))//shouldBe其实还需要out.imme.jbtb，但是这里未进行拆分因此可以直接这样子
 
 	out.imme.ready	:= in.imme.ready || ~pipeValid
 	out.imme.addr	:= Mux(in.imme.error,in.imme.addr,shouldBe)

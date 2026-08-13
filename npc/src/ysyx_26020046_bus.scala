@@ -33,8 +33,6 @@ class PipeIfId extends Bundle{
 	val res		= Output(IfuRes())
 	val pc		= Output(UInt((BitWidth-2).W))
 	val instr	= Output(UInt(BitWidth.W))
-	// val bp2		= Output(Bool())
-	// val btb		= Output(Bool())
 }
 class PipeLsWb extends Bundle{
 	val valid	= Output(Bool())
@@ -80,11 +78,13 @@ class ImmeLsEx extends ImmeWbLs{val ready = Output(Bool())}
 class ImmeExId extends ImmeData{
 	val ready	= Output(Bool())
 	val jump	= Output(Bool())
+	val jbtb	= Output(Bool())
 	val jbpu	= Output(Bool())
 }
 class ImmeIdIf extends Bundle{
 	val ready	= Output(Bool())
 	val jump	= Output(Bool())
+	val jbtb	= Output(Bool())
 	val jbpu	= Output(Bool())
 	val addr	= Output(UInt((BitWidth).W))
 	val pc		= Output(UInt((BitWidth-2).W))

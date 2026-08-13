@@ -38,18 +38,20 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	when(in.imme.jump){
 		pipePc := in.imme.addr(31,2)
 	}.elsewhen(in.imme.ready&&ich.ready){
-		when((isBranch||isJal) && bp2Hit&&btbHit){//||isJalr
+		when(((isBranch&&bp2Hit) || isJal)&&btbHit){//||isJalr
 					pipePc := btbAddr(btbIndex)
 		}.otherwise{pipePc := pipePc+1.U}
 	}
+	val shouldNotJump = in.imme.pc+1.U === in.imme.addr(31,2)
 	when(in.imme.jump && in.imme.jbpu){
-		val shouldNotJump = in.imme.pc+1.U === in.imme.addr(31,2)
-		when(shouldNotJump){when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}
-		}.otherwise{		when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}
-			btbPc(btbCnt)	:= in.imme.pc
-			btbAddr(btbCnt) := in.imme.addr(31,2)
-			btbCnt := btbCnt + 1.U
-		}
+		when(shouldNotJump){when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}}
+		.otherwise{			when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}
+
+	}
+	when(in.imme.jump && in.imme.jbtb ~shouldNotJump){
+		btbPc(btbCnt)	:= in.imme.pc
+		btbAddr(btbCnt) := in.imme.addr(31,2)
+		btbCnt := btbCnt + 1.U
 	}
 	if(Yosys == false){
 		dontTouch(isBranch)
