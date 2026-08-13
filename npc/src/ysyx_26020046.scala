@@ -84,4 +84,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	dontTouch(io.master)
 	dontTouch(io.slave)
 	dontTouch(io.interrupt)
+	if(Yosys == false){
+		val debug = BoringUtils.bore(ifu.pipePc)
+	}
 }
