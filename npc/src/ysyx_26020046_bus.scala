@@ -1,5 +1,6 @@
 import chisel3._
 import chisel3.util._
+import chisel3.util.experimental._
 
 object  WidthConsts{//const
 	val BitWidth	= 32
@@ -24,6 +25,7 @@ object  WidthConsts{//const
 		.elsewhen(pipeChange){reg := pipeNext}
 		reg
 	}
+	def Get[T <: Data](signal: T): T = BoringUtils.bore(signal)
 }
 
 import WidthConsts._
