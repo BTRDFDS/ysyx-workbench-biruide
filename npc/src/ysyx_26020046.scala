@@ -105,11 +105,11 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 			when(Get(ifu.out.pipe.res) === IfuRes.Null)			{chk.stall:= true.B}
 			when(Get(ifu.in.imme.jump))							{chk.jbMiss:= true.B}
 
-			when(Get(idu.in.imme.jump) && Get(idu.pipeRes))		{chk.miss	:= true.B}
-			when(Get(idu.out.imme.jump) && Get(idu.in.pipe.res)){chk.ifuMiss:= true.B}
+			when(Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid)		{chk.miss	:= true.B}
+			when(Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid){chk.ifuMiss:= true.B}
 		}
 
-		val chkIdu = Seq(chk.alu,chk.cal,chk.jump,chk.imm,chk.ls,chk.csr,chk.br);chkIdu.foreach(_ := false.B)
+		val chkIdu = Seq(chk.cal,chk.jump,chk.imm,chk.ls,chk.csr,chk.br);chkIdu.foreach(_ := false.B)
 		when(Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid)){
 			switch(Get(idu.opEnum)){
 				is(Op.Ialu)		{chk.cal	:= true.B}
