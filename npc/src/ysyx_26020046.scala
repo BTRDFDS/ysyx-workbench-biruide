@@ -88,7 +88,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	if(Yosys == false){
 		// val ifuPc	= Mux(out.pipe.res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
 		// val ifuInst	= Mux(out.pipe.res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
-		val pipePcIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,Cat(Get(ifu.out.pipe.pc)),0.U(32.W));dontTouch(pipePcIfu)
+		val pipePcIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,Cat(Get(ifu.out.pipe.pc),0.U(2.W)),0.U(32.W));dontTouch(pipePcIfu)
 	}
 }
 // class ysyx_26020046_Chk extends ExtModule{
