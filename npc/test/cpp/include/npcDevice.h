@@ -335,7 +335,6 @@ extern "C" void sdram_write(int addr,int data){
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void ebreakStop(){
-	numInst++;
 	iCacheTraceFileWrite(regs[0]);
 	return NpcFinish("ebreak",regs[10]!=0);
 	}
