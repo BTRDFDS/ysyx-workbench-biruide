@@ -68,7 +68,7 @@ class BTB{
 	uint32_t bits,size,mask,cnt;
 	std::vector<uint32_t> tags,addr,uses;
 	public:
-		BTB(uint32_t bit= 4){
+		BTB(uint32_t bit= 3){
 			bits = bit;
 			size = 1<<bits;
 			mask = size-1;
@@ -164,8 +164,8 @@ int main() {
 			tpf2 = TPF2(sext,jump);
 		}
 		if(!branch || btfn || bpb2 || tpf2){
-			if(!branch && sext)	btb = btb1.all(pc)==addr && addr!=0;
-			else				btb = btb0.all(pc)==addr && addr!=0;
+			if(!branch && sext)	btb = btb0.pcl(pc)==addr && addr!=0;
+			else				btb = btb0.pcl(pc)==addr && addr!=0;
 		}
 		if(branch){
 			if(jump == btfn)hitBTFN++;
@@ -186,8 +186,8 @@ int main() {
 			hitTPF2_BTB++;
 		}
 		if(jump && !btb){
-			if(!branch && sext)	btb1.all(pc,addr,true);
-			else				btb0.all(pc,addr,true);
+			if(!branch && sext)	btb0.pcl(pc,addr,true);
+			else				btb0.pcl(pc,addr,true);
 		}
 	}
 	file.close();
