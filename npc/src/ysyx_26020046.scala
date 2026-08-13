@@ -183,8 +183,9 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic storeWait,
 		input logic [31:0] addr,
 
-		output logic [7:0] rdAddr,
+		input logic [7:0] rdAddr,
 		input logic [31:0] rdValue,
+		input logic [31:0] pc,
 		input logic [31:0] dnpc,
 		input logic ebreak,
 		input logic check,
