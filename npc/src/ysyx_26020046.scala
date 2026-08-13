@@ -86,41 +86,50 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	dontTouch(io.slave)
 	dontTouch(io.interrupt)
 	if(Yosys == false){
-		val pipeInItIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Get(ifu.out.pipe.instr)  ,0.U(32.W));dontTouch(pipeInItIfu)
-		val pipePcIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Cat(Get(ifu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcIfu)
-		val pipePcIdu = Mux(Get(idu.pipeRes) === IfuRes.Valid,		Cat(Get(idu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcIdu)
-		val pipePcExu = Mux(Get(exu.pipeValid),						Cat(Get(exu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcExu)
-		val pipePcLsu = Mux(Get(lsu.pipeValid),						Cat(Get(lsu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcLsu)
-		val pipePcWbu = Mux(Get(wbu.pipeValid),						Cat(Get(wbu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcWbu)
+		val chkInItIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Get(ifu.out.pipe.instr)  ,0.U(32.W));dontTouch(pipeInItIfu)
+		val chkPcIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Cat(Get(ifu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcIfu)
+		val chkPcIdu = Mux(Get(idu.pipeRes) === IfuRes.Valid,		Cat(Get(idu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcIdu)
+		val chkPcExu = Mux(Get(exu.pipeValid),						Cat(Get(exu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcExu)
+		val chkPcLsu = Mux(Get(lsu.pipeValid),						Cat(Get(lsu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcLsu)
+		val chkPcWbu = Mux(Get(wbu.pipeValid),						Cat(Get(wbu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcWbu)
+
+
+		val chk = Module(new ysyx_26020046_Chk)
+		chk.clock	:= clock
+		val noEbreak = RegInit(true.B);when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && Get(ifu.in.imme.ready) && Get(ifu.out.pipe.instr) === 0x00100073L.U && ~Get(ifu.in.imme.jump)){noEbreak := false.B}
+		chk.inst	:= noEbreak && Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && (Get(ifu.in.imme.ready) || Get(ifu.in.imme.jump))
+		chk.stall	:= noEbreak && Get(ifu.out.pipe.res) === IfuRes.Null
+		chk.jbMiss	:= noEbreak && Get(ifu.in.imme.jump)
+		chk.jbHit	:= false.B
+		
 	}
 }
-// class ysyx_26020046_Chk extends ExtModule{
-// 	val inst	= IO(Input(Bool()))
-// 	val stall	= IO(Input(Bool()))
-// 	val jbMiss	= IO(Input(Bool()))
-// 	val jbHit	= IO(Input(Bool()))
-// 	val clock	= IO(Input(Clock()))
-// 	setInline("ysyx_26020046_Chk.sv",
-// 	"""
-// 	module ysyx_26020046_Chk(
-// 		input logic inst,
-// 		input logic stall,
-// 		input logic jbMiss,
-// 		input logic jbHit,
-// 		input logic clock
-// 	);
-// 	import "DPI-C" function void Inst();
-// 	import "DPI-C" function void Stall();
-// 	import "DPI-C" function void JbMiss();
-// 	import "DPI-C" function void JbHit();
-
-// 	always_ff@(posedge clock)begin
-// 		if(stall)	Stall();
-// 		if(inst)	Inst();
-// 		if(jbMiss)	JbMiss();
-// 		if(jbHit)	JbHit();
-// 	end
-// 	endmodule
-// 	"""
-// 	)
-// }
+class ysyx_26020046_Chk extends ExtModule{
+	val inst	= IO(Input(Bool()))
+	val stall	= IO(Input(Bool()))
+	val jbMiss	= IO(Input(Bool()))
+	val jbHit	= IO(Input(Bool()))
+	val clock	= IO(Input(Clock()))
+	setInline("ysyx_26020046_Chk.sv",
+	"""
+	module ysyx_26020046_Chk(
+		input logic inst,
+		input logic stall,
+		input logic jbMiss,
+		input logic jbHit,
+		input logic clock
+	);
+	import "DPI-C" function void ifuInst();
+	import "DPI-C" function void ifuStall();
+	import "DPI-C" function void ifuJbMiss();
+	import "DPI-C" function void ifuJbHit();
+	always_ff@(posedge clock)begin
+		if(stall)	ifuStall();
+		if(inst)	ifuInst();
+		if(jbMiss)	ifuJbMiss();
+		if(jbHit)	ifuJbHit();
+	end
+	endmodule
+	"""
+	)
+}
