@@ -119,7 +119,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.jlr		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)===ExuBfu.Null&& Get(exu.out.imme.jump) && Get(exu.pipeEnJcod) && Get(exu.pipeAlu)===ExuAlu.Jalr
 		chk.jumpAddr:= Get(exu.out.imme.addr)
 		chk.jumpPc 	:= Cat(Get(exu.pipePc),0.U(2.W))
-		chk.sext	:= Get(exu.pipeResult(31))
+		chk.sext	:= Get(exu.pipeResult)(31)
 
 		chk.load		:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Load	&& Get(lsu.bar.ready)
 		chk.loadWait	:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Load
