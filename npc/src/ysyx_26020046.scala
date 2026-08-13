@@ -100,9 +100,6 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 
 		val noEbreak = RegInit(true.B);when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && Get(ifu.in.imme.ready) && Get(ifu.out.pipe.instr) === 0x00100073L.U && ~Get(ifu.in.imme.jump)){noEbreak := false.B}
 		val chkIfu = Seq(chk.inst,chk.stall,chk.jbMiss,chk.miss,chk.ifuMiss);chkIfu.foreach(_ := false.B)
-		chk.inst	:= noEbreak && Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && (Get(ifu.in.imme.ready) || Get(ifu.in.imme.jump))
-		chk.stall	:= noEbreak && Get(ifu.out.pipe.res) === IfuRes.Null
-		chk.jbMiss	:= noEbreak && Get(ifu.in.imme.jump)
 		when(noEbreak){
 			when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && (Get(ifu.in.imme.ready) || Get(ifu.in.imme.jump))){chk.inst := true.B}
 			when(Get(ifu.out.pipe.res) === IfuRes.Null)			{chk.stall:= true.B}
@@ -128,6 +125,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 			}
 		}
 
+		val chkExu = Seq(chk.bnj,chk.bij,chk.jum,chk.jlr,chk.jumpAddr,chk.jumpPc,chk.sext);chkExu.foreach(_ := false.B)
 		chk.bnj		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&& ~Get(exu.enBfun) && Get(exu.out.imme.ready)
 		chk.bij		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&&  Get(exu.enBfun) && Get(exu.out.imme.ready)
 		chk.jum		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)===ExuBfu.Null&& Get(exu.out.imme.jump) && Get(exu.pipeEnJcod) && Get(exu.pipeAlu)=/=ExuAlu.Jalr
