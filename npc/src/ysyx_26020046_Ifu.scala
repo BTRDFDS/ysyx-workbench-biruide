@@ -22,7 +22,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val bp2Cnt	= RegInit(2.U(2.W))
 	val bp2Hit = bp2Cnt >= 2.U
 
-	val BtbBits	= 3
+	val BtbBits	= 4
 	val BtbSize	= 1 << BtbBits
 	val btbCnt	= RegInit(0.U(BtbBits.W))
 	val btbPc	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
@@ -44,7 +44,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	}
 	val shouldNotJump = in.imme.pc+1.U === in.imme.addr(31,2)
 	when(in.imme.jump && in.imme.jbpu){
-		when(shouldNotJump){when(bp2Cnt>0.U){bp2Cnt := bp2Cnt - 1.U}}
+		when(shouldNotJump){when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}}
 		.otherwise{			when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}
 
 	}

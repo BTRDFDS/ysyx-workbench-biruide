@@ -81,12 +81,13 @@ class BTB{
 			uint32_t res{};
 			uint32_t idx = (pc>>2)&mask;
 			if(write){
-				tags[idx] = (pc>>(bits+2));
+				// tags[idx] = (pc>>(bits+2));
 				addr[idx] = tobe;
 			}else{
-				if(tags[idx]==(pc>>(bits+2))){
-					res =addr[idx];
-				}
+				// if(tags[idx]==(pc>>(bits+2))){
+				// 	res =addr[idx];
+				// }
+				res =addr[idx];
 			}
 			return res;
 		}
@@ -109,7 +110,7 @@ class BTB{
 		}
 	};
 int main() {
-	BTB btb0(3);
+	BTB btb0(4);
 	BTB btb1(1);
 	file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
