@@ -91,7 +91,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeEnBpu)){hasSend := true.B}
 	//BJR
 	out.imme.jbtb := (~in.imme.error && pipeValid) && (pipeEnBpu)
-	out.imme.jbpu := ~pipeEnJcod && pipeEnBpu
+	out.imme.jbpu :=pipeEnBpu// ~pipeEnJcod && 
 	out.imme.jump :=  in.imme.error || (pipeValid && (pipeEnBpu || pipeEnJcod)&& ~hasSend && shouldBe=/=Cat(in.pipe.pc,0.U(2.W)))//shouldBe其实还需要out.imme.jbtb，但是这里未进行拆分因此可以直接这样子
 
 	out.imme.ready	:= in.imme.ready || ~pipeValid
