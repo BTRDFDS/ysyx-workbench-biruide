@@ -38,7 +38,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	when(in.imme.jump){
 		pipePc := in.imme.addr(31,2)
 	}.elsewhen(in.imme.ready&&ich.ready){
-		when(((isBranch) || isJal)&&bp2Hit&&btbHit){//||isJalr
+		when(((isBranch) || isJal)&&bp2Hit&&btbHit&&false.B){//||isJalr
 					pipePc := btbAddr(btbIndex)
 		}.otherwise{pipePc := pipePc+1.U}
 	}
