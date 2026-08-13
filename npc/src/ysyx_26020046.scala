@@ -190,6 +190,7 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic [31:0] regValue,
 		input logic [31:0] dnpc,
 		input logic ebreak,
+		input logic check,
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
