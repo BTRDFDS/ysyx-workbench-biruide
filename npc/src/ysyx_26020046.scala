@@ -126,12 +126,9 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		.elsewhen(Get(exu.pipeValid)){chk.dnpc := Cat(Get(exu.pipePc),0.U(2.W))}
 		.elsewhen(Get(idu.pipeRes)===IfuRes.Valid){chk.dnpc := Cat(Get(idu.pipePc),0.U(2.W))}
 		.otherwise{chk.dnpc := Cat(Get(ifu.pipePc),0.U(2.W))}
-		chk.regValue := 0.U(32.W)
+		
 		when(chk.regAddr === 0.U(8.W)){chk.regValue := Get(wbu.pipePc)}
-		.elsewhen(chk.regAddr(7,RegWidth)=/= 0.U){
-			printf("error regAddr=%d > %d \n",chk.regAddr,RegWidth.U)
-			stop()
-		}
+		.elsewhen(chk.regAddr(7,RegWidth)=/= 0.U){chk.regValue := 0.U(32.W)}
 		.otherwise{chk.regValue := Get(wbu.gpr)(chk.regAddr(RegWidth-1,0))}
 	}
 }
@@ -242,11 +239,9 @@ class ysyx_26020046_Chk extends ExtModule{
 	always_ff@(posedge load or posedge store)lsuTrace(addr);
 	
 	function int getRegPc(input byte rdAddr);
-		assign regAddr=rdAddr;
+		regAddr=rdAddr;
 		return regValue;
 	endfunction
-	always_comb begin
-	end
 	endmodule
 	"""
 	)
