@@ -241,11 +241,11 @@ class ysyx_26020046_Chk extends ExtModule{
 	end
 	always_ff@(posedge load or posedge store)lsuTrace(addr);
 	
-	always_comb begin
 	function int getRegPc(input byte rdAddr);
-		regAddr=rdAddr;
+		assign regAddr=rdAddr;
 		return regValue;
 	endfunction
+	always_comb begin
 	end
 	endmodule
 	"""
