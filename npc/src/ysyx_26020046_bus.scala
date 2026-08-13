@@ -57,7 +57,7 @@ class PipeIdEx extends PipeExLs(){
 	val in1 = Output(ExuIn1())
 	val in2 = Output(ExuIn2())
 
-	val enJcode	=Output(Bool())
+	val enJcod	=Output(Bool())
 	val r1		=Output(UInt(BitWidth.W))
 }
 class ImmeData extends Bundle{

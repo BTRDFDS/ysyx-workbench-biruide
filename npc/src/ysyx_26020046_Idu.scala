@@ -28,7 +28,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.r2		:= in.imme.r2Out
 	out.pipe.r1		:= in.imme.r1Out
 	out.pipe.csrMesg:= in.imme.csrOut
-	out.pipe.enJcode:= false.B
+	out.pipe.enJcod := false.B
 	out.pipe.alu	:= ExuAlu.Null
 	out.pipe.bfu	:= ExuBfu.Null
 	out.pipe.csr	:= ExuCsr.Null
@@ -74,7 +74,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			// 	opEnum === Op.Jal || opEnum === Op.Ijalr ||
 			// 	(opEnum === Op.Icsr & funct3 === 0.U(3.W))
 			// ){out.pipe.enJcod := true.B}
-			out.pipe.enJcode:= opEnum === Op.Jal || opEnum === Op.Ijalr || (opEnum === Op.Icsr & funct3 === 0.U(3.W))
+			out.pipe.enJcod:= opEnum === Op.Jal || opEnum === Op.Ijalr || (opEnum === Op.Icsr & funct3 === 0.U(3.W))
 			switch(opEnum){
 				is(Op.Uauipc){out.pipe.alu := ExuAlu.Add}
 				is(Op.Ialu){
