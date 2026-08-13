@@ -142,47 +142,5 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		}
 	}
 
-	if(Yosys == false){
-		val lsuPc = Mux(pipeValid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(lsuPc)
-		val lsuChk = Module(new ysyx_26020046_LsuChk)
-		lsuChk.clock	:= clock
-		lsuChk.load		:= pipeValid && pipeLsuOp === LsuOp.Load	&& bar.ready
-		lsuChk.loadWait	:= pipeValid && pipeLsuOp === LsuOp.Load
-		lsuChk.store	:= pipeValid && pipeLsuOp === LsuOp.Store	&& bar.ready
-		lsuChk.storeWait:= pipeValid && pipeLsuOp === LsuOp.Store
-		lsuChk.addr		:= pipeResult
-	}
-}
-class ysyx_26020046_LsuChk extends ExtModule{
-	val load		= IO(Input(Bool()))
-	val loadWait	= IO(Input(Bool()))
-	val store		= IO(Input(Bool()))
-	val storeWait	= IO(Input(Bool()))
-	val addr		= IO(Input(UInt(32.W)))
-	val clock		= IO(Input(Clock()))
-	setInline("ysyx_26020046_LsuChk.sv",
-	"""
-	module ysyx_26020046_LsuChk(
-		input logic load,
-		input logic loadWait,
-		input logic store,
-		input logic storeWait,
-		input logic [31:0] addr,
-		input logic clock
-	);
-	import "DPI-C" function void lsuLoad();
-	import "DPI-C" function void lsuLoadWait();
-	import "DPI-C" function void lsuStore();
-	import "DPI-C" function void lsuStoreWait();
-	import "DPI-C" function void lsuTrace(int addr);
-	always_ff@(posedge clock)begin
-		if(load			)lsuLoad();
-		if(loadWait		)lsuLoadWait();
-		if(store		)lsuStore();
-		if(storeWait	)lsuStoreWait();
-	end
-	always_ff@(posedge load or posedge store)lsuTrace(addr);
-	endmodule
-	"""
-	)
+	if(Yosys == false){}
 }

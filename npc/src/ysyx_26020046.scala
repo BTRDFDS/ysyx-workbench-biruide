@@ -97,13 +97,13 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 
 		val chk = Module(new ysyx_26020046_Chk)
 		chk.clock	:= clock
-		/////////////////////////////////
+
 		val noEbreak = RegInit(true.B);when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && Get(ifu.in.imme.ready) && Get(ifu.out.pipe.instr) === 0x00100073L.U && ~Get(ifu.in.imme.jump)){noEbreak := false.B}
 		chk.inst	:= noEbreak && Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && (Get(ifu.in.imme.ready) || Get(ifu.in.imme.jump))
 		chk.stall	:= noEbreak && Get(ifu.out.pipe.res) === IfuRes.Null
 		chk.jbMiss	:= noEbreak && Get(ifu.in.imme.jump)
 		chk.jbHit	:= false.B
-		////////////////////////////////////
+
 		chk.cal		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Ialu	|| Get(idu.opEnum) === Op.Ralu	)
 		chk.jump	:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Jal		|| Get(idu.opEnum) === Op.Ijalr	)
 		chk.imm		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Uauipc	|| Get(idu.opEnum) === Op.Ului	)
@@ -112,6 +112,12 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.br		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Branch	)
 		chk.miss	:= noEbreak && Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid
 		chk.ifuMiss	:= noEbreak && Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid
+		
+		chk.load		:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Load	&& Get(lsu.bar.ready)
+		chk.loadWait	:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Load
+		chk.store		:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Store	&& Get(lsu.bar.ready)
+		chk.storeWait	:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Store
+		chk.addr		:= Get(lsu.pipeResult)
 	}
 }
 class ysyx_26020046_Chk extends ExtModule{
@@ -128,6 +134,12 @@ class ysyx_26020046_Chk extends ExtModule{
 	val br		= IO(Input(Bool()))
 	val miss	= IO(Input(Bool()))
 	val ifuMiss = IO(Input(Bool()))
+
+	val load		= IO(Input(Bool()))
+	val loadWait	= IO(Input(Bool()))
+	val store		= IO(Input(Bool()))
+	val storeWait	= IO(Input(Bool()))
+	val addr		= IO(Input(UInt(32.W)))
 
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_Chk.sv",
@@ -147,6 +159,12 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic miss,
 		input logic ifuMiss,
 	
+		input logic load,
+		input logic loadWait,
+		input logic store,
+		input logic storeWait,
+		input logic [31:0] addr,
+
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
@@ -162,6 +180,12 @@ class ysyx_26020046_Chk extends ExtModule{
 	import "DPI-C" function void iduBr();
 	import "DPI-C" function void iduMiss();
 
+	import "DPI-C" function void lsuLoad();
+	import "DPI-C" function void lsuLoadWait();
+	import "DPI-C" function void lsuStore();
+	import "DPI-C" function void lsuStoreWait();
+	import "DPI-C" function void lsuTrace(int addr);
+
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
 		if(inst)	ifuInst();
@@ -176,7 +200,13 @@ class ysyx_26020046_Chk extends ExtModule{
 		if(br)		iduBr();
 		if(miss)	iduMiss();
 		if(ifuMiss)	iduMiss();
+		
+		if(load		)lsuLoad();
+		if(loadWait	)lsuLoadWait();
+		if(store	)lsuStore();
+		if(storeWait)lsuStoreWait();
 	end
+	always_ff@(posedge load or posedge store)lsuTrace(addr);
 	endmodule
 	"""
 	)
