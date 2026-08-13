@@ -332,7 +332,7 @@ extern "C" void sdram_write(int addr,int data){
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
-extern "C" int getRegPc(int addr);
+extern "C" int getRegPc(char rdAddr);
 extern "C" int getNextPc();
 extern "C" void ebreakStop(){
 	numInst++;

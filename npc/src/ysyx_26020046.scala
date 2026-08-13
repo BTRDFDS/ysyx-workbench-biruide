@@ -122,10 +122,10 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.ebreak := (Get(wbu.pipeCsrOp) === CsrOp.Trap)&(Get(wbu.pipeValid))&(Get(wbu.pipeCsrMesg) === 0x3L.U) ||Get(wbu.error)
 		chk.check := Get(wbu.pipeValid)
 		chk.dnpc := 0.U(32.W)
-		when(Get(lsu.pipeValid)){chk.dnpc := Get(lsu.pipePc)}
-		.elsewhen(Get(exu.pipeValid)){chk.dnpc := Get(exu.pipePc)}
-		.elsewhen(Get(idu.pipeRes)===IfuRes.Valid){chk.dnpc := Get(idu.pipePc)}
-		.otherwise{chk.dnpc := Get(ifu.pipePc)}
+		when(Get(lsu.pipeValid)){chk.dnpc := Cat(Get(lsu.pipePc),0.U(2.W))}
+		.elsewhen(Get(exu.pipeValid)){chk.dnpc := Cat(Get(exu.pipePc),0.U(2.W))}
+		.elsewhen(Get(idu.pipeRes)===IfuRes.Valid){chk.dnpc := Cat(Get(idu.pipePc),0.U(2.W))}
+		.otherwise{chk.dnpc := Cat(Get(ifu.pipePc),0.U(2.W))}
 		chk.regValue := 0.U(32.W)
 		when(chk.regAddr === 0.U(8.W)){chk.regValue := Get(wbu.pipePc)}
 		.elsewhen(chk.regAddr(7,RegWidth)=/= 0.U){
@@ -241,10 +241,12 @@ class ysyx_26020046_Chk extends ExtModule{
 	end
 	always_ff@(posedge load or posedge store)lsuTrace(addr);
 	
+	always_comb begin
 	function int getRegPc(input byte rdAddr);
-		assign regAddr=rdAddr;
+		regAddr=rdAddr;
 		return regValue;
 	endfunction
+	end
 	endmodule
 	"""
 	)
