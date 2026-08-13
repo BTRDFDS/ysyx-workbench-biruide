@@ -86,9 +86,12 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	dontTouch(io.slave)
 	dontTouch(io.interrupt)
 	if(Yosys == false){
-		// val ifuPc	= Mux(out.pipe.res === IfuRes.Valid,Cat(out.pipe.pc,0.U(2.W)),0.U(32.W));dontTouch(ifuPc)
-		// val ifuInst	= Mux(out.pipe.res === IfuRes.Valid,out.pipe.instr,0.U(BitWidth.W));dontTouch(ifuInst)
-		val pipePcIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,Cat(Get(ifu.out.pipe.pc),0.U(2.W)),0.U(32.W));dontTouch(pipePcIfu)
+		val pipeInItIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Get(ifu.out.pipe.instr)  ,0.U(32.W));dontTouch(pipeInItIfu)
+		val pipePcIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Cat(Get(ifu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcIfu)
+		val pipePcIdu = Mux(Get(idu.pipeRes) === IfuRes.Valid,		Cat(Get(idu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcIdu)
+		val pipePcExu = Mux(Get(exu.pipeValid),						Cat(Get(exu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcExu)
+		val pipePcLsu = Mux(Get(lsu.pipeValid),						Cat(Get(lsu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcLsu)
+		val pipePcWbu = Mux(Get(wbu.pipeValid),						Cat(Get(wbu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(pipePcWbu)
 	}
 }
 // class ysyx_26020046_Chk extends ExtModule{
