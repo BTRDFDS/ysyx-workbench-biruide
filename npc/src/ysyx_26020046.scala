@@ -86,7 +86,8 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	dontTouch(io.slave)
 	dontTouch(io.interrupt)
 	if(Yosys == false){
-		val chkInItIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Get(ifu.out.pipe.instr)  ,0.U(32.W));dontTouch(chkInItIfu)
+		val chkInstIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Get(ifu.out.pipe.instr)	,0.U(32.W));dontTouch(chkInstIfu)
+		val chkInstIdu = Mux(Get(idu.pipeRes) === IfuRes.Valid,			Get(idu.pipeInstr) 		,0.U(32.W));dontTouch(chkInstIdu)
 		val chkPcIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Cat(Get(ifu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcIfu)
 		val chkPcIdu = Mux(Get(idu.pipeRes) === IfuRes.Valid,		Cat(Get(idu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcIdu)
 		val chkPcExu = Mux(Get(exu.pipeValid),						Cat(Get(exu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcExu)
@@ -96,11 +97,22 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 
 		val chk = Module(new ysyx_26020046_Chk)
 		chk.clock	:= clock
+		/////////////////////////////////
 		val noEbreak = RegInit(true.B);when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && Get(ifu.in.imme.ready) && Get(ifu.out.pipe.instr) === 0x00100073L.U && ~Get(ifu.in.imme.jump)){noEbreak := false.B}
 		chk.inst	:= noEbreak && Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && (Get(ifu.in.imme.ready) || Get(ifu.in.imme.jump))
 		chk.stall	:= noEbreak && Get(ifu.out.pipe.res) === IfuRes.Null
 		chk.jbMiss	:= noEbreak && Get(ifu.in.imme.jump)
 		chk.jbHit	:= false.B
+		////////////////////////////////////
+		iduChk.cal		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Ialu	|| Get(idu.opEnum) === Op.Ralu	)
+		iduChk.jump		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Jal		|| Get(idu.opEnum) === Op.Ijalr	)
+		iduChk.imm		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Uauipc	|| Get(idu.opEnum) === Op.Ului	)
+		iduChk.ls		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Store	|| Get(idu.opEnum) === Op.Iload	)
+		iduChk.csr		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Icsr	)
+		iduChk.br		:= Get(idu.in.imme.ready) && (~Get(idu.in.imme.jump)) && Get(idu.out.pipe.valid) && (Get(idu.opEnum) === Op.Branch	)
+		iduChk.miss		:= noEbreak && Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid
+		iduChk.ifuMiss	:= noEbreak && Get(idu.out.imme.jump) && Get(idu.in.pipe.res) === IfuRes.Valid
+
 		
 	}
 }
@@ -109,6 +121,16 @@ class ysyx_26020046_Chk extends ExtModule{
 	val stall	= IO(Input(Bool()))
 	val jbMiss	= IO(Input(Bool()))
 	val jbHit	= IO(Input(Bool()))
+///////////////////////////////////////////
+	val cal		= IO(Input(Bool()))
+	val jump	= IO(Input(Bool()))
+	val imm		= IO(Input(Bool()))
+	val ls		= IO(Input(Bool()))
+	val csr		= IO(Input(Bool()))
+	val br		= IO(Input(Bool()))
+	val miss	= IO(Input(Bool()))
+	val ifuMiss = IO(Input(Bool()))
+///////////////////////////////////////////
 	val clock	= IO(Input(Clock()))
 	setInline("ysyx_26020046_Chk.sv",
 	"""
@@ -117,17 +139,45 @@ class ysyx_26020046_Chk extends ExtModule{
 		input logic stall,
 		input logic jbMiss,
 		input logic jbHit,
+
+		input logic cal,
+		input logic jump,
+		input logic imm,
+		input logic ls,
+		input logic csr,
+		input logic br,
+		input logic miss,
+		input logic ifuMiss,
+	
 		input logic clock
 	);
 	import "DPI-C" function void ifuInst();
 	import "DPI-C" function void ifuStall();
 	import "DPI-C" function void ifuJbMiss();
 	import "DPI-C" function void ifuJbHit();
+	
+	import "DPI-C" function void iduCal();
+	import "DPI-C" function void iduJump();
+	import "DPI-C" function void iduImm();
+	import "DPI-C" function void iduLs();
+	import "DPI-C" function void iduCsr();
+	import "DPI-C" function void iduBr();
+	import "DPI-C" function void iduMiss();
+
 	always_ff@(posedge clock)begin
 		if(stall)	ifuStall();
 		if(inst)	ifuInst();
 		if(jbMiss)	ifuJbMiss();
 		if(jbHit)	ifuJbHit();
+		
+		if(cal)		iduCal();
+		if(jump)	iduJump();
+		if(imm)		iduImm();
+		if(ls)		iduLs();
+		if(csr)		iduCsr();
+		if(br)		iduBr();
+		if(miss)	iduMiss();
+		if(ifuMiss)	iduMiss();
 	end
 	endmodule
 	"""

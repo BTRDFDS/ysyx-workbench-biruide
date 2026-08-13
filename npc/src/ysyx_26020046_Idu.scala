@@ -217,63 +217,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 
 	if(Yosys == false){
 		dontTouch(pipeReset)
-		val iduPc = Mux(pipeRes=== IfuRes.Valid,Cat(pipePc,0.U(2.W)),0.U(32.W));dontTouch(iduPc)
-		val iduInstr = Mux(pipeRes=== IfuRes.Valid,pipeInstr,0.U(32.W));dontTouch(iduInstr)
-		val iduChk = Module(new ysyx_26020046_IduChk)
-		iduChk.clock	:= clock
-		iduChk.cal		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Ialu	|| opEnum === Op.Ralu	)
-		iduChk.jump		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Jal		|| opEnum === Op.Ijalr	)
-		iduChk.imm		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Uauipc	|| opEnum === Op.Ului	)
-		iduChk.ls		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Store	|| opEnum === Op.Iload	)
-		iduChk.csr		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Icsr	)
-		iduChk.br		:= in.imme.ready && (~in.imme.jump) && out.pipe.valid && (opEnum === Op.Branch	)
-		val noEbreak = RegInit(true.B);when(pipeInstr === 0x00100073L.U && pipeRes === IfuRes.Valid && ~in.imme.jump){noEbreak := false.B};dontTouch(noEbreak)
-		iduChk.miss		:= noEbreak && in.imme.jump && pipeRes === IfuRes.Valid
-		iduChk.ifuMiss	:= noEbreak && out.imme.jump && in.pipe.res === IfuRes.Valid
 	}
 
-}
-class ysyx_26020046_IduChk extends ExtModule{
-	val cal		= IO(Input(Bool()))
-	val jump	= IO(Input(Bool()))
-	val imm		= IO(Input(Bool()))
-	val ls		= IO(Input(Bool()))
-	val csr		= IO(Input(Bool()))
-	val br		= IO(Input(Bool()))
-	val miss	= IO(Input(Bool()))
-	val ifuMiss = IO(Input(Bool()))
-	val clock = IO(Input(Clock()))
-	setInline("ysyx_26020046_IduChk.sv",
-	"""
-	module ysyx_26020046_IduChk(
-		input logic cal,
-		input logic jump,
-		input logic imm,
-		input logic ls,
-		input logic csr,
-		input logic br,
-		input logic miss,
-		input logic ifuMiss,
-		input logic clock
-	);
-	import "DPI-C" function void iduCal();
-	import "DPI-C" function void iduJump();
-	import "DPI-C" function void iduImm();
-	import "DPI-C" function void iduLs();
-	import "DPI-C" function void iduCsr();
-	import "DPI-C" function void iduBr();
-	import "DPI-C" function void iduMiss();
-	always_ff@(posedge clock)begin
-		if(cal)		iduCal();
-		if(jump)	iduJump();
-		if(imm)		iduImm();
-		if(ls)		iduLs();
-		if(csr)		iduCsr();
-		if(br)		iduBr();
-		if(miss)	iduMiss();
-		if(ifuMiss)	iduMiss();
-	end
-	endmodule
-	"""
-	)
 }
