@@ -5,8 +5,8 @@
 #include <stdint.h>
 #include <vector>
 std::fstream file;
-bool BPB2(bool result=false,bool write=false){
 	static uint8_t b2{2};
+bool BPB2(bool result=false,bool write=false){
 	bool res = b2>=2;
 	if(write){
 		if(result)	{if(b2<3){b2++;}}
@@ -85,6 +85,7 @@ int main() {
 		if(branch)	{isJump = BPB2();}
 		else		{isJump = true;}
 		if(isJump&&(branch || (~branch && ~sext))){getAddr = BTB(pc,isGet);}
+		// printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x b2= %2d\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr,b2);
 		if(jump){
 			if(isJump){
 				if(isGet&&getAddr==addr)hit++;
@@ -94,14 +95,14 @@ int main() {
 					if(branch || (!sext))BTB(pc,isGet,addr,true);
 				}
 			}else {
-				printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr);
+				// printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x b2= %2d\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr,b2);
 				missBPB2++;
 				if(branch)BPB2(true,true);
 				if(branch || (!sext))BTB(pc,isGet,addr,true);
 			}
 		}else{
 			if(isJump&&(isGet)){
-				printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr);
+				// printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x b2= %2d\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr,b2);
 				missBPB2++;
 				if(branch)BPB2(false,true);
 			}else{
