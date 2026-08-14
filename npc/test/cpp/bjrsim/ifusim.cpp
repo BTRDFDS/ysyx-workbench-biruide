@@ -27,8 +27,8 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	uint32_t BTBidx = (pc>>2)&BTBmask;
 	suce = false;
 	if(write){
-		BTBtags[cBTBcntnt]	= pc>>2;
-		BTBaddr[BTBcnt]		= addr;
+		BTBtags[BTBcnt]	= pc>>2;
+		BTBaddr[BTBcnt]	= addr;
 		BTBcnt = (BTBcnt+1)%BTBsize;
 	}else{
 		for(uint32_t i=0;i<BTBsize;i++){
@@ -42,9 +42,9 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	return res;
 }
 int main() {
-	file.open("./bin/BJRmicrobench-test.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJRmicrobench-test.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
-	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint64_t ju{},jr{},bi{},bn{},hit{},hitBPB2{},missBPB2{};
 	for(uint64_t cnt=0;;cnt++){
@@ -84,7 +84,7 @@ int main() {
 		if(isJump)	{getAddr = BTB(pc,isGet);}
 		if(jump){
 			if(isJump){
-				if(&&isGet&&getAddr==addr)hit++;
+				if(isGet&&getAddr==addr)hit++;
 				else {
 					hitBPB2++;
 					if(branch || (!sext))BTB(pc,isGet,addr,true);

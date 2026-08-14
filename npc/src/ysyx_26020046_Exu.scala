@@ -92,7 +92,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 
 	ich.fenceI	:= (~in.imme.error && pipeValid) && pipeFenceI && noSend
 	out.imme.jbtb := (~in.imme.error && pipeValid) && (pipeEnBpu)
-	out.imme.jbpu := (~in.imme.error && pipeValid) && pipeEnBpu//~pipeEnJcod && 
+	out.imme.jbpu := (~in.imme.error && pipeValid) && ~pipeEnJcod && pipeEnBpu
 	
 	out.imme.jump :=  in.imme.error || (pipeValid&& noSend  && (((pipeEnBpu || pipeEnJcod)&& shouldBe(31,2)=/=in.pipe.pc) || pipeFenceI))//shouldBe其实还需要out.imme.jbtb，但是这里未进行拆分因此可以直接这样子
 
