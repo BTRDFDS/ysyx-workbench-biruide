@@ -86,20 +86,23 @@ int main() {
 			if(isJump){
 				if(isGet&&getAddr==addr)hit++;
 				else {
+					printf("br= %d jump= %d sext= %d addr= %x isJump= %d isGet= %d getAddr= %x\n",branch,jump,sext,addr,isJump,isGet,getAddr);
 					hitBPB2++;
 					if(branch || (!sext))BTB(pc,isGet,addr,true);
 				}
 			}else {
+				// printf("br= %d jump= %d sext= %d addr= %x isJump= %d isGet= %d getAddr= %x\n",branch,jump,sext,addr,isJump,isGet,getAddr);
 				missBPB2++;
 				if(branch)BPB2(true,true);
 				if(branch || (!sext))BTB(pc,isGet,addr,true);
 			}
 		}else{
 			if(isJump){
+				// printf("br= %d jump= %d sext= %d addr= %x isJump= %d isGet= %d getAddr= %x\n",branch,jump,sext,addr,isJump,isGet,getAddr);
 				missBPB2++;
 				if(branch)BPB2(false,true);
 			}else{
-				hitBPB2++;
+				hit++;
 			}
 		}
 	}
