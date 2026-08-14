@@ -46,8 +46,16 @@ int main() {
 			if(sext)	jr++;
 			else		ju++;
 		}
-		if(branch)if(BPB2(jump)==jump)	hitBPB2++;
-		else							hitBPB2++;
+		if(branch){
+			if(BPB2(jump)==jump){
+				hitBPB2++;
+			}else{
+				printf("%x %d %x\n",pc,jump,addr);
+			}
+		}
+		else{
+			hitBPB2++;
+		}
 	}
 	file.close();
 }
