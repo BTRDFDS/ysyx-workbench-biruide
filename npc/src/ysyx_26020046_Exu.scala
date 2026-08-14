@@ -45,11 +45,6 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	out.pipe.result := 0.U
 	out.pipe.csrMesg:= pipeCsrMesg
 
-	val noFence = RegInit(true.B)
-	ich.fenceI	:= pipeFenceI && noFence
-	when(out.imme.ready){noFence := true.B}
-	.elsewhen(pipeFenceI){noFence := false.B}
-
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))
 	when(pipeValid){
@@ -94,6 +89,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val hasSend = RegInit(false.B)
 	when(out.imme.ready){hasSend := false.B}
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeEnBpu || pipeFenceI)){hasSend := true.B}
+
+	ich.fenceI	:= pipeFenceI && ~hasSend
 	//BJR
 	out.imme.jbtb := (~in.imme.error && pipeValid) && (pipeEnBpu)
 	out.imme.jbpu := ~pipeEnJcod && pipeEnBpu
