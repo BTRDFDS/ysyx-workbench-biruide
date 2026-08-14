@@ -178,6 +178,8 @@ bjsim:./test/cpp/bjsim/bjsim
 	time ./test/cpp/bjsim/bjsim
 bjrsim:./test/cpp/bjrsim/bjrsim
 	time ./test/cpp/bjrsim/bjrsim
+ifusim:./test/cpp/bjrsim/ifusim
+	time ./test/cpp/bjrsim/ifusim
 
 coverager:
 	lcov --list --rc branch_coverage=1 --rc function_coverage=0 /home/biruide/ysyx-workbench/npc/log/merged.info
