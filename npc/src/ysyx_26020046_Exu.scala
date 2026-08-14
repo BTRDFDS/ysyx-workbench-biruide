@@ -90,10 +90,14 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	when(out.imme.ready){hasSend := false.B}
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeEnBpu || pipeFenceI)){hasSend := true.B}
 
-	ich.fenceI	:= pipeFenceI && ~hasSend
-	//BJR
+	ich.fenceI	:= (~in.imme.error && pipeValid) && pipeFenceI && ~hasSend
 	out.imme.jbtb := (~in.imme.error && pipeValid) && (pipeEnBpu)
-	out.imme.jbpu := ~pipeEnJcod && pipeEnBpu
+	out.imme.jbpu := (~in.imme.error && pipeValid) && ~pipeEnJcod && pipeEnBpu
+	when((~in.imme.error && pipeValid)){
+	ich.fenceI		:= pipeFenceI && ~hasSend
+	out.imme.jbtb	:= pipeEnBpu
+	out.imme.jbpu	:= pipeEnBpu  && ~pipeEnJcod
+	}
 	out.imme.jump :=  in.imme.error || (pipeValid&& ~hasSend  && ((pipeEnBpu || pipeEnJcod&& shouldBe=/=Cat(in.pipe.pc,0.U(2.W))) || pipeFenceI))//shouldBe其实还需要out.imme.jbtb，但是这里未进行拆分因此可以直接这样子
 
 	out.imme.ready	:= in.imme.ready || ~pipeValid
