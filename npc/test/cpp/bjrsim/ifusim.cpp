@@ -13,9 +13,9 @@ bool BPB2(bool result){
 	return res;
 }
 int main() {
-	file.open("./bin/BJRmicrobench-test.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJRmicrobench-test.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJdiv.bin", std::ios::in | std::ios::binary);
-	// file.open("./bin/BJdummy.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint64_t ju{},jr{},bi{},bn{},hitBTFN{},hitBPB2{};
 	for(uint64_t cnt=0;;cnt++){
