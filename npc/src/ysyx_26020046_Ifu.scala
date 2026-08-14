@@ -8,7 +8,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	//pc更新
 		val pipePc	= RegInit(PcInit(31,2))
 
-		ich.valid	:= true.B
+		// ich.valid	:= true.B
 		ich.addr	:= pipePc
 
 		out.pipe.instr	:= ich.data

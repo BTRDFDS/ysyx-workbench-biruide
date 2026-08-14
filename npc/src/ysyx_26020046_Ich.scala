@@ -50,7 +50,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	ifu.ready	:= false.B
 	ifu.data	:= data(addrIdx)(addrOffset)
 	ifu.error := bar.res===BurstRes.Erro || (pipeValid && bar.res===BurstRes.Done && cnt =/= CacheDone.U)
-	when(ifu.valid){
+	// when(ifu.valid){
 		when(pipeValid){
 			when(burstIdx===addrIdx){ifu.ready	:= tag(addrIdx) === addrTag && burstValid(addrOffset)}
 			.otherwise				{ifu.ready	:= tag(addrIdx) === addrTag && valid(addrIdx)}
@@ -65,7 +65,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 				tag(addrIdx)	:= addrTag
 			}
 		}
-	}
+	// }
 	when(exu.fenceI){valid.foreach(_ := false.B)}
 
 	if(Yosys == false){
@@ -73,8 +73,8 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		dontTouch(addrIdx)
 		dontTouch(addrOffset)
 		dontTouch(addrTag)
-		ichChk.hit	:= ifu.valid &&  ifu.ready
-		ichChk.miss := ifu.valid && ~ifu.ready
+		ichChk.hit	:=  ifu.ready//ifu.valid && 
+		ichChk.miss := ~ifu.ready//ifu.valid && 
 		ichChk.clock:= clock
 	}
 }

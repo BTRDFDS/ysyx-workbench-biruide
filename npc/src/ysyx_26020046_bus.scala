@@ -132,7 +132,7 @@ class Axi4MasterOut extends Axi4Master {
 	val bid		= Input(UInt(IdWidth.W))
 }
 class InstrBus extends Bundle{
-	val valid	= Output(Bool())
+	// val valid	= Output(Bool())
 	val addr	= Output(UInt((BitWidth-2).W))
 	val data	= Input(UInt(BitWidth.W))
 	val ready	= Input(Bool())
