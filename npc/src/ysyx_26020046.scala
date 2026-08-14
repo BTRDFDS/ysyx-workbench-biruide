@@ -99,7 +99,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		chk.clock	:= clock
 		val btbIdu = RegInit(false.B);when(Get(idu.out.imme.ready)){btbIdu := (Get(ifu.isBranch)&&Get(ifu.bp2Hit)) || Get(ifu.isJal)||Get(ifu.isJalr)}
 		val btbExu = RegInit(false.B);when(Get(exu.out.imme.ready)){btbExu := btbIdu}
-		val shouldbe = Mux(Get(exu.in.pipe.valid),Get(exu.in.pipe.pc),Get(ifu.pipePc))
+		val shouldbe = Mux(Get(exu.in.pipe.valid),Get(exu.in.pipe.pc),Get(ifu.pipePc));dontTouch(shouldbe)
 		val noEbreak = RegInit(true.B);when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && Get(ifu.in.imme.ready) && Get(ifu.out.pipe.instr) === 0x00100073L.U && ~Get(ifu.in.imme.jump)){noEbreak := false.B}
 		val chkIfu = Seq(chk.inst,chk.stall,chk.jbMiss,chk.jbHit,chk.miss,chk.ifuMiss);chkIfu.foreach(_ := false.B)
 		when(noEbreak){
