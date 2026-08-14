@@ -47,10 +47,11 @@ int main() {
 			else		ju++;
 		}
 		if(branch){
-			if(BPB2(jump)==jump){
+			bool res = BPB2(jump);
+			printf("res=%d pc=%8x jump=%d addr=%8x\n",res,pc,jump,addr);
+			if(res==jump){
 				hitBPB2++;
 			}else{
-				printf("%x %x\n",pc,addr);
 			}
 		}
 		else{
