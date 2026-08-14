@@ -90,15 +90,19 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	when(out.imme.ready){noSend := true.B}
 	.elsewhen(pipeValid&&(pipeEnJcod||pipeEnBpu || pipeFenceI)){noSend := false.B}
 
-	ich.fenceI	:= (~in.imme.error && pipeValid) && pipeFenceI && noSend
-	out.imme.jbtb := (~in.imme.error && pipeValid) && (pipeEnBpu)
-	out.imme.jbpu := (~in.imme.error && pipeValid) && ~pipeEnJcod && pipeEnBpu
+	// ich.fenceI	:= (~in.imme.error && pipeValid) && pipeFenceI && noSend
+	// out.imme.jbtb := (~in.imme.error && pipeValid) && (pipeEnBpu)
+	// out.imme.jbpu := (~in.imme.error && pipeValid) && ~pipeEnJcod && pipeEnBpu
+	
+	ich.fenceI		:= false.B
+	out.imme.jbtb 	:= false.B
+	out.imme.jbpu 	:= false.B
 	when((~in.imme.error && pipeValid)){
 	ich.fenceI		:= pipeFenceI && noSend
 	out.imme.jbtb	:= pipeEnBpu
 	out.imme.jbpu	:= pipeEnBpu  && ~pipeEnJcod
 	}
-	out.imme.jump :=  in.imme.error || (pipeValid&& noSend  && ((pipeEnBpu || pipeEnJcod&& shouldBe=/=Cat(in.pipe.pc,0.U(2.W))) || pipeFenceI))//shouldBe其实还需要out.imme.jbtb，但是这里未进行拆分因此可以直接这样子
+	out.imme.jump :=  in.imme.error || (pipeValid&& noSend  && (((pipeEnBpu || pipeEnJcod)&& shouldBe(31,2)=/=in.pipe.pc) || pipeFenceI))//shouldBe其实还需要out.imme.jbtb，但是这里未进行拆分因此可以直接这样子
 
 	out.imme.ready	:= in.imme.ready || ~pipeValid
 	out.imme.addr	:= Mux(in.imme.error,in.imme.addr,shouldBe)
