@@ -41,10 +41,10 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		pipePc := in.imme.addr(31,2)
 		jalNoStop := true.B
 	}.elsewhen(in.imme.ready&&ich.ready&&jalNoStop){
-		when(((isBranch&&bp2Hit) || isJal||isJalr)&&btbHit){//
+		when(((isBranch&&bp2Hit) || isJal)&&btbHit){//||isJalr
 					pipePc := btbAddr(btbIndex)
 		}.otherwise{pipePc := pipePc+1.U}
-		when((isJal || isJalr) && ~btbHit){jalNoStop := false.B}
+		when((isJal && ~btbHit) || isJalr){jalNoStop := false.B}
 	}
 	val shouldNotJump = in.imme.pc+1.U === in.imme.addr(31,2)
 	when(in.imme.jump && in.imme.jbpu){
