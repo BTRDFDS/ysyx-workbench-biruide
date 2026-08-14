@@ -50,7 +50,7 @@ int main() {
 			if(BPB2(jump)==jump){
 				hitBPB2++;
 			}else{
-				printf("%x %d %x\n",pc,jump,addr);
+				printf("%x %x\n",pc,addr);
 			}
 		}
 		else{
