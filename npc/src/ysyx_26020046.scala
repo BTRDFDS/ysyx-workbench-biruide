@@ -105,7 +105,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 			when(Get(ifu.ich.ready) && Get(ifu.out.pipe.res) === IfuRes.Valid && (Get(ifu.in.imme.ready) || Get(ifu.in.imme.jump))){chk.inst := true.B}
 			when(Get(ifu.out.pipe.res) === IfuRes.Null)							{chk.stall	:= true.B}
 			when(Get(ifu.in.imme.jump))											{chk.jbMiss	:= true.B}
-			when((Get(exu.shouldBe)===Cat(Get(exu.in.pipe.pc),0.U(2.W)))=/=btbExu)	{chk.jbHit	:= true.B}
+			when((Get(exu.shouldBe)===Cat(Get(exu.in.pipe.pc),0.U(2.W)))=/=btbExu && (Get(exu.pipeEnJcod)||Get(exu.pipeEnBpu)))	{chk.jbHit	:= true.B}
 
 
 			when(Get(idu.in.imme.jump) && Get(idu.pipeRes) === IfuRes.Valid)		{chk.miss	:= true.B}
