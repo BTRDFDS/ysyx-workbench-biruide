@@ -43,7 +43,7 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 }
 int main() {
 	// file.open("./bin/BJRmicrobench-test.bin", std::ios::in | std::ios::binary);
-	file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJRadd.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},hitBPB2{},missBPB2{};
@@ -94,14 +94,14 @@ int main() {
 					if(branch || (!sext))BTB(pc,isGet,addr,true);
 				}
 			}else {
-				// printf("br= %d jump= %d sext= %d addr= %x isJump= %d isGet= %d getAddr= %x\n",branch,jump,sext,addr,isJump,isGet,getAddr);
+				printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr);
 				missBPB2++;
 				if(branch)BPB2(true,true);
 				if(branch || (!sext))BTB(pc,isGet,addr,true);
 			}
 		}else{
 			if(isJump&&(isGet)){
-				// printf("br= %d jump= %d sext= %d addr= %x isJump= %d isGet= %d getAddr= %x\n",branch,jump,sext,addr,isJump,isGet,getAddr);
+				printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr);
 				missBPB2++;
 				if(branch)BPB2(false,true);
 			}else{
