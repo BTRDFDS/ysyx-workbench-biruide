@@ -92,6 +92,7 @@ int main() {
 				else {
 					// printf("br= %d jump= %d sext= %d addr= %x isJump= %d isGet= %d getAddr= %x\n",branch,jump,sext,addr,isJump,isGet,getAddr);
 					hitBPB2++;
+					if(branch)BPB2(true,true);
 					if(branch || (!sext))BTB(pc,isGet,addr,true);
 				}
 			}else {
