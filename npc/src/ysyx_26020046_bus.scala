@@ -47,7 +47,6 @@ class PipeExLs extends PipeLsWb(){
 	val lsuOp	= Output(LsuOp())
 	val lsuAddr	= Output(LsuAddr())
 	val r2		= Output(UInt(BitWidth.W))
-	val fenceI	= Output(Bool())
 }
 class PipeIdEx extends PipeExLs(){
 	val alu = Output(ExuAlu())
@@ -56,6 +55,7 @@ class PipeIdEx extends PipeExLs(){
 	val res = Output(ExuRes())
 	val in1 = Output(ExuIn1())
 	val in2 = Output(ExuIn2())
+	val fenceI	= Output(Bool())
 
 	val enJcod	=Output(Bool())
 	val enBpu	=Output(Bool())

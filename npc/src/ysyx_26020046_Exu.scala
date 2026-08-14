@@ -47,6 +47,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 
 	val noFence = RegInit(true.B)
 	ich.fenceI	:= pipeFenceI && noFence
+	when(out.imme.ready){noFence := true.B}
+	.elsewhen(pipeFenceI){noFence := false.B}
 
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))
