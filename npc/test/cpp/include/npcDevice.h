@@ -63,14 +63,17 @@ void printCounter(){
 		numIchHit ,numIchHit /(float)numIfuInst,
 		numIchMiss,numIchMiss/(float)numIfuInst,
 		numIchHit+numIchMiss);
+	printf("ifu inst = %ld[+ %ld %f] wait= %ld AMAT= %f\n",
+		numIfuInst,numIfuInst-numInst,(numIfuInst-numInst)/(float)numInst,
+		numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst)
+	);
 	uint64_t  missHit = numIfuJbHit;
 	numIfuJbHit=numIduJump+numIduBr-numIfuJbMiss;
-	printf("ifu inst = %ld[+ %ld %f] wait= %ld AMAT= %f jbHit= %ld[%f] jbMiss= %ld[%f]{bp2= %ld[%f]}\n",
-		numIfuInst,numIfuInst-numInst,(numIfuInst-numInst)/(float)numInst,
-		numIfuStall,(float)((float)numIfuStall)/((float)numIfuInst),
+	printf("ifu jbHit= %ld[%f] jbMiss= %ld[%f]{bp= %ld[%f]} bpHit= %ld[%f]\n",
 		numIfuJbHit ,numIfuJbHit /(float)(numIfuJbHit+numIfuJbMiss),
 		numIfuJbMiss,numIfuJbMiss/(float)(numIfuJbHit+numIfuJbMiss),
-		missHit,missHit/(float)numIfuJbMiss
+		missHit,missHit/(float)numIfuJbMiss,
+		numIfuJbMiss-missHit+numIfuJbHit,(numIfuJbMiss-missHit+numIfuJbHit)/(float)(numIduJump+numIduBr)
 	);
 	printf("idu cal= %ld jump= %ld imm= %ld ls= %ld csr= %ld br= %ld sum= %ld miss= %ld\n",
 		numIduCal,numIduJump,numIduImm,numIduLs,numIduCsr,numIduBr,
