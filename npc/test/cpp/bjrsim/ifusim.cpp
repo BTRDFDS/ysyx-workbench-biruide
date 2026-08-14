@@ -46,12 +46,13 @@ int main() {
 	file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t ju{},jr{},bi{},bn{},hit{},hitBPB2{},missBPB2{};
+	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},hitBPB2{},missBPB2{};
 	for(uint64_t cnt=0;;cnt++){
 		uint32_t addr{},pc{};
 		uint8_t state{};
 		if(!file.read((char*)&pc, sizeof(pc))){
 			uint64_t br = bi+bn;
+			miss = cnt-hit;
 			printf("cnt= %ld ju= %ld[%f] jr= %ld[%f] bi= %ld[%f] bn= %ld[%f]\n",
 				cnt,
 				ju,ju/float(cnt),
@@ -59,9 +60,11 @@ int main() {
 				bi,bi/(float)br,
 				bn,bn/(float)br
 			);
-			printf("hit = %ld[%f]\n",hit,hit/(float)cnt);
-			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)cnt);
-			printf("missBPB2= %ld[%f]\n",missBPB2,missBPB2/(float)cnt);
+			if((cnt-hit)!=(hitBPB2+missBPB2))printf("miss error\n");
+			printf("hit= %ld[%f]\n",hit,hit/(float)cnt);
+			printf("miss= %ld[%f]\n",miss,miss/(float)cnt);
+			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)miss);
+			printf("missBPB2= %ld[%f]\n",missBPB2,missBPB2/(float)miss);
 			break;
 		}
         bool branch{},jump{},sext{};
@@ -77,11 +80,11 @@ int main() {
 			if(sext)	jr++;
 			else		ju++;
 		}
-		bool isJump{},isGet{};
+		bool isJump{},isGet{true};
 		uint32_t getAddr{};
 		if(branch)	{isJump = BPB2();}
 		else		{isJump = true;}
-		if(isJump)	{getAddr = BTB(pc,isGet);}
+		if(isJump&&(branch || (~branch && ~sext))){getAddr = BTB(pc,isGet);}
 		if(jump){
 			if(isJump){
 				if(isGet&&getAddr==addr)hit++;
@@ -97,7 +100,7 @@ int main() {
 				if(branch || (!sext))BTB(pc,isGet,addr,true);
 			}
 		}else{
-			if(isJump){
+			if(isJump&&(isGet)){
 				// printf("br= %d jump= %d sext= %d addr= %x isJump= %d isGet= %d getAddr= %x\n",branch,jump,sext,addr,isJump,isGet,getAddr);
 				missBPB2++;
 				if(branch)BPB2(false,true);
