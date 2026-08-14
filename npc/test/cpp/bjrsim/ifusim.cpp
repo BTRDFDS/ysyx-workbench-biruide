@@ -42,8 +42,8 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	return res;
 }
 int main() {
-	// file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
-	file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJRstring.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
 	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},mhBPB2{},missBPB2{};
