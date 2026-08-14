@@ -11,6 +11,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val imme = new ImmeExId()
 		val pipe = new PipeExLs()
 	})
+	val ich		= IO(new FecneBus())
 	val pipeReset	= reset.asBool||(out.imme.jump && in.imme.ready)//||in.imme.error error被包含在jump里面了
 	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
@@ -35,7 +36,6 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 
 	out.pipe.lsuAddr:= pipeLsuAddr
 	out.pipe.lsuOp	:= pipeLsuOp
-	out.pipe.fenceI	:= pipeFenceI
 	out.pipe.r2		:= pipeR2
 	out.pipe.pc		:= pipePc
 	out.pipe.csrOp	:= pipeCsrOp
@@ -44,6 +44,9 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	out.pipe.rdAddr	:= pipeRdAddr
 	out.pipe.result := 0.U
 	out.pipe.csrMesg:= pipeCsrMesg
+
+	val noFence = RegInit(true.B)
+	ich.fenceI	:= pipeFenceI && noFence
 
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))

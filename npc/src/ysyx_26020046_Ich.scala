@@ -4,7 +4,7 @@ import WidthConsts._
 class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val ifu = IO(Flipped(new InstrBus()))
 	val bar = IO(new BurstBus())
-	val lsu	= IO(Flipped(new FecneBus()))
+	val exu	= IO(Flipped(new FecneBus()))
 
 	// val CacheBit	= 2
 	// val CacheNum    = 1 << CacheBit
@@ -66,7 +66,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 			}
 		}
 	}
-	when(lsu.fenceI){valid.foreach(_ := false.B)}
+	when(exu.fenceI){valid.foreach(_ := false.B)}
 
 	if(Yosys == false){
 		val ichChk = Module(new ysyx_26020046_IchChk)

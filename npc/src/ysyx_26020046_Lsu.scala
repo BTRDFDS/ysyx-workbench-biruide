@@ -12,12 +12,10 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 		val imme = new ImmeLsEx()
 	})
 	val bar		= IO(new MemBus())
-	val ich		= IO(new FecneBus())
 	val state	= RegInit(MemStatus.Call)
 
 	val pipeReset	= reset.asBool||in.imme.error
 	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
-	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
@@ -59,7 +57,6 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	bar.wstrb	:= 0.U
 	bar.write	:= false.B
 	bar.addr	:= 0.U
-	ich.fenceI	:= pipeFenceI
 	when(pipeValid && ~addrError && state === MemStatus.Call){//发出
 		when(pipeLsuOp === LsuOp.Load){
 			switch(pipeLsuAddr){
