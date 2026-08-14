@@ -42,11 +42,11 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	return res;
 }
 int main() {
-	file.open("./bin/BJRmicrobench-test.bin", std::ios::in | std::ios::binary);
-	// file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},hitBPB2{},missBPB2{};
+	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},mhBPB2{},missBPB2{};
 	for(uint64_t cnt=0;;cnt++){
 		uint32_t addr{},pc{};
 		uint8_t state{};
@@ -60,11 +60,13 @@ int main() {
 				bi,bi/(float)br,
 				bn,bn/(float)br
 			);
-			if((cnt-hit)!=(hitBPB2+missBPB2))printf("miss error\n");
+			if((cnt-hit)!=(mhBPB2+missBPB2))printf("miss error\n");
 			printf("hit= %ld[%f]\n",hit,hit/(float)cnt);
 			printf("miss= %ld[%f]\n",miss,miss/(float)cnt);
-			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)miss);
+			printf("mhBPB2= %ld[%f]\n",mhBPB2,mhBPB2/(float)miss);
 			printf("missBPB2= %ld[%f]\n",missBPB2,missBPB2/(float)miss);
+			uint64_t hitBPB2 = hit+mhBPB2;
+			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)cnt);
 			break;
 		}
         bool branch{},jump{},sext{};
@@ -90,20 +92,17 @@ int main() {
 			if(isJump){
 				if(isGet&&getAddr==addr)hit++;
 				else {
-					// printf("br= %d jump= %d sext= %d addr= %x isJump= %d isGet= %d getAddr= %x\n",branch,jump,sext,addr,isJump,isGet,getAddr);
-					hitBPB2++;
+					mhBPB2++;
 					if(branch)BPB2(true,true);
 					if(branch || (!sext))BTB(pc,isGet,addr,true);
 				}
 			}else {
-				// printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x b2= %2d\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr,b2);
 				missBPB2++;
 				if(branch)BPB2(true,true);
 				if(branch || (!sext))BTB(pc,isGet,addr,true);
 			}
 		}else{
 			if(isJump&&(isGet)){
-				// printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x b2= %2d\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr,b2);
 				missBPB2++;
 				if(branch)BPB2(false,true);
 			}else{
