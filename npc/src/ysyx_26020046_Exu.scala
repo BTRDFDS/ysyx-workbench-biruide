@@ -16,7 +16,10 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
 	val pipeEnJcod	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.enJcod	)
-	val pipeEnBpu	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.enBpu	)
+	val pipeBrHit	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.brHit	)
+	val pipeHit		= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.hit		)
+	val pipeNoBp	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.noBp	)
+	val pipeMayJp	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.mayJp	)
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
@@ -88,17 +91,26 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val shouldBe = Mux((pipeEnJcod || enBfun),result,Cat(pipePc+1.U,0.U(2.W)))
 	val noSend = RegInit(true.B)
 	when(out.imme.ready){noSend := true.B}
-	.elsewhen(pipeValid&&(pipeEnJcod||pipeEnBpu || pipeFenceI)){noSend := false.B}
-
+	.elsewhen(pipeValid&&(pipeMayJp)){noSend := false.B}
 	ich.fenceI	:= (~in.imme.error && pipeValid) && pipeFenceI && noSend
-	out.imme.jbtb := (~in.imme.error && pipeValid) && (pipeEnBpu)
-	out.imme.jbpu := (~in.imme.error && pipeValid) && ~pipeEnJcod && pipeEnBpu
-	
-	out.imme.jump :=  in.imme.error || (pipeValid&& noSend  && (((pipeEnBpu || pipeEnJcod)&& shouldBe(31,2)=/=in.pipe.pc) || pipeFenceI))//shouldBe其实还需要out.imme.jbtb，但是这里未进行拆分因此可以直接这样子
-
 	out.imme.ready	:= in.imme.ready || ~pipeValid
-	out.imme.addr	:= Mux(in.imme.error,in.imme.addr,shouldBe)
-	out.imme.pc		:= Mux(in.imme.error,in.imme.pc	,pipePc)
+	when(in.imme.error){
+		out.imme.addr	:= in.imme.addr
+		out.imme.pc		:= in.imme.pc
+		out.imme.pcChg	:= true.B
+		out.imme.btChg	:= false.B
+		out.imme.bpChg	:= false.B
+		out.imme.jump	:= false.B
+	}.otherwise{
+		out.imme.addr	:= shouldBe
+		out.imme.pc		:= pipePc
+		out.imme.jump	:= pipeEnJcod || enBfun
+		when(pipeValid&&noSend){
+			out.imme.bpChg := enBfun || pipeBrHit
+			out.imme.pcChg := Mux(pipeEnJcod || enBfun,pipenoBp || (in.pipeValid && in.pipe.pc =/= shouldBe(31,2)),pipeHit)
+			out.imme.btChg := (pipeEnJcod || enBfun) && (pipeNoBp || (in.pipeValid && in.pipe.pc =/= shouldBe(31,2)))
+		}
+	}
 
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr

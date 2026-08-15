@@ -10,10 +10,14 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val pipe	= new PipeIdEx()
 		val imme	= new ImmeIdIf()
 	})
+	// val bpJump	= Output(Bool())
+	// val btbGet	= Output(Bool())
 	val pipeReset	= reset.asBool||in.imme.jump
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,out.imme.ready,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
 	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.instr	)
+	val pipeBpJump	= PipeReg(piepReset,false.B				,out.imme.ready,in.pipe.bpJump	)
+	val pipeBtbGet	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.btbGet	)
 
 	//默认值
 	out.pipe.valid	:= false.B
@@ -71,11 +75,13 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Jal)		{out.pipe.result := Cat(Fill(12,pipeInstr(31)),pipeInstr(19,12),pipeInstr(20),pipeInstr(30,21),0.U(1.W))}
 				is(Op.Icsr)		{out.pipe.result := in.imme.csrOut}
 			}
-			when(
-				opEnum === Op.Jal || opEnum === Op.Ijalr ||
-				(opEnum === Op.Icsr & funct3 === 0.U(3.W))
-			){out.pipe.enJcod := true.B}
-			when(opEnum === Op.Jal || opEnum === Op.Branch){out.pipe.enBpu := true.B}
+			when(opEnum === Op.Jal || opEnum === Op.Ijalr ||(opEnum === Op.Icsr & funct3 === 0.U(3.W))){out.pipe.enJcod := true.B}
+			when(opEnum === Op.Branch && pipeBpJump && pipeBtbGet){out.pipe.brHit := true.B}
+			when(pipeBpJump && pipeBtbGet){out.pipe.hit := true.B}
+			when(~pipeBpJump){out.pipe.noBp := true.B}
+			when(opEnum === Op.Jal || opEnum === Op.Ijalr || opEnum === Op.Branch || pipeInstr === 0x0000100F.U){out.pipe.valid := true.B}
+			out.pipe.fenceI := pipeInstr === 0x0000100F.U
+			
 			switch(opEnum){
 				is(Op.Uauipc){out.pipe.alu := ExuAlu.Add}
 				is(Op.Ialu){
@@ -192,7 +198,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 					is(0b010.U){out.pipe.csrAddr := Cat(0.U(8.W),funct7,r2Addr);csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
 				}
 			}
-			out.pipe.fenceI := pipeInstr === 0x0000100F.U
 		}
 		when(opValid & aluValid & lsuValid & bfuValid & csrValid){
 			out.pipe.valid	:= in.imme.valid
@@ -212,9 +217,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.addr	:= in.imme.addr
 	out.imme.pc		:= in.imme.pc
 	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
-	out.imme.jbtb	:= in.imme.jbtb
-	out.imme.jbpu	:= in.imme.jbpu
-	out.imme.jump	:= in.imme.jump && (in.imme.addr(31,2)=/=in.pipe.pc || pipeRes===IfuRes.Valid || ~in.imme.jbtb)
+
+	out.imme.bpChg	= in.imme.bpChg
+	out.imme.jump	= in.imme.jump
+	out.imme.btChg	= in.imme.btChg
+	out.imme.pcChg	= in.imme.pcChg
 
 	if(Yosys == false){
 		dontTouch(pipeReset)

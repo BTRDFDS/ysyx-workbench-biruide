@@ -33,6 +33,8 @@ class PipeIfId extends Bundle{
 	val res		= Output(IfuRes())
 	val pc		= Output(UInt((BitWidth-2).W))
 	val instr	= Output(UInt(BitWidth.W))
+	val bpJump	= Output(Bool())
+	val btbGet	= Output(Bool())
 }
 class PipeLsWb extends Bundle{
 	val valid	= Output(Bool())
@@ -57,9 +59,12 @@ class PipeIdEx extends PipeExLs(){
 	val in2 = Output(ExuIn2())
 	val fenceI	= Output(Bool())
 
-	val enJcod	=Output(Bool())
-	val enBpu	=Output(Bool())
-	val r1		=Output(UInt(BitWidth.W))
+	val enJcod	= Output(Bool())
+	val brHit	= Output(Bool())
+	val hit		= Output(Bool())
+	val noBp	= Output(Bool())
+	val mayJp	= Output(Bool())
+	val r1		= Output(UInt(BitWidth.W))
 }
 class ImmeData extends Bundle{
 	val addr	= Output(UInt((BitWidth).W))
@@ -77,15 +82,17 @@ class ImmeWbLs extends ImmeData{val error = Output(Bool())}
 class ImmeLsEx extends ImmeWbLs{val ready = Output(Bool())}
 class ImmeExId extends ImmeData{
 	val ready	= Output(Bool())
+	val bpChg	= Output(Bool())
 	val jump	= Output(Bool())
-	val jbtb	= Output(Bool())
-	val jbpu	= Output(Bool())
+	val btChg	= Output(Bool())
+	val pcChg	= Output(Bool())
 }
 class ImmeIdIf extends Bundle{
 	val ready	= Output(Bool())
+	val bpChg	= Output(Bool())
 	val jump	= Output(Bool())
-	val jbtb	= Output(Bool())
-	val jbpu	= Output(Bool())
+	val btChg	= Output(Bool())
+	val pcChg	= Output(Bool())
 	val addr	= Output(UInt((BitWidth).W))
 	val pc		= Output(UInt((BitWidth-2).W))
 }
