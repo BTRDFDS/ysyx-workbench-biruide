@@ -36,14 +36,16 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val isJalr	= out.pipe.instr(6,0)===Op.Ijalr.asUInt
 
 	val jalNoStop = RegInit(true.B)
+	when(in.imme.jump){jalNoStop := true.B}
+	.elsewhen(in.imme.ready&&ich.ready&&jalNoStop&&(isJalr||(isJal && ~btbHit))){jalNoStop := false.B}
 	when(in.imme.pcChg){
 		pipePc := in.imme.addr(31,2)
-		jalNoStop := true.B
-	}.elsewhen(in.imme.ready&&ich.ready&&jalNoStop){
+		// jalNoStop := true.B
+	}.elsewhen(in.imme.ready&&ich.ready&&(jalNoStop || in.imme.jump)){
 		when(((isBranch&&bp2Hit) || isJal)&&btbHit){//||isJalr
 					pipePc := btbAddr(btbIndex)
 		}.otherwise{pipePc := pipePc+1.U}
-		when(isJalr){jalNoStop := false.B}//(isJal && ~btbHit) || 
+		// when(isJalr){jalNoStop := false.B}//(isJal && ~btbHit)
 	}
 	when(in.imme.bpChg){
 		when(in.imme.jump){	when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}
