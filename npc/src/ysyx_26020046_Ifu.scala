@@ -47,8 +47,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	}
 	val shouldNotJump = in.imme.pc+1.U === in.imme.addr(31,2)
 	when(in.imme.bpChg){
-		when(jump){when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}}
-		.otherwise{when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}
+		when(in.imme.jump){	when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}}
+		.otherwise{			when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}
 	}
 	when(btChg){
 		btbPc(btbCnt)	:= in.imme.pc

@@ -2,36 +2,11 @@ test:
 	@mill -i test
 verilog:verilogNpc verilogYsyxSoc verilogSta verilogStaPart
 	$(call git_commit, "generate verilog")
-# 	@mkdir -p ./build
-# 	@mill -i runMain Builder
-# verilogNpc:
-# 	$(call git_commit, "generate verilog for Npc")
-# 	@mkdir -p ./build
-# 	@mkdir -p ./build/npc
-# 	@mill -i runMain BuilderNpc
-# verilogYsyxSoc:
-# 	$(call git_commit, "generate verilog for YsyxSoc")
-# 	@mkdir -p ./build
-# 	@mkdir -p ./build/ysyxsoc
-# 	@mill -i runMain BuilderYsyxSoc
-# verilogSta:
-# 	$(call git_commit, "generate verilog for sta")
-# 	@mkdir -p ./build
-# 	@mkdir -p ./build/sta
-# 	@mill -i runMain BuilderSta
-# verilogIcache:
-# 	$(call git_commit, "generate verilog for icache")
-# 	@mkdir -p ./build
-# 	@mkdir -p ./build/icache
-# 	@mill -i runMain BuilderIcache
-# help:
-# 	@mill -i runMain Builder --help
 
 srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
 build/%.stamp:$(srcScala)
 	@mill -i runMain $*
-	$(call git_commit, "generate verilog for $*")
-	touch $@
+	@touch $@
 verilogNpc:build/BuilderNpc.stamp
 verilogYsyxSoc:build/BuilderYsyxSoc.stamp
 verilogSta:build/BuilderSta.stamp

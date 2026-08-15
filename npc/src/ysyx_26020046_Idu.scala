@@ -218,10 +218,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.pc		:= in.imme.pc
 	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
 
-	out.imme.bpChg	= in.imme.bpChg
-	out.imme.jump	= in.imme.jump
-	out.imme.btChg	= in.imme.btChg
-	out.imme.pcChg	= in.imme.pcChg
+	out.imme.bpChg	:= in.imme.bpChg
+	out.imme.jump	:= in.imme.jump
+	out.imme.btChg	:= in.imme.btChg
+	out.imme.pcChg	:= in.imme.pcChg
 
 	if(Yosys == false){
 		dontTouch(pipeReset)
