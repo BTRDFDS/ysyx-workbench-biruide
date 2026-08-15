@@ -12,7 +12,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val pipe = new PipeExLs()
 	})
 	val ich		= IO(new FecneBus())
-	val pipeReset	= reset.asBool||(out.imme.jump && in.imme.ready)//||in.imme.error error被包含在jump里面了
+	val pipeReset	= reset.asBool||(out.imme.pcChg && in.imme.ready)//||in.imme.error error被包含在jump里面了
 	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
 	val pipeEnJcod	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.enJcod	)
@@ -20,6 +20,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val pipeHit		= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.hit		)
 	val pipeNoBp	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.noBp	)
 	val pipeMayJp	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.mayJp	)
+	val pipeMayBt	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.mayBt	)
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
@@ -105,10 +106,13 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		out.imme.addr	:= shouldBe
 		out.imme.pc		:= pipePc
 		out.imme.jump	:= pipeEnJcod || enBfun
+		out.imme.pcChg	:= false.B
+		out.imme.btChg	:= false.B
+		out.imme.bpChg	:= false.B
 		when(pipeValid&&noSend){
 			out.imme.bpChg := enBfun || pipeBrHit
-			out.imme.pcChg := Mux(pipeEnJcod || enBfun,pipenoBp || (in.pipeValid && in.pipe.pc =/= shouldBe(31,2)),pipeHit)
-			out.imme.btChg := (pipeEnJcod || enBfun) && (pipeNoBp || (in.pipeValid && in.pipe.pc =/= shouldBe(31,2)))
+			out.imme.pcChg := Mux(pipeEnJcod || enBfun,pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)),pipeHit)//~in.pipe.valid || 
+			out.imme.btChg := (pipeEnJcod || enBfun) && (pipeNoBp || (in.pipe.pc =/= shouldBe(31,2))) && pipeMayBt//~in.pipe.valid || 
 		}
 	}
 
@@ -127,5 +131,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		}
 	}
 
-	if(Yosys == false){}
+	if(Yosys == false){
+		dontTouch(noSend);
+	}
 }

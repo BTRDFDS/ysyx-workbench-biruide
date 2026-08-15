@@ -69,7 +69,7 @@ void printCounter(){
 	);
 	uint64_t  missHit = numIfuJbHit;
 	numIfuJbHit=numIduJump+numIduBr-numIfuJbMiss;
-	printf("ifu jbHit= %ld[%f] jbMiss= %ld[%f]{bp= %ld[%f]} bpHit= %ld[%f]\n",
+	printf("ifu jbHit= %ld[%f] jbMiss= %ld[%f]{bpMiss= %ld[%f]} bpHit= %ld[%f]\n",
 		numIfuJbHit ,numIfuJbHit /(float)(numIfuJbHit+numIfuJbMiss),
 		numIfuJbMiss,numIfuJbMiss/(float)(numIfuJbHit+numIfuJbMiss),
 		missHit,missHit/(float)numIfuJbMiss,

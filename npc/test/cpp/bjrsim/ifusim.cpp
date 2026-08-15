@@ -15,13 +15,13 @@ bool BP2(bool result=false,bool write=false){
 	return res;
 }
 
+	static uint32_t BTBcnt{};
 uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	const  uint32_t BTBbits = 3;
 	const  uint32_t BTBsize = 1<<BTBbits;
 	const  uint32_t BTBmask = BTBsize-1;
 	static uint32_t BTBtags[BTBsize]{};
 	static uint32_t BTBaddr[BTBsize]{};
-	static uint32_t BTBcnt{};
 
 	uint32_t res{};
 	uint32_t BTBidx = (pc>>2)&BTBmask;
@@ -29,6 +29,7 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	if(write){
 		BTBtags[BTBcnt]	= pc>>2;
 		BTBaddr[BTBcnt]	= addr;
+		// printf("BTBcnt %d => %d\n",BTBcnt,(BTBcnt+1)%BTBsize);
 		BTBcnt = (BTBcnt+1)%BTBsize;
 	}else{
 		for(uint32_t i=0;i<BTBsize;i++){
@@ -42,7 +43,8 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	return res;
 }
 int main() {
-	file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJRmicrobench-test.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJRadd.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
@@ -93,19 +95,21 @@ int main() {
 		if(isJump&&(branch || jal)){getAddr = BTB(pc,isGet);}
 		if(isJump&&isGet)	dnpc=getAddr;
 		else				dnpc=pc+4;
-		// printf("pc= %8x br= %d jal= %d jalr= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x b2= %2d\n",pc,branch,jal,jalr,jump,sext,addr,isJump,isGet,getAddr,b2);
+			// printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
 		if(jump){
 			if(isJump){
 				if(dnpc==addr){//isGet&&
 					hit++;
 					if(branch)BP2(true,true);
 				}else{
+			// printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
 					mhBP2++;
 					dnpc=addr;
 					if(branch)BP2(true,true);
 					if(branch || jal)BTB(pc,isGet,addr,true);
 				}
 			}else {
+			// printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
 				missBP2++;
 				dnpc=addr;
 				if(branch)BP2(true,true);
@@ -113,6 +117,7 @@ int main() {
 			}
 		}else{
 			if(isJump&&(isGet)){//isGet&&getAddr==addr
+			// printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
 				missBP2++;
 				dnpc=addr;
 				
@@ -122,7 +127,7 @@ int main() {
 			}
 		}
 		if(dnpc!=(jump?addr:(pc+4))){
-			printf("pc= %8x br= %d jal= %d jalr= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x b2= %2d dnpc= %8x\n",pc,branch,jal,jalr,jump,sext,addr,isJump,isGet,getAddr,b2,dnpc);
+			printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
 			break;
 		}
 	}

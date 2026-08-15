@@ -10,13 +10,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val pipe	= new PipeIdEx()
 		val imme	= new ImmeIdIf()
 	})
-	// val bpJump	= Output(Bool())
-	// val btbGet	= Output(Bool())
-	val pipeReset	= reset.asBool||in.imme.jump
+	val pipeReset	= reset.asBool||in.imme.pcChg
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,out.imme.ready,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
 	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.instr	)
-	val pipeBpJump	= PipeReg(piepReset,false.B				,out.imme.ready,in.pipe.bpJump	)
+	val pipeBpJump	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.bpJump	)
 	val pipeBtbGet	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.btbGet	)
 
 	//默认值
@@ -28,12 +26,16 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.csrAddr:= 0.U//Illegal Instruction
 	out.pipe.lsuAddr:= LsuAddr.B//000
 	out.pipe.lsuOp	:= LsuOp.Null
-	out.pipe.fenceI	:= false.B
 	out.pipe.r2		:= in.imme.r2Out
 	out.pipe.r1		:= in.imme.r1Out
 	out.pipe.csrMesg:= in.imme.csrOut
 	out.pipe.enJcod	:= false.B
-	out.pipe.enBpu	:= false.B
+	out.pipe.brHit	:= false.B
+	out.pipe.hit	:= false.B
+	out.pipe.noBp	:= false.B
+	out.pipe.mayJp	:= false.B
+	out.pipe.mayBt	:= false.B
+	out.pipe.fenceI	:= false.B
 	out.pipe.alu	:= ExuAlu.Null
 	out.pipe.bfu	:= ExuBfu.Null
 	out.pipe.csr	:= ExuCsr.Null
@@ -79,7 +81,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			when(opEnum === Op.Branch && pipeBpJump && pipeBtbGet){out.pipe.brHit := true.B}
 			when(pipeBpJump && pipeBtbGet){out.pipe.hit := true.B}
 			when(~pipeBpJump){out.pipe.noBp := true.B}
-			when(opEnum === Op.Jal || opEnum === Op.Ijalr || opEnum === Op.Branch || pipeInstr === 0x0000100F.U){out.pipe.valid := true.B}
+			when(opEnum === Op.Jal || opEnum === Op.Branch || opEnum === Op.Ijalr || pipeInstr === 0x0000100F.U){out.pipe.mayJp := true.B}
+			when(opEnum === Op.Jal || opEnum === Op.Branch){out.pipe.mayBt := true.B}
 			out.pipe.fenceI := pipeInstr === 0x0000100F.U
 			
 			switch(opEnum){

@@ -68,7 +68,6 @@ runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	./build/$(srcNpc)/V$(srcNpc) $(ARG)
-	make sim
 
 srcYsyxSoc = ysyxSoCFull
 srcVerilogYsyxSoc += $(shell find $(NPC_HOME)/build/ysyxsoc -type f -name "*.sv")
@@ -92,7 +91,6 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 # 	 -Wno-UNOPTFLAT
 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
-	make sim
 
 YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 # nangate45 icsprout55
@@ -136,7 +134,6 @@ runIcache:verilogIcache $(srcCppIcache)
 # 	 -Wno-UNOPTFLAT
 # 	./build/$(srcIcache)/V$(srcIcache) $(ARG)
 	time ./build/$(srcIcache)/V$(srcIcache) $(ARG)
-	make sim
 
 buildIcachesim:./test/cpp/icachesim/icachesim.cpp
 	clang++ ./test/cpp/icachesim/icachesim.cpp -o ./test/cpp/icachesim/icachesim
