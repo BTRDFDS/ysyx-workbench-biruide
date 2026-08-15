@@ -6,7 +6,7 @@
 #include <vector>
 std::fstream file;
 	static uint8_t b2{2};
-bool BPB2(bool result=false,bool write=false){
+bool BP2(bool result=false,bool write=false){
 	bool res = b2>=2;
 	if(write){
 		if(result)	{if(b2<3){b2++;}}
@@ -27,6 +27,19 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	uint32_t BTBidx = (pc>>2)&BTBmask;
 	suce = false;
 	if(write){
+		// suce=false;
+		// for(uint32_t i=0;i<BTBsize;i++){
+		// 	if(BTBtags[i]==(pc>>2)){
+		// 		BTBaddr[i]	= addr;
+		// 		suce = true;
+		// 		break;
+		// 	}
+		// }
+		// if(!suce){
+		// 	BTBtags[BTBcnt]	= pc>>2;
+		// 	BTBaddr[BTBcnt]	= addr;
+		// 	BTBcnt = (BTBcnt+1)%BTBsize;
+		// }
 		BTBtags[BTBcnt]	= pc>>2;
 		BTBaddr[BTBcnt]	= addr;
 		BTBcnt = (BTBcnt+1)%BTBsize;
@@ -46,7 +59,7 @@ int main() {
 	// file.open("./bin/BJRstring.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},mhBPB2{},missBPB2{};
+	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},mhBP2{},missBP2{};
 	for(uint64_t cnt=0;;cnt++){
 		uint32_t addr{},pc{};
 		uint8_t state{};
@@ -60,13 +73,13 @@ int main() {
 				bi,bi/(float)br,
 				bn,bn/(float)br
 			);
-			if((cnt-hit)!=(mhBPB2+missBPB2))printf("miss error\n");
+			if((cnt-hit)!=(mhBP2+missBP2))printf("miss error\n");
 			printf("hit= %ld[%f]\n",hit,hit/(float)cnt);
 			printf("miss= %ld[%f]\n",miss,miss/(float)cnt);
-			printf("mhBPB2= %ld[%f]\n",mhBPB2,mhBPB2/(float)miss);
-			printf("missBPB2= %ld[%f]\n",missBPB2,missBPB2/(float)miss);
-			uint64_t hitBPB2 = hit+mhBPB2;
-			printf("hitBPB2= %ld[%f]\n",hitBPB2,hitBPB2/(float)cnt);
+			printf("mhBP2= %ld[%f]\n",mhBP2,mhBP2/(float)miss);
+			printf("missBP2= %ld[%f]\n",missBP2,missBP2/(float)miss);
+			uint64_t hitBP2 = hit+mhBP2;
+			printf("hitBP2= %ld[%f]\n",hitBP2,hitBP2/(float)cnt);
 			break;
 		}
         bool branch{},jump{},sext{};
@@ -84,27 +97,27 @@ int main() {
 		}
 		bool isJump{},isGet{true};
 		uint32_t getAddr{};
-		if(branch)	{isJump = BPB2();}
+		if(branch)	{isJump = BP2();}
 		else		{isJump = true;}
 		if(isJump&&(branch || (~branch && ~sext))){getAddr = BTB(pc,isGet);}
 		// printf("pc= %8x br= %d jump= %d sext= %d addr= %8x isJump= %d isGet= %d getAddr= %8x b2= %2d\n",pc,branch,jump,sext,addr,isJump,isGet,getAddr,b2);
 		if(jump){
+					if(branch)BP2(true,true);
 			if(isJump){
 				if(isGet&&getAddr==addr)hit++;
 				else {
-					mhBPB2++;
-					if(branch)BPB2(true,true);
+					mhBP2++;
 					if(branch || (!sext))BTB(pc,isGet,addr,true);
 				}
 			}else {
-				missBPB2++;
-				if(branch)BPB2(true,true);
+				missBP2++;
+				// if(branch)BP2(true,true);
 				if(branch || (!sext))BTB(pc,isGet,addr,true);
 			}
 		}else{
 			if(isJump&&(isGet)){
-				missBPB2++;
-				if(branch)BPB2(false,true);
+				missBP2++;
+				if(branch)BP2(false,true);
 			}else{
 				hit++;
 			}
