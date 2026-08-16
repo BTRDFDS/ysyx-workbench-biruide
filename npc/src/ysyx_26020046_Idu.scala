@@ -182,14 +182,13 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			when(opEnum === Op.Icsr){
 				switch(funct3){
 					is(0b000.U){
-						out.pipe.csr := ExuCsr.Null;
+						out.pipe.csr := ExuCsr.Null
 						when(Cat(funct7,pipeInstr(24,15),pipeInstr(11,7)) === 0b0011000_00010_00000_00000.U)
 									{in.imme.csrAddr := CsrAddr.Mepc.asUInt	}
 						.otherwise	{in.imme.csrAddr := CsrAddr.Mtvec.asUInt}
 						}
 					is(0b001.U){out.pipe.csr := ExuCsr.Write;	in.imme.csrAddr := pipeInstr(31,20)}
 					is(0b010.U){out.pipe.csr := ExuCsr.Read;	in.imme.csrAddr := pipeInstr(31,20)}
-					//TODO:0b010这个地方有待验证，原本是(oIfId.code.r1=='0)?NACSR:RACSR;
 				}
 				csrValid := false.B
 				switch(funct3){
