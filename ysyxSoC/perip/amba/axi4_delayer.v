@@ -95,7 +95,7 @@ module axi4_delayer(
 	// assign in_bid = out_bid;
 	// assign in_bresp = out_bresp;
 
-localparam rs = 448;//(5.1118)*64
+localparam rs = 462;//(5.1118)*64
 
 `ifdef DelayW
 logic wHasAddr,wHasData,wDone;
