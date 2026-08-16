@@ -183,11 +183,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				switch(funct3){
 					is(0b000.U){
 						out.pipe.csr := ExuCsr.Null;
-						when(Cat(funct7,r2Addr,r1Addr,rdAddr) === 0b0011000_00010_00000_00000.U){in.imme.csrAddr := CsrAddr.Mepc.asUInt}
+						when(Cat(funct7,pipeInstr(24,15),pipeInstr(11,7)) === 0b0011000_00010_00000_00000.U){in.imme.csrAddr := CsrAddr.Mepc.asUInt}
 						.otherwise{in.imme.csrAddr := CsrAddr.Mtvec.asUInt}
 						}
-					is(0b001.U){out.pipe.csr := ExuCsr.Write;	in.imme.csrAddr := Cat(funct7,r2Addr)}
-					is(0b010.U){out.pipe.csr := ExuCsr.Read;	in.imme.csrAddr := Cat(funct7,r2Addr)}
+					is(0b001.U){out.pipe.csr := ExuCsr.Write;	in.imme.csrAddr := pipeInstr(31,20)}
+					is(0b010.U){out.pipe.csr := ExuCsr.Read;	in.imme.csrAddr := pipeInstr(31,20)}
 					//TODO:0b010这个地方有待验证，原本是(oIfId.code.r1=='0)?NACSR:RACSR;
 				}
 				csrValid := false.B
@@ -197,8 +197,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 					when(Cat(funct7,pipeInstr(24,15),pipeInstr(11,7)) === 0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}//Breakpoint
 					when(Cat(funct7,pipeInstr(24,15),pipeInstr(11,7)) === 0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 					}
-					is(0b001.U){out.pipe.csrAddr := Cat(0.U(8.W),funct7,r2Addr);csrOp := CsrOp.Write;csrValid := true.B}
-					is(0b010.U){out.pipe.csrAddr := Cat(0.U(8.W),funct7,r2Addr);csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
+					is(0b001.U){out.pipe.csrAddr := Cat(0.U(20.W),pipeInstr(31,20));csrOp := CsrOp.Write;csrValid := true.B}
+					is(0b010.U){out.pipe.csrAddr := Cat(0.U(20.W),pipeInstr(31,20));csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
 				}
 			}
 		}

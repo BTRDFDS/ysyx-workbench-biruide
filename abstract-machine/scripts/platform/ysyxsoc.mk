@@ -5,7 +5,10 @@ AM_SRCS := riscv/npc/start.S \
            riscv/ysyxSoC/uart.c \
            riscv/ysyxSoC/input.c \
            riscv/ysyxSoC/gpu.c \
-           platform/dummy/mpe.c
+           platform/dummy/mpe.c \
+           platform/dummy/vme.c \
+           riscv/npc/cte.c \
+           riscv/npc/trap.S
 
 CFLAGS    += -fdata-sections -ffunction-sections
 LDSCRIPTS += $(AM_HOME)/scripts/linkerYsyxSoC.ld
