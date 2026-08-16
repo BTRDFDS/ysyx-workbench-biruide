@@ -86,13 +86,13 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	dontTouch(io.slave)
 	dontTouch(io.interrupt)
 	if(Yosys == false){
-		val chkInstIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Get(ifu.out.pipe.instr)	,0.U(32.W));dontTouch(chkInstIfu)
-		val chkInstIdu = Mux(Get(idu.pipeRes) === IfuRes.Valid,			Get(idu.pipeInstr) 		,0.U(32.W));dontTouch(chkInstIdu)
-		val chkPcIfu = Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Cat(Get(ifu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcIfu)
-		val chkPcIdu = Mux(Get(idu.pipeRes) === IfuRes.Valid,		Cat(Get(idu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcIdu)
-		val chkPcExu = Mux(Get(exu.pipeValid),						Cat(Get(exu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcExu)
-		val chkPcLsu = Mux(Get(lsu.pipeValid),						Cat(Get(lsu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcLsu)
-		val chkPcWbu = Mux(Get(wbu.pipeValid),						Cat(Get(wbu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcWbu)
+		val chkInstIfu	= Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Get(ifu.out.pipe.instr)	,0.U(32.W));dontTouch(chkInstIfu)
+		val chkInstIdu	= Mux(Get(idu.pipeRes) === IfuRes.Valid,		Get(idu.pipeInstr) 		,0.U(32.W));dontTouch(chkInstIdu)
+		val chkPcIfu	= Mux(Get(ifu.out.pipe.res) === IfuRes.Valid,	Cat(Get(ifu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcIfu)
+		val chkPcIdu	= Mux(Get(idu.pipeRes) === IfuRes.Valid,		Cat(Get(idu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcIdu)
+		val chkPcExu	= Mux(Get(exu.pipeValid),						Cat(Get(exu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcExu)
+		val chkPcLsu	= Mux(Get(lsu.pipeValid),						Cat(Get(lsu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcLsu)
+		val chkPcWbu	= Mux(Get(wbu.pipeValid),						Cat(Get(wbu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcWbu)
 
 
 		val chk = Module(new ysyx_26020046_Chk)

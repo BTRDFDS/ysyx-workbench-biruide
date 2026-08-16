@@ -12,14 +12,11 @@
 
 VerilatedContext* contextp;//verilator上下文
 VysyxSoCFull* top;//顶层模块
-svScope scope;//作用域
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDeviceMem(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new VysyxSoCFull{contextp};
-	scope=svGetScopeFromName("TOP.ysyxSoCFull.asic.cpu.cpu.wbu.wbuChk");
-	svSetScope(scope);
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		Verilated::traceEverOn(true);
 		tfp = new VerilatedFstC;
@@ -104,6 +101,9 @@ int main(int argc, char** argv) {
 		top->clock=0;top->eval();
 		numCycle++;
 	}
+	#ifdef NPC_NVBroad
+		nvboard_quit();
+	#endif
 	// NpcWave();
 	printOver();
 	contextp->statsPrintSummary();

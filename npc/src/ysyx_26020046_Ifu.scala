@@ -8,14 +8,13 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	//pc更新
 		val pipePc	= RegInit(PcInit(31,2))
 
-		// ich.valid	:= true.B
 		ich.addr	:= pipePc
 
 		out.pipe.instr	:= ich.data
 		out.pipe.pc		:= pipePc
 
 		when(in.imme.addr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
-		.elsewhen(ich.ready)	{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
+		.elsewhen(ich.ready)				{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 		.otherwise							{out.pipe.res := IfuRes.Null}
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,16 +35,14 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val isJalr	= out.pipe.instr(6,0)===Op.Ijalr.asUInt
 
 	val jalNoStop = RegInit(true.B)
-	when(in.imme.jump){jalNoStop := true.B}
+	when(in.imme.jump || in.imme.pcChg){jalNoStop := true.B}
 	.elsewhen(in.imme.ready&&ich.ready&&jalNoStop&&(isJalr||(isJal && ~btbHit))){jalNoStop := false.B}
 	when(in.imme.pcChg){
 		pipePc := in.imme.addr(31,2)
-		// jalNoStop := true.B
 	}.elsewhen(in.imme.ready&&ich.ready&&(jalNoStop || in.imme.jump)){
 		when(((isBranch&&bp2Hit) || isJal)&&btbHit){//||isJalr
 					pipePc := btbAddr(btbIndex)
 		}.otherwise{pipePc := pipePc+1.U}
-		// when(isJalr){jalNoStop := false.B}//(isJal && ~btbHit)
 	}
 	when(in.imme.bpChg){
 		when(in.imme.jump){	when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}

@@ -198,9 +198,6 @@ void printOver(){
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		tfp->close();
 	#endif
-	#ifdef NPC_NVBroad
-		nvboard_quit();
-	#endif
 	printCounter();
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",

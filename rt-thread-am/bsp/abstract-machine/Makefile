@@ -10,8 +10,11 @@ CFLAGS += -DHAVE_CCONFIG_H -D__RTTHREAD__
 CFLAGS += -Wno-nonnull-compare
 
 ifneq ($(ARCH),riscv32i-ysyxsoc)
-LDFLAGS += -T extra.ld
+	ifneq ($(ARCH),riscv32e-ysyxsoc)
+		LDFLAGS += -T extra.ld
+	endif
 endif
+
 
 -include $(FILE_MK)
 -include $(AM_APPS_MK)
