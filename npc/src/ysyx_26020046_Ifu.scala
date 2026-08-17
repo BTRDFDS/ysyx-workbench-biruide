@@ -35,7 +35,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val isJalr	= out.pipe.instr(6,0)===Op.Ijalr.asUInt
 
 	val jalNoStop = RegInit(true.B)
-	when(in.imme.jump || in.imme.pcChg){jalNoStop := true.B}
+	when(in.imme.jump || in.imme.pcChg){jalNoStop := true.B}//TODO：没办法只能对这里下手了
 	.elsewhen(in.imme.ready&&ich.ready&&jalNoStop&&(isJalr||(isJal && ~btbHit))){jalNoStop := false.B}
 	when(in.imme.pcChg){
 		pipePc := in.imme.addr(31,2)
