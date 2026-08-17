@@ -17,7 +17,7 @@ bool BP2(bool result=false,bool write=false){
 
 	static uint32_t BTBcnt{};
 uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
-	const  uint32_t BTBbits = 3;
+	const  uint32_t BTBbits = 2;
 	const  uint32_t BTBsize = 1<<BTBbits;
 	const  uint32_t BTBmask = BTBsize-1;
 	static uint32_t BTBtags[BTBsize]{};
@@ -92,40 +92,37 @@ int main() {
 		uint32_t getAddr{},dnpc{};
 		if(branch)	{isJump = BP2();}
 		else		{isJump = true;}
-		if(isJump&&(branch || jal)){getAddr = BTB(pc,isGet);}
+		if(isJump&&(branch)){getAddr = BTB(pc,isGet);}
 		if(isJump&&isGet)	dnpc=getAddr;
 		else				dnpc=pc+4;
-			// printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
+		if(jal)dnpc=addr;
 		if(jump){
+			// if(branch)BP2(true,true);
 			if(isJump){
-				if(dnpc==addr){//isGet&&
+				if(dnpc==addr){
 					hit++;
-					if(branch)BP2(true,true);
 				}else{
-			// printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
 					mhBP2++;
-					dnpc=addr;
-					if(branch)BP2(true,true);
-					if(branch || jal)BTB(pc,isGet,addr,true);
+					// dnpc=addr;
+					// if(branch)BTB(pc,isGet,addr,true);
 				}
 			}else {
-			// printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
 				missBP2++;
-				dnpc=addr;
-				if(branch)BP2(true,true);
-				if(branch || jal)BTB(pc,isGet,addr,true);
+				// dnpc=addr;
+				// if(branch)BTB(pc,isGet,addr,true);
 			}
 		}else{
-			if(isJump&&(isGet)){//isGet&&getAddr==addr
-			// printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
+			if(isJump&&(isGet)){
 				missBP2++;
-				dnpc=addr;
-				
-				if(branch)BP2(false,true);
+				// dnpc=addr;
+				// if(branch)BP2(false,true);
 			}else{
 				hit++;
 			}
 		}
+		if((jump && branch)||(isJump && isGet && branch))BP2(jump,true);
+		if(jump && branch && (!isJump || dnpc!=addr))BTB(pc,isGet,addr,true);
+		if(jump?(dnpc != addr || ~isJump): isJump&&isGet)dnpc=addr;
 		if(dnpc!=(jump?addr:(pc+4))){
 			printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
 			break;

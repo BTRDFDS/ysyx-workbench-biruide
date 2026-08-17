@@ -64,7 +64,6 @@ class PipeIdEx extends PipeExLs(){
 	val hit		= Output(Bool())
 	val noBp	= Output(Bool())
 	val mayJp	= Output(Bool())
-	val mayBt	= Output(Bool())
 	val r1		= Output(UInt(BitWidth.W))
 }
 class ImmeData extends Bundle{

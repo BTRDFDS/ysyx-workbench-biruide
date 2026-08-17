@@ -34,7 +34,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.hit	:= false.B
 	out.pipe.noBp	:= false.B
 	out.pipe.mayJp	:= false.B
-	out.pipe.mayBt	:= false.B
 	out.pipe.fenceI	:= false.B
 	out.pipe.alu	:= ExuAlu.Null
 	out.pipe.bfu	:= ExuBfu.Null
@@ -74,15 +73,13 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Ijalr)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20))}
 				is(Op.Iload)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20))}
 				is(Op.Branch)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(7),pipeInstr(30,25),pipeInstr(11,8),0.U(1.W))}
-				is(Op.Jal)		{out.pipe.result := Cat(Fill(12,pipeInstr(31)),pipeInstr(19,12),pipeInstr(20),pipeInstr(30,21),0.U(1.W))}
 				is(Op.Icsr)		{out.pipe.result := in.imme.csrOut}
 			}
-			when(opEnum === Op.Jal || opEnum === Op.Ijalr ||(opEnum === Op.Icsr & funct3 === 0.U(3.W))){out.pipe.enJcod := true.B}
+			when(opEnum === Op.Ijalr ||(opEnum === Op.Icsr & funct3 === 0.U(3.W))){out.pipe.enJcod := true.B}
 			when(opEnum === Op.Branch && pipeBpJump && pipeBtbGet){out.pipe.brHit := true.B}
 			when(pipeBpJump && pipeBtbGet){out.pipe.hit := true.B}
 			when(~pipeBpJump){out.pipe.noBp := true.B}
-			when(opEnum === Op.Jal || opEnum === Op.Branch || opEnum === Op.Ijalr || pipeInstr === 0x0000100F.U){out.pipe.mayJp := true.B}
-			when(opEnum === Op.Jal || opEnum === Op.Branch){out.pipe.mayBt := true.B}
+			when(opEnum === Op.Branch || opEnum === Op.Ijalr || pipeInstr === 0x0000100F.U){out.pipe.mayJp := true.B}
 			out.pipe.fenceI := pipeInstr === 0x0000100F.U
 			
 			switch(opEnum){
@@ -113,7 +110,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 						}
 					}
 				}
-				is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
+				// is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
 				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Jalr}
 				is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Icsr)		{out.pipe.alu := ExuAlu.Csr}
@@ -123,14 +120,14 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			}
 			switch(opEnum){
 				is(Op.Uauipc)	{out.pipe.in1 := ExuIn1.Pc}
-				is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
+				// is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
 				is(Op.Branch)	{out.pipe.in1 := ExuIn1.Pc}
 			}
 			switch(opEnum){
 				is(Op.Uauipc)	{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Ului)		{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Ialu)		{out.pipe.in2 := ExuIn2.Imm}
-				is(Op.Jal)		{out.pipe.in2 := ExuIn2.Imm}
+				// is(Op.Jal)		{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Ijalr)	{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Iload)	{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Branch)	{out.pipe.in2 := ExuIn2.Imm}

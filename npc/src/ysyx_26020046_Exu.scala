@@ -20,7 +20,6 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val pipeHit		= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.hit		)
 	val pipeNoBp	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.noBp	)
 	val pipeMayJp	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.mayJp	)
-	val pipeMayBt	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.mayBt	)
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
@@ -112,7 +111,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		when(pipeValid&&noSend){
 			out.imme.bpChg := enBfun || pipeBrHit
 			out.imme.pcChg := Mux(pipeEnJcod || enBfun,pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)),pipeHit)//~in.pipe.valid || 
-			out.imme.btChg := (pipeEnJcod || enBfun) && (pipeNoBp || (in.pipe.pc =/= shouldBe(31,2))) && pipeMayBt//~in.pipe.valid || 
+			out.imme.btChg := enBfun && (pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)))//~in.pipe.valid || 
 		}
 	}
 
