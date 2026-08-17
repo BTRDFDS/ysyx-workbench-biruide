@@ -32,8 +32,8 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 	ich.exu <> exu.ich
 	ich.ifu <> ifu.ich
 	bar.ifu <> ich.bar
-	bar.lsu <> lsu.bar
-	bar.clt	<> clt.axi4
+	clt.lsu <> lsu.bar
+	bar.lsu <> clt.bar
 
 	io.master.arvalid	<> bar.out.arvalid
 	io.master.araddr	<> bar.out.araddr

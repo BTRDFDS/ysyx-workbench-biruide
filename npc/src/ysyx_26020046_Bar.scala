@@ -4,7 +4,6 @@ import WidthConsts._
 
 class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
 	val out = IO(new Axi4Master())
-	val clt = IO(new Axi4Master())
 	val ifu = IO(Flipped(new BurstBus()))
 	val lsu = IO(Flipped(new MemBus()))
 object BarRstate	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack=Value}
@@ -17,31 +16,25 @@ object BarRstate	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack=Val
 				rAddr	:= lsu.addr
 			}.elsewhen(ifu.valid){rState := BarRstate.IfuCall;rAddr := Cat(ifu.addr,0.U(2.W))}
 		}
-		is(BarRstate.IfuCall){when(out.arready)													{rState := BarRstate.IfuBack}}
-		is(BarRstate.IfuBack){when(out.rlast)													{rState := BarRstate.Idle	}}
-		is(BarRstate.LsuCall){when(Mux(rAddr(31,24) === 0x02.U(8.W),clt.arready,out.arready))	{rState := BarRstate.LsuBack}}
-		is(BarRstate.LsuBack){when(Mux(rAddr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))		{rState := BarRstate.Idle	}}
+		is(BarRstate.IfuCall){when(out.arready)	{rState := BarRstate.IfuBack}}
+		is(BarRstate.IfuBack){when(out.rlast)	{rState := BarRstate.Idle	}}
+		is(BarRstate.LsuCall){when(out.arready)	{rState := BarRstate.LsuBack}}
+		is(BarRstate.LsuBack){when(out.rvalid)	{rState := BarRstate.Idle	}}
 	}
-	out.arvalid := (rState === BarRstate.IfuCall || rState === BarRstate.LsuCall) && rAddr(31,24) =/= 0x02.U(8.W)
-	out.rready  := (rState === BarRstate.IfuBack || rState === BarRstate.LsuBack) && rAddr(31,24) =/= 0x02.U(8.W)
+	out.arvalid := (rState === BarRstate.IfuCall || rState === BarRstate.LsuCall)
+	out.rready  := (rState === BarRstate.IfuBack || rState === BarRstate.LsuBack)
 	out.araddr  := rAddr
 	out.arlen	:= Mux(rState === BarRstate.IfuCall,(CacheSize-1).U,0.U)//只有ifu能突发
 	out.arsize	:= Mux(rState === BarRstate.IfuCall,2.U,lsu.size)
 	out.arburst := Mux(rState === BarRstate.IfuCall,2.U,0.U)
-	clt.arvalid := (rState === BarRstate.IfuCall || rState === BarRstate.LsuCall) && rAddr(31,24) === 0x02.U(8.W)
-	clt.rready  := (rState === BarRstate.IfuBack || rState === BarRstate.LsuBack) && rAddr(31,24) === 0x02.U(8.W)
-	clt.araddr  := rAddr
-	clt.arlen	:= 0.U
-	clt.arsize	:= 0.U//用不到
-	clt.arburst := 0.U
-	ifu.data	:= Mux(rAddr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
+	ifu.data	:= out.rdata
 	when(rState === BarRstate.IfuBack){
 		when(out.rresp =/= 0.U)	{ifu.res := BurstRes.Erro}
 		.elsewhen(out.rlast)	{ifu.res := BurstRes.Done}
 		.elsewhen(out.rvalid)	{ifu.res := BurstRes.Read}
 		.otherwise				{ifu.res := BurstRes.Idle}
 	}.otherwise{ifu.res := BurstRes.Idle}
-	lsu.rdata	:= Mux(rAddr(31,24) === 0x02.U(8.W),clt.rdata,out.rdata)
+	lsu.rdata	:= out.rdata
 
 object BarWstate	extends ChiselEnum{val Idle,Call,Back=Value}
 	val wState		= RegInit(BarWstate.Idle)
@@ -69,34 +62,42 @@ object BarWstate	extends ChiselEnum{val Idle,Call,Back=Value}
 	out.wstrb	:= lsu.wstrb
 	out.bready	:= (wState === BarWstate.Back)
 	out.awaddr	:= wAddr
-	clt.awvalid := false.B
-	clt.awaddr	:= 0.U
-	clt.wdata	:= 0.U
-	clt.wstrb	:= 0.U
-	clt.wvalid	:= false.B
-	clt.bready	:= false.B
 
-	lsu.ready	:= ((wState === BarWstate.Back) && out.bvalid)			|| (rState === BarRstate.LsuBack && Mux(rAddr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))
-	lsu.error	:= ((wState === BarWstate.Back) && out.bresp =/= 0.U)	|| (rState === BarRstate.LsuBack && Mux(rAddr(31,24) === 0x02.U(8.W),clt.rresp,out.rresp) =/= 0.U)
+	lsu.ready	:= ((wState === BarWstate.Back) && out.bvalid)			|| (rState === BarRstate.LsuBack && out.rvalid)
+	lsu.error	:= ((wState === BarWstate.Back) && out.bresp =/= 0.U)	|| (rState === BarRstate.LsuBack && out.rresp =/= 0.U)
 	
-
-
-	// val addrValid = (
-	// 	(addr		=== 0x02.U(8.W))	||//clint
-	// 	(addr		=== 0x0f.U(8.W))	||//sram
-	// 	(addr		=== 0x10.U(8.W))	||//UART16550 or SPI or GPIO or PS2
-	// 	(addr		=== 0x20.U(8.W))	||//mrom
-	// 	(addr		=== 0x21.U(8.W))	||//vga
-	// 	(addr(7,4))	===	0x3.U(4.W)		||//flash
-	// 	(addr(7,5)	=== 0b100.U(3.W))	||//psram
-	// 	(addr(7,5)	=== 0b101.U(3.W))	||//sdram
-	// 	(addr(7,6)	=== 0b11.U(2.W)))	  //ChipLink
-	// when(~addrValid){
-	// 	if(Yosys == false){
-	// 		when(state =/= ArbStatus.Idle){
-	// 			printf("arb addr error %x\n",addr)
-	// 			stop()
-	// 		}
-	// 	}
-	// }
+	if(Yosys == false){
+		val rAddrValid = (
+			(rAddr(31,24) === 0x02.U(8.W))	||//clint
+			(rAddr(31,24) === 0x0f.U(8.W))	||//sram
+			(rAddr(31,24) === 0x10.U(8.W))	||//UART16550 or SPI or GPIO or PS2
+			(rAddr(31,24) === 0x20.U(8.W))	||//mrom
+			(rAddr(31,24) === 0x21.U(8.W))	||//vga
+			(rAddr(31,28) === 0x3.U(4.W))	||//flash
+			(rAddr(31,29) === 0b100.U(3.W))	||//psram
+			(rAddr(31,29) === 0b101.U(3.W))	||//sdram
+			(rAddr(31,30) === 0b11.U(2.W)))	  //ChipLink
+		when(~rAddrValid){
+			when(rState =/= BarRstate.Idle){
+				printf("arb rAddr error %x\n",rAddr)
+				stop()
+			}
+		}
+		val wAddrValid = (
+			(wAddr(31,24) === 0x02.U(8.W))	||//clint
+			(wAddr(31,24) === 0x0f.U(8.W))	||//sram
+			(wAddr(31,24) === 0x10.U(8.W))	||//UART16550 or SPI or GPIO or PS2
+			(wAddr(31,24) === 0x20.U(8.W))	||//mrom
+			(wAddr(31,24) === 0x21.U(8.W))	||//vga
+			(wAddr(31,28) === 0x3.U(4.W))	||//flash
+			(wAddr(31,29) === 0b100.U(3.W))	||//psram
+			(wAddr(31,29) === 0b101.U(3.W))	||//sdram
+			(wAddr(31,30) === 0b11.U(2.W)))	  //ChipLink
+		when(~wAddrValid){
+			when(wState =/= BarWstate.Idle){
+				printf("arb wAddr error %x\n",wAddr)
+				stop()
+			}
+		}
+	}
 }

@@ -139,6 +139,13 @@ class Axi4MasterOut extends Axi4Master {
 
 	val bid		= Input(UInt(IdWidth.W))
 }
+// class ClintLoad extends Bundle {
+// 	val valid	= Output(Bool())
+//     val addr	= Output(UInt(16.W))
+// 	val ready	= Input(Bool())
+// 	val data	= Input(UInt(BitWidth.W))
+// 	val error	= Input(Bool())
+// }
 class InstrBus extends Bundle{
 	// val valid	= Output(Bool())
 	val addr	= Output(UInt((BitWidth-2).W))

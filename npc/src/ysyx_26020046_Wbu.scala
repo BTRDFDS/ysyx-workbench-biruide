@@ -31,8 +31,10 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	val mcause		= RegInit(0xffffffffL.U(BitWidth.W))
 	val mcycle		= RegInit(0.U(BitWidth.W))
 	val mcycleh		= RegInit(0.U(BitWidth.W))
-	val marchid		= RegInit(0x018D08CE.U(BitWidth.W))
-	val mvendorid	= RegInit(0x79737978.U(BitWidth.W))
+	// val marchid		= RegInit(0x018D08CE.U(BitWidth.W))
+	// val mvendorid	= RegInit(0x79737978.U(BitWidth.W))
+	val marchid		= 0x018D08CE.U
+	val mvendorid	= 0x79737978.U
 
 	val error = WireInit(false.B)
 	val nextMcycle	= Wire(UInt(BitWidth.W));nextMcycle	:= mcycle + 1.U
@@ -54,8 +56,8 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 						is(CsrAddr.Mtvec)		{mtvec		:= pipeCsrMesg}
 						is(CsrAddr.Mcause)		{mcause		:= pipeCsrMesg}
 						is(CsrAddr.Mstatus)		{mstatus	:= pipeCsrMesg}
-						is(CsrAddr.Marchid)		{marchid	:= pipeCsrMesg}
-						is(CsrAddr.Mvendorid)	{mvendorid	:= pipeCsrMesg}
+						// is(CsrAddr.Marchid)		{marchid	:= pipeCsrMesg}
+						// is(CsrAddr.Mvendorid)	{mvendorid	:= pipeCsrMesg}
 					}
 				}otherwise{error := true.B}
 			}

@@ -56,7 +56,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	bar.wdata	:= 0.U
 	bar.wstrb	:= 0.U
 	bar.write	:= false.B
-	bar.addr	:= 0.U
+	bar.addr	:= pipeResult
 	when(pipeValid && ~addrError && state === MemStatus.Call){//发出
 		when(pipeLsuOp === LsuOp.Load){
 			switch(pipeLsuAddr){
@@ -66,7 +66,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 				is(LsuAddr.Hu){bar.size := 0b01.U}
 				is(LsuAddr.W ){bar.size := 0b10.U}
 			}
-			bar.addr	:= pipeResult
+			// bar.addr	:= pipeResult
 		}
 		when(pipeLsuOp === LsuOp.Store){
 			bar.write	:= true.B
@@ -75,7 +75,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 				is(LsuAddr.H ){bar.size := 0b01.U}
 				is(LsuAddr.W ){bar.size := 0b10.U}
 			}
-			bar.addr	:= pipeResult
+			// bar.addr	:= pipeResult
 			switch(pipeLsuAddr){
 				is(LsuAddr.B){bar.wstrb := 0b0001.U << pipeResult(1,0)}
 				is(LsuAddr.H){bar.wstrb := 0b0011.U << pipeResult(1,0)}
