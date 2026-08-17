@@ -9,38 +9,41 @@ object ClintAddr extends ChiselEnum{
 }
 object ClintStatus extends ChiselEnum{val Idle,Read=Value}//TODO:目前只读,没有,Write
 class ysyx_26020046_Clt extends Module{
-	val lsu = IO(Flipped(new MemBus()))
-	val bar = IO(new MemBus())
-
+	val axi4 = IO(Flipped(new Axi4Master()))
 
 	val mtime  = RegInit(0.U((BitWidth).W))
 	val mtimeh = RegInit(0.U((BitWidth).W))
 	mtime  := mtime + 1.U
 	mtimeh := Mux(mtime === (Fill(BitWidth,1.U)),mtimeh + 1.U,mtimeh)
 
-	bar.wdata := lsu.wdata
-	bar.wstrb := lsu.wstrb
-	bar.addr  := lsu.addr
-	bar.write := lsu.write
-	lsu.rdata := 0.U
-	when(lsu.size =/= 0b11.U && lsu.addr(31,24) === 0x02.U){
-		bar.size := 0b11.U
-		lsu.ready := true.B
-		val (clintEnum,clintValid) = ClintAddr.safe(lsu.addr(15,0))
-		when(clintValid){switch(clintEnum){
-			is(ClintAddr.Mtime)	{lsu.rdata:= mtime }
-			is(ClintAddr.Mtimeh){lsu.rdata:= mtimeh}
-		}}
-		lsu.error := ~clintValid || lsu.write
-	}.otherwise{
-		bar.size := lsu.size
-		lsu.rdata:= bar.rdata
-		lsu.ready:= bar.ready
-		lsu.error:= bar.error
+	val status = RegInit(ClintStatus.Idle)
+	val addr = RegInit(0.U(16.W))
+	switch(status){
+	    is(ClintStatus.Idle){when(axi4.arvalid)	{status := ClintStatus.Read}}
+		is(ClintStatus.Read){when(axi4.rready)	{status := ClintStatus.Idle}}
 	}
-
-	// when(lsu.size =/= 0b11.U && lsu.addr(31,24) === 0x02.U){
-	// 	printf("clint addr:%x %d %d\n",lsu.addr,Cat(mtimeh,mtime),lsu.rdata)
-	// }
-
+	axi4.arready := status === ClintStatus.Idle
+	when(status === ClintStatus.Idle & axi4.arvalid){addr := axi4.araddr(15,0)}
+	val (clintEnum,clintValid) = ClintAddr.safe(addr)
+	axi4.rdata := 0.U
+	axi4.rresp := 0.U
+	when(clintValid){
+		switch(clintEnum){
+			is(ClintAddr.Mtime)	{axi4.rdata	:= mtime }
+			is(ClintAddr.Mtimeh){axi4.rdata	:= mtimeh}
+		}
+	}otherwise{
+		switch(status){
+			is(ClintStatus.Read){axi4.rresp := 0.U}
+			is(ClintStatus.Idle){axi4.rresp := 1.U}
+		}
+	}
+	axi4.arready:= status === ClintStatus.Idle
+	axi4.rvalid := status === ClintStatus.Read
+	//写通道无效
+	axi4.awready	:= false.B
+	axi4.wready	:= false.B
+	axi4.bvalid	:= false.B
+	axi4.bresp	:= 1.U//但凡想写就都是false
+	axi4.rlast	:= false.B
 }
