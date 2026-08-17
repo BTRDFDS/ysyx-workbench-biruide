@@ -23,7 +23,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 	val BtbBits	= 3
 	val BtbSize	= 1 << BtbBits
-	val btbCnt	= in.imme.pc(1+BtbBits,2)
+	val btbCnt	= in.imme.pc(BtbBits-1,0)
 	val btbPc	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2-BtbBits).W))))
 	val btbAddr = Reg(Vec(BtbSize,UInt((BitWidth-2).W)))
 	val btbIndex= pipePc(BtbBits-1,0)
