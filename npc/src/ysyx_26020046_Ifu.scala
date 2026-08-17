@@ -21,14 +21,21 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val bp2Cnt	= RegInit(2.U(2.W))
 	val bp2Hit = bp2Cnt >= 2.U
 
+	// val BtbBits	= 3
+	// val BtbSize	= 1 << BtbBits
+	// val btbCnt	= RegInit(0.U(BtbBits.W))
+	// val btbPc	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
+	// val btbAddr	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
+	// val btbMatch= VecInit(btbPc.map(_ === pipePc)).asUInt
+	// val btbIndex= PriorityEncoder(btbMatch)
+	// val btbHit	= btbMatch.orR
 	val BtbBits	= 3
 	val BtbSize	= 1 << BtbBits
-	val btbCnt	= RegInit(0.U(BtbBits.W))
-	val btbPc	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
-	val btbAddr	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
-	val btbMatch= VecInit(btbPc.map(_ === pipePc)).asUInt
-	val btbIndex= PriorityEncoder(btbMatch)
-	val btbHit	= btbMatch.orR
+	val btbCnt	= in.imme.pc(1+BtbBits,2)
+	val btbPc	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2-BtbBits).W))))
+	val btbAddr = Reg(Vec(BtbSize,UInt((BitWidth-2).W)))
+	val btbIndex= pipePc(BtbBits-1,0)
+	val btbHit	= pipePc(29,BtbBits) === btbPc(btbIndex)
 
 	val isBranch= out.pipe.instr(6,0)===Op.Branch.asUInt
 	val isJal	= out.pipe.instr(6,0)===Op.Jal.asUInt
@@ -49,9 +56,9 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		.otherwise{			when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}}
 	}
 	when(in.imme.btChg && in.imme.addr(31,2)=/=pipePc){
-		btbPc(btbCnt)	:= in.imme.pc
+		btbPc(btbCnt)	:= in.imme.pc(29,BtbBits)
 		btbAddr(btbCnt) := in.imme.addr(31,2)
-		btbCnt := btbCnt + 1.U
+		// btbCnt := btbCnt + 1.U
 	}
 	out.pipe.bpJump	:= bp2Hit || isJal || isJalr
 	out.pipe.btbGet := btbHit
@@ -62,7 +69,7 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		dontTouch(btbCnt)
 		dontTouch(btbPc)
 		dontTouch(btbAddr)
-		dontTouch(btbMatch)
+		// dontTouch(btbMatch)
 		dontTouch(btbIndex)
 		dontTouch(btbHit)
 		dontTouch(bp2Cnt)
