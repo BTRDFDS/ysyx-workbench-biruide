@@ -43,8 +43,8 @@ uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
 	return res;
 }
 int main() {
-	file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
-	// file.open("./bin/BJRadd.bin", std::ios::in | std::ios::binary);
+	// file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
+	file.open("./bin/BJRadd.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
@@ -97,7 +97,7 @@ int main() {
 		else				dnpc=pc+4;
 		if(jal)dnpc=addr;
 		if(jump){
-			// if(branch)BP2(true,true);
+			if(branch)BP2(true,true);
 			if(isJump){
 				if(dnpc==addr){
 					hit++;
@@ -115,12 +115,13 @@ int main() {
 			if(isJump&&(isGet)){
 				missBP2++;
 				// dnpc=addr;
-				// if(branch)BP2(false,true);
+				if(branch)BP2(false,true);
 			}else{
+				// if(branch)BP2(false,true);
 				hit++;
 			}
 		}
-		if((jump && branch)||(isJump && isGet && branch))BP2(jump,true);
+		// if((jump && branch)||(isJump && isGet && branch))BP2(jump,true);
 		if(jump && branch && (!isJump || dnpc!=addr))BTB(pc,isGet,addr,true);
 		if(jump?(dnpc != addr || ~isJump): isJump&&isGet)dnpc=addr;
 		if(dnpc!=(jump?addr:(pc+4))){

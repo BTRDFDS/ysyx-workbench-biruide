@@ -110,8 +110,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		out.imme.bpChg	:= false.B
 		when(pipeValid&&noSend){
 			out.imme.bpChg := enBfun || pipeBrHit
-			out.imme.pcChg := Mux(pipeEnJcod || enBfun,pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)),pipeHit)//~in.pipe.valid || 
-			out.imme.btChg := enBfun && (pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)))//~in.pipe.valid || 
+			out.imme.pcChg := Mux(pipeEnJcod || enBfun,pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)),pipeHit)
+			out.imme.btChg := enBfun && (pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)))
 		}
 	}
 
