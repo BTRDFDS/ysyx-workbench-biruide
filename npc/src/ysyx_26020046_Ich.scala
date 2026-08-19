@@ -17,7 +17,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val valid	= RegInit(VecInit(Seq.fill(CacheNum)(false.B)))
 
 
-	val addrTag		= Wire(UInt((BitWidth-2-CacheBit).W))
+	val addrTag		= Wire(UInt((BitWidth-2-CacheBit-CacheWidth).W))
 	val addrIdx		= Wire(UInt(CacheBit.W))
 	val addrOffset	= Wire(UInt(CacheWidth.W))
 
@@ -29,7 +29,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	val pipeValid		= RegInit(false.B)
 	val cnt			= RegInit(0.U(CacheWidth.W))
 	val burstValid	= RegInit(VecInit(Seq.fill(CacheSize)(false.B)))
-	val burstTag	= Reg(UInt((BitWidth-2-CacheBit).W))
+	val burstTag	= Reg(UInt((BitWidth-2-CacheBit-CacheWidth).W))
 	val burstIdx	= Reg(UInt(CacheBit.W))
 	val burstOffset = Reg(UInt(CacheWidth.W))
 	when(pipeValid){

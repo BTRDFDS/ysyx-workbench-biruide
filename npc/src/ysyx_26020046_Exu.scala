@@ -23,7 +23,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
-	val pipeCsrAddr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.csrAddr	)
+	val pipeCsrAddr	= PipeReg(pipeReset,0.U(CsrWidth.W)		,out.imme.ready,in.pipe.csrAddr	)
 	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.csrMesg	)
 	val pipeR1		= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.r1		)
 	val pipeR2		= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.r2		)
@@ -55,7 +55,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeResult)
 		switch(pipeAlu){
 			is(ExuAlu.Add)	{result := input1 + input2}
-			is(ExuAlu.Sll)	{result := input1 << input2(4,0)}
+			is(ExuAlu.Sll)	{result :=(input1 << input2(4,0))(31,0)}
 			is(ExuAlu.Slt)	{result := input1.asSInt < input2.asSInt}
 			is(ExuAlu.Sltu)	{result := input1 < input2}
 			is(ExuAlu.Xor)	{result := input1 ^ input2}
@@ -63,7 +63,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 			is(ExuAlu.Or)	{result := input1 | input2}
 			is(ExuAlu.And)	{result := input1 & input2}
 			is(ExuAlu.Sub)	{result := input1 - input2}
-			is(ExuAlu.Sra)	{result := (input1.asSInt >> input2(4,0)).asUInt}
+			is(ExuAlu.Sra)	{result :=(input1.asSInt >> input2(4,0)).asUInt}
 			is(ExuAlu.Csr)	{result := pipeResult}//给addr的
 			is(ExuAlu.Imm)	{result := pipeResult}
 			is(ExuAlu.Jalr)	{result := Cat((pipeR1 + pipeResult)(31,1), 0.U(1.W))}

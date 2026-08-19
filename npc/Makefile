@@ -101,6 +101,9 @@ sta:verilogSta $(srcVerilogSta)
 	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)" $(YOSYS_CONFIG)
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
 
+chk:verilogSta $(srcVerilogSta)
+	verilator --lint-only -Wall $(srcVerilogSta) --top-module ysyx_26020046
+
 srcVerilogStaWbu += $(NPC_HOME)/build/sta/ysyx_26020046_Wbu.sv
 srcVerilogStaIdu += $(NPC_HOME)/build/sta/ysyx_26020046_Idu.sv
 srcVerilogStaIdu += $(NPC_HOME)/test/sta/ysyx_26020046_StaIdu.sv

@@ -18,7 +18,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,true.B,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.result	)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,true.B,in.pipe.pc		)
-	val pipeCsrAddr	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.csrAddr	)
+	val pipeCsrAddr	= PipeReg(pipeReset,0.U(CsrWidth.W)		,true.B,in.pipe.csrAddr	)
 	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.csrMesg	)
 	val pipeCsrOp	= PipeReg(pipeReset,CsrOp.Null			,true.B,in.pipe.csrOp	)
 	
@@ -73,7 +73,7 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		if(Yosys == false){
 			when(pipeValid === false.B & pipeCsrOp === CsrOp.Trap){printf("pipe err catch\n")}
 			when(error){printf("wbu err catch\n")}
-			printf("error,stop!!! %x tval: %x ",pipeCsrMesg,pipeCsrAddr)//tval
+			printf("error,stop!!! %x",pipeCsrMesg)//tval
 			switch(pipeCsrMesg){
 				is(3.U	){printf("ebreak\n")}
 				is(11.U	){printf("ecall\n")}

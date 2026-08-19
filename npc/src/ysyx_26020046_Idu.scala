@@ -194,8 +194,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 						is(0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}
 						is(0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 					}}
-					is(0b001.U){out.pipe.csrAddr := Cat(0.U(20.W),pipeInstr(31,20));csrOp := CsrOp.Write;csrValid := true.B}
-					is(0b010.U){out.pipe.csrAddr := Cat(0.U(20.W),pipeInstr(31,20));csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
+					is(0b001.U){out.pipe.csrAddr := pipeInstr(31,20);csrOp := CsrOp.Write;csrValid := true.B}
+					is(0b010.U){out.pipe.csrAddr := pipeInstr(31,20);csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
 				}
 			}
 		}

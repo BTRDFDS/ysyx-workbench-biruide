@@ -4,8 +4,8 @@ import WidthConsts._
 
 
 object ClintAddr extends ChiselEnum{
-	val Mtime	= Value(0xBFF8L.U)
-	val Mtimeh	= Value(0xBFFCL.U)
+	val Mtime	= Value(0x0200BFF8L.U(BitWidth.W))
+	val Mtimeh	= Value(0x0200BFFCL.U(BitWidth.W))
 }
 object ClintStatus extends ChiselEnum{val Idle,Read=Value}//TODO:目前只读,没有,Write
 class ysyx_26020046_Clt extends Module{
@@ -17,13 +17,13 @@ class ysyx_26020046_Clt extends Module{
 	mtimeh := Mux(mtime === (Fill(BitWidth,1.U)),mtimeh + 1.U,mtimeh)
 
 	val status = RegInit(ClintStatus.Idle)
-	val addr = RegInit(0.U(16.W))
+	val addr = RegInit(0.U(BitWidth.W))
 	switch(status){
 	    is(ClintStatus.Idle){when(axi4.arvalid)	{status := ClintStatus.Read}}
 		is(ClintStatus.Read){when(axi4.rready)	{status := ClintStatus.Idle}}
 	}
 	axi4.arready := status === ClintStatus.Idle
-	when(status === ClintStatus.Idle & axi4.arvalid){addr := axi4.araddr(15,0)}
+	when(status === ClintStatus.Idle & axi4.arvalid){addr := axi4.araddr}
 	val (clintEnum,clintValid) = ClintAddr.safe(addr)
 	axi4.rdata := 0.U
 	axi4.rresp := 0.U

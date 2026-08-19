@@ -19,7 +19,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
-	val pipeCsrAddr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.csrAddr	)
+	val pipeCsrAddr	= PipeReg(pipeReset,0.U(CsrWidth.W)		,out.imme.ready,in.pipe.csrAddr	)
 	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.csrMesg	)
 	val pipeR2		= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.r2		)
 	val pipeLsuOp	= PipeReg(pipeReset,LsuOp.Null			,out.imme.ready,in.pipe.lsuOp	)
@@ -77,8 +77,8 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 			}
 			bar.addr	:= pipeResult
 			switch(pipeLsuAddr){
-				is(LsuAddr.B){bar.wstrb := 0b0001.U << pipeResult(1,0)}
-				is(LsuAddr.H){bar.wstrb := 0b0011.U << pipeResult(1,0)}
+				is(LsuAddr.B){bar.wstrb := (0b0001.U << pipeResult(1,0))}
+				is(LsuAddr.H){bar.wstrb := Mux(pipeResult(1),0b1100.U,0b0011.U)}
 				is(LsuAddr.W){bar.wstrb := 0b1111.U}
 			}
 			switch(pipeLsuAddr){
