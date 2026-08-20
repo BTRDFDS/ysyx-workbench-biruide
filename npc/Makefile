@@ -11,6 +11,7 @@ verilogNpc:build/BuilderNpc.stamp
 verilogYsyxSoc:build/BuilderYsyxSoc.stamp
 verilogSta:build/BuilderSta.stamp
 verilogIcache:build/BuilderIcache.stamp
+verilogIverilog:build/BuilderIverilog.stamp
 
 
 reformat:
@@ -90,8 +91,18 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
 	$(addprefix -CFLAGS , $(CXXFLAGS)) \
 	$(addprefix -LDFLAGS , $(LDFLAGS))
-# 	 -Wno-UNOPTFLAT
 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
+
+
+srcVerilogIverilog += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.sv")
+srcVerilogIverilog += $(NPC_HOME)/test/iverilog/iverliog.v
+iverilog:verilogIverilog
+	riscv64-linux-gnu-objcopy -O verilog --adjust-vma=-0x80000000 $(ARG:.bin=.elf) $(NPC_HOME)/test/iverilog/iverilog.hex
+	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
+	vvp build/iverilogCpu -fst
+
+
+
 
 YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 # nangate45 icsprout55
