@@ -94,15 +94,9 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 
 
-srcVerilogIverilog += $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v
+srcVerilogIverilog += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.sv")
 srcVerilogIverilog += $(NPC_HOME)/test/iverilog/iverliog.v
 iverilog:verilogIverilog
-	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
-	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
-	vvp build/iverilogCpu -fst
-srcVerilogNetlist += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.sv")
-srcVerilogNetlist += $(NPC_HOME)/test/iverilog/iverliog.v
-netlist:
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
 	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst

@@ -38,13 +38,19 @@ static int _uart_putc(struct rt_serial_device *serial, char c) {
 }
 
 static int _uart_getc(struct rt_serial_device *serial) {
+  static bool noInit = true;
+  static hasUart = false;
+  if(noInit){
+    hasUart=io_read(AM_UART_CONFIG).present;
+    noInit = false;
+  }
   static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\n";
   if( *p != '\0') return *(p++);
-  else{
+  else if(hasUart){
     char ch = io_read(AM_UART_RX).data;
     if (ch == (char)-1) return -1;
     return ch;
-  }
+  }else return -1;
 }
 
 const struct rt_uart_ops _uart_ops = {

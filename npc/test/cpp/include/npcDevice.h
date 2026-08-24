@@ -218,7 +218,8 @@ void printOver(){
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
-const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
+// const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
+const uint32_t psramSize	=0x07ffffff;//为了NPC开大一点
 uint8_t psram[psramSize];
 
 const uint32_t sdramAddr	=0xa0000000;
