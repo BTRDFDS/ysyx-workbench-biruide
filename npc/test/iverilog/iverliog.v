@@ -3,8 +3,8 @@ logic clock,reset;
 always #5 clock = ~clock;
 ysyx_26020046_iverilog cpu(clock, reset);
 initial begin
-	$dumpfile("wave/iverilog.fst");
-	$dumpvars(0,cpu);
+	// $dumpfile("wave/iverilog.fst");
+	// $dumpvars(0,cpu);
 	#0  clock = 0;
 	#0  reset = 1;
 	#10 reset = 0;

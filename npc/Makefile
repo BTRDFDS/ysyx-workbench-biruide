@@ -94,14 +94,18 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 	./build/$(srcYsyxSoc)/V$(srcYsyxSoc) $(ARG)
 
 
-srcVerilogIverilog += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.sv")
+srcVerilogIverilog += $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v
 srcVerilogIverilog += $(NPC_HOME)/test/iverilog/iverliog.v
 iverilog:verilogIverilog
-	riscv64-linux-gnu-objcopy -O verilog --adjust-vma=-0x80000000 --set-section-flags .bss=alloc,load,contents $(ARG:.bin=.elf) $(NPC_HOME)/test/iverilog/iverilog.hex
+	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
 	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
-
-
+srcVerilogNetlist += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.sv")
+srcVerilogNetlist += $(NPC_HOME)/test/iverilog/iverliog.v
+netlist:
+	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
+	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
+	vvp build/iverilogCpu -fst
 
 
 YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45

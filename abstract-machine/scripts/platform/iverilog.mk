@@ -26,5 +26,5 @@ image: image-dep
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: insert-arg
-	make -C $(NPC_HOME) iverilog ARG=$(IMAGE).elf
+	make -C $(NPC_HOME) iverilog ARG=$(IMAGE).bin
 .PHONY: insert-arg
