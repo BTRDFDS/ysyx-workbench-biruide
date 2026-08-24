@@ -39,7 +39,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c) {
 
 static int _uart_getc(struct rt_serial_device *serial) {
   static bool noInit = true;
-  static hasUart = false;
+  static bool hasUart = false;
   if(noInit){
     hasUart=io_read(AM_UART_CONFIG).present;
     noInit = false;

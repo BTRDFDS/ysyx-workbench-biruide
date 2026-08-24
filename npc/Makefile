@@ -101,6 +101,16 @@ iverilog:verilogIverilog
 	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
 
+srcVerilogNetlist += $(NPC_HOME)/test/iverilog/iverliog.v
+srcVerilogNetlist += $(NPC_HOME)/build/iverilog/ysyx_26020046_iverilog.sv
+srcVerilogNetlist += $(NPC_HOME)/build/iverilog/ysyx_26020046_iverilog_Mem.sv
+srcVerilogNetlist += $(NPC_HOME)/build/iverilog/psram_16777216x8.sv
+srcVerilogNetlist += $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v
+srcVerilogNetlist += $(YOSYS_STA_HOME)/pdk/nangate45/sim/cells.v
+netlist:verilogIverilog
+	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
+	iverilog -o build/netlistCpu $(srcVerilogNetlist)
+	vvp build/netlistCpu -fst
 
 YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 # nangate45 icsprout55
