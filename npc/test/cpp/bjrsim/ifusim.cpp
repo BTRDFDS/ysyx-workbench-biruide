@@ -5,44 +5,77 @@
 #include <stdint.h>
 #include <vector>
 std::fstream file;
-	static uint8_t b2{2};
-bool BP2(bool result=false,bool write=false){
-	bool res = b2>=2;
-	if(write){
-		if(result)	{if(b2<3){b2++;}}
-		else 		{if(b2>0){b2--;}}
+enum class Code{Idle,branch,Jal,jalr};
+struct BpuRes{
+	uint32_t addr,pc;
+	bool hit,jump;
+	Code code;
+};
+struct Bpu{
+	uint8_t b2=2;
+	uint8_t btbCnt=0;
+	static const  uint32_t BtbBits = 2;
+	static const  uint32_t BtbSize = 1<<BtbBits;
+	static const  uint32_t BtbMask = BtbSize-1;
+	uint32_t btbPc[BtbSize]{};
+	uint32_t btbAddr[BtbSize]{};
+	Code btbCode[BtbSize]{};
+	Bpu(){
+		for(int i=0;i<BtbSize;i++){
+			btbPc[i] = 0;
+			btbAddr[i] = 0;
+			btbCode[i] = Code::Idle;
+		}
 	}
-	return res;
-}
-
-	static uint32_t BTBcnt{};
-uint32_t BTB(uint32_t pc,bool &suce,uint32_t addr=0,bool write=false){
-	const  uint32_t BTBbits = 2;
-	const  uint32_t BTBsize = 1<<BTBbits;
-	const  uint32_t BTBmask = BTBsize-1;
-	static uint32_t BTBtags[BTBsize]{};
-	static uint32_t BTBaddr[BTBsize]{};
-
-	uint32_t res{};
-	uint32_t BTBidx = (pc>>2)&BTBmask;
-	suce = false;
-	if(write){
-		BTBtags[BTBcnt]	= pc>>2;
-		BTBaddr[BTBcnt]	= addr;
-		// printf("BTBcnt %d => %d\n",BTBcnt,(BTBcnt+1)%BTBsize);
-		BTBcnt = (BTBcnt+1)%BTBsize;
-	}else{
-		for(uint32_t i=0;i<BTBsize;i++){
-			if(BTBtags[i]==(pc>>2)){
-				res = BTBaddr[i];
-				suce = true;
+	BpuRes locate(uint32_t pc){
+		BpuRes res;
+		res.pc=pc;
+		uint32_t i;
+		for(i=0;i<BtbSize;i++){
+			if(btbPc[i]==pc && btbCode[i]!=Code::Idle){
+				res.hit = true;
 				break;
 			}
 		}
+		res.code = btbCode[i];
+		switch(btbCode[i]){
+			case Code::branch	:res.jump = b2 >=2;break;
+			case Code::Jal		:res.jump = true;break;
+			case Code::jalr		:res.jump = true;break;
+			case Code::Idle		:res.jump = false;break;
+		}
+		if(res.hit && res.jump)res.addr = btbAddr[i];
+		else res.addr = pc+4;
+		return res;
 	}
-	return res;
-}
+	void update(uint32_t pc,uint32_t addr,bool pred,bool btb,bool prTo,Code btTo){
+		if(btb){
+			bool hit = false;
+			int i;
+			for(i=0;i<BtbSize;i++){
+				if(btbPc[i]==pc){
+					hit = true;
+					break;
+				}
+			}
+			if(hit){
+				btbAddr[i] = addr;
+				btbCode[i] = btTo;
+			}else{
+				btbPc	[btbCnt] = pc;
+				btbAddr	[btbCnt] = addr;
+				btbCode	[btbCnt] = btTo;
+				btbCnt = (btbCnt+1)%BtbSize;
+			}
+		}
+		if(pred){
+			if(prTo){if(b2<3){b2++;}}
+			else 	{if(b2>0){b2--;}}
+		}
+	}
+};
 int main() {
+	Bpu bpu;
 	// file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
 	file.open("./bin/BJRadd.bin", std::ios::in | std::ios::binary);
 	// file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
@@ -88,46 +121,34 @@ int main() {
 		}
 		if(jalr)jr++;
 		if(jal )ju++;
-		bool isJump{},isGet{true};
-		uint32_t getAddr{},dnpc{};
-		if(branch)	{isJump = BP2();}
-		else		{isJump = true;}
-		if(isJump&&(branch)){getAddr = BTB(pc,isGet);}
-		if(isJump&&isGet)	dnpc=getAddr;
-		else				dnpc=pc+4;
-		if(jal)dnpc=addr;
-		if(jump){
-			if(branch)BP2(true,true);
-			if(isJump){
-				if(dnpc==addr){
-					hit++;
+		uint32_t rightPc = jump?addr:(pc+4);
+
+		BpuRes res = bpu.locate(pc);
+		uint32_t dnpc = res.addr;
+		switch(res.code){
+			case Code::branch:
+				if(dnpc!=rightPc){
+					dnpc=rightPc;
+					bpu.update(pc,rightPc,true,true,jump,Code::branch);
 				}else{
-					mhBP2++;
-					// dnpc=addr;
-					// if(branch)BTB(pc,isGet,addr,true);
+					bpu.update(pc,rightPc,true,false,jump,Code::branch);
 				}
-			}else {
-				missBP2++;
-				// dnpc=addr;
-				// if(branch)BTB(pc,isGet,addr,true);
-			}
-		}else{
-			if(isJump&&(isGet)){
-				missBP2++;
-				// dnpc=addr;
-				if(branch)BP2(false,true);
-			}else{
-				// if(branch)BP2(false,true);
-				hit++;
-			}
+				break;
+			case Code::Jal:
+				if(dnpc!=rightPc){
+					dnpc=rightPc;
+					bpu.update(pc,rightPc,false,true,false,Code::Jal);
+				}break;
+			case Code::jalr:
+				if(dnpc!=rightPc){
+					dnpc=rightPc;
+					bpu.update(pc,rightPc,false,true,false,Code::jalr);
+				}break;
+			case Code::Idle:break;
 		}
-		// if((jump && branch)||(isJump && isGet && branch))BP2(jump,true);
-		if(jump && branch && (!isJump || dnpc!=addr))BTB(pc,isGet,addr,true);
-		if(jump?(dnpc != addr || ~isJump): isJump&&isGet)dnpc=addr;
-		if(dnpc!=(jump?addr:(pc+4))){
-			printf("pc= %8x addr= %8x getAddr= %8x dnpc= %8x br=%d jal=%d jalr=%d sext=%d jump=%d isJump=%d isGet=%d b2=%2d BTBcnt=%d\n",pc,addr,getAddr,dnpc,branch,jal,jalr,sext,jump,isJump,isGet,b2,BTBcnt);
-			break;
-		}
+
+
+		if(dnpc!=rightPc){printf("error\n");break;}
 	}
 	file.close();
 }
