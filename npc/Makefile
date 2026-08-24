@@ -97,7 +97,7 @@ runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
 srcVerilogIverilog += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.sv")
 srcVerilogIverilog += $(NPC_HOME)/test/iverilog/iverliog.v
 iverilog:verilogIverilog
-	riscv64-linux-gnu-objcopy -O verilog --adjust-vma=-0x80000000 $(ARG:.bin=.elf) $(NPC_HOME)/test/iverilog/iverilog.hex
+	riscv64-linux-gnu-objcopy -O verilog --adjust-vma=-0x80000000 --set-section-flags .bss=alloc,load,contents $(ARG:.bin=.elf) $(NPC_HOME)/test/iverilog/iverilog.hex
 	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
 

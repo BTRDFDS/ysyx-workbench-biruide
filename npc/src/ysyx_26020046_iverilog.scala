@@ -133,6 +133,8 @@ class ysyx_26020046_iverilog extends Module{
 		}
 		shuouldStop := true.B
 	}
+	// when(mem.read.valid){printf("%8x read at %8x %8x\n",Cat(Get(cpu.lsu.pipePc),0.U(2.W)),mem.read.addr,mem.read.data)}
+	// when(mem.write.valid){printf("%8x write at %8x %b %8x\n",Cat(Get(cpu.lsu.pipePc),0.U(2.W)),mem.write.addr,mem.write.strb,mem.write.data)}
 }
 class ysyx_26020046_iverilog_Mem extends Module{
 	val read = IO(new Bundle{
