@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <vector>
 std::fstream file;
-enum class Code{Idle,branch,Jal,jalr};
+enum class Code{Idle,Branch,Jal,Jalr};
 struct BpuRes{
 	uint32_t addr,pc;
 	bool hit,jump;
@@ -31,6 +31,7 @@ struct Bpu{
 		BpuRes res;
 		res.pc=pc;
 		uint32_t i;
+		res.hit = false;
 		for(i=0;i<BtbSize;i++){
 			if(btbPc[i]==pc && btbCode[i]!=Code::Idle){
 				res.hit = true;
@@ -39,9 +40,9 @@ struct Bpu{
 		}
 		res.code = btbCode[i];
 		switch(btbCode[i]){
-			case Code::branch	:res.jump = b2 >=2;break;
+			case Code::Branch	:res.jump = b2 >=2;break;
 			case Code::Jal		:res.jump = true;break;
-			case Code::jalr		:res.jump = true;break;
+			case Code::Jalr		:res.jump = true;break;
 			case Code::Idle		:res.jump = false;break;
 		}
 		if(res.hit && res.jump)res.addr = btbAddr[i];
@@ -49,7 +50,7 @@ struct Bpu{
 		return res;
 	}
 	void update(uint32_t pc,uint32_t addr,bool pred,bool btb,bool prTo,Code btTo){
-		if(btb){
+		if(btb&&(btTo==Code::Branch || btTo==Code::Jal)){
 			bool hit = false;
 			int i;
 			for(i=0;i<BtbSize;i++){
@@ -76,12 +77,12 @@ struct Bpu{
 };
 int main() {
 	Bpu bpu;
-	// file.open("./bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
-	file.open("./bin/BJRadd.bin", std::ios::in | std::ios::binary);
-	// file.open("./bin/BJRdiv.bin", std::ios::in | std::ios::binary);
-	// file.open("./bin/BJRdummy.bin", std::ios::in | std::ios::binary);
+	file.open("/home/biruide/ysyx-workbench/npc/bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
+	// file.open("/home/biruide/ysyx-workbench/npc/bin/BJRadd.bin", std::ios::in | std::ios::binary);
+	// file.open("/home/biruide/ysyx-workbench/npc/bin/BJRdiv.bin", std::ios::in | std::ios::binary);
+	// file.open("/home/biruide/ysyx-workbench/npc/bin/BJRdummy.bin", std::ios::in | std::ios::binary);
 	if (!file.is_open()) {printf("Failed to open file\n");return -1;}
-	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},mhBP2{},missBP2{};
+	uint64_t ju{},jr{},bi{},bn{},hit{},miss{},errJalAddr{},errJalrAddr{},errBrNotJump{},errBrJump{},errBrAddr{};
 	for(uint64_t cnt=0;;cnt++){
 		uint32_t addr{},pc{};
 		uint8_t state{};
@@ -90,18 +91,19 @@ int main() {
 			miss = cnt-hit;
 			printf("cnt= %ld ju= %ld[%f] jr= %ld[%f] bi= %ld[%f] bn= %ld[%f]\n",
 				cnt,
-				ju,ju/float(cnt),
-				jr,jr/(float)br,
+				ju,ju/(float)cnt,
+				jr,jr/(float)cnt,
 				bi,bi/(float)br,
 				bn,bn/(float)br
 			);
-			if((cnt-hit)!=(mhBP2+missBP2))printf("miss error\n");
+			// if((cnt-hit)!=(mhBP2+missBP2))printf("miss error\n");
 			printf("hit= %ld[%f]\n",hit,hit/(float)cnt);
 			printf("miss= %ld[%f]\n",miss,miss/(float)cnt);
-			printf("mhBP2= %ld[%f]\n",mhBP2,mhBP2/(float)miss);
-			printf("missBP2= %ld[%f]\n",missBP2,missBP2/(float)miss);
-			uint64_t hitBP2 = hit+mhBP2;
-			printf("hitBP2= %ld[%f]\n",hitBP2,hitBP2/(float)cnt);
+			printf("errJalAddr= %ld[%f](%f){%f}\n",	errJalAddr,	errJalAddr /(float)cnt,errJalAddr /(float)miss,errJalAddr /(float)ju);
+			printf("errJalrAddr= %ld[%f](%f){%f}\n",errJalrAddr,errJalrAddr/(float)cnt,errJalrAddr/(float)miss,errJalrAddr/(float)jr);
+			printf("errBrNotJump= %ld[%f](%f)\n",errBrNotJump,errBrNotJump/(float)cnt,errBrNotJump/(float)miss);
+			printf("errBrJump= %ld[%f](%f)\n",errBrJump,errBrJump/(float)cnt,errBrJump/(float)miss);
+			printf("errBrAddr= %ld[%f](%f)\n",errBrAddr,errBrAddr/(float)cnt,errBrAddr/(float)miss);
 			break;
 		}
         bool branch{},jump{},sext{},jal{},jalr{};
@@ -115,6 +117,9 @@ int main() {
 			if(sext)jalr = true;
 			else	jal	 = true;
 		}
+		if(( (branch?1:0)+(jal?1:0)+(jalr?1:0))!=1){
+			printf("error %x b:%d j:%d r:%d\n",pc,branch,jal,jalr);
+		}
 		if(branch){
 			if(jump)	bi++;
 			else		bn++;
@@ -122,33 +127,68 @@ int main() {
 		if(jalr)jr++;
 		if(jal )ju++;
 		uint32_t rightPc = jump?addr:(pc+4);
+		Code rightCode = Code::Idle;
+		if(branch)	rightCode = Code::Branch;
+		if(jal)		rightCode = Code::Jal;
+		if(jalr)	rightCode = Code::Jalr;
 
 		BpuRes res = bpu.locate(pc);
+		// if(rightCode==Code::Jal){
+		// 	res.jump=true;
+		// 	res.addr=addr;
+		// 	res.hit=true;
+		// 	res.code=Code::Jal;
+		// }
 		uint32_t dnpc = res.addr;
-		switch(res.code){
-			case Code::branch:
+		switch(rightCode){
+			case Code::Branch:
 				if(dnpc!=rightPc){
 					dnpc=rightPc;
-					bpu.update(pc,rightPc,true,true,jump,Code::branch);
+					bpu.update(pc,rightPc,true,true,jump,rightCode);
+					if(res.jump!=jump){
+						if(jump)errBrNotJump++;
+						else 	errBrJump++;
+					}else		errBrAddr++;
 				}else{
-					bpu.update(pc,rightPc,true,false,jump,Code::branch);
+					hit++;
+					bpu.update(pc,rightPc,true,false,jump,rightCode);
 				}
 				break;
 			case Code::Jal:
 				if(dnpc!=rightPc){
+					errJalAddr++;
 					dnpc=rightPc;
-					bpu.update(pc,rightPc,false,true,false,Code::Jal);
-				}break;
-			case Code::jalr:
+					bpu.update(pc,rightPc,false,true,jump,rightCode);
+				}else{
+					hit++;
+					bpu.update(pc,rightPc,false,false,jump,rightCode);//TODO
+				}
+				break;
+			case Code::Jalr:
 				if(dnpc!=rightPc){
+					errJalrAddr++;
 					dnpc=rightPc;
-					bpu.update(pc,rightPc,false,true,false,Code::jalr);
-				}break;
-			case Code::Idle:break;
+					bpu.update(pc,rightPc,false,true,jump,rightCode);
+				}else{
+					hit++;
+					bpu.update(pc,rightPc,false,false,jump,rightCode);//TODO
+				}
+				break;
+			case Code::Idle:
+				if(dnpc!=rightPc || rightCode!=res.code){
+					dnpc=rightPc;
+					bpu.update(pc,rightPc,true,true,jump,rightCode);
+					// printf("error %8x %d!=%d\n",pc,res.code,rightCode);
+				}else{
+					hit++;
+					bpu.update(pc,rightPc,false,false,jump,rightCode);//TODO
+				}
+				break;
 		}
 
-
-		if(dnpc!=rightPc){printf("error\n");break;}
+		if(dnpc!=rightPc){
+			printf("error %lu %8x != %8x\n",cnt,dnpc,rightPc);break;
+		}
 	}
 	file.close();
 }

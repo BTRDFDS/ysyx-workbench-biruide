@@ -158,23 +158,19 @@ runIcache:verilogIcache $(srcCppIcache)
 # 	./build/$(srcIcache)/V$(srcIcache) $(ARG)
 	time ./build/$(srcIcache)/V$(srcIcache) $(ARG)
 
-buildIcachesim:./test/cpp/icachesim/icachesim.cpp
+icachesim:./test/cpp/icachesim/icachesim.cpp
 	clang++ ./test/cpp/icachesim/icachesim.cpp -o ./test/cpp/icachesim/icachesim
-icachesim:./test/cpp/icachesim/icachesim
 	time ./test/cpp/icachesim/icachesim
 
-buildDcachesim:./test/cpp/dcachesim/dcachesim.cpp
+dcachesim:./test/cpp/dcachesim/dcachesim.cpp
 	clang++ ./test/cpp/dcachesim/dcachesim.cpp -o ./test/cpp/dcachesim/dcachesim
-dcachesim:./test/cpp/dcachesim/dcachesim
 	time ./test/cpp/dcachesim/dcachesim
-branchsim:./test/cpp/branchsim/branchsim
+branchsim:./test/cpp/branchsim/branchsim.cpp
+	clang++ ./test/cpp/branchsim/branchsim.cpp -o ./test/cpp/branchsim/branchsim
 	time ./test/cpp/branchsim/branchsim
-bjsim:./test/cpp/bjsim/bjsim
+bjsim:./test/cpp/bjsim/bjsim.cpp
+	clang++ ./test/cpp/bjsim/bjsim.cpp -o ./test/cpp/bjsim/bjsim
 	time ./test/cpp/bjsim/bjsim
-bjrsim:./test/cpp/bjrsim/bjrsim
-	time ./test/cpp/bjrsim/bjrsim
-ifusim:./test/cpp/bjrsim/ifusim
-	time ./test/cpp/bjrsim/ifusim
 
 coverager:
 	lcov --list --rc branch_coverage=1 --rc function_coverage=0 /home/biruide/ysyx-workbench/npc/log/merged.info
