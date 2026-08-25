@@ -20,6 +20,11 @@ struct Bpu{
 	uint32_t btbPc[BtbSize]{};
 	uint32_t btbAddr[BtbSize]{};
 	Code btbCode[BtbSize]{};
+	// static const uint32_t JalrBits = 1;
+	// static const uint32_t JalrSize = 1<<JalrBits;
+	// static const uint32_t JalrMask = JalrSize-1;
+	// uint32_t jalrPc[JalrSize]{};
+	// uint32_t jalrAddr[JalrSize]{};
 	Bpu(){
 		for(int i=0;i<BtbSize;i++){
 			btbPc[i] = 0;
@@ -40,7 +45,7 @@ struct Bpu{
 		}
 		res.code = btbCode[i];
 		switch(btbCode[i]){
-			case Code::Branch	:res.jump = b2 >=2;break;
+			case Code::Branch	:res.jump = b2 >=0;break;
 			case Code::Jal		:res.jump = true;break;
 			case Code::Jalr		:res.jump = true;break;
 			case Code::Idle		:res.jump = false;break;
@@ -50,7 +55,7 @@ struct Bpu{
 		return res;
 	}
 	void update(uint32_t pc,uint32_t addr,bool pred,bool btb,bool prTo,Code btTo){
-		if(btb&&(btTo==Code::Branch || btTo==Code::Jal)){
+		if(btb&&(btTo==Code::Branch || btTo==Code::Jalr)){
 			bool hit = false;
 			int i;
 			for(i=0;i<BtbSize;i++){
@@ -133,12 +138,12 @@ int main() {
 		if(jalr)	rightCode = Code::Jalr;
 
 		BpuRes res = bpu.locate(pc);
-		// if(rightCode==Code::Jal){
-		// 	res.jump=true;
-		// 	res.addr=addr;
-		// 	res.hit=true;
-		// 	res.code=Code::Jal;
-		// }
+		if(rightCode==Code::Jal){
+			res.jump=true;
+			res.addr=addr;
+			res.hit=true;
+			res.code=Code::Jal;
+		}
 		uint32_t dnpc = res.addr;
 		switch(rightCode){
 			case Code::Branch:
