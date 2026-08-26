@@ -22,7 +22,7 @@ struct Bpu{
 	uint32_t jalrPc[JalrSize]{};
 	uint32_t jalrAddr[JalrSize]{};
 	uint32_t jalrCnt=0;
-	static const uint32_t JalBits = 0;
+	static const uint32_t JalBits = 1;
 	static const uint32_t JalSize = 1<<JalBits;
 	uint32_t jalPc[JalSize]{};
 	uint32_t jalAddr[JalSize]{};
