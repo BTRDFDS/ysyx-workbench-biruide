@@ -47,9 +47,9 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))
+	val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
+	val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeResult)
 	when(pipeValid){
-		val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
-		val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeResult)
 		switch(pipeAlu){
 			is(ExuAlu.Add)	{result := input1 + input2}
 			is(ExuAlu.Sll)	{result :=(input1 << input2(4,0))(31,0)}
@@ -85,7 +85,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		}
 	}
 
-	val shouldBe = Mux((pipeJump || enBfun),result,Cat(pipePc+1.U,0.U(2.W)))
+	val shouldBe = Mux((pipeJump || enBfun),input1+pipeResult,Cat(pipePc+1.U,0.U(2.W)))
 	val noSend = RegInit(true.B)
 	when(out.imme.ready){noSend := true.B}
 	.elsewhen(pipeValid&&(out.imme.reloca || pipeFenceI)){noSend := false.B}
