@@ -83,7 +83,7 @@ struct Bpu{
 		return res;
 	}
 	void update(uint32_t pc,uint32_t addr,bool pred,bool btb,bool prTo,Code btTo){
-		if(btb&&(btTo==Code::Branch)&&addr!=pc+4){
+		if(btb&&(btTo==Code::Branch)){//&&prTo
 			bool hit = false;
 			int i;
 			for(i=0;i<BtbSize;i++){
@@ -207,45 +207,30 @@ int main() {
 			case Code::Branch:
 				if(dnpc!=rightPc){
 					dnpc=rightPc;
-					bpu.update(pc,rightPc,true,true,jump,rightCode);
+					bpu.update(pc,rightPc,true,jump,jump,rightCode);
 					if(res.jump!=jump){
 						if(jump)errBrNotJump++;
 						else 	errBrJump++;
 					}else		errBrAddr++;
-				}else{
-					hit++;
-					bpu.update(pc,rightPc,true,false,jump,rightCode);
-				}
+				}else{hit++;}
 				break;
 			case Code::Jal:
-				if(dnpc!=rightPc){
-					errJalAddr++;
+				if(dnpc!=rightPc){errJalAddr++;
 					dnpc=rightPc;
 					bpu.update(pc,rightPc,false,true,jump,rightCode);
-				}else{
-					hit++;
-					bpu.update(pc,rightPc,false,false,jump,rightCode);//TODO
-				}
+				}else{hit++;}
 				break;
 			case Code::Jalr:
-				if(dnpc!=rightPc){
-					errJalrAddr++;
+				if(dnpc!=rightPc){errJalrAddr++;
 					dnpc=rightPc;
 					bpu.update(pc,rightPc,false,true,jump,rightCode);
-				}else{
-					hit++;
-					bpu.update(pc,rightPc,false,false,jump,rightCode);//TODO
-				}
+				}else{hit++;}
 				break;
 			case Code::Idle:
-				if(dnpc!=rightPc || rightCode!=res.code){
+				if(dnpc!=rightPc){// || rightCode!=res.code
 					dnpc=rightPc;
 					bpu.update(pc,rightPc,true,true,jump,rightCode);
-					// printf("error %8x %d!=%d\n",pc,res.code,rightCode);
-				}else{
-					hit++;
-					bpu.update(pc,rightPc,false,false,jump,rightCode);//TODO
-				}
+				}else{hit++;}
 				break;
 		}
 
