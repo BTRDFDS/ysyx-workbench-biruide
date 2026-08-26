@@ -4,7 +4,6 @@
 #include <fstream>
 #include <stdint.h>
 #include <vector>
-std::fstream file;
 enum class Code{Idle,Branch,Jal,Jalr};
 struct BpuRes{
 	uint32_t addr,pc;
@@ -13,23 +12,33 @@ struct BpuRes{
 };
 struct Bpu{
 	uint8_t b2=2;
-	uint8_t btbCnt=0;
 	static const  uint32_t BtbBits = 2;
 	static const  uint32_t BtbSize = 1<<BtbBits;
-	static const  uint32_t BtbMask = BtbSize-1;
 	uint32_t btbPc[BtbSize]{};
 	uint32_t btbAddr[BtbSize]{};
-	Code btbCode[BtbSize]{};
-	// static const uint32_t JalrBits = 1;
-	// static const uint32_t JalrSize = 1<<JalrBits;
-	// static const uint32_t JalrMask = JalrSize-1;
-	// uint32_t jalrPc[JalrSize]{};
-	// uint32_t jalrAddr[JalrSize]{};
+	uint8_t btbCnt=0;
+	static const uint32_t JalrBits = 0;
+	static const uint32_t JalrSize = 1<<JalrBits;
+	uint32_t jalrPc[JalrSize]{};
+	uint32_t jalrAddr[JalrSize]{};
+	uint32_t jalrCnt=0;
+	static const uint32_t JalBits = 0;
+	static const uint32_t JalSize = 1<<JalBits;
+	uint32_t jalPc[JalSize]{};
+	uint32_t jalAddr[JalSize]{};
+	uint32_t jalCnt=0;
 	Bpu(){
 		for(int i=0;i<BtbSize;i++){
 			btbPc[i] = 0;
 			btbAddr[i] = 0;
-			btbCode[i] = Code::Idle;
+		}
+		for(int i=0;i<JalrSize;i++){
+			jalrPc[i] = 0;
+			jalrAddr[i] = 0;
+		}
+		for(int i=0;i<JalSize;i++){
+			jalPc[i] = 0;
+			jalAddr[i] = 0;
 		}
 	}
 	BpuRes locate(uint32_t pc){
@@ -37,25 +46,44 @@ struct Bpu{
 		res.pc=pc;
 		uint32_t i;
 		res.hit = false;
-		for(i=0;i<BtbSize;i++){
-			if(btbPc[i]==pc && btbCode[i]!=Code::Idle){
+		for(i=0;i<JalSize;i++){
+			if(jalPc[i]==pc){
 				res.hit = true;
 				break;
 			}
 		}
-		res.code = btbCode[i];
-		switch(btbCode[i]){
-			case Code::Branch	:res.jump = b2 >=0;break;
-			case Code::Jal		:res.jump = true;break;
-			case Code::Jalr		:res.jump = true;break;
-			case Code::Idle		:res.jump = false;break;
+		if(res.hit){
+			res.addr = jalAddr[i];
+			res.code = Code::Jal;
+			res.jump = true;
+		}else{
+			for(i=0;i<JalrSize;i++){
+				if(jalrPc[i]==pc){
+					res.hit = true;
+					break;
+				}
+			}
+			if(res.hit){
+				res.addr = jalrAddr[i];
+				res.code = Code::Jalr;
+				res.jump = true;
+			}else{
+				for(i=0;i<BtbSize;i++){
+					if(btbPc[i]==pc){
+						res.hit = true;
+						break;
+					}
+				}
+				res.code = Code::Branch;
+				res.jump = b2 >=0;
+				if(res.hit && res.jump)res.addr = btbAddr[i];
+				else res.addr = pc+4;
+			}
 		}
-		if(res.hit && res.jump)res.addr = btbAddr[i];
-		else res.addr = pc+4;
 		return res;
 	}
 	void update(uint32_t pc,uint32_t addr,bool pred,bool btb,bool prTo,Code btTo){
-		if(btb&&(btTo==Code::Branch || btTo==Code::Jalr)){
+		if(btb&&(btTo==Code::Branch)&&addr!=pc+4){
 			bool hit = false;
 			int i;
 			for(i=0;i<BtbSize;i++){
@@ -64,14 +92,43 @@ struct Bpu{
 					break;
 				}
 			}
-			if(hit){
-				btbAddr[i] = addr;
-				btbCode[i] = btTo;
+			if(hit){btbAddr[i] = addr;
 			}else{
 				btbPc	[btbCnt] = pc;
 				btbAddr	[btbCnt] = addr;
-				btbCode	[btbCnt] = btTo;
 				btbCnt = (btbCnt+1)%BtbSize;
+			}
+		}
+		if(btb&&btTo==Code::Jalr){
+			bool hit = false;
+			int i;
+			for(i=0;i<JalrSize;i++){
+				if(jalrPc[i]==pc){
+					hit = true;
+					break;
+				}
+			}
+			if(hit){jalrAddr[i] = addr;
+			}else{
+				jalrPc	[jalrCnt] = pc;
+				jalrAddr[jalrCnt] = addr;
+				jalrCnt = (jalrCnt+1)%JalrSize;
+			}
+		}
+		if(btb&&btTo==Code::Jal){
+			bool hit = false;
+			int i;
+			for(i=0;i<JalSize;i++){
+				if(jalPc[i]==pc){
+					hit = true;
+					break;
+				}
+			}
+			if(hit){jalAddr[i] = addr;
+			}else{
+				jalPc  [jalCnt] = pc;
+				jalAddr[jalCnt] = addr;
+				jalCnt = (jalCnt+1)%JalSize;
 			}
 		}
 		if(pred){
@@ -82,6 +139,7 @@ struct Bpu{
 };
 int main() {
 	Bpu bpu;
+	std::fstream file;
 	file.open("/home/biruide/ysyx-workbench/npc/bin/BJRmicrobench-train.bin", std::ios::in | std::ios::binary);
 	// file.open("/home/biruide/ysyx-workbench/npc/bin/BJRadd.bin", std::ios::in | std::ios::binary);
 	// file.open("/home/biruide/ysyx-workbench/npc/bin/BJRdiv.bin", std::ios::in | std::ios::binary);
@@ -106,8 +164,8 @@ int main() {
 			printf("miss= %ld[%f]\n",miss,miss/(float)cnt);
 			printf("errJalAddr= %ld[%f](%f){%f}\n",	errJalAddr,	errJalAddr /(float)cnt,errJalAddr /(float)miss,errJalAddr /(float)ju);
 			printf("errJalrAddr= %ld[%f](%f){%f}\n",errJalrAddr,errJalrAddr/(float)cnt,errJalrAddr/(float)miss,errJalrAddr/(float)jr);
-			printf("errBrNotJump= %ld[%f](%f)\n",errBrNotJump,errBrNotJump/(float)cnt,errBrNotJump/(float)miss);
-			printf("errBrJump= %ld[%f](%f)\n",errBrJump,errBrJump/(float)cnt,errBrJump/(float)miss);
+			printf("errBrNotJump= %ld[%f](%f){%f}\n",errBrNotJump,errBrNotJump/(float)cnt,errBrNotJump/(float)miss,errBrNotJump/(float)bi);
+			printf("errBrJump= %ld[%f](%f){%f}\n"	,errBrJump   ,errBrJump   /(float)cnt,errBrJump   /(float)miss,errBrJump   /(float)bn);
 			printf("errBrAddr= %ld[%f](%f)\n",errBrAddr,errBrAddr/(float)cnt,errBrAddr/(float)miss);
 			break;
 		}
@@ -138,12 +196,12 @@ int main() {
 		if(jalr)	rightCode = Code::Jalr;
 
 		BpuRes res = bpu.locate(pc);
-		if(rightCode==Code::Jal){
-			res.jump=true;
-			res.addr=addr;
-			res.hit=true;
-			res.code=Code::Jal;
-		}
+		// if(rightCode==Code::Jal){
+		// 	res.jump=true;
+		// 	res.addr=addr;
+		// 	res.hit=true;
+		// 	res.code=Code::Jal;
+		// }
 		uint32_t dnpc = res.addr;
 		switch(rightCode){
 			case Code::Branch:
