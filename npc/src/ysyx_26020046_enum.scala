@@ -4,6 +4,7 @@ import chisel3.util._
 
 object MemStatus extends ChiselEnum{val Call,Back = Value}
 object IfuRes extends ChiselEnum {val Null,Valid,Un4b,Fall=Value}
+object IfuUpdate extends ChiselEnum {val Null,Branch,Jal,Jalr=Value}
 object Jump extends ChiselEnum {val Null,Suce,Chag,Nchg=Value}
 object ExuAlu extends ChiselEnum {val Add,Sll,Slt,Sltu,Xor,Srl,Or,And,Sub,Sra,Csr,Imm,Jalr,Null = Value}
 object ExuBfu extends ChiselEnum {

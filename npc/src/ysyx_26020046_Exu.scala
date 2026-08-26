@@ -12,14 +12,11 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		val pipe = new PipeExLs()
 	})
 	val ich		= IO(new FecneBus())
-	val pipeReset	= reset.asBool||(out.imme.pcChg && in.imme.ready)//||in.imme.error error被包含在jump里面了
+	val pipeReset	= reset.asBool||(out.imme.reloca && in.imme.ready)//||in.imme.error error被包含在jump里面了
 	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
 	val pipeFenceI	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.fenceI	)
-	val pipeEnJcod	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.enJcod	)
-	val pipeBrHit	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.brHit	)
-	val pipeHit		= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.hit		)
-	val pipeNoBp	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.noBp	)
-	val pipeMayJp	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.mayJp	)
+	val pipeJump	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.jump	)
+	val pipeUpdate	= PipeReg(pipeReset,IfuUpdate.Null		,out.imme.ready,in.pipe.update	)
 	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
 	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
@@ -88,30 +85,32 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		}
 	}
 
-	val shouldBe = Mux((pipeEnJcod || enBfun),result,Cat(pipePc+1.U,0.U(2.W)))
+	val shouldBe = Mux((pipeJump || enBfun),result,Cat(pipePc+1.U,0.U(2.W)))
 	val noSend = RegInit(true.B)
 	when(out.imme.ready){noSend := true.B}
-	.elsewhen(pipeValid&&(pipeMayJp)){noSend := false.B}
+	.elsewhen(pipeValid&&(out.imme.reloca || pipeFenceI)){noSend := false.B}
+
 	ich.fenceI	:= (~in.imme.error && pipeValid) && pipeFenceI && noSend
 	out.imme.ready	:= in.imme.ready || ~pipeValid
+	out.imme.update	:= IfuUpdate.Null
+	out.imme.reloca	:= false.B
 	when(in.imme.error){
 		out.imme.addr	:= in.imme.addr
 		out.imme.pc		:= in.imme.pc
-		out.imme.pcChg	:= true.B
-		out.imme.btChg	:= false.B
-		out.imme.bpChg	:= false.B
-		out.imme.jump	:= false.B
+		out.imme.reloca	:= true.B
 	}.otherwise{
 		out.imme.addr	:= shouldBe
 		out.imme.pc		:= pipePc
-		out.imme.jump	:= pipeEnJcod || enBfun
-		out.imme.pcChg	:= false.B
-		out.imme.btChg	:= false.B
-		out.imme.bpChg	:= false.B
 		when(pipeValid&&noSend){
-			out.imme.bpChg := enBfun || pipeBrHit
-			out.imme.pcChg := Mux(pipeEnJcod || enBfun,pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)),pipeHit)
-			out.imme.btChg := enBfun && (pipeNoBp || (in.pipe.pc =/= shouldBe(31,2)))
+			when(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI){
+				out.imme.reloca := true.B
+				out.imme.update	:= Mux1H(Seq(
+					(pipeUpdate === IfuUpdate.Jalr)		-> IfuUpdate.Jalr,
+					(pipeUpdate === IfuUpdate.Jal)		-> IfuUpdate.Jal,
+					(pipeUpdate === IfuUpdate.Branch)	-> Mux(enBfun,IfuUpdate.Branch,IfuUpdate.Null),
+					(pipeUpdate === IfuUpdate.Null)		-> IfuUpdate.Null
+				))
+			}
 		}
 	}
 
@@ -129,6 +128,8 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	}
 
 	if(Yosys == false){
-		dontTouch(noSend);
+		dontTouch(result)
+		dontTouch(shouldBe)
+		dontTouch(noSend)
 	}
 }

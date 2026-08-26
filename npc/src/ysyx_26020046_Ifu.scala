@@ -18,56 +18,59 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		.otherwise							{out.pipe.res := IfuRes.Null}
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-	val bp2Cnt	= RegInit(2.U(2.W))
-	val bp2Hit = bp2Cnt >= 2.U
+	val BrBits	= 2
+	val BrSize	= 1 << BrBits
+	val brCnt	= RegInit(0.U(BrBits.W))
+	val brPc	= RegInit(VecInit(Seq.fill(BrSize)(0.U((BitWidth-2).W))))
+	val brAddr	= RegInit(VecInit(Seq.fill(BrSize)(0.U((BitWidth-2).W))))
+	val brMatch = VecInit(brPc.map(_ === pipePc)).asUInt
+	val brIndex = PriorityEncoder(brMatch)
+	val brHit	= brMatch.orR
 
-	val BtbBits	= 2
-	val BtbSize	= 1 << BtbBits
-	val btbCnt	= RegInit(0.U(BtbBits.W))
-	val btbPc	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
-	val btbAddr	= RegInit(VecInit(Seq.fill(BtbSize)(0.U((BitWidth-2).W))))
-	val btbMatch= VecInit(btbPc.map(_ === pipePc)).asUInt
-	val btbIndex= PriorityEncoder(btbMatch)
-	val btbHit	= btbMatch.orR
+	val JalBits = 1
+	val JalSize = 1 << JalBits
+	val jalCnt	= RegInit(0.U(JalBits.W))
+	val jalPc	= RegInit(VecInit(Seq.fill(JalSize)(0.U((BitWidth-2).W))))
+	val jalAddr	= RegInit(VecInit(Seq.fill(JalSize)(0.U((BitWidth-2).W))))
+	val jalMatch= VecInit(jalPc.map(_ === pipePc)).asUInt
+	val jalIndex= PriorityEncoder(jalMatch)
+	val jalHit	= jalMatch.orR
+	
+	val jalrPc	= RegInit(0.U((BitWidth-2).W))
+	val jalrAddr= RegInit(0.U((BitWidth-2).W))
+	val JalrHit	= jalrPc === pipePc	
 
-	val isBranch= out.pipe.instr(6,0)===Op.Branch.asUInt
-	val isJal	= out.pipe.instr(6,0)===Op.Jal.asUInt
-	val isJalr	= out.pipe.instr(6,0)===Op.Ijalr.asUInt
-
-	val jalNoStop = RegInit(true.B)
-	when(in.imme.jump || in.imme.pcChg){jalNoStop := true.B}//TODO：没办法只能对这里下手了
-	.elsewhen(in.imme.ready&&ich.ready&&jalNoStop&&(isJalr)){jalNoStop := false.B}
-	when(in.imme.pcChg){
+	when(in.imme.reloca){
 		pipePc := in.imme.addr(31,2)
-	}.elsewhen(in.imme.ready&&ich.ready&&(jalNoStop || in.imme.jump)){
-		when(isJal){
-					pipePc := pipePc + Cat(Fill(12,out.pipe.instr(31)),out.pipe.instr(19,12),out.pipe.instr(20),out.pipe.instr(30,22))
-		}.elsewhen(((isBranch&&bp2Hit))&&btbHit){//||isJalr
-					pipePc := btbAddr(btbIndex)
-		}.otherwise{pipePc := pipePc+1.U}
+	}.elsewhen(in.imme.ready&&ich.ready){
+		pipePc := MuxCase(pipePc+1.U,Seq(
+			brHit	-> brAddr(brIndex),
+			jalHit	-> jalAddr(jalIndex),
+			JalrHit	-> jalrAddr
+		))
 	}
-	when(in.imme.bpChg){
-		when(in.imme.jump){	when(bp2Cnt<=2.U){bp2Cnt := bp2Cnt + 1.U}}
-		.otherwise{			when(bp2Cnt>=1.U){bp2Cnt := bp2Cnt - 1.U}}
+	when(in.imme.update===IfuUpdate.Branch){
+		brPc(brCnt)	:= in.imme.pc
+		brAddr(brCnt) := in.imme.addr(31,2)
+		brCnt := brCnt + 1.U
 	}
-	when(in.imme.btChg && in.imme.addr(31,2)=/=pipePc){
-		btbPc(btbCnt)	:= in.imme.pc
-		btbAddr(btbCnt) := in.imme.addr(31,2)
-		btbCnt := btbCnt + 1.U
+	when(in.imme.update===IfuUpdate.Jal){
+		jalPc(jalCnt)	:= in.imme.pc
+		jalAddr(jalCnt) := in.imme.addr(31,2)
+		jalCnt := jalCnt + 1.U
 	}
-	out.pipe.bpJump	:= bp2Hit || isJalr
-	out.pipe.btbGet := btbHit
+	when(in.imme.update===IfuUpdate.Jalr){
+		jalrPc	:= in.imme.pc
+		jalrAddr:= in.imme.addr(31,2)
+	}
 	if(Yosys == false){
-		dontTouch(isBranch)
-		dontTouch(isJal)
-		dontTouch(isJalr)
-		dontTouch(btbCnt)
-		dontTouch(btbPc)
-		dontTouch(btbAddr)
-		dontTouch(btbMatch)
-		dontTouch(btbIndex)
-		dontTouch(btbHit)
-		dontTouch(bp2Cnt)
-		dontTouch(bp2Hit)
+		dontTouch(brCnt)
+		dontTouch(brPc)
+		dontTouch(brAddr)
+		dontTouch(jalCnt)
+		dontTouch(jalPc)
+		dontTouch(jalAddr)
+		dontTouch(jalrPc)
+		dontTouch(jalrAddr)
 	}
 }

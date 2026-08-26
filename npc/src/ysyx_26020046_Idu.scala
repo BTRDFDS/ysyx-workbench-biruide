@@ -10,12 +10,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val pipe	= new PipeIdEx()
 		val imme	= new ImmeIdIf()
 	})
-	val pipeReset	= reset.asBool||in.imme.pcChg
+	val pipeReset	= reset.asBool||in.imme.reloca
 	val pipeRes		= PipeReg(pipeReset,IfuRes.Null			,out.imme.ready,in.pipe.res		)
 	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
 	val pipeInstr	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.instr	)
-	val pipeBpJump	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.bpJump	)
-	val pipeBtbGet	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.btbGet	)
 
 	//默认值
 	out.pipe.valid	:= false.B
@@ -29,12 +27,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.r2		:= in.imme.r2Out
 	out.pipe.r1		:= in.imme.r1Out
 	out.pipe.csrMesg:= in.imme.csrOut
-	out.pipe.enJcod	:= false.B
-	out.pipe.brHit	:= false.B
-	out.pipe.hit	:= false.B
-	out.pipe.noBp	:= false.B
-	out.pipe.mayJp	:= false.B
+
 	out.pipe.fenceI	:= false.B
+	out.pipe.jump	:= false.B
+	out.pipe.update	:= IfuUpdate.Null
+
 	out.pipe.alu	:= ExuAlu.Null
 	out.pipe.bfu	:= ExuBfu.Null
 	out.pipe.csr	:= ExuCsr.Null
@@ -73,15 +70,23 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Ijalr)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20))}
 				is(Op.Iload)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20))}
 				is(Op.Branch)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(7),pipeInstr(30,25),pipeInstr(11,8),0.U(1.W))}
+				is(Op.Jal)		{out.pipe.result := Cat(Fill(12,pipeInstr(31)),pipeInstr(19,12),pipeInstr(20),pipeInstr(30,21),0.U(1.W))}
 				is(Op.Icsr)		{out.pipe.result := in.imme.csrOut}
 			}
-			when(opEnum === Op.Ijalr ||(opEnum === Op.Icsr & funct3 === 0.U(3.W))){out.pipe.enJcod := true.B}
-			when(opEnum === Op.Branch && pipeBpJump && pipeBtbGet){out.pipe.brHit := true.B}
-			when(pipeBpJump && pipeBtbGet){out.pipe.hit := true.B}
-			when(~pipeBpJump){out.pipe.noBp := true.B}
-			when(opEnum === Op.Branch || opEnum === Op.Ijalr || pipeInstr === 0x0000100F.U){out.pipe.mayJp := true.B}
+			// when(opEnum === Op.Ijalr ||(opEnum === Op.Icsr & funct3 === 0.U(3.W))){out.pipe.enJcod := true.B}
+			// when(opEnum === Op.Branch && pipeBpJump && pipeBtbGet){out.pipe.brHit := true.B}
+			// when(pipeBpJump && pipeBtbGet){out.pipe.hit := true.B}
+			// when(~pipeBpJump){out.pipe.noBp := true.B}
+			// when(opEnum === Op.Branch || opEnum === Op.Ijalr || pipeInstr === 0x0000100F.U){out.pipe.mayJp := true.B}
+
 			out.pipe.fenceI := pipeInstr === 0x0000100F.U
-			
+			when(opEnum === Op.Jal || opEnum === Op.Ijalr){out.pipe.jump := true.B}
+			switch(opEnum){
+				is(Op.Jal)		{out.pipe.update := IfuUpdate.Jal}
+				is(Op.Ijalr)	{out.pipe.update := IfuUpdate.Jalr}
+				is(Op.Branch)	{out.pipe.update := IfuUpdate.Branch}
+			}
+
 			switch(opEnum){
 				is(Op.Uauipc){out.pipe.alu := ExuAlu.Add}
 				is(Op.Ialu){
@@ -110,7 +115,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 						}
 					}
 				}
-				// is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
+				is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
 				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Jalr}
 				is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Icsr)		{out.pipe.alu := ExuAlu.Csr}
@@ -120,14 +125,14 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			}
 			switch(opEnum){
 				is(Op.Uauipc)	{out.pipe.in1 := ExuIn1.Pc}
-				// is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
+				is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
 				is(Op.Branch)	{out.pipe.in1 := ExuIn1.Pc}
 			}
 			switch(opEnum){
 				is(Op.Uauipc)	{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Ului)		{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Ialu)		{out.pipe.in2 := ExuIn2.Imm}
-				// is(Op.Jal)		{out.pipe.in2 := ExuIn2.Imm}
+				is(Op.Jal)		{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Ijalr)	{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Iload)	{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Branch)	{out.pipe.in2 := ExuIn2.Imm}
@@ -218,10 +223,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.imme.pc		:= in.imme.pc
 	out.imme.ready	:= (in.imme.ready && in.imme.valid) || pipeRes === IfuRes.Null
 
-	out.imme.bpChg	:= in.imme.bpChg
-	out.imme.jump	:= in.imme.jump
-	out.imme.btChg	:= in.imme.btChg
-	out.imme.pcChg	:= in.imme.pcChg
+	out.imme.reloca	:= in.imme.reloca
+	out.imme.update	:= in.imme.update
 
 	if(Yosys == false){
 		dontTouch(pipeReset)

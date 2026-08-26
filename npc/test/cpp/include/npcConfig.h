@@ -1,3 +1,4 @@
+#include <cstdint>
 #ifndef _NPC_CONFIG_
 #define _NPC_CONFIG_
 
