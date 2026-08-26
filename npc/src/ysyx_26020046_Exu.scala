@@ -90,7 +90,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 	when(out.imme.ready){noSend := true.B}
 	.elsewhen(pipeValid&&(out.imme.reloca || pipeFenceI)){noSend := false.B}
 
-	ich.fenceI	:= (~in.imme.error && pipeValid) && pipeFenceI && noSend
+	ich.fenceI	:= false.B
 	out.imme.ready	:= in.imme.ready || ~pipeValid
 	out.imme.update	:= IfuUpdate.Null
 	out.imme.reloca	:= false.B
@@ -102,6 +102,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		out.imme.addr	:= shouldBe
 		out.imme.pc		:= pipePc
 		when(pipeValid&&noSend){
+			ich.fenceI		:= pipeFenceI
 			when(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI){
 				out.imme.reloca := true.B
 				out.imme.update	:= Mux1H(Seq(
