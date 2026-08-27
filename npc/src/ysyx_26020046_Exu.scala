@@ -61,7 +61,6 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 			is(ExuAlu.And)	{result := input1 & input2}
 			is(ExuAlu.Sub)	{result := input1 - input2}
 			is(ExuAlu.Sra)	{result :=(input1.asSInt >> input2(4,0)).asUInt}
-			is(ExuAlu.Imm)	{result := pipeResult}
 		}
 		switch(pipeBfu){
 			is(ExuBfu.Beq)	{enBfun := pipeR1 === pipeR2}
@@ -79,7 +78,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 			is(ExuRes.Alu)	{out.pipe.result := result}
 			is(ExuRes.Null)	{out.pipe.result := 0.U}
 			is(ExuRes.Snpc)	{out.pipe.result := Cat(pipePc+1.U,0.U(2.W))}
-			is(ExuRes.Csr)	{out.pipe.result := pipeResult}//给rd的
+			is(ExuRes.Imm)	{out.pipe.result := pipeResult}//给rd的
 		}
 	}
 

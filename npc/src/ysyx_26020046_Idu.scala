@@ -73,11 +73,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Jal)		{out.pipe.result := Cat(Fill(12,pipeInstr(31)),pipeInstr(19,12),pipeInstr(20),pipeInstr(30,21),0.U(1.W))}
 				is(Op.Icsr)		{out.pipe.result := in.imme.csrOut}
 			}
-			// when(opEnum === Op.Ijalr ||(opEnum === Op.Icsr & funct3 === 0.U(3.W))){out.pipe.enJcod := true.B}
-			// when(opEnum === Op.Branch && pipeBpJump && pipeBtbGet){out.pipe.brHit := true.B}
-			// when(pipeBpJump && pipeBtbGet){out.pipe.hit := true.B}
-			// when(~pipeBpJump){out.pipe.noBp := true.B}
-			// when(opEnum === Op.Branch || opEnum === Op.Ijalr || pipeInstr === 0x0000100F.U){out.pipe.mayJp := true.B}
 
 			out.pipe.fenceI := pipeInstr === 0x0000100F.U
 			when(opEnum === Op.Jal || opEnum === Op.Ijalr || Cat(pipeInstr(14,12),pipeInstr(6,0))===0x73.U(10.W)){out.pipe.jump := true.B}
@@ -119,7 +114,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Branch)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
-				is(Op.Ului)		{out.pipe.alu := ExuAlu.Imm}
 			}
 			switch(opEnum){
 				is(Op.Uauipc)	{out.pipe.in1 := ExuIn1.Pc}
@@ -128,7 +122,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			}
 			switch(opEnum){
 				is(Op.Uauipc)	{out.pipe.in2 := ExuIn2.Imm}
-				is(Op.Ului)		{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Ialu)		{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Jal)		{out.pipe.in2 := ExuIn2.Imm}
 				is(Op.Ijalr)	{out.pipe.in2 := ExuIn2.Imm}
@@ -142,11 +135,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Uauipc)	{out.pipe.res := ExuRes.Alu}
 				is(Op.Store)	{out.pipe.res := ExuRes.Alu}
 				is(Op.Ralu)		{out.pipe.res := ExuRes.Alu}
-				is(Op.Ului)		{out.pipe.res := ExuRes.Alu}
+				is(Op.Ului)		{out.pipe.res := ExuRes.Imm}
 				is(Op.Branch)	{out.pipe.res := ExuRes.Null}
 				is(Op.Ijalr)	{out.pipe.res := ExuRes.Snpc}
 				is(Op.Jal)		{out.pipe.res := ExuRes.Snpc}
-				is(Op.Icsr)		{out.pipe.res := ExuRes.Csr}
+				is(Op.Icsr)		{out.pipe.res := ExuRes.Imm}
 			}
 			when(opEnum === Op.Branch){
 				val (bfuEnum,bfuValidAll) = ExuBfu.safe(funct3)
