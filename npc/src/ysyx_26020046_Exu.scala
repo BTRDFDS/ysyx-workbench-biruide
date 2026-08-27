@@ -61,9 +61,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 			is(ExuAlu.And)	{result := input1 & input2}
 			is(ExuAlu.Sub)	{result := input1 - input2}
 			is(ExuAlu.Sra)	{result :=(input1.asSInt >> input2(4,0)).asUInt}
-			is(ExuAlu.Csr)	{result := pipeResult}//给addr的
 			is(ExuAlu.Imm)	{result := pipeResult}
-			is(ExuAlu.Jalr)	{result := Cat((pipeR1 + pipeResult)(31,1), 0.U(1.W))}
 		}
 		switch(pipeBfu){
 			is(ExuBfu.Beq)	{enBfun := pipeR1 === pipeR2}

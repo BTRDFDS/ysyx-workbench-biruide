@@ -80,7 +80,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			// when(opEnum === Op.Branch || opEnum === Op.Ijalr || pipeInstr === 0x0000100F.U){out.pipe.mayJp := true.B}
 
 			out.pipe.fenceI := pipeInstr === 0x0000100F.U
-			when(opEnum === Op.Jal || opEnum === Op.Ijalr){out.pipe.jump := true.B}
+			when(opEnum === Op.Jal || opEnum === Op.Ijalr || Cat(pipeInstr(14,12),pipeInstr(6,0))===0x73.U(10.W)){out.pipe.jump := true.B}
 			switch(opEnum){
 				is(Op.Jal)		{out.pipe.update := IfuUpdate.Jal}
 				is(Op.Ijalr)	{out.pipe.update := IfuUpdate.Jalr}
@@ -116,9 +116,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 					}
 				}
 				is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
-				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Jalr}
 				is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
-				is(Op.Icsr)		{out.pipe.alu := ExuAlu.Csr}
 				is(Op.Branch)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Ului)		{out.pipe.alu := ExuAlu.Imm}
