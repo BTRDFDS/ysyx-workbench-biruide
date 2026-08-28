@@ -37,7 +37,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.csr	:= ExuCsr.Null
 	out.pipe.res	:= ExuRes.Alu
 	out.pipe.in1	:= ExuIn1.R1
-	out.pipe.in2	:= ExuIn2.R2
+	out.pipe.in2	:= ExuIn2.Imm
 
 	in.imme.r1Addr	:= 0.U
 	in.imme.r2Addr	:= 0.U
@@ -111,8 +111,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 						}
 					}
 				}
-				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Add}
-				is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
+				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Null}
+				is(Op.Jal)		{out.pipe.alu := ExuAlu.Null}
 				is(Op.Icsr)		{out.pipe.alu := ExuAlu.Null}
 				is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Branch)	{out.pipe.alu := ExuAlu.Null}
@@ -133,11 +133,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Store)	{out.pipe.in2 := ExuIn2.Imm}
 			}
 			switch(opEnum){
-				is(Op.Iload)	{out.pipe.res := ExuRes.Alu}
-				is(Op.Ialu)		{out.pipe.res := ExuRes.Alu}
-				is(Op.Uauipc)	{out.pipe.res := ExuRes.Alu}
-				is(Op.Store)	{out.pipe.res := ExuRes.Alu}
-				is(Op.Ralu)		{out.pipe.res := ExuRes.Alu}
+				is(Op.Fence)	{out.pipe.res := ExuRes.Null}
 				is(Op.Ului)		{out.pipe.res := ExuRes.Imm}
 				is(Op.Branch)	{out.pipe.res := ExuRes.Null}
 				is(Op.Ijalr)	{out.pipe.res := ExuRes.Snpc}

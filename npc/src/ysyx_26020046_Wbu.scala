@@ -91,10 +91,10 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 //提供数据
 	out.imme.valid	:= true.B
 	out.imme.csrOut := 0.U
-	out.imme.r1Out	:= Mux(out.imme.r1Addr === 0.U, 0.U,Mux(out.imme.r1Addr===pipeRdAddr,pipeResult,gpr(out.imme.r1Addr)))
-	out.imme.r2Out	:= Mux(out.imme.r2Addr === 0.U, 0.U,Mux(out.imme.r2Addr===pipeRdAddr,pipeResult,gpr(out.imme.r2Addr)))
+	out.imme.r1Out	:= Mux(out.imme.r1Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r1Addr===pipeRdAddr,pipeResult,gpr(out.imme.r1Addr)))
+	out.imme.r2Out	:= Mux(out.imme.r2Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r2Addr===pipeRdAddr,pipeResult,gpr(out.imme.r2Addr)))
 	val (csrReadAddr,csrReadValid)=CsrAddr.safe(out.imme.csrAddr)
-	when(csrReadValid){switch(csrReadAddr){
+	when(pipeValid&&csrReadValid){switch(csrReadAddr){
 		is(CsrAddr.Mcycle)		{out.imme.csrOut := mcycle}
 		is(CsrAddr.Mcycleh)		{out.imme.csrOut := mcycleh}
 		is(CsrAddr.Mepc)		{out.imme.csrOut := mepc}
