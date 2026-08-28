@@ -37,7 +37,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.csr	:= ExuCsr.Null
 	out.pipe.res	:= ExuRes.Alu
 	out.pipe.in1	:= ExuIn1.R1
-	out.pipe.in2	:= ExuIn2.Imm
+	out.pipe.in2	:= ExuIn2.R2
 
 	in.imme.r1Addr	:= 0.U
 	in.imme.r2Addr	:= 0.U
