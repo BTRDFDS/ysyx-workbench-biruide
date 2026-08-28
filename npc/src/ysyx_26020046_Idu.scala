@@ -110,8 +110,9 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 						}
 					}
 				}
-				is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
 				is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Add}
+				is(Op.Jal)		{out.pipe.alu := ExuAlu.Add}
+				is(Op.Icsr)		{out.pipe.alu := ExuAlu.Null}
 				is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
 				is(Op.Branch)	{out.pipe.alu := ExuAlu.Null}
 				is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
