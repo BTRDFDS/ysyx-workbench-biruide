@@ -98,6 +98,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 						}
 					}
 				}
+				is(Op.Fence)	{out.pipe.alu := ExuAlu.Null}
 				is(Op.Ralu){
 					val (aluEnum,_) = ExuAlu.safe(funct3)
 					aluValid := false.B
