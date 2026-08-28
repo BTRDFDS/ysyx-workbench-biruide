@@ -6,18 +6,27 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val ich	= IO(new InstrBus())
 	//pc更新
-		val pipePc	= RegInit(PcInit(31,2))
+		val pipePc		= RegInit(PcInit(31,2))
+		val pipeValid	= RegNext(Mux(in.imme.reloca,false.B,true.B),true.B)
 
 		ich.addr	:= pipePc
+		ich.valid	:= pipeValid
 
 		out.pipe.instr	:= ich.data
 		out.pipe.pc		:= pipePc
 
 		when(in.imme.addr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
-		.elsewhen(ich.ready)				{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
+		.elsewhen(ich.ready&&pipeValid)		{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 		.otherwise							{out.pipe.res := IfuRes.Null}
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+	val immePc		= RegNext(in.imme.pc	,0.U)
+	val immeAddr	= RegNext(in.imme.addr	,0.U)
+	val immeReloca	= RegNext(in.imme.reloca,false.B)
+	val immeUpdate	= RegNext(in.imme.update,IfuUpdate.Null)
+
+
+
 	val BrBits	= 2
 	val BrSize	= 1 << BrBits
 	val brCnt	= RegInit(0.U(BrBits.W))
@@ -40,8 +49,8 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val jalrAddr= RegInit(0.U((BitWidth-2).W))
 	val JalrHit	= jalrPc === pipePc	
 
-	when(in.imme.reloca){
-		pipePc := in.imme.addr(31,2)
+	when(immeReloca){
+		pipePc := immeAddr(31,2)
 	}.elsewhen(in.imme.ready&&ich.ready){
 		pipePc := MuxCase(pipePc+1.U,Seq(
 			brHit	-> brAddr(brIndex),
@@ -49,19 +58,19 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 			JalrHit	-> jalrAddr
 		))
 	}
-	when(in.imme.update===IfuUpdate.Branch){
-		brPc(brCnt)	:= in.imme.pc
-		brAddr(brCnt) := in.imme.addr(31,2)
+	when(immeUpdate===IfuUpdate.Branch){
+		brPc(brCnt)	:= immePc
+		brAddr(brCnt) := immeAddr(31,2)
 		brCnt := brCnt + 1.U
 	}
-	when(in.imme.update===IfuUpdate.Jal){
-		jalPc(jalCnt)	:= in.imme.pc
-		jalAddr(jalCnt) := in.imme.addr(31,2)
+	when(immeUpdate===IfuUpdate.Jal){
+		jalPc(jalCnt)	:= immePc
+		jalAddr(jalCnt) := immeAddr(31,2)
 		jalCnt := jalCnt + 1.U
 	}
-	when(in.imme.update===IfuUpdate.Jalr){
-		jalrPc	:= in.imme.pc
-		jalrAddr:= in.imme.addr(31,2)
+	when(immeUpdate===IfuUpdate.Jalr){
+		jalrPc	:= immePc
+		jalrAddr:= immeAddr(31,2)
 	}
 	if(Yosys == false){
 		dontTouch(brCnt)
