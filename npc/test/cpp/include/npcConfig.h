@@ -7,7 +7,7 @@
 // #define NPC_F_TRACE
 // #define NPC_E_TRACE
 // #define NPC_D_TRACE
-// #define NPC_NVBroad
+#define NPC_NVBroad
 // #define NPC_I_CACHE_TRACE
 // #define NPC_D_CACHE_TRACE
 // #define NPC_BRACHE_TRACE

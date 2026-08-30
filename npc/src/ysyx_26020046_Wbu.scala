@@ -94,16 +94,18 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	out.imme.r1Out	:= Mux(out.imme.r1Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r1Addr===pipeRdAddr,pipeResult,gpr(out.imme.r1Addr)))
 	out.imme.r2Out	:= Mux(out.imme.r2Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r2Addr===pipeRdAddr,pipeResult,gpr(out.imme.r2Addr)))
 	val (csrReadAddr,csrReadValid)=CsrAddr.safe(out.imme.csrAddr)
-	when(pipeValid&&csrReadValid){switch(csrReadAddr){
-		is(CsrAddr.Mcycle)		{out.imme.csrOut := mcycle}
-		is(CsrAddr.Mcycleh)		{out.imme.csrOut := mcycleh}
-		is(CsrAddr.Mepc)		{out.imme.csrOut := mepc}
-		is(CsrAddr.Mtvec)		{out.imme.csrOut := mtvec}
-		is(CsrAddr.Mcause)		{out.imme.csrOut := mcause}
-		is(CsrAddr.Mstatus)		{out.imme.csrOut := mstatus}
-		is(CsrAddr.Marchid)		{out.imme.csrOut := marchid}
-		is(CsrAddr.Mvendorid)	{out.imme.csrOut := mvendorid}
-	}}
-	
+	when(csrReadValid){
+		when(pipeValid&&out.imme.csrAddr===pipeCsrAddr){out.imme.csrOut := pipeCsrMesg}
+		.otherwise{switch(csrReadAddr){
+			is(CsrAddr.Mcycle)		{out.imme.csrOut := mcycle}
+			is(CsrAddr.Mcycleh)		{out.imme.csrOut := mcycleh}
+			is(CsrAddr.Mepc)		{out.imme.csrOut := mepc}
+			is(CsrAddr.Mtvec)		{out.imme.csrOut := mtvec}
+			is(CsrAddr.Mcause)		{out.imme.csrOut := mcause}
+			is(CsrAddr.Mstatus)		{out.imme.csrOut := mstatus}
+			is(CsrAddr.Marchid)		{out.imme.csrOut := marchid}
+			is(CsrAddr.Mvendorid)	{out.imme.csrOut := mvendorid}
+		}}
+	}
 	if(Yosys == false){}
 }
