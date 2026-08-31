@@ -123,11 +123,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
 				is(Op.Branch)	{out.pipe.in1 := ExuIn1.Pc}
 			}
-			out.pipe.in2 := MuxCase(ExuIn2.R2,Seq(
-				(opEnum===Op.Uauipc)-> ExuIn2.Imm,
-				(opEnum===Op.Store)	-> ExuIn2.Imm,
-				(opEnum===Op.Ialu)	-> ExuIn2.Imm,
+			out.pipe.in2 := MuxCase(ExuIn2.R2,Seq(//best
 				(opEnum===Op.Iload)	-> ExuIn2.Imm,
+				(opEnum===Op.Ialu)	-> ExuIn2.Imm,
+				(opEnum===Op.Store)	-> ExuIn2.Imm,
+				(opEnum===Op.Uauipc)-> ExuIn2.Imm,
 			))
 			switch(opEnum){
 				is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
