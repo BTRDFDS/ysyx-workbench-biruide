@@ -28,7 +28,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.r1		:= in.imme.r1Out
 	out.pipe.csrMesg:= in.imme.csrOut
 
-	out.pipe.fenceI	:= false.B
+	out.pipe.fenceI := pipeInstr === 0x0000100F.U
 	out.pipe.jump	:= false.B
 	out.pipe.update	:= IfuUpdate.Null
 
@@ -74,7 +74,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Icsr)		{out.pipe.result := in.imme.csrOut}
 			}
 
-			out.pipe.fenceI := pipeInstr === 0x0000100F.U
 			when(opEnum === Op.Jal || opEnum === Op.Ijalr || Cat(pipeInstr(14,12),pipeInstr(6,0))===0x73.U(10.W)){out.pipe.jump := true.B}
 			switch(opEnum){
 				is(Op.Jal)		{out.pipe.update := IfuUpdate.Jal}
