@@ -123,22 +123,16 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
 				is(Op.Branch)	{out.pipe.in1 := ExuIn1.Pc}
 			}
+			out.pipe.in2 := MuxCase(ExuIn2.R2,Seq(
+				(opEnum===Op.Uauipc)-> ExuIn2.Imm,
+				(opEnum===Op.Store)	-> ExuIn2.Imm,
+				(opEnum===Op.Ialu)	-> ExuIn2.Imm,
+				(opEnum===Op.Iload)	-> ExuIn2.Imm,
+			))
 			switch(opEnum){
-				is(Op.Uauipc)	{out.pipe.in2 := ExuIn2.Imm}
-				is(Op.Ialu)		{out.pipe.in2 := ExuIn2.Imm}
-				is(Op.Jal)		{out.pipe.in2 := ExuIn2.Imm}
-				is(Op.Ijalr)	{out.pipe.in2 := ExuIn2.Imm}
-				is(Op.Iload)	{out.pipe.in2 := ExuIn2.Imm}
-				is(Op.Branch)	{out.pipe.in2 := ExuIn2.Imm}
-				is(Op.Store)	{out.pipe.in2 := ExuIn2.Imm}
-			}
-			switch(opEnum){
-				is(Op.Fence)	{out.pipe.res := ExuRes.Null}
-				is(Op.Ului)		{out.pipe.res := ExuRes.Imm}
-				is(Op.Branch)	{out.pipe.res := ExuRes.Null}
-				is(Op.Ijalr)	{out.pipe.res := ExuRes.Snpc}
-				is(Op.Jal)		{out.pipe.res := ExuRes.Snpc}
-				is(Op.Icsr)		{out.pipe.res := ExuRes.Imm}
+				is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
+				is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}
+				is(Op.Fence,Op.Branch)	{out.pipe.res := ExuRes.Null}
 			}
 			when(opEnum === Op.Branch){
 				val (bfuEnum,bfuValidAll) = ExuBfu.safe(funct3)
