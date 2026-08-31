@@ -118,7 +118,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Branch)	{out.pipe.alu := ExuAlu.Null}
 				is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
 			}
-			switch(opEnum){
+			switch(opEnum){//bast
 				is(Op.Uauipc)	{out.pipe.in1 := ExuIn1.Pc}
 				is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
 				is(Op.Branch)	{out.pipe.in1 := ExuIn1.Pc}
@@ -129,7 +129,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				(opEnum===Op.Store)	-> ExuIn2.Imm,
 				(opEnum===Op.Uauipc)-> ExuIn2.Imm,
 			))
-			switch(opEnum){
+			switch(opEnum){//best
 				is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
 				is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}
 				is(Op.Fence,Op.Branch)	{out.pipe.res := ExuRes.Null}
@@ -139,7 +139,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				bfuValid := bfuValidAll & funct3 =/= ExuBfu.Null.asUInt
 				when(bfuValid){out.pipe.bfu := bfuEnum}
 			}
-			switch(opEnum){
+			switch(opEnum){//best
 				is(Op.Store){out.pipe.lsuOp := LsuOp.Store}
 				is(Op.Iload){out.pipe.lsuOp := LsuOp.Load}
 			}
