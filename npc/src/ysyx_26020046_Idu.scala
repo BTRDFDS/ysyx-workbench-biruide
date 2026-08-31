@@ -154,13 +154,13 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Branch)	{out.pipe.rdAddr := 0.U}
 				is(Op.Icsr)		{out.pipe.rdAddr := Mux(funct3 === 0.U(3.W),0.U(5.W),rdAddr)}
 			}
-			in.imme.r1Addr := r1Addr
-			switch(opEnum){//反选
+			in.imme.r1Addr := r1Addr//反选
+			switch(opEnum){//best
 			    is(Op.Ului)		{in.imme.r1Addr := 0.U}
 				is(Op.Uauipc)	{in.imme.r1Addr := 0.U}
 				is(Op.Jal)		{in.imme.r1Addr := 0.U}
 			}
-			switch(opEnum){
+			switch(opEnum){//best
 				is(Op.Store)	{in.imme.r2Addr := r2Addr}
 				is(Op.Branch)	{in.imme.r2Addr := r2Addr}
 				is(Op.Ralu)		{in.imme.r2Addr := r2Addr}
