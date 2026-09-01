@@ -30,7 +30,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 
 	out.pipe.fenceI := pipeInstr === 0x0000100F.U
 	out.pipe.jump	:= false.B
-	out.pipe.update	:= IfuUpdate.Null
 
 	out.pipe.alu	:= ExuAlu.Null
 	out.pipe.bfu	:= ExuBfu.Null
@@ -60,6 +59,20 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	
 	val (opEnum,opValid) = Op.safe(opCode)
 
+	out.pipe.update := MuxCase(IfuUpdate.Null,Seq(
+		(opEnum === Op.Ijalr)	-> IfuUpdate.Jalr,
+		(opEnum === Op.Branch)	-> IfuUpdate.Branch,
+		(opEnum === Op.Jal)		-> IfuUpdate.Jal,
+	))
+	// val exuin1pc = opEnum === Op.Jal || opEnum === Op.Branch || opEnum === Op.Uauipc
+	// out.pipe.in1 := Mux(exuin1pc,ExuIn1.Pc,ExuIn1.R1)
+	
+	// out.pipe.in1 := MuxCase(ExuIn1.R1,Seq(//1011.855
+	// 	(opCode === Op.Uauipc.asUInt)	-> ExuIn1.Pc,
+	// 	(opCode === Op.Branch.asUInt)	-> ExuIn1.Pc,
+	// 	(opCode === Op.Jal.asUInt)		-> ExuIn1.Pc,
+	// ))
+
 	switch(pipeRes){is(IfuRes.Valid){
 		when(opValid){
 			switch(opEnum){
@@ -75,11 +88,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			}
 
 			when(opEnum === Op.Jal || opEnum === Op.Ijalr || Cat(pipeInstr(14,12),pipeInstr(6,0))===0x73.U(10.W)){out.pipe.jump := true.B}
-			switch(opEnum){
-				is(Op.Jal)		{out.pipe.update := IfuUpdate.Jal}
-				is(Op.Branch)	{out.pipe.update := IfuUpdate.Branch}
-				is(Op.Ijalr)	{out.pipe.update := IfuUpdate.Jalr}
-			}
 
 			switch(opEnum){
 				is(Op.Uauipc){out.pipe.alu := ExuAlu.Add}
@@ -196,13 +204,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		.otherwise{
 			out.pipe.csrOp	:= CsrOp.Trap
 			out.pipe.csrMesg:= 2.U//非法指令
-			// out.pipe.csrAddr:= pipeInstr//mtval
 		}
 		}
-		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U;}//Instruction address misaligned
-		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;}//Instruction access fault
-// out.pipe.csrAddr := Cat(pipePc,0.U(2.W))
-// out.pipe.csrAddr := Cat(pipePc,0.U(2.W))
+		is(IfuRes.Un4b){out.pipe.csrOp	:= CsrOp.Trap;out.pipe.csrMesg:= 0.U;}//Instruction address misaligned
+		is(IfuRes.Fall){out.pipe.csrOp	:= CsrOp.Trap;out.pipe.csrMesg:= 1.U;}//Instruction access fault
 	}
 
 	out.imme.addr	:= in.imme.addr
