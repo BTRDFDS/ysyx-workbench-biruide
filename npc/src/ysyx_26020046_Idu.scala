@@ -28,6 +28,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.r1		:= in.imme.r1Out
 	out.pipe.csrMesg:= in.imme.csrOut
 
+	out.pipe.update := IfuUpdate.Null
 	out.pipe.fenceI := pipeInstr === 0x0000100F.U
 	out.pipe.jump	:= false.B
 
@@ -65,15 +66,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		(opEnum === Op.Ijalr)	-> IfuUpdate.Jalr,
 		(opEnum === Op.Branch)	-> IfuUpdate.Branch,
 	)),IfuUpdate.Null)
-	// val exuin1pc = opEnum === Op.Jal || opEnum === Op.Branch || opEnum === Op.Uauipc
-	// out.pipe.in1 := Mux(exuin1pc,ExuIn1.Pc,ExuIn1.R1)
-	
-	// out.pipe.in1 := MuxCase(ExuIn1.R1,Seq(//1011.855
-	// 	(opCode === Op.Uauipc.asUInt)	-> ExuIn1.Pc,
-	// 	(opCode === Op.Branch.asUInt)	-> ExuIn1.Pc,
-	// 	(opCode === Op.Jal.asUInt)		-> ExuIn1.Pc,
-	// ))
-
 	switch(pipeRes){is(IfuRes.Valid){
 			out.pipe.result := Mux1H(Seq(
 				(opEnum === Op.Ului)	-> Cat(pipeInstr(31,12),0.U(12.W)),
@@ -127,11 +119,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(Op.Branch)	{out.pipe.alu := ExuAlu.Null}
 				is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
 			}
-			switch(opEnum){//bast
-				is(Op.Uauipc)	{out.pipe.in1 := ExuIn1.Pc}
-				is(Op.Jal)		{out.pipe.in1 := ExuIn1.Pc}
-				is(Op.Branch)	{out.pipe.in1 := ExuIn1.Pc}
-			}
+			when(opEnum === Op.Branch || opEnum === Op.Uauipc || opEnum === Op.Jal){out.pipe.in1 := ExuIn1.Pc}
 			out.pipe.in2 := MuxCase(ExuIn2.R2,Seq(//best
 				(opEnum===Op.Iload)	-> ExuIn2.Imm,
 				(opEnum===Op.Ialu)	-> ExuIn2.Imm,
