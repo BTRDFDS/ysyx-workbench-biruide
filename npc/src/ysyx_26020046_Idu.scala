@@ -39,8 +39,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.in1	:= ExuIn1.R1
 	out.pipe.in2	:= ExuIn2.R2
 
-	in.imme.r1Addr	:= pipeInstr(14+RegWidth,15)
-	in.imme.r2Addr	:= pipeInstr(19+RegWidth,20)
+	// in.imme.r1Addr	:= pipeInstr(14+RegWidth,15)
+	// in.imme.r2Addr	:= pipeInstr(19+RegWidth,20)
 	in.imme.csrAddr	:= 0.U
 
 	val opCode	= pipeInstr( 6, 0)
@@ -59,6 +59,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	val csrMesg = WireInit(in.imme.csrOut)
 	
 	val (opEnum,opValid) = Op.safe(opCode)
+	in.imme.r1Addr := Mux(opEnum === Op.Ului || opEnum === Op.Uauipc || opEnum === Op.Fence || opEnum === Op.Jal,0.U,r1Addr)
+	in.imme.r2Addr := Mux(opEnum === Op.Ralu || opEnum === Op.Branch || opEnum === Op.Store,r2Addr,0.U)
 
 	out.pipe.update := Mux(opEnum === Op.Jal || opEnum === Op.Ijalr || opEnum === Op.Branch,
 	Mux1H(Seq(
