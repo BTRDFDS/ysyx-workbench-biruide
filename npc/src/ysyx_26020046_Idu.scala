@@ -17,11 +17,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 
 	//默认值
 	out.pipe.valid	:= false.B
-	out.pipe.rdAddr	:= 0.U
+	out.pipe.rdAddr	:= pipeInstr( 6+RegWidth, 7)
 	out.pipe.result	:= 0.U
 	out.pipe.pc		:= pipePc
 	out.pipe.csrOp	:= CsrOp.Null
-	out.pipe.csrAddr:= 0.U//Illegal Instruction
+	out.pipe.csrAddr:= pipeInstr(31,20)
 	out.pipe.lsuAddr:= LsuAddr.B//000
 	out.pipe.lsuOp	:= LsuOp.Null
 	out.pipe.r2		:= in.imme.r2Out
@@ -39,8 +39,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.in1	:= ExuIn1.R1
 	out.pipe.in2	:= ExuIn2.R2
 
-	in.imme.r1Addr	:= 0.U
-	in.imme.r2Addr	:= 0.U
+	in.imme.r1Addr	:= pipeInstr(14+RegWidth,15)
+	in.imme.r2Addr	:= pipeInstr(19+RegWidth,20)
 	in.imme.csrAddr	:= 0.U
 
 	val opCode	= pipeInstr( 6, 0)
@@ -77,8 +77,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			when(opEnum === Op.Jal || opEnum === Op.Ijalr || Cat(pipeInstr(14,12),pipeInstr(6,0))===0x73.U(10.W)){out.pipe.jump := true.B}
 			switch(opEnum){
 				is(Op.Jal)		{out.pipe.update := IfuUpdate.Jal}
-				is(Op.Ijalr)	{out.pipe.update := IfuUpdate.Jalr}
 				is(Op.Branch)	{out.pipe.update := IfuUpdate.Branch}
+				is(Op.Ijalr)	{out.pipe.update := IfuUpdate.Jalr}
 			}
 
 			switch(opEnum){
@@ -89,10 +89,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 					switch(aluEnum){
 						is(ExuAlu.Sll){aluValid := funct7 === 0.U(7.W)}
 						is(ExuAlu.Srl){
-							aluValid := false.B
+							aluValid := funct7===0b0000000.U || funct7===0b0100000.U
 							switch(funct7){
-							    is(0b0000000.U){out.pipe.alu := ExuAlu.Srl;aluValid := true.B}
-								is(0b0100000.U){out.pipe.alu := ExuAlu.Sra;aluValid := true.B}
+							    is(0b0000000.U){out.pipe.alu := ExuAlu.Srl;}
+								is(0b0100000.U){out.pipe.alu := ExuAlu.Sra;}
 							}
 						}
 					}
@@ -131,7 +131,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			switch(opEnum){//best
 				is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
 				is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}
-				is(Op.Fence,Op.Branch)	{out.pipe.res := ExuRes.Null}
+				is(Op.Branch)	{out.pipe.res := ExuRes.Null}
 			}
 			when(opEnum === Op.Branch){
 				val (bfuEnum,bfuValidAll) = ExuBfu.safe(funct3)
@@ -147,23 +147,22 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				lsuValid := lsuValidinside
 				when(lsuValidinside){out.pipe.lsuAddr := lsuEnum}
 			}
-			out.pipe.rdAddr := rdAddr
 			switch(opEnum){
 				is(Op.Store)	{out.pipe.rdAddr := 0.U}
 				is(Op.Branch)	{out.pipe.rdAddr := 0.U}
-				is(Op.Icsr)		{out.pipe.rdAddr := Mux(funct3 === 0.U(3.W),0.U(5.W),rdAddr)}
+				// is(Op.Icsr)		{out.pipe.rdAddr := Mux(funct3 === 0.U(3.W),0.U(5.W),rdAddr)}
 			}
-			in.imme.r1Addr := r1Addr//反选
-			switch(opEnum){//best
-			    is(Op.Ului)		{in.imme.r1Addr := 0.U}
-				is(Op.Uauipc)	{in.imme.r1Addr := 0.U}
-				is(Op.Jal)		{in.imme.r1Addr := 0.U}
-			}
-			switch(opEnum){//best
-				is(Op.Store)	{in.imme.r2Addr := r2Addr}
-				is(Op.Branch)	{in.imme.r2Addr := r2Addr}
-				is(Op.Ralu)		{in.imme.r2Addr := r2Addr}
-			}
+			// in.imme.r1Addr := r1Addr//反选
+			// switch(opEnum){//best
+			//     is(Op.Ului)		{in.imme.r1Addr := 0.U}
+			// 	is(Op.Uauipc)	{in.imme.r1Addr := 0.U}
+			// 	is(Op.Jal)		{in.imme.r1Addr := 0.U}
+			// }
+			// switch(opEnum){//best
+			// 	is(Op.Store)	{in.imme.r2Addr := r2Addr}
+			// 	is(Op.Branch)	{in.imme.r2Addr := r2Addr}
+			// 	is(Op.Ralu)		{in.imme.r2Addr := r2Addr}
+			// }
 			when(opEnum === Op.Icsr){
 				switch(funct3){
 					is(0b000.U){
@@ -182,8 +181,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 						is(0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}
 						is(0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 					}}
-					is(0b001.U){out.pipe.csrAddr := pipeInstr(31,20);csrOp := CsrOp.Write;csrValid := true.B}
-					is(0b010.U){out.pipe.csrAddr := pipeInstr(31,20);csrOp := Mux(r1Addr === 0.U(5.W),CsrOp.Null,CsrOp.Write);csrValid := true.B}
+					is(0b001.U){csrOp := CsrOp.Write;csrValid := true.B}
+					is(0b010.U){csrOp := Mux(rdAddr === 0.U,CsrOp.Null,CsrOp.Write);csrValid := true.B}
+					// out.pipe.csrAddr := pipeInstr(31,20);
+					// out.pipe.csrAddr := pipeInstr(31,20);
 				}
 			}
 		}
@@ -195,11 +196,13 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		.otherwise{
 			out.pipe.csrOp	:= CsrOp.Trap
 			out.pipe.csrMesg:= 2.U//非法指令
-			out.pipe.csrAddr:= pipeInstr//mtval
+			// out.pipe.csrAddr:= pipeInstr//mtval
 		}
 		}
-		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U;out.pipe.csrAddr := Cat(pipePc,0.U(2.W))}//Instruction address misaligned
-		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;out.pipe.csrAddr := Cat(pipePc,0.U(2.W))}//Instruction access fault
+		is(IfuRes.Un4b){out.pipe.csrMesg:= 0.U;}//Instruction address misaligned
+		is(IfuRes.Fall){out.pipe.csrMesg:= 1.U;}//Instruction access fault
+// out.pipe.csrAddr := Cat(pipePc,0.U(2.W))
+// out.pipe.csrAddr := Cat(pipePc,0.U(2.W))
 	}
 
 	out.imme.addr	:= in.imme.addr
