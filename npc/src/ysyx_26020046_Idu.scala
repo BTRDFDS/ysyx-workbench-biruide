@@ -59,11 +59,12 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	
 	val (opEnum,opValid) = Op.safe(opCode)
 
-	out.pipe.update := MuxCase(IfuUpdate.Null,Seq(
+	out.pipe.update := Mux(opEnum === Op.Jal || opEnum === Op.Ijalr || opEnum === Op.Branch,
+	Mux1H(Seq(
+		(opEnum === Op.Jal)		-> IfuUpdate.Jal,
 		(opEnum === Op.Ijalr)	-> IfuUpdate.Jalr,
 		(opEnum === Op.Branch)	-> IfuUpdate.Branch,
-		(opEnum === Op.Jal)		-> IfuUpdate.Jal,
-	))
+	)),IfuUpdate.Null)
 	// val exuin1pc = opEnum === Op.Jal || opEnum === Op.Branch || opEnum === Op.Uauipc
 	// out.pipe.in1 := Mux(exuin1pc,ExuIn1.Pc,ExuIn1.R1)
 	
@@ -74,19 +75,20 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	// ))
 
 	switch(pipeRes){is(IfuRes.Valid){
+			out.pipe.result := Mux1H(Seq(
+				(opEnum === Op.Ului)	-> Cat(pipeInstr(31,12),0.U(12.W)),
+				(opEnum === Op.Uauipc)	-> Cat(pipeInstr(31,12),0.U(12.W)),
+				(opEnum === Op.Store)	-> Cat(Fill(20,pipeInstr(31)),pipeInstr(31,25),pipeInstr(11,7)),
+				(opEnum === Op.Ialu)	-> Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20)),
+				(opEnum === Op.Ijalr)	-> Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20)),
+				(opEnum === Op.Iload)	-> Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20)),
+				(opEnum === Op.Branch)	-> Cat(Fill(20,pipeInstr(31)),pipeInstr(7),pipeInstr(30,25),pipeInstr(11,8),0.U(1.W)),
+				(opEnum === Op.Jal)		-> Cat(Fill(12,pipeInstr(31)),pipeInstr(19,12),pipeInstr(20),pipeInstr(30,21),0.U(1.W)),
+				(opEnum === Op.Icsr)	-> in.imme.csrOut,
+				(opEnum === Op.Fence)	-> 0.U,
+				(opEnum === Op.Ralu)	-> 0.U,
+			))
 		when(opValid){
-			switch(opEnum){
-				is(Op.Ului)		{out.pipe.result := Cat(pipeInstr(31,12),0.U(12.W))}
-				is(Op.Uauipc)	{out.pipe.result := Cat(pipeInstr(31,12),0.U(12.W))}
-				is(Op.Store)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(31,25),pipeInstr(11,7))}
-				is(Op.Ialu)		{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20))}
-				is(Op.Ijalr)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20))}
-				is(Op.Iload)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(31,20))}
-				is(Op.Branch)	{out.pipe.result := Cat(Fill(20,pipeInstr(31)),pipeInstr(7),pipeInstr(30,25),pipeInstr(11,8),0.U(1.W))}
-				is(Op.Jal)		{out.pipe.result := Cat(Fill(12,pipeInstr(31)),pipeInstr(19,12),pipeInstr(20),pipeInstr(30,21),0.U(1.W))}
-				is(Op.Icsr)		{out.pipe.result := in.imme.csrOut}
-			}
-
 			when(opEnum === Op.Jal || opEnum === Op.Ijalr || Cat(pipeInstr(14,12),pipeInstr(6,0))===0x73.U(10.W)){out.pipe.jump := true.B}
 
 			switch(opEnum){
@@ -158,19 +160,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			switch(opEnum){
 				is(Op.Store)	{out.pipe.rdAddr := 0.U}
 				is(Op.Branch)	{out.pipe.rdAddr := 0.U}
-				// is(Op.Icsr)		{out.pipe.rdAddr := Mux(funct3 === 0.U(3.W),0.U(5.W),rdAddr)}
 			}
-			// in.imme.r1Addr := r1Addr//反选
-			// switch(opEnum){//best
-			//     is(Op.Ului)		{in.imme.r1Addr := 0.U}
-			// 	is(Op.Uauipc)	{in.imme.r1Addr := 0.U}
-			// 	is(Op.Jal)		{in.imme.r1Addr := 0.U}
-			// }
-			// switch(opEnum){//best
-			// 	is(Op.Store)	{in.imme.r2Addr := r2Addr}
-			// 	is(Op.Branch)	{in.imme.r2Addr := r2Addr}
-			// 	is(Op.Ralu)		{in.imme.r2Addr := r2Addr}
-			// }
 			when(opEnum === Op.Icsr){
 				switch(funct3){
 					is(0b000.U){
@@ -191,8 +181,6 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 					}}
 					is(0b001.U){csrOp := CsrOp.Write;csrValid := true.B}
 					is(0b010.U){csrOp := Mux(rdAddr === 0.U,CsrOp.Null,CsrOp.Write);csrValid := true.B}
-					// out.pipe.csrAddr := pipeInstr(31,20);
-					// out.pipe.csrAddr := pipeInstr(31,20);
 				}
 			}
 		}
