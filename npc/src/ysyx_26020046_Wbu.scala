@@ -39,8 +39,17 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= Mux(mcycle === (Fill(BitWidth,1.U)),mcycleh + 1.U,mcycleh)
 	when(pipeValid){//合法处理
 		switch(pipeCsrOp){
-			is(CsrOp.Mret){mstatus := MstatuseReset}//TODO
-			is(CsrOp.Trap){//TODO:mstatus
+			is(CsrOp.Mret){
+				mstatus := Cat(mstatus(31,13),0b00.U(2.W),mstatus(10,3),mstatus(1),mstatus(2),1.U(1.W),mstatus(0))
+				// mstatus(3)	:= mstatus(1)	//MIE
+				// mstatus(1)	:= 1.U;			//MPIE
+				// mstatus(12,11) := 0b00.U	//MPP
+				}
+			is(CsrOp.Trap){
+				mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
+				// mstatus(3) := 0.U			//MIE
+				// mstatus(1) := mstatus(3)	//MPIE
+				// mstatus(12,11) := 0b11.U	//MPP
 				mcause	:= pipeCsrMesg
 				mepc 	:= Cat(pipePc,0.U(2.W))
 			}
@@ -96,7 +105,8 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	val (csrReadAddr,csrReadValid)=CsrAddr.safe(out.imme.csrAddr)
 	when(csrReadValid){
 		when(pipeValid&&out.imme.csrAddr===pipeCsrAddr){out.imme.csrOut := pipeCsrMesg}
-		.otherwise{switch(csrReadAddr){
+		.otherwise{
+			switch(csrReadAddr){
 			is(CsrAddr.Mcycle)		{out.imme.csrOut := mcycle}
 			is(CsrAddr.Mcycleh)		{out.imme.csrOut := mcycleh}
 			is(CsrAddr.Mepc)		{out.imme.csrOut := mepc}
@@ -105,7 +115,18 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 			is(CsrAddr.Mstatus)		{out.imme.csrOut := mstatus}
 			is(CsrAddr.Marchid)		{out.imme.csrOut := marchid}
 			is(CsrAddr.Mvendorid)	{out.imme.csrOut := mvendorid}
-		}}
+		}
+			// out.imme.csrOut := Mux1H(Seq(
+			// 	(csrReadAddr===CsrAddr.Mcycle)		-> mcycle,
+			// 	(csrReadAddr===CsrAddr.Mcycleh)		-> mcycleh,
+			// 	(csrReadAddr===CsrAddr.Mepc)		-> mepc,
+			// 	(csrReadAddr===CsrAddr.Mtvec)		-> mtvec,
+			// 	(csrReadAddr===CsrAddr.Mcause)		-> mcause,
+			// 	(csrReadAddr===CsrAddr.Mstatus)		-> mstatus,
+			// 	(csrReadAddr===CsrAddr.Marchid)		-> marchid,
+			// 	(csrReadAddr===CsrAddr.Mvendorid)	-> mvendorid,
+			// ))
+		}
 	}
 	if(Yosys == false){}
 }
