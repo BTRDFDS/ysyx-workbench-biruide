@@ -125,7 +125,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 	switch(opEnum){//best
 		is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
 		is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}
-		is(Op.Branch)	{out.pipe.res := ExuRes.Null}
+		is(Op.Branch)			{out.pipe.res := ExuRes.Null}
 	}
 	when(opEnum === Op.Branch){
 		val (bfuEnum,bfuValidAll) = ExuBfu.safe(funct3)
@@ -163,9 +163,9 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			is(0b010.U){csrOp := Mux(rdAddr === 0.U,CsrOp.Null,CsrOp.Write);csrValid := true.B}
 		}
 	}
-	out.pipe.valid := pipeRes===IfuRes.Valid & opValid & aluValid & lsuValid & bfuValid & csrValid & in.imme.valid
 	switch(pipeRes){is(IfuRes.Valid){
 		when(opValid & aluValid & lsuValid & bfuValid & csrValid){
+			out.pipe.valid := in.imme.valid
 			out.pipe.csrOp	:= csrOp
 			out.pipe.csrMesg:= csrMesg
 		}.otherwise{
