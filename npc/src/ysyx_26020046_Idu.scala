@@ -122,7 +122,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		(opEnum===Op.Store)	-> ExuIn2.Imm,
 		(opEnum===Op.Uauipc)-> ExuIn2.Imm,
 	))
-	switch(opEnum){//best//TODO
+	switch(opEnum){//best
 		is(Op.Branch)			{out.pipe.res := ExuRes.Null}
 		is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
 		is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}

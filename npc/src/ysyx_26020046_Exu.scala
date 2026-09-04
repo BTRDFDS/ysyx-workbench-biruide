@@ -124,6 +124,7 @@ class ysyx_26020046_Exu(val Yosys:Boolean=false) extends Module {
 		when(out.imme.r2Addr === pipeRdAddr){out.imme.r2Out := out.pipe.result}
 		when(out.imme.r1Addr === pipeRdAddr || out.imme.r2Addr === pipeRdAddr){out.imme.valid := pipeLsuOp =/= LsuOp.Load}//store理论上也可以
 	}
+	when(pipeValid&&out.imme.csrAddr === pipeCsrAddr){out.imme.csrOut := out.pipe.csrMesg}
 
 	if(Yosys == false){
 		dontTouch(result)
