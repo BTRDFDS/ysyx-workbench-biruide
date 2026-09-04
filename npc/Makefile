@@ -12,6 +12,7 @@ verilogYsyxSoc:build/BuilderYsyxSoc.stamp
 verilogSta:build/BuilderSta.stamp
 verilogIcache:build/BuilderIcache.stamp
 verilogIverilog:build/BuilderIverilog.stamp
+verilogNetlist:build/BuilderNetlist.stamp
 
 
 reformat:
@@ -101,10 +102,11 @@ iverilog:verilogIverilog
 	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
 
-srcVerilogNetlist += $(NPC_HOME)/test/iverilog/iverliog.v
-srcVerilogNetlist += $(NPC_HOME)/build/iverilog/ysyx_26020046_iverilog.sv
-srcVerilogNetlist += $(NPC_HOME)/build/iverilog/ysyx_26020046_iverilog_Mem.sv
-srcVerilogNetlist += $(NPC_HOME)/build/iverilog/psram_16777216x8.sv
+srcVerilogNetlist += $(NPC_HOME)/test/iverilog/netlist.v
+srcVerilogNetlist += $(NPC_HOME)/test/iverilog/ysyx_26020046_netlistLink.v
+srcVerilogNetlist += $(NPC_HOME)/build/netlist/ysyx_26020046_netlist.sv
+srcVerilogNetlist += $(NPC_HOME)/build/netlist/ysyx_26020046_iverilog_Mem.sv
+srcVerilogNetlist += $(NPC_HOME)/build/netlist/psram_16777216x8.sv
 srcVerilogNetlist += $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v
 srcVerilogNetlist += $(YOSYS_STA_HOME)/pdk/nangate45/sim/cells.v
 netlist:verilogIverilog

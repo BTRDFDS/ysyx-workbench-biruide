@@ -25,9 +25,11 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 
 	val gpr = Reg(Vec(RegNum, UInt(BitWidth.W)))
 
-	val mepc		= RegInit(PcReset)
+	// val mepc		= RegInit(PcReset)
+	// val mtvec		= RegInit(PcReset)
+	val mtvec		= Reg(UInt(BitWidth.W))
+	val mepc		= Reg(UInt(BitWidth.W))
 	val mstatus		= RegInit(MstatuseReset)
-	val mtvec		= RegInit(PcReset)
 	val mcause		= RegInit(0xffffffffL.U(BitWidth.W))
 	val mcycle		= RegInit(0.U(BitWidth.W))
 	val mcycleh		= RegInit(0.U(BitWidth.W))

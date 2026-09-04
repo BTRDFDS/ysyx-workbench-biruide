@@ -145,7 +145,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		switch(funct3){
 			is(0b000.U){
 				out.pipe.csr := ExuCsr.Null
-				when(Cat(pipeInstr(31,15)) === 0b0011000_00010_00000.U)
+				when(Cat(pipeInstr(21,20)) === 0b10.U)
 							{in.imme.csrAddr := CsrAddr.Mepc.asUInt	}
 				.otherwise	{in.imme.csrAddr := CsrAddr.Mtvec.asUInt}
 				}
@@ -154,10 +154,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		}
 		csrValid := false.B
 		switch(funct3){
-			is(0b000.U){switch(Cat(pipeInstr(31,15))){
-				is(0b0000000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0xbL.U}
-				is(0b0000000_00001_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}
-				is(0b0011000_00010_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
+			is(0b000.U){switch(Cat(pipeInstr(21,20))){
+				is(0b00.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0xbL.U}
+				is(0b01.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}
+				is(0b10.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 			}}
 			is(0b001.U){csrOp := CsrOp.Write;csrValid := true.B}
 			is(0b010.U){csrOp := Mux(rdAddr === 0.U,CsrOp.Null,CsrOp.Write);csrValid := true.B}
