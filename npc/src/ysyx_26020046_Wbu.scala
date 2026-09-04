@@ -40,16 +40,10 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	when(pipeValid){//合法处理
 		switch(pipeCsrOp){
 			is(CsrOp.Mret){
-				mstatus := Cat(mstatus(31,13),0b00.U(2.W),mstatus(10,3),mstatus(1),mstatus(2),1.U(1.W),mstatus(0))
-				// mstatus(3)	:= mstatus(1)	//MIE
-				// mstatus(1)	:= 1.U;			//MPIE
-				// mstatus(12,11) := 0b00.U	//MPP
+				// mstatus := Cat(mstatus(31,13),0b00.U(2.W),mstatus(10,3),mstatus(1),mstatus(2),1.U(1.W),mstatus(0))
 				}
 			is(CsrOp.Trap){
-				mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
-				// mstatus(3) := 0.U			//MIE
-				// mstatus(1) := mstatus(3)	//MPIE
-				// mstatus(12,11) := 0b11.U	//MPP
+				// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
 				mcause	:= pipeCsrMesg
 				mepc 	:= Cat(pipePc,0.U(2.W))
 			}
@@ -75,7 +69,8 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 	out.imme.addr	:= mtvec
 	out.imme.pc		:= pipePc
 	out.imme.error	:= false.B
-	when((pipeValid === false.B & pipeCsrOp === CsrOp.Trap) || error){//TODO:mstatus
+	when((pipeValid === false.B & pipeCsrOp === CsrOp.Trap) || error){
+		// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
 		mcause			:= Mux(error,ErrorMesg,pipeCsrMesg)
 		mepc 			:= Cat(pipePc,0.U(2.W))
 		out.imme.error	:= true.B

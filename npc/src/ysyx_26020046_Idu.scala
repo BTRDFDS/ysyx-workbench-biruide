@@ -122,7 +122,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		(opEnum===Op.Store)	-> ExuIn2.Imm,
 		(opEnum===Op.Uauipc)-> ExuIn2.Imm,
 	))
-	switch(opEnum){//best
+	switch(opEnum){//best//TODO
 		is(Op.Branch)			{out.pipe.res := ExuRes.Null}
 		is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
 		is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}
@@ -133,8 +133,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		when(bfuValid){out.pipe.bfu := bfuEnum}
 	}
 	switch(opEnum){//best
-		is(Op.Store){out.pipe.lsuOp := LsuOp.Store}
 		is(Op.Iload){out.pipe.lsuOp := LsuOp.Load}
+		is(Op.Store){out.pipe.lsuOp := LsuOp.Store}
 	}
 		val (lsuEnum,lsuValidinside) = LsuAddr.safe(funct3)
 	when(opEnum === Op.Iload || opEnum === Op.Store){
