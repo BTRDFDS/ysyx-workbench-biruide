@@ -5,9 +5,15 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val in	= IO(new Bundle{val imme = Flipped(new ImmeIdIf())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val ich	= IO(new InstrBus())
+
+	val immePc		= RegNext(in.imme.pc	,0.U)
+	val immeAddr	= RegNext(in.imme.addr	,0.U)
+	val immeReloca	= RegNext(in.imme.reloca,false.B)
+	val immeUpdate	= RegNext(in.imme.update,IfuUpdate.Null)
+
 	//pc更新
 		val pipePc		= RegInit(PcInit(31,2))
-		val pipeValid	= RegNext(Mux(in.imme.reloca,false.B,true.B),true.B)
+		val pipeValid	= RegNext(!in.imme.reloca,true.B)
 
 		ich.addr	:= pipePc
 		ich.valid	:= pipeValid
@@ -15,15 +21,11 @@ class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 		out.pipe.instr	:= ich.data
 		out.pipe.pc		:= pipePc
 
-		when(in.imme.addr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
+		when(immeReloca&&immeAddr(1,0)=/=0.U(2.W))	{out.pipe.res := IfuRes.Un4b}
 		.elsewhen(ich.ready&&pipeValid)		{out.pipe.res := Mux(ich.error,IfuRes.Fall,IfuRes.Valid)}
 		.otherwise							{out.pipe.res := IfuRes.Null}
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-	val immePc		= RegNext(in.imme.pc	,0.U)
-	val immeAddr	= RegNext(in.imme.addr	,0.U)
-	val immeReloca	= RegNext(in.imme.reloca,false.B)
-	val immeUpdate	= RegNext(in.imme.update,IfuUpdate.Null)
 
 
 

@@ -89,8 +89,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 				is(ExuAlu.Srl){
 					aluValid := funct7===0b0000000.U || funct7===0b0100000.U
 					switch(funct7){
-						is(0b0000000.U){out.pipe.alu := ExuAlu.Srl;}
-						is(0b0100000.U){out.pipe.alu := ExuAlu.Sra;}
+						is(0b0000000.U){out.pipe.alu := ExuAlu.Srl}
+						is(0b0100000.U){out.pipe.alu := ExuAlu.Sra}
 					}
 				}
 			}
@@ -116,16 +116,16 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
 	}
 	out.pipe.in1 := Mux(opEnum === Op.Branch || opEnum === Op.Uauipc || opEnum === Op.Jal,ExuIn1.Pc,ExuIn1.R1)
-	out.pipe.in2 := MuxCase(ExuIn2.R2,Seq(//best
+	out.pipe.in2 := MuxCase(ExuIn2.R2,Seq(//best//TODO
 		(opEnum===Op.Iload)	-> ExuIn2.Imm,
 		(opEnum===Op.Ialu)	-> ExuIn2.Imm,
 		(opEnum===Op.Store)	-> ExuIn2.Imm,
 		(opEnum===Op.Uauipc)-> ExuIn2.Imm,
 	))
 	switch(opEnum){//best
+		is(Op.Branch)			{out.pipe.res := ExuRes.Null}
 		is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
 		is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}
-		is(Op.Branch)			{out.pipe.res := ExuRes.Null}
 	}
 	when(opEnum === Op.Branch){
 		val (bfuEnum,bfuValidAll) = ExuBfu.safe(funct3)
@@ -136,8 +136,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		is(Op.Store){out.pipe.lsuOp := LsuOp.Store}
 		is(Op.Iload){out.pipe.lsuOp := LsuOp.Load}
 	}
-	when(opEnum === Op.Iload || opEnum === Op.Store){
 		val (lsuEnum,lsuValidinside) = LsuAddr.safe(funct3)
+	when(opEnum === Op.Iload || opEnum === Op.Store){
 		lsuValid := lsuValidinside
 		when(lsuValidinside){out.pipe.lsuAddr := lsuEnum}
 	}
@@ -145,7 +145,7 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		switch(funct3){
 			is(0b000.U){
 				out.pipe.csr := ExuCsr.Null
-				when(Cat(pipeInstr(31,15),pipeInstr(11,7)) === 0b0011000_00010_00000_00000.U)
+				when(Cat(pipeInstr(31,15)) === 0b0011000_00010_00000.U)
 							{in.imme.csrAddr := CsrAddr.Mepc.asUInt	}
 				.otherwise	{in.imme.csrAddr := CsrAddr.Mtvec.asUInt}
 				}
@@ -154,10 +154,10 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		}
 		csrValid := false.B
 		switch(funct3){
-			is(0b000.U){switch(Cat(pipeInstr(31,15),pipeInstr(11,7))){
-				is(0b0000000_00000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0xbL.U}
-				is(0b0000000_00001_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}
-				is(0b0011000_00010_00000_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
+			is(0b000.U){switch(Cat(pipeInstr(31,15))){
+				is(0b0000000_00000_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0xbL.U}
+				is(0b0000000_00001_00000.U){csrOp := CsrOp.Trap;csrValid := true.B;csrMesg := 0x3L.U}
+				is(0b0011000_00010_00000.U){csrOp := CsrOp.Mret;csrValid := true.B;}
 			}}
 			is(0b001.U){csrOp := CsrOp.Write;csrValid := true.B}
 			is(0b010.U){csrOp := Mux(rdAddr === 0.U,CsrOp.Null,CsrOp.Write);csrValid := true.B}
@@ -173,8 +173,8 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 			out.pipe.csrMesg:= 2.U//非法指令
 		}
 		}
-		is(IfuRes.Un4b){out.pipe.csrOp	:= CsrOp.Trap;out.pipe.csrMesg:= 0.U;}//地址对齐
-		is(IfuRes.Fall){out.pipe.csrOp	:= CsrOp.Trap;out.pipe.csrMesg:= 1.U;}//读错
+		is(IfuRes.Un4b){out.pipe.csrOp	:= CsrOp.Trap;out.pipe.csrMesg:= 0.U}//地址对齐
+		is(IfuRes.Fall){out.pipe.csrOp	:= CsrOp.Trap;out.pipe.csrMesg:= 1.U}//读错
 	}
 	in.imme.r1Addr := Mux(opEnum === Op.Ului || opEnum === Op.Uauipc || opEnum === Op.Fence || opEnum === Op.Jal,0.U,r1Addr)
 	in.imme.r2Addr := Mux(opEnum === Op.Ralu || opEnum === Op.Branch || opEnum === Op.Store,r2Addr,0.U)
