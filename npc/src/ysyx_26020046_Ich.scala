@@ -26,7 +26,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	addrIdx 	:= ifu.addr(CacheBit+CacheWidth-1,CacheWidth)
 	addrOffset	:= ifu.addr(CacheWidth-1,0)
 
-	val pipeValid		= RegInit(false.B)
+	val pipeValid	= RegInit(false.B)//拉取状态机valid
 	val cnt			= RegInit(0.U(CacheWidth.W))
 	val burstValid	= RegInit(VecInit(Seq.fill(CacheSize)(false.B)))
 	val burstTag	= Reg(UInt((BitWidth-2-CacheBit-CacheWidth).W))
@@ -39,8 +39,14 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 			data(burstIdx)(burstOffset+cnt) := bar.data
 			burstValid(burstOffset+cnt)		:= true.B
 		}
-		when(bar.res === BurstRes.Read){cnt := cnt + 1.U}
-		when((bar.res===BurstRes.Done&&cnt===CacheDone.U)||bar.res===BurstRes.Erro){pipeValid := false.B}
+		// when(bar.res === BurstRes.Read){cnt := cnt + 1.U}
+		cnt := Mux1H(Seq(
+			(bar.res === BurstRes.Read) -> (cnt + 1.U),
+			(bar.res === BurstRes.Done) -> (0.U),
+			(bar.res === BurstRes.Erro) -> (0.U),
+			(bar.res === BurstRes.Idle) -> (cnt),
+		))
+		when((bar.res===BurstRes.Done||cnt===CacheDone.U)||bar.res===BurstRes.Erro){pipeValid := false.B}
 	}.otherwise{
 		bar.valid	:= false.B
 		bar.addr	:= 0.U

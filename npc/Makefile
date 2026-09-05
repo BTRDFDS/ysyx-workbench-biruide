@@ -109,7 +109,7 @@ srcVerilogNetlist += $(NPC_HOME)/build/netlist/ysyx_26020046_iverilog_Mem.sv
 srcVerilogNetlist += $(NPC_HOME)/build/netlist/psram_16777216x8.sv
 srcVerilogNetlist += $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v.sim
 srcVerilogNetlist += $(YOSYS_STA_HOME)/pdk/nangate45/sim/cells.v
-netlist:verilogNetlist
+netlist:verilogNetlist sta
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
 	iverilog -g2012 -o build/netlistCpu $(srcVerilogNetlist)
 	vvp build/netlistCpu -fst
