@@ -18,13 +18,10 @@ object  WidthConsts{//const
 	val CacheWidth	= 2
 	val CacheNum    = 1 << CacheBit
 	val CacheSize	= 1 << CacheWidth
-
-	def PipeReg[T <: Data](pipeReset:Bool,pipeInit:T,pipeChange:Bool,pipeNext:T): T = {
-		val reg = Reg(pipeInit.cloneType)
-		when	 (pipeReset ){reg := pipeInit}
-		.elsewhen(pipeChange){reg := pipeNext}
-		reg
-	}
+	def PipeReg[T <: Data](pipeNext:T,pipeChange:Bool							): T = {RegEnable(pipeNext							,pipeChange				)}
+	def PipeReg[T <: Data](pipeNext:T,pipeChange:Bool,pipeInit:T, pipeReset:Bool): T = {RegEnable(Mux(pipeReset,pipeInit,pipeNext)	,pipeReset||pipeChange	)}
+	def PipeReg[T <: Data](pipeNext:T											): T = {RegNext(pipeNext													)}
+	def PipeReg[T <: Data](pipeNext:T,pipeInit:T, pipeReset:Bool				): T = {RegNext(Mux(pipeReset,pipeInit,pipeNext)							)}
 	def Get[T <: Data](signal: T): T = BoringUtils.bore(signal)
 }
 

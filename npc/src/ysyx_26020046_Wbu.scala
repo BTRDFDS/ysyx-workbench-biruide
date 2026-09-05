@@ -14,13 +14,13 @@ class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
 		val imme = new ImmeWbLs()
 	})
 	val pipeReset	= reset.asBool||out.imme.error
-	val pipeValid	= PipeReg(pipeReset,false.B				,true.B,in.pipe.valid	)
-	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,true.B,in.pipe.rdAddr	)
-	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.result	)
-	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,true.B,in.pipe.pc		)
-	val pipeCsrAddr	= PipeReg(pipeReset,0.U(CsrWidth.W)		,true.B,in.pipe.csrAddr	)
-	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)		,true.B,in.pipe.csrMesg	)
-	val pipeCsrOp	= PipeReg(pipeReset,CsrOp.Null			,true.B,in.pipe.csrOp	)
+	val pipeValid	= PipeReg(in.pipe.valid		,false.B	,pipeReset)
+	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,CsrOp.Null	,pipeReset)
+	val pipeRdAddr	= PipeReg(in.pipe.rdAddr	)
+	val pipeResult	= PipeReg(in.pipe.result	)
+	val pipePc		= PipeReg(in.pipe.pc		)
+	val pipeCsrAddr	= PipeReg(in.pipe.csrAddr	)
+	val pipeCsrMesg	= PipeReg(in.pipe.csrMesg	)
 	
 
 	val gpr = Reg(Vec(RegNum, UInt(BitWidth.W)))

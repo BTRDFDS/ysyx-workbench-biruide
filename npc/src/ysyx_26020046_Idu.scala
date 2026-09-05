@@ -11,9 +11,9 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		val imme	= new ImmeIdIf()
 	})
 	val pipeReset	= reset.asBool||in.imme.reloca
-	val pipeRes		= PipeReg(pipeReset	,IfuRes.Null			,out.imme.ready||pipeReset,in.pipe.res)
-	val pipePc		= PipeReg(false.B	,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
-	val pipeInstr	= PipeReg(false.B	,0.U(BitWidth.W)		,out.imme.ready,in.pipe.instr	)
+	val pipeRes		= PipeReg(in.pipe.res	,out.imme.ready,IfuRes.Null,pipeReset)
+	val pipePc		= PipeReg(in.pipe.pc	,out.imme.ready)
+	val pipeInstr	= PipeReg(in.pipe.instr	,out.imme.ready)
 	//默认值
 	out.pipe.valid	:= false.B
 	out.pipe.rdAddr	:= pipeInstr( 6+RegWidth, 7)

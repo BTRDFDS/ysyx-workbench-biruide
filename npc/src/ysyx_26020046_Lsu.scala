@@ -15,16 +15,17 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val state	= RegInit(MemStatus.Call)
 
 	val pipeReset	= reset.asBool||in.imme.error
-	val pipeValid	= PipeReg(pipeReset,false.B				,out.imme.ready,in.pipe.valid	)
-	val pipeRdAddr	= PipeReg(pipeReset,0.U(RegWidth.W)		,out.imme.ready,in.pipe.rdAddr	)
-	val pipeResult	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.result	)
-	val pipePc		= PipeReg(pipeReset,0.U((BitWidth-2).W)	,out.imme.ready,in.pipe.pc		)
-	val pipeCsrAddr	= PipeReg(pipeReset,0.U(CsrWidth.W)		,out.imme.ready,in.pipe.csrAddr	)
-	val pipeCsrMesg	= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.csrMesg	)
-	val pipeR2		= PipeReg(pipeReset,0.U(BitWidth.W)		,out.imme.ready,in.pipe.r2		)
-	val pipeLsuOp	= PipeReg(pipeReset,LsuOp.Null			,out.imme.ready,in.pipe.lsuOp	)
-	val pipeLsuAddr	= PipeReg(pipeReset,LsuAddr.B			,out.imme.ready,in.pipe.lsuAddr	)
-	val pipeCsrOp	= PipeReg(pipeReset,CsrOp.Null			,out.imme.ready,in.pipe.csrOp	)
+	val pipeValid	= PipeReg(in.pipe.valid		,out.imme.ready,false.B		,pipeReset)
+	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,out.imme.ready,CsrOp.Null	,pipeReset)
+	val pipeRdAddr	= PipeReg(in.pipe.rdAddr	,out.imme.ready)
+	val pipeResult	= PipeReg(in.pipe.result	,out.imme.ready)
+	val pipePc		= PipeReg(in.pipe.pc		,out.imme.ready)
+	val pipeCsrAddr	= PipeReg(in.pipe.csrAddr	,out.imme.ready)
+	val pipeCsrMesg	= PipeReg(in.pipe.csrMesg	,out.imme.ready)
+	val pipeR2		= PipeReg(in.pipe.r2		,out.imme.ready)
+	val pipeLsuOp	= PipeReg(in.pipe.lsuOp		,out.imme.ready)
+	val pipeLsuAddr	= PipeReg(in.pipe.lsuAddr	,out.imme.ready)
+
 
 	out.pipe.valid	:= false.B
 	out.pipe.rdAddr	:= pipeRdAddr
@@ -121,7 +122,7 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	out.imme.addr	:= in.imme.addr
 	out.imme.pc		:= in.imme.pc
 	out.imme.error	:= in.imme.error
-	out.imme.ready	:= (~pipeValid) || pipeLsuOp === LsuOp.Null || state === MemStatus.Back || in.imme.error
+	out.imme.ready	:= (~pipeValid) || pipeLsuOp === LsuOp.Null || state === MemStatus.Back
 
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr
