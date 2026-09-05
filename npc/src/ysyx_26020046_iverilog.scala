@@ -110,6 +110,7 @@ class ysyx_26020046_iverilog extends Module{
 	cpu.slave.awsize		:= 0.U
 	cpu.slave.awburst	:= 0.U
 
+	val pc = Cat(Get(cpu.cpu.ifu.pipePc),0.U(2.W));dontTouch(pc)
 	val shouldStop = RegInit(false.B);when(shouldStop){stop()}	
 	when((Get(cpu.cpu.wbu.pipeCsrOp) === CsrOp.Trap && Get(cpu.cpu.wbu.pipeValid) && Get(cpu.cpu.wbu.pipeCsrMesg) === 0x3L.U) || Get(cpu.cpu.wbu.error)){
 		printf("Ebreak at 0x%8x a0=%8x\n",Cat(Get(cpu.cpu.wbu.pipePc),0.U(2.W)),Get(cpu.cpu.wbu.gpr)(10))

@@ -4,6 +4,8 @@ import chisel3.util.experimental._
 import WidthConsts._
 class ysyx_26020046_netlist extends Module{
 	val cpu = Module(new ysyx_26020046_netlistLink())
+	cpu.clock := clock
+	cpu.reset := reset
 	val mem = Module(new ysyx_26020046_iverilog_Mem())
 
 	val rState	= RegInit(NpcState.Idle)
@@ -83,5 +85,7 @@ class ysyx_26020046_netlist extends Module{
 	cpu.master.bid	:= 0.U
 }
 class ysyx_26020046_netlistLink extends ExtModule{
-	val master		= IO(new Axi4MasterOut())
+	val clock	= IO(Input(Clock()))
+	val reset	= IO(Input(Reset()))
+	val master	= IO(new Axi4MasterOut())
 }

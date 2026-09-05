@@ -99,7 +99,7 @@ srcVerilogIverilog += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.s
 srcVerilogIverilog += $(NPC_HOME)/test/iverilog/iverliog.v
 iverilog:verilogIverilog
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
-	iverilog -o build/iverilogCpu $(srcVerilogIverilog)
+	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
 
 srcVerilogNetlist += $(NPC_HOME)/test/iverilog/netlist.v
@@ -107,11 +107,11 @@ srcVerilogNetlist += $(NPC_HOME)/test/iverilog/ysyx_26020046_netlistLink.v
 srcVerilogNetlist += $(NPC_HOME)/build/netlist/ysyx_26020046_netlist.sv
 srcVerilogNetlist += $(NPC_HOME)/build/netlist/ysyx_26020046_iverilog_Mem.sv
 srcVerilogNetlist += $(NPC_HOME)/build/netlist/psram_16777216x8.sv
-srcVerilogNetlist += $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v
+srcVerilogNetlist += $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v.sim
 srcVerilogNetlist += $(YOSYS_STA_HOME)/pdk/nangate45/sim/cells.v
-netlist:verilogIverilog
+netlist:verilogNetlist
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
-	iverilog -o build/netlistCpu $(srcVerilogNetlist)
+	iverilog -g2012 -o build/netlistCpu $(srcVerilogNetlist)
 	vvp build/netlistCpu -fst
 
 YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
