@@ -17,13 +17,13 @@ class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
 	val pipeReset	= reset.asBool||in.imme.error
 	val pipeValid	= PipeReg(in.pipe.valid		,out.imme.ready,false.B		,pipeReset)
 	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,out.imme.ready,CsrOp.Null	,pipeReset)
+	val pipeLsuOp	= PipeReg(in.pipe.lsuOp		,out.imme.ready,LsuOp.Null	,pipeReset)
 	val pipeRdAddr	= PipeReg(in.pipe.rdAddr	,out.imme.ready)
 	val pipeResult	= PipeReg(in.pipe.result	,out.imme.ready)
 	val pipePc		= PipeReg(in.pipe.pc		,out.imme.ready)
 	val pipeCsrAddr	= PipeReg(in.pipe.csrAddr	,out.imme.ready)
 	val pipeCsrMesg	= PipeReg(in.pipe.csrMesg	,out.imme.ready)
 	val pipeR2		= PipeReg(in.pipe.r2		,out.imme.ready)
-	val pipeLsuOp	= PipeReg(in.pipe.lsuOp		,out.imme.ready)
 	val pipeLsuAddr	= PipeReg(in.pipe.lsuAddr	,out.imme.ready)
 
 

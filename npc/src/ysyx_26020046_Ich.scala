@@ -46,7 +46,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 			(bar.res === BurstRes.Erro) -> (0.U),
 			(bar.res === BurstRes.Idle) -> (cnt),
 		))
-		when((bar.res===BurstRes.Done||cnt===CacheDone.U)||bar.res===BurstRes.Erro){pipeValid := false.B}
+		when((bar.res===BurstRes.Done)||bar.res===BurstRes.Erro){pipeValid := false.B}
 	}.otherwise{
 		bar.valid	:= false.B
 		bar.addr	:= 0.U
