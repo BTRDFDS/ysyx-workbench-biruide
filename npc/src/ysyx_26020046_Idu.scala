@@ -114,17 +114,11 @@ class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
 		is(Op.Branch)	{out.pipe.alu := ExuAlu.Null}
 		is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
 	}
-	out.pipe.in1 := Mux(opEnum === Op.Branch || opEnum === Op.Uauipc || opEnum === Op.Jal,ExuIn1.Pc,ExuIn1.R1)
-	out.pipe.in2 := MuxCase(ExuIn2.R2,Seq(//best//TODO
-		(opEnum===Op.Iload)	-> ExuIn2.Imm,
-		(opEnum===Op.Ialu)	-> ExuIn2.Imm,
-		(opEnum===Op.Store)	-> ExuIn2.Imm,
-		(opEnum===Op.Uauipc)-> ExuIn2.Imm,
-	))
+	out.pipe.in1 := Mux(opEnum === Op.Uauipc || opEnum === Op.Branch || opEnum === Op.Jal,ExuIn1.Pc,ExuIn1.R1)
+	out.pipe.in2 := Mux(opEnum===Op.Ialu || opEnum===Op.Store || opEnum===Op.Iload || opEnum===Op.Uauipc,ExuIn2.Imm,ExuIn2.R2)//best
 	switch(opEnum){//best
-		is(Op.Branch)			{out.pipe.res := ExuRes.Null}
-		is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
 		is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}
+		is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
 	}
 	when(opEnum === Op.Branch){
 		val (bfuEnum,bfuValidAll) = ExuBfu.safe(funct3)
