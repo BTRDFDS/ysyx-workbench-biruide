@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-class ysyx_26020046_Idu(val Yosys:Boolean=false) extends Module{
+class idu(val Yosys:Boolean=false) extends Module{
 	val in = IO(new Bundle{
 		val pipe	= Flipped(new PipeIfId())
 		val imme	= Flipped(new ImmeExId())

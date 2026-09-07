@@ -3,21 +3,21 @@ import chisel3.util._
 import chisel3.util.experimental._
 import WidthConsts._
 
-class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) extends Module {
+class cpu(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) extends Module {
 	override def desiredName = "ysyx_26020046"
 	val io = IO(new Bundle {
 		val interrupt = Input(Bool())
 		val master = new Axi4MasterOut()
 		val slave = Flipped(new Axi4MasterOut())
 	})
-	val ich = Module(new ysyx_26020046_Ich(Yosys))
-	val ifu = Module(new ysyx_26020046_Ifu(PcInit,Yosys))
-	val idu = Module(new ysyx_26020046_Idu(Yosys))
-	val exu = Module(new ysyx_26020046_Exu(Yosys))
-	val lsu = Module(new ysyx_26020046_Lsu(Yosys))
-	val wbu = Module(new ysyx_26020046_Wbu(Yosys))
-	val clt = Module(new ysyx_26020046_Clt)
-	val bar = Module(new ysyx_26020046_Bar(Yosys))
+	val ich = withModulePrefix("ysyx_26020046"){Module(new icache(Yosys))}
+	val ifu = withModulePrefix("ysyx_26020046"){Module(new ifu(PcInit,Yosys))}
+	val idu = withModulePrefix("ysyx_26020046"){Module(new idu(Yosys))}
+	val exu = withModulePrefix("ysyx_26020046"){Module(new exu(Yosys))}
+	val lsu = withModulePrefix("ysyx_26020046"){Module(new lsu(Yosys))}
+	val wbu = withModulePrefix("ysyx_26020046"){Module(new wbu(Yosys))}
+	val clt = withModulePrefix("ysyx_26020046"){Module(new clint)}
+	val bar = withModulePrefix("ysyx_26020046"){Module(new xbar(Yosys))}
 	//流水线
 	ifu.out.pipe <> idu.in.pipe
 	idu.out.pipe <> exu.in.pipe
@@ -96,7 +96,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		val chkPcWbu	= Mux(Get(wbu.pipeValid),						Cat(Get(wbu.pipePc),0.U(2.W)),0.U(32.W));dontTouch(chkPcWbu)
 
 
-		val chk = Module(new ysyx_26020046_Chk)
+		val chk = Module(new cpuChecker)
 		chk.clock	:= clock
 		// val btbIdu = RegInit(false.B);when(Get(idu.out.imme.ready)){btbIdu := (Get(ifu.isBranch)&&Get(ifu.bp2Hit)) || Get(ifu.isJal)||Get(ifu.isJalr)}
 		// val btbExu = RegInit(false.B);when(Get(exu.out.imme.ready)){btbExu := btbIdu}
@@ -157,7 +157,7 @@ class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) exten
 		.otherwise{chk.dnpc := Cat(Get(ifu.pipePc),0.U(2.W))}
 	}
 }
-class ysyx_26020046_Chk extends ExtModule{
+class cpuChecker extends ExtModule{
 	val inst	= IO(Input(Bool()))
 	val stall	= IO(Input(Bool()))
 	val jbMiss	= IO(Input(Bool()))
@@ -194,101 +194,101 @@ class ysyx_26020046_Chk extends ExtModule{
 	val check	= IO(Input(Bool()))
 
 	val clock	= IO(Input(Clock()))
-	setInline("ysyx_26020046_Chk.sv",
+	setInline("cpuChecker.sv",
 	"""
-	module ysyx_26020046_Chk(
-		input logic inst,
-		input logic stall,
-		input logic jbMiss,
-		input logic jbHit,
+module cpuChecker(
+	input logic inst,
+	input logic stall,
+	input logic jbMiss,
+	input logic jbHit,
 
-		input logic cal,
-		input logic jump,
-		input logic imm,
-		input logic ls,
-		input logic csr,
-		input logic br,
-		input logic miss,
-		input logic ifuMiss,
-		
-		input logic bnj,
-		input logic bij,
-		input logic jum,
-		input logic jlr,
-		input logic [31:0]jumpAddr,
-		input logic [31:0]jumpPc,
-		input logic sext,
+	input logic cal,
+	input logic jump,
+	input logic imm,
+	input logic ls,
+	input logic csr,
+	input logic br,
+	input logic miss,
+	input logic ifuMiss,
 	
-		input logic load,
-		input logic loadWait,
-		input logic store,
-		input logic storeWait,
-		input logic [31:0] addr,
+	input logic bnj,
+	input logic bij,
+	input logic jum,
+	input logic jlr,
+	input logic [31:0]jumpAddr,
+	input logic [31:0]jumpPc,
+	input logic sext,
 
-		input logic [7:0] rdAddr,
-		input logic [31:0] rdValue,
-		input logic [31:0] pc,
-		input logic [31:0] dnpc,
-		input logic ebreak,
-		input logic check,
-		input logic clock
-	);
-	import "DPI-C" function void ifuInst();
-	import "DPI-C" function void ifuStall();
-	import "DPI-C" function void ifuJbMiss();
-	import "DPI-C" function void ifuJbHit();
+	input logic load,
+	input logic loadWait,
+	input logic store,
+	input logic storeWait,
+	input logic [31:0] addr,
+
+	input logic [7:0] rdAddr,
+	input logic [31:0] rdValue,
+	input logic [31:0] pc,
+	input logic [31:0] dnpc,
+	input logic ebreak,
+	input logic check,
+	input logic clock
+);
+import "DPI-C" function void ifuInst();
+import "DPI-C" function void ifuStall();
+import "DPI-C" function void ifuJbMiss();
+import "DPI-C" function void ifuJbHit();
+
+import "DPI-C" function void iduCal();
+import "DPI-C" function void iduJump();
+import "DPI-C" function void iduImm();
+import "DPI-C" function void iduLs();
+import "DPI-C" function void iduCsr();
+import "DPI-C" function void iduBr();
+import "DPI-C" function void iduMiss();
+
+import "DPI-C" function void exuBnTrace(int pc,byte state);
+import "DPI-C" function void exuBiTrace(int pc,byte state,int addr);
+
+import "DPI-C" function void lsuLoad();
+import "DPI-C" function void lsuLoadWait();
+import "DPI-C" function void lsuStore();
+import "DPI-C" function void lsuStoreWait();
+import "DPI-C" function void lsuTrace(int addr);
+
+import "DPI-C" function void ebreakStop();
+import "DPI-C" function void wbuCheck(int dnpc,int pc,byte addr,int value);
+
+always_ff@(posedge clock)begin
+	if(stall)	ifuStall();
+	if(inst)	ifuInst();
+	if(jbMiss)	ifuJbMiss();
+	if(jbHit)	ifuJbHit();
 	
-	import "DPI-C" function void iduCal();
-	import "DPI-C" function void iduJump();
-	import "DPI-C" function void iduImm();
-	import "DPI-C" function void iduLs();
-	import "DPI-C" function void iduCsr();
-	import "DPI-C" function void iduBr();
-	import "DPI-C" function void iduMiss();
+	if(cal)		iduCal();
+	if(jump)	iduJump();
+	if(imm)		iduImm();
+	if(ls)		iduLs();
+	if(csr)		iduCsr();
+	if(br)		iduBr();
+	if(miss)	iduMiss();
+	if(ifuMiss)	iduMiss();
 	
-	import "DPI-C" function void exuBnTrace(int pc,byte state);
-	import "DPI-C" function void exuBiTrace(int pc,byte state,int addr);
+	if(bnj) exuBnTrace(jumpPc,{5'b0,sext,2'b01});
+	if(bij) exuBiTrace(jumpPc,{5'b0,sext,2'b11},jumpAddr);
+	if(jum) exuBiTrace(jumpPc,{5'b0,1'b0,2'b10},jumpAddr);
+	if(jlr) exuBiTrace(jumpPc,{5'b0,1'b1,2'b10},jumpAddr);
 
-	import "DPI-C" function void lsuLoad();
-	import "DPI-C" function void lsuLoadWait();
-	import "DPI-C" function void lsuStore();
-	import "DPI-C" function void lsuStoreWait();
-	import "DPI-C" function void lsuTrace(int addr);
+	if(load)		lsuLoad();
+	if(loadWait)	lsuLoadWait();
+	if(store)		lsuStore();
+	if(storeWait)	lsuStoreWait();
 
-	import "DPI-C" function void ebreakStop();
-	import "DPI-C" function void wbuCheck(int dnpc,int pc,byte addr,int value);
+	if(ebreak)	ebreakStop();
+	if(check)	wbuCheck(dnpc,pc,rdAddr,rdValue);
+end
+always_ff@(posedge load or posedge store)lsuTrace(addr);
 
-	always_ff@(posedge clock)begin
-		if(stall)	ifuStall();
-		if(inst)	ifuInst();
-		if(jbMiss)	ifuJbMiss();
-		if(jbHit)	ifuJbHit();
-		
-		if(cal)		iduCal();
-		if(jump)	iduJump();
-		if(imm)		iduImm();
-		if(ls)		iduLs();
-		if(csr)		iduCsr();
-		if(br)		iduBr();
-		if(miss)	iduMiss();
-		if(ifuMiss)	iduMiss();
-		
-		if(bnj) exuBnTrace(jumpPc,{5'b0,sext,2'b01});
-		if(bij) exuBiTrace(jumpPc,{5'b0,sext,2'b11},jumpAddr);
-		if(jum) exuBiTrace(jumpPc,{5'b0,1'b0,2'b10},jumpAddr);
-		if(jlr) exuBiTrace(jumpPc,{5'b0,1'b1,2'b10},jumpAddr);
-	
-		if(load)		lsuLoad();
-		if(loadWait)	lsuLoadWait();
-		if(store)		lsuStore();
-		if(storeWait)	lsuStoreWait();
-
-		if(ebreak)	ebreakStop();
-		if(check)	wbuCheck(dnpc,pc,rdAddr,rdValue);
-	end
-	always_ff@(posedge load or posedge store)lsuTrace(addr);
-
-	endmodule
+endmodule
 	"""
 	)
 }

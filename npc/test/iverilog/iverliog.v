@@ -1,7 +1,7 @@
 module iverilog;
 logic clock,reset;
 always #5 clock = ~clock;
-ysyx_26020046_iverilog cpu(clock, reset);
+driveIverilog cpu(clock, reset);
 initial begin
 	// $dumpfile("wave/iverilog.fst");
 	// $dumpvars(0,cpu);

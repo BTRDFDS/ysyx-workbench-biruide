@@ -2,7 +2,7 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-class ysyx_26020046_Wbu(val Yosys:Boolean=false) extends Module {
+class wbu(val Yosys:Boolean=false) extends Module {
 	val PcReset:UInt=0x80000000L.U(BitWidth.W)
 	val MstatuseReset = 0x1800.U(BitWidth.W)
 	val ErrorMesg = 2.U(BitWidth.W)

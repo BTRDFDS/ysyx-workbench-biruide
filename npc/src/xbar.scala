@@ -2,7 +2,7 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-class ysyx_26020046_Bar(val Yosys:Boolean=false) extends Module{
+class xbar(val Yosys:Boolean=false) extends Module{
 	val out = IO(new Axi4Master())
 	val clt = IO(new Axi4Master())
 	val ifu = IO(Flipped(new BurstBus()))

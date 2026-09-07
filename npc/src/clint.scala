@@ -8,7 +8,7 @@ object ClintAddr extends ChiselEnum{
 	val Mtimeh	= Value(0x0200BFFCL.U(BitWidth.W))
 }
 object ClintStatus extends ChiselEnum{val Idle,Read=Value}//TODO:目前只读,没有,Write
-class ysyx_26020046_Clt extends Module{
+class clint extends Module{
 	val axi4 = IO(Flipped(new Axi4Master()))
 
 	val mtime  = RegInit(0.U((BitWidth).W))

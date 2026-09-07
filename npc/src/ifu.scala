@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-class ysyx_26020046_Ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
+class ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val in	= IO(new Bundle{val imme = Flipped(new ImmeIdIf())})
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val ich	= IO(new InstrBus())

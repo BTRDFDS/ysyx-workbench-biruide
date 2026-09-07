@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 import WidthConsts._
-class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
+class icache(val Yosys:Boolean=false) extends Module {
 	val ifu = IO(Flipped(new InstrBus()))
 	val bar = IO(new BurstBus())
 	val exu	= IO(Flipped(new FecneBus()))
@@ -75,7 +75,7 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 	when(exu.fenceI){valid.foreach(_ := false.B)}
 
 	if(Yosys == false){
-		val ichChk = Module(new ysyx_26020046_IchChk)
+		val ichChk = Module(new icacheChk)
 		dontTouch(addrIdx)
 		dontTouch(addrOffset)
 		dontTouch(addrTag)
@@ -84,13 +84,13 @@ class ysyx_26020046_Ich(val Yosys:Boolean=false) extends Module {
 		ichChk.clock:= clock
 	}
 }
-class ysyx_26020046_IchChk extends ExtModule{
+class icacheChk extends ExtModule{
 	val hit		= IO(Input(Bool()))
 	val miss	= IO(Input(Bool()))
 	val clock	= IO(Input(Clock()))
-	setInline("ysyx_26020046_IchChk.sv",
+	setInline("icacheChk.sv",
 	"""
-	module ysyx_26020046_IchChk(
+	module icacheChk(
 		input logic hit,
 		input logic miss,
 		input logic clock

@@ -1,14 +1,11 @@
 import chisel3._
 import chisel3.util._
+import chisel3.util.experimental._
 import WidthConsts._
-//TODO:需要BlackBox
-//根据官网，blackbox已经被废弃了，使用ExtModule
-//TODO:1为了简化进行了一定程度的行为建模2写没有处理突发传输3读写可能冲不过应该问题不大
-object NpcState extends ChiselEnum{val Idle,Back = Value}
-class ysyx_26020046_Npc extends Module{
-	val PcInit:UInt=0x80000000L.U
-	val cpu = Module(new ysyx_26020046(PcInit))
-	val mem = Module(new ysyx_26020046_Mem())
+class driveIverilog extends Module{
+	val cpu = Module(new cpu(0x30000000L.U,true))
+	dontTouch(cpu.io)
+	val mem = Module(new driveIverilogMem())
 
 	val rState	= RegInit(NpcState.Idle)
 	val araddr	= RegInit(0.U(BitWidth.W))
@@ -42,9 +39,6 @@ class ysyx_26020046_Npc extends Module{
 		cpu.io.master.rresp		:= 0.U
 		mem.read.valid	:= true.B
 		mem.read.addr	:= Cat(araddr(31,CacheWidth+2),(cnt+araddr(CacheWidth+1,2)),0.U(2.W))
-		// val myAddr0 = Cat(araddr(31,CacheWidth+2),0.U((CacheWidth+2).W));dontTouch(myAddr0)
-		// val myAddr1 = araddr(CacheWidth+1,2)							;dontTouch(myAddr1)
-		// val myAddr2 = cnt+araddr(CacheWidth+1,2)						;dontTouch(myAddr2)
 		when(arburst=/=2.U && arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
 		when(arsiz=/=0.U && arsiz=/=1.U && arsiz=/=2.U){printf("arsize=%x error\n",arsiz);stop();}
 	}
@@ -104,7 +98,7 @@ class ysyx_26020046_Npc extends Module{
 	cpu.io.slave.wvalid		:= false.B
 	cpu.io.slave.bready		:= false.B
 	cpu.io.slave.wlast		:= false.B
-    cpu.io.slave.araddr		:= 0.U
+	cpu.io.slave.araddr		:= 0.U
 	cpu.io.slave.arlen		:= 0.U
 	cpu.io.slave.arsize		:= 0.U
 	cpu.io.slave.arburst	:= 0.U
@@ -116,9 +110,35 @@ class ysyx_26020046_Npc extends Module{
 	cpu.io.slave.awlen		:= 0.U
 	cpu.io.slave.awsize		:= 0.U
 	cpu.io.slave.awburst	:= 0.U
+
+	val pc = Cat(Get(cpu.ifu.pipePc),0.U(2.W));dontTouch(pc)
+	val shouldStop = RegInit(false.B);when(shouldStop){stop()}	
+	when((Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap && Get(cpu.wbu.pipeValid) && Get(cpu.wbu.pipeCsrMesg) === 0x3L.U) || Get(cpu.wbu.error)){
+		printf("Ebreak at 0x%8x a0=%8x\n",Cat(Get(cpu.wbu.pipePc),0.U(2.W)),Get(cpu.wbu.gpr)(10))
+		shouldStop := true.B
+	}
+	when((Get(cpu.wbu.pipeValid) === false.B & Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap) || Get(cpu.wbu.error)){//TODO:mstatus
+		when(Get(cpu.wbu.pipeValid) === false.B & Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap){printf("pipe err catch\n")}
+		when(Get(cpu.wbu.error)){printf("wbu err catch\n")}
+		printf("error,stop!!! %x ",Get(cpu.wbu.pipeCsrMesg))//tval
+		switch(Get(cpu.wbu.pipeCsrMesg)){
+			is(3.U	){printf("ebreak\n")}
+			is(11.U	){printf("ecall\n")}
+			is(0.U	){printf("ifuN4\n")}
+			is(1.U	){printf("ifuErr\n")}
+			is(2.U	){printf("instr\n")}
+			is(4.U	){printf("laddr\n")}
+			is(5.U	){printf("lerror\n")}
+			is(6.U	){printf("sAddr\n")}
+			is(7.U	){printf("sError\n")}
+		}
+		shouldStop := true.B
+	}
+	// when(mem.read.valid){printf("%8x read at %8x %8x\n",Cat(Get(cpu.io.lsu.pipePc),0.U(2.W)),mem.read.addr,mem.read.data)}
+	// when(mem.write.valid){printf("%8x write at %8x %b %8x\n",Cat(Get(cpu.io.lsu.pipePc),0.U(2.W)),mem.write.addr,mem.write.strb,mem.write.data)}
 }
-class ysyx_26020046_Mem extends ExtModule{
-    val read = IO(new Bundle{
+class driveIverilogMem extends Module{
+	val read = IO(new Bundle{
 		val valid	= Input(Bool())
 		val addr	= Input(UInt(32.W))
 		val data	= Output(UInt(32.W))
@@ -129,27 +149,35 @@ class ysyx_26020046_Mem extends ExtModule{
 		val strb	= Input(UInt(4.W))
 		val data	= Input(UInt(32.W))
 	})
-	setInline("ysyx_26020046_Mem.sv",
-	"""
-	module ysyx_26020046_Mem(
-		input logic read_valid,
-		input logic[31:0] read_addr,
-		output logic[31:0] read_data,
-		input logic write_valid,
-		input logic[31:0] write_addr,
-		input logic[3:0] write_strb,
-		input logic[31:0] write_data
-	);
-	import "DPI-C" function int psram_read(input int addr);
-	import "DPI-C" function void psram_write(input int addr, input int data);
-	assign read_data = read_valid?psram_read({5'd0,read_addr[26:2],2'b00}):0;
-	always_ff@(posedge write_valid) if(write_addr[31:28]==4'b1000)begin
-		if(write_strb[0])psram_write({5'b0,write_addr[26:2],2'b00},{24'd0,write_data[ 7: 0]});
-		if(write_strb[1])psram_write({5'b0,write_addr[26:2],2'b01},{24'd0,write_data[15: 8]});
-		if(write_strb[2])psram_write({5'b0,write_addr[26:2],2'b10},{24'd0,write_data[23:16]});
-		if(write_strb[3])psram_write({5'b0,write_addr[26:2],2'b11},{24'd0,write_data[31:24]});
-	end else if(write_addr==32'h10000000)$write("%c",write_data[ 7: 0]);
-	endmodule
-	"""
-	)
+	val psram = Mem(0x01000000,UInt(8.W))
+	loadMemoryFromFileInline(psram, "./test/iverilog/iverilog.hex")
+	// val theFirst = RegInit(true.B);when(theFirst){theFirst := false.B
+	// 	printf("%x\n",Cat(psram(0x0003),psram(0x0002),psram(0x0001),psram(0x0000)))
+	// 	printf("%x\n",Cat(psram(0x0007),psram(0x0006),psram(0x0005),psram(0x0004)))
+	// 	printf("%x\n",Cat(psram(0x000b),psram(0x000a),psram(0x0009),psram(0x0008)))
+	// 	printf("%x\n",Cat(psram(0x000f),psram(0x000e),psram(0x000d),psram(0x000c)))
+	// 	printf("%x\n",Cat(psram(0x0013),psram(0x0012),psram(0x0011),psram(0x0010)))
+	// 	printf("%x\n",Cat(psram(0x0017),psram(0x0016),psram(0x0015),psram(0x0014)))
+	// }
+
+	val rdata = Wire(UInt(32.W))
+	when(read.addr(31,28)===0x3.U){
+		rdata := Mux(read.addr(2),0x00008067L.U,0x800000b7L.U)
+	}.otherwise{
+		rdata := Cat(
+			psram(Cat(read.addr(31,2),3.U(2.W))),
+			psram(Cat(read.addr(31,2),2.U(2.W))),
+			psram(Cat(read.addr(31,2),1.U(2.W))),
+			psram(Cat(read.addr(31,2),0.U(2.W)))
+		)
+	}
+	read.data := Mux(read.valid,rdata,0.U)
+	when(write.valid && write.addr(31,28)===0b1000.U){
+		when(write.strb(0).asBool){psram(Cat(write.addr(31,2),0.U(2.W))) := write.data( 7, 0)}
+		when(write.strb(1).asBool){psram(Cat(write.addr(31,2),1.U(2.W))) := write.data(15, 8)}
+		when(write.strb(2).asBool){psram(Cat(write.addr(31,2),2.U(2.W))) := write.data(23,16)}
+		when(write.strb(3).asBool){psram(Cat(write.addr(31,2),3.U(2.W))) := write.data(31,24)}
+	}.elsewhen(write.valid && write.addr===0x10000000.U){
+		printf("%c",write.data(7,0))
+	}
 }

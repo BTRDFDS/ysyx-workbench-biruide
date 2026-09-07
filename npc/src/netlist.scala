@@ -2,11 +2,11 @@ import chisel3._
 import chisel3.util._
 import chisel3.util.experimental._
 import WidthConsts._
-class ysyx_26020046_netlist extends Module{
+class driveNetlist extends Module{
 	val cpu = Module(new ysyx_26020046_netlistLink())
 	cpu.clock := clock
 	cpu.reset := reset
-	val mem = Module(new ysyx_26020046_iverilog_Mem())
+	val mem = Module(new driveIverilogMem())
 
 	val rState	= RegInit(NpcState.Idle)
 	val araddr	= RegInit(0.U(BitWidth.W))

@@ -3,7 +3,7 @@ import chisel3.simulator.scalatest.ChiselSim
 import org.scalatest.funsuite.AnyFunSuite
 
 class icachesim extends AnyFunSuite with ChiselSim{
-	test("icache延迟测试") {simulate(new ysyx_26020046_Ich(true)) { dut =>
+	test("icache延迟测试") {simulate(new ich(true)) { dut =>
 			dut.ifu.valid.poke(true.B)
 			dut.ifu.addr.poke(0x1000.U)
 

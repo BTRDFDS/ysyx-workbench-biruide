@@ -2,7 +2,7 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 
-class ysyx_26020046_Lsu(val Yosys:Boolean=false) extends Module{
+class lsu(val Yosys:Boolean=false) extends Module{
 	val in = IO(new Bundle{
 		val pipe = Flipped(new PipeExLs())
 		val imme = Flipped(new ImmeWbLs())

@@ -5,15 +5,15 @@ verilog:verilogYsyxSoc
 	$(call git_commit, "generate verilog")
 
 srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
-build/%.stamp:$(srcScala)
-	@mill -i runMain $*
+build/%:$(srcScala)
+	@mill -i runMain $(notdir $*)
 	@touch $@
-verilogNpc:build/BuilderNpc.stamp
-verilogYsyxSoc:build/BuilderYsyxSoc.stamp
-verilogSta:build/BuilderSta.stamp
-verilogIcache:build/BuilderIcache.stamp
-verilogIverilog:build/BuilderIverilog.stamp
-verilogNetlist:build/BuilderNetlist.stamp
+verilogNpc:build/npc/BuilderNpc
+verilogYsyxSoc:build/ysyxsoc/BuilderYsyxSoc
+verilogSta:build/sta/BuilderSta
+verilogIcache:build/icache/BuilderIcache
+verilogIverilog:build/iverilog/BuilderIverilog
+verilogNetlist:build/netlist/BuilderNetlist
 
 
 reformat:
@@ -60,7 +60,7 @@ CXXFLAGS += -I/$(NVBOARD_HOME)/usr/include
 wave:
 	@mkdir -p wave
 
-srcNpc =ysyx_26020046_Npc
+srcNpc =driveNpc
 srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
