@@ -4,6 +4,7 @@ import chisel3.util.experimental._
 import WidthConsts._
 
 class ysyx_26020046(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) extends Module {
+	override def desiredName = "ysyx_26020046"
 	val io = IO(new Bundle {
 		val interrupt = Input(Bool())
 		val master = new Axi4MasterOut()

@@ -3,7 +3,8 @@ import chisel3.util._
 import chisel3.util.experimental._
 import WidthConsts._
 class ysyx_26020046_iverilog extends Module{
-	val cpu = Module(new ysyx_26020046_iverilogLink())
+	val cpu = Module(new ysyx_26020046(0x30000000L.U,true))
+	dontTouch(cpu.io)
 	val mem = Module(new ysyx_26020046_iverilog_Mem())
 
 	val rState	= RegInit(NpcState.Idle)
@@ -13,29 +14,29 @@ class ysyx_26020046_iverilog extends Module{
 	val arburst	= RegInit(0.U(BurstWidth.W))
 	val cnt		= RegInit(0.U(CacheWidth.W))
 	when(rState===NpcState.Idle){
-		when(cpu.master.arvalid){
+		when(cpu.io.master.arvalid){
 			rState	:= NpcState.Back
-			araddr	:= cpu.master.araddr
-			arlen	:= cpu.master.arlen
-			arsiz	:= cpu.master.arsize
-			arburst	:= cpu.master.arburst
+			araddr	:= cpu.io.master.araddr
+			arlen	:= cpu.io.master.arlen
+			arsiz	:= cpu.io.master.arsize
+			arburst	:= cpu.io.master.arburst
 		}
 		cnt	:= 0.U
-		cpu.master.arready	:= true.B
-		cpu.master.rvalid	:= false.B
-		cpu.master.rlast		:= false.B
-		cpu.master.rdata		:= 0.U
-		cpu.master.rresp		:= 0.U
+		cpu.io.master.arready	:= true.B
+		cpu.io.master.rvalid	:= false.B
+		cpu.io.master.rlast		:= false.B
+		cpu.io.master.rdata		:= 0.U
+		cpu.io.master.rresp		:= 0.U
 		mem.read.valid			:= false.B
 		mem.read.addr			:= 0.U
 	}.otherwise{
-		when(cpu.master.rready && Mux(arburst===2.U,cnt===arlen,true.B)){rState := NpcState.Idle}
+		when(cpu.io.master.rready && Mux(arburst===2.U,cnt===arlen,true.B)){rState := NpcState.Idle}
 		cnt := cnt + 1.U
-		cpu.master.arready	:= false.B
-		cpu.master.rvalid	:= true.B
-		cpu.master.rlast		:= Mux(arburst===2.U,cnt===arlen,true.B)
-		cpu.master.rdata		:= mem.read.data
-		cpu.master.rresp		:= 0.U
+		cpu.io.master.arready	:= false.B
+		cpu.io.master.rvalid	:= true.B
+		cpu.io.master.rlast		:= Mux(arburst===2.U,cnt===arlen,true.B)
+		cpu.io.master.rdata		:= mem.read.data
+		cpu.io.master.rresp		:= 0.U
 		mem.read.valid	:= true.B
 		mem.read.addr	:= Cat(araddr(31,CacheWidth+2),(cnt+araddr(CacheWidth+1,2)),0.U(2.W))
 		when(arburst=/=2.U && arburst=/=0.U){printf("arburst=%x error\n",arburst);stop();}
@@ -48,32 +49,32 @@ class ysyx_26020046_iverilog extends Module{
 	val hasAddr = RegInit(false.B)
 	val hasData = RegInit(false.B)
 	when(wState===NpcState.Idle){
-		when((hasAddr && hasData) || (cpu.master.awvalid && cpu.master.wvalid)){wState:=NpcState.Back}
-		hasAddr := cpu.master.awvalid
-		hasData := cpu.master.wvalid
-		when(cpu.master.awvalid && ~hasAddr){
-			awaddr := cpu.master.awaddr
+		when((hasAddr && hasData) || (cpu.io.master.awvalid && cpu.io.master.wvalid)){wState:=NpcState.Back}
+		hasAddr := cpu.io.master.awvalid
+		hasData := cpu.io.master.wvalid
+		when(cpu.io.master.awvalid && ~hasAddr){
+			awaddr := cpu.io.master.awaddr
 		}
-		when(cpu.master.wvalid && ~hasData){
-			wdata := cpu.master.wdata
-			wstrb := cpu.master.wstrb
+		when(cpu.io.master.wvalid && ~hasData){
+			wdata := cpu.io.master.wdata
+			wstrb := cpu.io.master.wstrb
 		}
-		cpu.master.awready	:= ~hasAddr
-		cpu.master.wready	:= ~hasData
-		cpu.master.bvalid	:= false.B
-		cpu.master.bresp		:= 0.U
+		cpu.io.master.awready	:= ~hasAddr
+		cpu.io.master.wready	:= ~hasData
+		cpu.io.master.bvalid	:= false.B
+		cpu.io.master.bresp		:= 0.U
 		mem.write.valid	:= false.B
 		mem.write.addr		:= 0.U
 		mem.write.strb		:= 0.U
 		mem.write.data		:= 0.U
 	}.otherwise{
-		when(cpu.master.bready){wState := NpcState.Idle}
+		when(cpu.io.master.bready){wState := NpcState.Idle}
 		hasAddr := false.B
 		hasData := false.B
-		cpu.master.awready	:= false.B
-		cpu.master.wready	:= false.B
-		cpu.master.bvalid	:= true.B
-		cpu.master.bresp		:= 0.U
+		cpu.io.master.awready	:= false.B
+		cpu.io.master.wready	:= false.B
+		cpu.io.master.bvalid	:= true.B
+		cpu.io.master.bresp		:= 0.U
 		mem.write.valid	:= true.B
 		mem.write.addr		:= awaddr
 		mem.write.strb		:= wstrb
@@ -86,41 +87,41 @@ class ysyx_26020046_iverilog extends Module{
 	// val awsize	= Output(UInt(SizeWidth.W))
 	// val awburst	= Output(UInt(BurstWidth.W))
 	// val wlast	= Output(Bool())Z
-	cpu.master.rid	:= 0.U
-	cpu.master.bid	:= 0.U
+	cpu.io.master.rid	:= 0.U
+	cpu.io.master.bid	:= 0.U
 
-	cpu.interrupt	:= false.B
+	cpu.io.interrupt	:= false.B
 	
-	cpu.slave.arvalid	:= false.B
-	cpu.slave.rready		:= false.B
-	cpu.slave.awvalid	:= false.B
-	cpu.slave.wvalid		:= false.B
-	cpu.slave.bready		:= false.B
-	cpu.slave.wlast		:= false.B
-	cpu.slave.araddr		:= 0.U
-	cpu.slave.arlen		:= 0.U
-	cpu.slave.arsize		:= 0.U
-	cpu.slave.arburst	:= 0.U
-	cpu.slave.awaddr		:= 0.U
-	cpu.slave.wdata		:= 0.U
-	cpu.slave.wstrb		:= 0.U
-	cpu.slave.arid		:= 0.U
-	cpu.slave.awid		:= 0.U
-	cpu.slave.awlen		:= 0.U
-	cpu.slave.awsize		:= 0.U
-	cpu.slave.awburst	:= 0.U
+	cpu.io.slave.arvalid	:= false.B
+	cpu.io.slave.rready		:= false.B
+	cpu.io.slave.awvalid	:= false.B
+	cpu.io.slave.wvalid		:= false.B
+	cpu.io.slave.bready		:= false.B
+	cpu.io.slave.wlast		:= false.B
+	cpu.io.slave.araddr		:= 0.U
+	cpu.io.slave.arlen		:= 0.U
+	cpu.io.slave.arsize		:= 0.U
+	cpu.io.slave.arburst	:= 0.U
+	cpu.io.slave.awaddr		:= 0.U
+	cpu.io.slave.wdata		:= 0.U
+	cpu.io.slave.wstrb		:= 0.U
+	cpu.io.slave.arid		:= 0.U
+	cpu.io.slave.awid		:= 0.U
+	cpu.io.slave.awlen		:= 0.U
+	cpu.io.slave.awsize		:= 0.U
+	cpu.io.slave.awburst	:= 0.U
 
-	val pc = Cat(Get(cpu.cpu.ifu.pipePc),0.U(2.W));dontTouch(pc)
+	val pc = Cat(Get(cpu.ifu.pipePc),0.U(2.W));dontTouch(pc)
 	val shouldStop = RegInit(false.B);when(shouldStop){stop()}	
-	when((Get(cpu.cpu.wbu.pipeCsrOp) === CsrOp.Trap && Get(cpu.cpu.wbu.pipeValid) && Get(cpu.cpu.wbu.pipeCsrMesg) === 0x3L.U) || Get(cpu.cpu.wbu.error)){
-		printf("Ebreak at 0x%8x a0=%8x\n",Cat(Get(cpu.cpu.wbu.pipePc),0.U(2.W)),Get(cpu.cpu.wbu.gpr)(10))
+	when((Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap && Get(cpu.wbu.pipeValid) && Get(cpu.wbu.pipeCsrMesg) === 0x3L.U) || Get(cpu.wbu.error)){
+		printf("Ebreak at 0x%8x a0=%8x\n",Cat(Get(cpu.wbu.pipePc),0.U(2.W)),Get(cpu.wbu.gpr)(10))
 		shouldStop := true.B
 	}
-	when((Get(cpu.cpu.wbu.pipeValid) === false.B & Get(cpu.cpu.wbu.pipeCsrOp) === CsrOp.Trap) || Get(cpu.cpu.wbu.error)){//TODO:mstatus
-		when(Get(cpu.cpu.wbu.pipeValid) === false.B & Get(cpu.cpu.wbu.pipeCsrOp) === CsrOp.Trap){printf("pipe err catch\n")}
-		when(Get(cpu.cpu.wbu.error)){printf("wbu err catch\n")}
-		printf("error,stop!!! %x ",Get(cpu.cpu.wbu.pipeCsrMesg))//tval
-		switch(Get(cpu.cpu.wbu.pipeCsrMesg)){
+	when((Get(cpu.wbu.pipeValid) === false.B & Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap) || Get(cpu.wbu.error)){//TODO:mstatus
+		when(Get(cpu.wbu.pipeValid) === false.B & Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap){printf("pipe err catch\n")}
+		when(Get(cpu.wbu.error)){printf("wbu err catch\n")}
+		printf("error,stop!!! %x ",Get(cpu.wbu.pipeCsrMesg))//tval
+		switch(Get(cpu.wbu.pipeCsrMesg)){
 			is(3.U	){printf("ebreak\n")}
 			is(11.U	){printf("ecall\n")}
 			is(0.U	){printf("ifuN4\n")}
@@ -133,8 +134,8 @@ class ysyx_26020046_iverilog extends Module{
 		}
 		shouldStop := true.B
 	}
-	// when(mem.read.valid){printf("%8x read at %8x %8x\n",Cat(Get(cpu.lsu.pipePc),0.U(2.W)),mem.read.addr,mem.read.data)}
-	// when(mem.write.valid){printf("%8x write at %8x %b %8x\n",Cat(Get(cpu.lsu.pipePc),0.U(2.W)),mem.write.addr,mem.write.strb,mem.write.data)}
+	// when(mem.read.valid){printf("%8x read at %8x %8x\n",Cat(Get(cpu.io.lsu.pipePc),0.U(2.W)),mem.read.addr,mem.read.data)}
+	// when(mem.write.valid){printf("%8x write at %8x %b %8x\n",Cat(Get(cpu.io.lsu.pipePc),0.U(2.W)),mem.write.addr,mem.write.strb,mem.write.data)}
 }
 class ysyx_26020046_iverilog_Mem extends Module{
 	val read = IO(new Bundle{
@@ -159,14 +160,17 @@ class ysyx_26020046_iverilog_Mem extends Module{
 	// 	printf("%x\n",Cat(psram(0x0017),psram(0x0016),psram(0x0015),psram(0x0014)))
 	// }
 
-
-
-	val rdata = Cat(
-		psram(Cat(read.addr(31,2),3.U(2.W))),
-		psram(Cat(read.addr(31,2),2.U(2.W))),
-		psram(Cat(read.addr(31,2),1.U(2.W))),
-		psram(Cat(read.addr(31,2),0.U(2.W)))
-	)
+	val rdata = Wire(UInt(32.W))
+	when(read.addr(31,28)===0x3.U){
+		rdata := Mux(read.addr(2),0x00008067L.U,0x800000b7L.U)
+	}.otherwise{
+		rdata := Cat(
+			psram(Cat(read.addr(31,2),3.U(2.W))),
+			psram(Cat(read.addr(31,2),2.U(2.W))),
+			psram(Cat(read.addr(31,2),1.U(2.W))),
+			psram(Cat(read.addr(31,2),0.U(2.W)))
+		)
+	}
 	read.data := Mux(read.valid,rdata,0.U)
 	when(write.valid && write.addr(31,28)===0b1000.U){
 		when(write.strb(0).asBool){psram(Cat(write.addr(31,2),0.U(2.W))) := write.data( 7, 0)}

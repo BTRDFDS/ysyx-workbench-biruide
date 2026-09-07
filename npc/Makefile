@@ -1,9 +1,8 @@
 test:
 	@mill -i test
-verilog:
-	$(call git_commit, "generate verilog")
-	make verilogYsyxSoc
+verilog:verilogYsyxSoc
 	cat $(shell find $(NPC_HOME)/build/ysyxsoc -type f -name "*.sv") > $(NPC_HOME)/build/ysyx_26020046.sv
+	$(call git_commit, "generate verilog")
 
 srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
 build/%.stamp:$(srcScala)
@@ -103,6 +102,10 @@ iverilog:verilogIverilog
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
+sim-iverilog:verilogIverilog
+	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(NPC_HOME)/test/iverilog/iverilog.hex
+	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
+	vvp build/iverilogCpu -fst
 
 srcVerilogNetlist += $(NPC_HOME)/test/iverilog/netlist.v
 srcVerilogNetlist += $(NPC_HOME)/test/iverilog/ysyx_26020046_netlistLink.v
@@ -113,6 +116,10 @@ srcVerilogNetlist += $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046
 srcVerilogNetlist += $(YOSYS_STA_HOME)/pdk/nangate45/sim/cells.v
 netlist:verilogNetlist sta
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/test/iverilog/iverilog.hex
+	iverilog -g2012 -o build/netlistCpu $(srcVerilogNetlist)
+	vvp build/netlistCpu -fst
+sim-iverilog-netlist:verilogNetlist
+	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(NPC_HOME)/test/iverilog/iverilog.hex
 	iverilog -g2012 -o build/netlistCpu $(srcVerilogNetlist)
 	vvp build/netlistCpu -fst
 

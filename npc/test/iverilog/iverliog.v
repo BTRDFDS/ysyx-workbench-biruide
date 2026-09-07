@@ -13,6 +13,6 @@ initial begin
 	// #300 $display("300 pc:%x",{cpu.cpu.ifu.pipePc,2'b0});
 	// #400 $display("400 pc:%x",{cpu.cpu.ifu.pipePc,2'b0});
 	// #500 $display("500 pc:%x",{cpu.cpu.ifu.pipePc,2'b0});
-	// #10000 $finish();
+	// #300 $finish();
 end
 endmodule

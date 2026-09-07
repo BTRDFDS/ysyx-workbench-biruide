@@ -28,7 +28,7 @@ import circt.stage.ChiselStage.emitSystemVerilogFile
 import chisel3._
 object BuilderNpc		extends App	{emitSystemVerilogFile(new ysyx_26020046_Npc				,Array("--target-dir","./build/npc")		,firtoolOptions)}
 object BuilderYsyxSoc	extends App	{emitSystemVerilogFile(new ysyx_26020046					,Array("--target-dir","./build/ysyxsoc")	,firtoolOptions)}
-object BuilderSta		extends App	{emitSystemVerilogFile(new ysyx_26020046(0x80000000L.U,true)	,Array("--target-dir","./build/sta")		,firtoolOptions)}
+object BuilderSta		extends App	{emitSystemVerilogFile(new ysyx_26020046(0x30000000L.U,true)	,Array("--target-dir","./build/sta")		,firtoolOptions)}
 object BuilderIcache	extends App	{emitSystemVerilogFile(new ysyx_26020046_Ich(true)			,Array("--target-dir","./build/icache")		,firtoolOptions)}
 object BuilderIverilog	extends App	{emitSystemVerilogFile(new ysyx_26020046_iverilog			,Array("--target-dir","./build/iverilog")	,firtoolOptionsIverilog)}
 object BuilderNetlist	extends App	{emitSystemVerilogFile(new ysyx_26020046_netlist			,Array("--target-dir","./build/netlist")	,firtoolOptionsIverilog)}
