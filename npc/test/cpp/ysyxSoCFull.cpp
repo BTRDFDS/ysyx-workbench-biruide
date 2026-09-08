@@ -17,7 +17,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
 	top = new VysyxSoCFull{contextp};
-	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
+	#if defined(NPC_WAVE)
 		Verilated::traceEverOn(true);
 		tfp = new VerilatedFstC;
 		top->trace(tfp, 99);
@@ -72,11 +72,6 @@ void NpcWave(){
 	#ifdef NPC_WAVE
 		contextp->timeInc(1);
 		tfp->dump(contextp->time());
-	#elif defined(NPC_MIN_TRACE)
-	if(numCycle >= NpcMinTraceBegin){
-		contextp->timeInc(1);
-		tfp->dump(contextp->time());
-	}
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +86,7 @@ int main(int argc, char** argv) {
 		numCycle=0;
 	}
 	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	for(int i=0;(i<runstopTime||runstopTime==0)&&(!contextp->gotFinish()&(!stop));i++){
+	for(int i=0;(i<RunstopTime||RunstopTime==0)&&(!contextp->gotFinish()&(!stop));i++){
 		#ifdef NPC_NVBroad
 			nvboard_update();
 		#endif

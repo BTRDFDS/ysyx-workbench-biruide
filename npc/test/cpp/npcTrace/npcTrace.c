@@ -4,13 +4,11 @@
 csh handle;
 
 FILE *npctraceIringsFp=NULL;
-FILE *npctraceMtraceFp=NULL;
 FILE *npctraceFtraceFp=NULL;
 FILE *npctraceEtraceFp=NULL;
 FILE *npctraceDtraceFp=NULL;
 
 const char *npctraceIringsFile={"log/irings.log"};
-const char *npctraceMtraceFile={"log/mtrace.log"};
 const char *npctraceFtraceFile={"log/ftrace.log"};
 const char *npctraceEtraceFile={"log/etrace.log"};
 const char *npctraceDtraceFile={"log/dtrace.log"};
@@ -20,11 +18,6 @@ void NpcTraceInitFile(){
 	npctraceIringsFp = fopen(npctraceIringsFile, "w");
 	if(npctraceIringsFp == NULL){printf("err:open %s",npctraceIringsFile);exit(-1);}
 	printf("\033[1;34m ITRACE\t\033[0m");
-#endif
-#ifdef NPC_M_TRACE
-	npctraceMtraceFp = fopen(npctraceMtraceFile, "w");
-	if(npctraceMtraceFp == NULL){printf("err:open %s",npctraceMtraceFile);exit(-1);}
-	printf("\033[1;34m MTRACE\t\033[0m");
 #endif
 #ifdef NPC_F_TRACE
 	npctraceFtraceFp = fopen(npctraceFtraceFile, "w");
@@ -47,10 +40,6 @@ void NpcTraceCloseFile(){
 	if(npctraceIringsFp != NULL){
 		printf("irings:%s\n",npctraceIringsFile);
 		fclose(npctraceIringsFp);
-	}
-	if(npctraceMtraceFp != NULL){
-		printf("mtrace:%s\n",npctraceMtraceFile);
-		fclose(npctraceMtraceFp);
 	}
 	if(npctraceFtraceFp != NULL){
 		printf("ftrace:%s\n",npctraceFtraceFile);
@@ -129,17 +118,6 @@ void NpcTraceIrings(uint32_t pc,uint32_t incode,char*mnemonic,char*op){
 		}
 		fflush(npctraceIringsFp);
 	}
-}
-void NpcTraceMtrace(const char *format, ...){
-#ifdef NPC_M_TRACE
-	if(npctraceMtraceFp!=NULL){
-		va_list args;
-		va_start(args, format);
-		if(vfprintf(npctraceMtraceFp,format,args)<0){printf("mtrace write err\n");exit(-1);}
-		else{fflush(npctraceMtraceFp);}
-		va_end(args);
-	}
-#endif
 }
 void NpcTraceDtrace(const char *format, ...){
 #ifdef NPC_D_TRACE

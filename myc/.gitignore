@@ -1,6 +1,0 @@
-!src/*
-!hex/*
-!tests/*
-bin/*
-build/*
-!Makefile

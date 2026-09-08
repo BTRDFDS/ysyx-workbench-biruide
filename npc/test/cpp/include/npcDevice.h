@@ -84,11 +84,11 @@ inline void printCounter(){
 	printf("lsu store= %ld storeWait= %ld WpS= %f\n",numLsuStore,numLsuStoreWait,(float)((float)numLsuStoreWait)/((float)numLsuStore));
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
-#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
+#if defined(NPC_M_TRACE)
 	std::fstream logFile;//输出日志文件：
 	#endif
 inline void logFileInit(const char* logFileName){
-	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
+	#if defined(NPC_M_TRACE)
 		logFile.open(logFileName,std::ios::out);
 		if(!logFile.is_open()) {
 		printf("Failed to open log file!\n");
@@ -97,7 +97,7 @@ inline void logFileInit(const char* logFileName){
 	#endif
 	}
 inline void logFileClose(){
-	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
+	#if defined(NPC_M_TRACE)
 		logFile.close();
 	#endif
 	}
@@ -184,7 +184,7 @@ inline void branchTraceFileClose(){
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
-#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
+#if defined(NPC_WAVE)
 	#include "verilated_fst_c.h"
 	VerilatedFstC* tfp;//波形文件
 	#endif
@@ -195,7 +195,7 @@ inline void TraceInit(){
 	branchTraceFileInit();
 	}
 inline void printOver(){
-	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
+	#if defined(NPC_WAVE)
 		tfp->close();
 	#endif
 	printCounter();
@@ -272,9 +272,6 @@ extern "C" int psram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr)&0xfffffffc;
 	#if defined(NPC_M_TRACE)
 		logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
-	#elif defined(NPC_MIN_TRACE)
-		// if(numCycle >= NpcMinTraceBegin)logFile<<std::hex<<regs[0]<<"\n";
-		// if((addr&0xfffffff0) == (0xa00164b4&0xfffffff0))logFile<<"psram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
 	#endif
 	if(addrX>=psramSize){NpcFinish("psram read error",addrX);return 0;}
 	uint32_t temp=
@@ -297,17 +294,12 @@ extern "C" void psram_write(int addr,int data){
 	psram[addrX+0]=(uint8_t)(data&0xff);
 	#if defined(NPC_M_TRACE)
 		logFile<<std::hex<<(uint32_t)psram[addrX+0]<<std::endl;
-	#elif defined(NPC_MIN_TRACE)
-		// if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0))logFile<<std::hex<<(uint32_t)psram[addrX+0]<<"\n";
 	#endif
 	}
 extern "C" int sdram_read(int32_t addr){
 	uint32_t addrX=((uint32_t)addr);
 	#if defined(NPC_M_TRACE)
 		logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
-	#elif defined(NPC_MIN_TRACE)
-		if(numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<regs[0]<<"\n";
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	R "<<std::hex<<addr<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle;
 	#endif
 	if(addrX>=sdramSize){NpcFinish("sdram read error",addrX);return 0;}
 	uint32_t temp=
@@ -317,8 +309,6 @@ extern "C" int sdram_read(int32_t addr){
 		((uint32_t)sdram[addrX+3]<<24);
 	#ifdef NPC_M_TRACE
 		logFile<<" => "<<std::hex<<temp<<std::endl;
-	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<" => "<<std::hex<<temp<<std::endl;
 	#endif
 	return temp;
 	}
@@ -326,14 +316,10 @@ extern "C" void sdram_write(int addr,int data){
 	uint32_t addrX=(uint32_t)addr;
 	#if defined(NPC_M_TRACE)
 		logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
-	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<"sdram	W "<<std::hex<<addrX<<" at 0x "<<std::hex<<regs[0]<<" T="<<std::dec<<numCycle<<" "<<std::hex<<data<<" => ";
 	#endif
 	sdram[addrX+0]=(uint8_t)(data&0xff);
 	#if defined(NPC_M_TRACE)
 		logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
-	#elif defined(NPC_MIN_TRACE)
-		if((addr&0x00fffff0) == (0xa00164b4&0x00fffff0) || numCycle >= NpcMinTraceBegin)logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
