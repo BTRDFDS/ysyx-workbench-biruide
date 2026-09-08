@@ -1,25 +1,25 @@
 //psram
-//driveNpc
-#include "VdriveNpc.h"
+//driveTop
+#include "VdriveTop.h"
 #include "verilated.h"
 #include "svdpi.h"
-#include "VdriveNpc__Dpi.h"
+#include "VdriveTop__Dpi.h"
 #include <npcDevice.h>
 
 VerilatedContext* contextp;//verilator上下文
-VdriveNpc* top;//顶层模块
+VdriveTop* top;//顶层模块
 ////////////////////////////////////////////////////////////////////////////////////////
 void NpcInitDeviceMem(int argc, char** argv){
 	contextp = new VerilatedContext;
 	contextp->commandArgs(argc, argv);
-	top = new VdriveNpc{contextp};
+	top = new VdriveTop{contextp};
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		Verilated::traceEverOn(true);
 		tfp = new VerilatedFstC;
 		top->trace(tfp, 99);
-		tfp->open("./wave/driveNpc.fst");
+		tfp->open("./wave/driveTop.fst");
 	#endif
-	logFileInit("./log/driveNpc.log");
+	logFileInit("./log/driveTop.log");
 	TraceInit();
 	FILE *file;
 	if(argc>1&&argv[1]!=NULL){
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
 		top->clock=0;top->reset=0;top->eval();
 		numCycle=0;
 	}
-	printf("\033[1;32m Welcome to driveNpc[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
+	printf("\033[1;32m Welcome to driveTop[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
 	for(uint64_t i=0;(i<runstopTime||runstopTime==0)&&(!contextp->gotFinish()&(!stop));i++){
 		NpcWave();
 		top->clock=1;top->eval();
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 	// NpcWave();
 	printOver();
 	contextp->statsPrintSummary();
-	contextp->coveragep()->write("./log/driveNpc.dat");
+	contextp->coveragep()->write("./log/driveTop.dat");
 	delete top;
 	delete contextp;
 	return returnCode;

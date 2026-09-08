@@ -26,9 +26,9 @@ object FirtoolOptions{
 import FirtoolOptions._
 import circt.stage.ChiselStage.emitSystemVerilogFile
 import chisel3._
-object BuilderNpc		extends App	{emitSystemVerilogFile(new driveNpc				,Array("--target-dir","./build/npc")		,firtoolOptions)}
-object BuilderYsyxSoc	extends App	{emitSystemVerilogFile(new cpu					,Array("--target-dir","./build/ysyxsoc")	,firtoolOptions)}
+object BuilderYsyxSoc	extends App	{emitSystemVerilogFile(new cpu(0x30000000L.U,false)	,Array("--target-dir","./build/ysyxsoc")	,firtoolOptions)}
 object BuilderSta		extends App	{emitSystemVerilogFile(new cpu(0x30000000L.U,true)	,Array("--target-dir","./build/sta")		,firtoolOptions)}
-object BuilderIcache	extends App	{emitSystemVerilogFile(new icache(true)			,Array("--target-dir","./build/icache")		,firtoolOptions)}
-object BuilderIverilog	extends App	{emitSystemVerilogFile(new driveIverilog			,Array("--target-dir","./build/iverilog")	,firtoolOptionsIverilog)}
-object BuilderNetlist	extends App	{emitSystemVerilogFile(new driveNetlist			,Array("--target-dir","./build/netlist")	,firtoolOptionsIverilog)}
+object BuilderIcache	extends App	{emitSystemVerilogFile(new icache(true)				,Array("--target-dir","./build/icache")		,firtoolOptions)}
+object BuilderNpc		extends App	{emitSystemVerilogFile(new driveTop(false,false)	,Array("--target-dir","./build/npc")		,firtoolOptions)}
+object BuilderIverilog	extends App	{emitSystemVerilogFile(new driveTop(true ,false)	,Array("--target-dir","./build/iverilog")	,firtoolOptionsIverilog)}
+object BuilderNetlist	extends App	{emitSystemVerilogFile(new driveTop(true ,true )	,Array("--target-dir","./build/netlist")	,firtoolOptionsIverilog)}
