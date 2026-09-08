@@ -6,6 +6,8 @@ verilog:verilogSta
 
 srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
 build/%:$(srcScala)
+	@mkdir -p wave
+	@mkdir -p build
 	@mill -i runMain $(notdir $*)
 	@touch $@
 verilogNpc:build/npc/BuilderNpc
@@ -57,14 +59,11 @@ LDFLAGS += -ldl
 CXXFLAGS += -I/$(NEMU_HOME)/include
 CXXFLAGS += -I/$(NVBOARD_HOME)/usr/include
 
-wave:
-	@mkdir -p wave
-
 srcNpc =driveTop
 srcVerilogNpc = $(shell find $(NPC_HOME)/build/npc -type f -name "*.sv")
 srcCppNpc = $(NPC_HOME)/test/cpp/$(srcNpc).cpp
 
-runNpc:verilogNpc $(srcCpp) $(srcCppNpc) wave
+runNpc:verilogNpc $(srcCpp) $(srcCppNpc)
 	@verilator --coverage $(VERILATOR_CFLAGS) $(srcVerilogNpc) \
 	 --exe $(srcCpp) $(srcCppNpc) --Mdir build/$(srcNpc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcNpc) \
@@ -86,7 +85,7 @@ SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
 SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
 
-runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc) wave
+runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc)
 	@verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \

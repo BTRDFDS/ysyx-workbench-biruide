@@ -58,9 +58,6 @@ inline bool NpcDifftestCheck(uint32_t pc){
         return true;
     }
     riscv32_CPU_state npc_state;
-    // for (int i = 0; i < 32; i++) {
-    //     npc_state.gpr[i] = getReg(i);//TODO:处理获取寄存器的逻辑
-    // }
     NpcDifftestGetGpr(npc_state.gpr);
     npc_state.pc = pc;//这个是下一个的PC
     npc_state.gpr[0] = 0;

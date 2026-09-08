@@ -37,7 +37,7 @@ void NpcInitDeviceMem(int argc, char** argv){
 	size_t wordsRead = fread(psram, sizeof(uint8_t), fileSize/sizeof(uint8_t), file);
 	if(wordsRead!=fileSize/sizeof(uint8_t)){printf("can't read file\n");}
 	fclose(file);
-	NpcDifftestInit8(psramSize,psram,psramAddr,"/home/biruide/ysyx-workbench/npc/test/cpp/lib/riscv32-nemu-interpreter-so-npc");
+	NpcDifftestInit8(psramSize,psram,psramAddr,"./test/cpp/lib/riscv32-nemu-interpreter-so-npc");
 	}
 void NpcWave(){
 	#ifdef NPC_WAVE

@@ -36,14 +36,14 @@ extern uint32_t expr(char *e, bool *success);
 extern int cmd_t(char *args);
 extern void gen_expr();
 extern int checkWp();
-
+//提供
 extern void NpcSdbMainloop();
 extern void NpcSdbInit();
 extern int NpcsdbCheck();
+extern uint32_t NpcsdbRegTranslate(const char *s, bool *success);
+//需求
 extern void NpcsdbGetGpr();
 extern uint32_t NpcsdbGetReg(uint32_t addr);
 extern uint32_t NpcsdbReadMem(uint32_t addr);
-extern uint32_t NpcsdbRegTranslate(const char *s, bool *success);
-
 extern void NpcsdbRun(uint32_t times);
 #endif //_NPC_SDB_H_
