@@ -4,7 +4,7 @@
 #include "verilated.h"
 #include "svdpi.h"
 #include "VdriveTop__Dpi.h"
-#include <npcDevice.h>
+#include "npcDevice.h"
 
 VerilatedContext* contextp;//verilator上下文
 VdriveTop* top;//顶层模块

@@ -11,7 +11,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#include <npcConfig.h>
+#include "npcConfig.h"
 
 extern const char *npcsdbRegs[32];
 extern uint32_t npcsdbGpr[32];//注意：0号寄存器替代为pc

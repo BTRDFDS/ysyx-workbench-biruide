@@ -6,9 +6,9 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
-#include <capstone/capstone.h>
+#include "capstone/capstone.h"
 
-#include <npcConfig.h>
+#include "npcConfig.h"
 
 // #define NPC_I_TRACE
 // #define NPC_M_TRACE

@@ -1,6 +1,6 @@
 test:
 	@mill -i test
-verilog:verilogYsyxSoc
+verilog:verilogSta
 	cat $(shell find $(NPC_HOME)/build/ysyxsoc -type f -name "*.sv") > $(NPC_HOME)/build/ysyx_26020046.sv
 	$(call git_commit, "generate verilog")
 
@@ -47,7 +47,7 @@ VERILATOR_CFLAGS += --autoflush
 VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
 # VERILATOR_CFLAGS += --threads 2
 
-srcCpp += $(NPC_HOME)/test/cpp/npcDifftest/npcDifftest.c
+# srcCpp += $(NPC_HOME)/test/cpp/npcDifftest/npcDifftest.c
 
 LDFLAGS += -lreadline
 LDFLAGS += -L$(NPC_HOME)/test/cpp/lib
@@ -150,21 +150,6 @@ staIch:verilogSta $(srcVerilogStaIch)
 staIfu:verilogSta $(srcVerilogStaIfu)
 	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Ifu RTL_FILES="$(srcVerilogStaIfu)" $(YOSYS_CONFIG)
 staPart:verilogSta staWbu staIdu staExu staIch staIfu
-
-srcIcache = ysyx_26020046_Ich
-srcCppIcache += $(NPC_HOME)/test/cpp/ysyx_26020046_Ich.cpp
-srcVerilogIcache += $(shell find $(NPC_HOME)/build/icache -type f -name "*.sv")
-# BuilderIcache
-runIcache:verilogIcache $(srcCppIcache)
-	@verilator $(VERILATOR_CFLAGS) $(srcVerilogIcache) \
-	--exe $(srcCpp) $(srcCppIcache) --Mdir build/$(srcIcache) --build \
-	--top-module $(srcIcache) \
-	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
-	$(addprefix -CFLAGS , $(CXXFLAGS)) \
-	$(addprefix -LDFLAGS , $(LDFLAGS))
-# 	 -Wno-UNOPTFLAT
-# 	./build/$(srcIcache)/V$(srcIcache) $(ARG)
-	time ./build/$(srcIcache)/V$(srcIcache) $(ARG)
 
 icachesim:./test/cpp/icachesim/icachesim.cpp
 	clang++ ./test/cpp/icachesim/icachesim.cpp -o ./test/cpp/icachesim/icachesim

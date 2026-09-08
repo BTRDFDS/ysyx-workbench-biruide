@@ -6,37 +6,37 @@
 #include <stdio.h>
 #include <fstream>
 #include <stdint.h>
-#include <npcDifftest.h>//我只需要difftest
+#include "npcDifftest.h"//我只需要difftest
 ////////////////////////////////////////////////////////////////////////////////////////
-uint32_t regs[32]{};
+inline uint32_t regs[32]{};
 ////////////////////////////////////////////////////////////////////////////////////////
-bool stop=false;
-uint32_t returnCode=1;
-void NpcFinish(const char* msg,int code){
+inline bool stop=false;
+inline uint32_t returnCode=1;
+inline void NpcFinish(const char* msg,int code){
 	printf("%s\n",msg);
 	returnCode=code;
 	stop=true;
-}
+	}
 ////////////////////////////////////////////////////////////////////////////////////////
-uint64_t numCycle		=0;
-uint64_t numInst		=0;
-uint64_t numIchHit		=0;
-uint64_t numIchMiss		=0;
-uint64_t numIfuInst		=0;
-uint64_t numIfuStall 	=0;
-uint64_t numIfuJbHit	=0;
-uint64_t numIfuJbMiss	=0;
-uint64_t numIduCal		=0;
-uint64_t numIduJump		=0;
-uint64_t numIduImm		=0;
-uint64_t numIduLs		=0;
-uint64_t numIduCsr		=0;
-uint64_t numIduBr		=0;
-uint64_t numIduMiss		=0;
-uint64_t numLsuLoad		=0;
-uint64_t numLsuLoadWait	=0;
-uint64_t numLsuStore	=0;
-uint64_t numLsuStoreWait=0;
+inline uint64_t numCycle		=0;
+inline uint64_t numInst			=0;
+inline uint64_t numIchHit		=0;
+inline uint64_t numIchMiss		=0;
+inline uint64_t numIfuInst		=0;
+inline uint64_t numIfuStall 	=0;
+inline uint64_t numIfuJbHit		=0;
+inline uint64_t numIfuJbMiss	=0;
+inline uint64_t numIduCal		=0;
+inline uint64_t numIduJump		=0;
+inline uint64_t numIduImm		=0;
+inline uint64_t numIduLs		=0;
+inline uint64_t numIduCsr		=0;
+inline uint64_t numIduBr		=0;
+inline uint64_t numIduMiss		=0;
+inline uint64_t numLsuLoad		=0;
+inline uint64_t numLsuLoadWait	=0;
+inline uint64_t numLsuStore		=0;
+inline uint64_t numLsuStoreWait	=0;
 
 extern "C" void ichHit()		{numIchHit++;		}
 extern "C" void ichMiss()		{numIchMiss++;		}
@@ -56,7 +56,7 @@ extern "C" void lsuLoadWait()	{numLsuLoadWait++;	}
 extern "C" void lsuStore()		{numLsuStore++;		}
 extern "C" void lsuStoreWait()	{numLsuStoreWait++;	}
 
-void printCounter(){
+inline void printCounter(){
 	printf("cycle= %ld inst= %ld IPC= %f CPI= %f\n",numCycle,numInst,((float)numInst)/((float)numCycle),((float)numCycle)/((float)numInst));//实质上是已经是next pc了
 	numIchHit=numIfuInst-numIchMiss;
 	printf("ich hit= %ld[%f] miss= %ld[%f] sum= %ld\n",
@@ -82,12 +82,12 @@ void printCounter(){
 	);
 	printf("lsu load= %ld loadWait= %ld WpL= %f\n",numLsuLoad,numLsuLoadWait,(float)((float)numLsuLoadWait)/((float)numLsuLoad));
 	printf("lsu store= %ld storeWait= %ld WpS= %f\n",numLsuStore,numLsuStoreWait,(float)((float)numLsuStoreWait)/((float)numLsuStore));
-}
+	}
 ////////////////////////////////////////////////////////////////////////////////////////
 #if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
 	std::fstream logFile;//输出日志文件：
 	#endif
-void logFileInit(const char* logFileName){
+inline void logFileInit(const char* logFileName){
 	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
 		logFile.open(logFileName,std::ios::out);
 		if(!logFile.is_open()) {
@@ -96,16 +96,16 @@ void logFileInit(const char* logFileName){
 	}
 	#endif
 	}
-void logFileClose(){
+inline void logFileClose(){
 	#if defined(NPC_M_TRACE) || defined(NPC_MIN_TRACE)
 		logFile.close();
 	#endif
-}
+	}
 ////////////////////////////////////////////////////////////////////////////////////////
 #if defined(NPC_I_CACHE_TRACE)
 	std::fstream iCacheTraceFile;//输出日志文件：
 	#endif
-void iCacheTraceFileInit(){
+inline void iCacheTraceFileInit(){
 	#if defined(NPC_I_CACHE_TRACE)
 		iCacheTraceFile.open("./bin/iCacheTrace.bin",std::ios::out | std::ios::binary);
 		printf("./bin/iCacheTrace.bin\n");
@@ -115,13 +115,13 @@ void iCacheTraceFileInit(){
 	}
 	#endif
 	}
-void iCacheTraceFileWrite(uint32_t pc){
+inline void iCacheTraceFileWrite(uint32_t pc){
 	#if defined(NPC_I_CACHE_TRACE)
 		// logFile<<"write pc=0x"<<std::hex<<pc<<"\n";
 		iCacheTraceFile.write((const char*)&pc, 4);
 	#endif
 	}
-void iCacheTraceFileClose(){
+inline void iCacheTraceFileClose(){
 	#if defined(NPC_I_CACHE_TRACE)
 		iCacheTraceFile.close();
 	#endif
@@ -130,7 +130,7 @@ void iCacheTraceFileClose(){
 #if defined(NPC_D_CACHE_TRACE)
 	std::fstream dCacheTraceFile;//输出日志文件：
 	#endif
-void dCacheTraceFileInit(){
+inline void dCacheTraceFileInit(){
 	#if defined(NPC_D_CACHE_TRACE)
 		dCacheTraceFile.open("./bin/dCacheTrace.bin",std::ios::out | std::ios::binary);
 		printf("./bin/dCacheTrace.bin\n");
@@ -146,7 +146,7 @@ extern "C" void lsuTrace(int addr){
 		dCacheTraceFile.write((const char*)&addrX, 4);
 	#endif
 	}
-void dCacheTraceFileClose(){
+inline void dCacheTraceFileClose(){
 	#if defined(NPC_D_CACHE_TRACE)
 		dCacheTraceFile.close();
 	#endif
@@ -155,7 +155,7 @@ void dCacheTraceFileClose(){
 #if defined(NPC_BRACHE_TRACE)
 	std::fstream branchTraceFile;//输出日志文件：
 	#endif
-void branchTraceFileInit(){
+inline void branchTraceFileInit(){
 	#if defined(NPC_BRACHE_TRACE)
 	branchTraceFile.open("./bin/branchTrace.bin",std::ios::out | std::ios::binary);
 	printf("./bin/branchTrace.bin\n");
@@ -165,20 +165,20 @@ void branchTraceFileInit(){
 	}
 	#endif
 	}
-void exuBnTrace(int pc,char state){
+extern "C" void exuBnTrace(int pc,char state){
 	#if defined(NPC_BRACHE_TRACE)
 	branchTraceFile.write((const char*)&pc,		4);
 	branchTraceFile.write((const char*)&state,	1);
 	#endif
 	}
-void exuBiTrace(int pc,char state,int addr){
+extern "C" void exuBiTrace(int pc,char state,int addr){
 	#if defined(NPC_BRACHE_TRACE)
 	branchTraceFile.write((const char*)&pc,		4);
 	branchTraceFile.write((const char*)&state,	1);
 	branchTraceFile.write((const char*)&addr,	4);
 	#endif
 	}
-void branchTraceFileClose(){
+inline void branchTraceFileClose(){
 	#if defined(NPC_BRACHE_TRACE)
 		branchTraceFile.close();
 	#endif
@@ -189,12 +189,12 @@ void branchTraceFileClose(){
 	VerilatedFstC* tfp;//波形文件
 	#endif
 ////////////////////////////////////////////////////////////////////////////////////////
-void TraceInit(){
+inline void TraceInit(){
 	iCacheTraceFileInit();
 	dCacheTraceFileInit();
 	branchTraceFileInit();
 	}
-void printOver(){
+inline void printOver(){
 	#if defined(NPC_WAVE)  || defined(NPC_MIN_TRACE)
 		tfp->close();
 	#endif
@@ -215,25 +215,25 @@ void printOver(){
 	iCacheTraceFileClose();
 	dCacheTraceFileClose();
 	branchTraceFileClose();
-}
+	}
 ////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
 // const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
 const uint32_t psramSize	=0x07ffffff;//为了NPC开大一点
-uint8_t psram[psramSize];
+inline uint8_t psram[psramSize];
 
 const uint32_t sdramAddr	=0xa0000000;
 const uint32_t sdramSize	=0x07ffffff;//2+12+10+2
-uint8_t sdram[sdramSize];
+inline uint8_t sdram[sdramSize];
 
 const uint32_t mromAddr		=0x20000000;//mrom起始地址
 const uint32_t mromSize		=0xfff;
-uint8_t mrom[mromSize];
+inline uint8_t mrom[mromSize];
 
 
 const uint32_t flashAddr	=0x30000000;
 const uint32_t flashSize	=0x00ffffff;//flash极限地址是bfff_ffff
-uint8_t flash[flashSize];
+inline uint8_t flash[flashSize];
 
 void NpcRun(uint32_t times);
 void NpcWave();
@@ -348,7 +348,7 @@ extern "C" void wbuCheck(int dnpc,int pc,char addr,int value){
 	iCacheTraceFileWrite(regs[0]);
 	if(NpcDifftestCheck(dnpc))return NpcFinish("difftest end",-1);
 	}
-void NpcDifftestGetGpr(uint32_t *gpr){
+inline void NpcDifftestGetGpr(uint32_t *gpr){
 	if(gpr){
 		for(uint32_t i=1;i<32;i++){gpr[i]=regs[i];}
 		gpr[0]=0;
