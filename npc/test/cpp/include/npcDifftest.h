@@ -9,23 +9,11 @@
 #define NPC_DIFFTEST //仅限给vscode找语法错误用
 #ifdef NPC_DIFFTEST
 #include <dlfcn.h>
-#include <cpu/difftest.h>
-#include <common.h>//需要NEMU_HOME
+#include "cpu/difftest.h"
+#include "common.h"//需要NEMU_HOME
 #endif
 
-// #define NPC_DIFFTEST_DEBUG
-
-#ifdef NPC_DIFFTEST_DEBUG
-    #define dftDebug(...) do { __VA_ARGS__; } while(0)
-#else
-    #define dftDebug(...) ((void)0)
-#endif
-
-// extern void NpcDifftestInit8 (uint32_t memSize,uint8_t  *M,uint32_t pcReset,const char *nemuLib);
-// extern bool NpcDifftestCheck(uint32_t pc);
-
-extern void NpcDifftestGetGpr(uint32_t *gpr);//与PC无关
-#endif
+extern void NpcDifftestGetGpr(uint32_t *gpr);//需要提供
 
 #ifdef NPC_DIFFTEST
 static bool difftest_enabled = false;
@@ -51,7 +39,7 @@ const char *npcDifftestRegs[32] = {//注意：0号寄存器替代为pc
 
 inline bool NpcDifftestCheck(uint32_t pc){
 #ifdef NPC_DIFFTEST
-    dftDebug(printf("NpcDifftestCheck\n"););
+    // printf("NpcDifftestCheck\n");
 
     if (difftest_enabled==false||ref_difftest_exec==NULL){
         printf("difftest_enabled or ref_difftest_exec is NULL\n");
@@ -98,7 +86,7 @@ inline void NpcDifftestInit8(uint32_t memSize,uint8_t *mem,uint32_t pcReset,cons
         printf("[NPC_DIFFTEST] NEMU err: %s\n", dlerror());
         exit(-1);
     }
-    dftDebug(printf("文件读取完成\n"););
+    // printf("文件读取完成\n");
     // 获取函数指针
     ref_difftest_memcpy = (void (*)(uint32_t, void*, size_t, bool))dlsym(difftestHandle, "difftest_memcpy");
     ref_difftest_regcpy = (void (*)(void*, bool))dlsym(difftestHandle, "difftest_regcpy");
@@ -110,21 +98,22 @@ inline void NpcDifftestInit8(uint32_t memSize,uint8_t *mem,uint32_t pcReset,cons
         dlclose(difftestHandle);
         exit(-1);
     }
-    dftDebug(printf("函数指针获取完成\n"););
+    // printf("函数指针获取完成\n");
 
     ref_difftest_init(0);
     uint32_t mem_size = (memSize/4) * sizeof(uint32_t);
     ref_difftest_memcpy(pcReset, mem32, mem_size/4, DIFFTEST_TO_REF);
-    dftDebug(printf("内存转移完成\n"););
+    // printf("内存转移完成\n");
     // 同步初始寄存器状态
     riscv32_CPU_state init_state;
     memset(&init_state, 0, sizeof(riscv32_CPU_state));
     init_state.pc = pcReset;
     ref_difftest_regcpy(&init_state, DIFFTEST_TO_REF);
-    dftDebug(printf("寄存器同步完成\n"););
+    // printf("寄存器同步完成\n");
     difftest_enabled = true;
     // printf("[NPC_DIFFTEST] NEMU初始化完成\n");
     if(mem32!=NULL){free(mem32);}
 	printf("\033[1;34m DIFFTEST8\t\033[0m");
 #endif
 }
+#endif

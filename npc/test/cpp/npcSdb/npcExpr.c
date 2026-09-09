@@ -1,4 +1,7 @@
 #include <npcSdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
 uint32_t NpcsdbRegTranslate(const char *s, bool *success){
 	if(s[0] != '$') {
 		*success = false;

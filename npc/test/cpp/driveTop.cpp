@@ -63,9 +63,7 @@ int main(int argc, char** argv) {
 		NpcWave();
 		top->clock=0;top->eval();
 		numCycle++;
-		// if(numIfuInst < numInst+numIduMiss)break;
 	}
-	// NpcWave();
 	printOver();
 	contextp->statsPrintSummary();
 	contextp->coveragep()->write("./log/driveTop.dat");
