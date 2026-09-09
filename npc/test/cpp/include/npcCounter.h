@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <stdint.h>
-#include "npcDevice.h"
+#include "npcDrive.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////
 inline uint64_t numCycle		=0;

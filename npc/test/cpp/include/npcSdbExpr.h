@@ -1,3 +1,5 @@
+#ifndef _NPC_SDB_EXPR_
+#define _NPC_SDB_EXPR_
 #include <npcSdb.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,9 +11,9 @@ uint32_t NpcsdbRegTranslate(const char *s, bool *success){
 	}
 	const char *name = s + 1;
 	for(int i = 0; i < 32; i++) {
-		if(strcmp(name, npcsdbRegs[i]) == 0) {
+		if(strcmp(name, npcsdbGprName[i]) == 0) {
 			*success = true;
-			return NpcsdbGetReg(i);
+			return regs[i];
 		}
 	}
 	// if(strcmp(name, "pc") == 0) {
@@ -383,3 +385,4 @@ void gen_expr(){
 	// }
 	// assert(0);
 }
+#endif

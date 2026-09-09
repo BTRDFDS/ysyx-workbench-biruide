@@ -4,7 +4,7 @@
 #include "verilated.h"
 #include "svdpi.h"
 #include "VysyxSoCFull__Dpi.h"
-#include <npcDevice.h>
+#include <npcDrive.h>
 
 #ifdef NPC_NVBroad
 #include <nvboard.h>

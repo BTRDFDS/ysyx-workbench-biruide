@@ -1,11 +1,13 @@
 #ifndef _NPC_MEM_
 #define _NPC_MEM_
+#include <cstdint>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <fstream>
 #include <stdint.h>
-#include "npcDevice.h"
+#include "npcDrive.h"
+#include "npcTrace.h"
 ////////////////////////////////////////////////////////////////////////////////////////
 const uint32_t psramAddr	=0x80000000;
 // const uint32_t psramSize	=0x00ffffff;//psram极限地址是bfff_ffff
@@ -110,4 +112,19 @@ extern "C" void sdram_write(int addr,int data){
 		logFile<<std::hex<<(uint32_t)sdram[addrX+0]<<std::endl;
 	#endif
 	}
+uint32_t NpcLw(uint8_t* mem,uint32_t addr){
+	return (
+		(uint32_t)mem[addr+0]<< 0|
+		(uint32_t)mem[addr+1]<< 8|
+		(uint32_t)mem[addr+2]<<16|
+		(uint32_t)mem[addr+3]<<24
+	);
+}
+uint32_t NpcsdbReadMem(uint32_t addr){
+	if(addr>=flashAddr	&addr<flashAddr+flashSize)	return NpcLw(flash	,addr-flashAddr	);
+	if(addr>=mromAddr	&addr<mromAddr+mromSize)	return NpcLw(mrom	,addr-mromAddr	);
+	if(addr>=psramAddr	&addr<psramAddr+psramSize)	return NpcLw(psram	,addr-psramAddr	);
+	if(addr>=sdramAddr	&addr<sdramAddr+sdramSize)	return NpcLw(sdram	,addr-sdramAddr	);
+	printf("error:sdb read %08x\n",addr);return 0;
+}
 #endif

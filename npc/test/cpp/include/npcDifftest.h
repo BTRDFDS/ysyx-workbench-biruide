@@ -6,14 +6,13 @@
 #include <cstring>
 #include <stdlib.h>
 #include "npcConfig.h"
-#define NPC_DIFFTEST //仅限给vscode找语法错误用
+#include "npcDrive.h"
+// #define NPC_DIFFTEST //仅限给vscode找语法错误用
 #ifdef NPC_DIFFTEST
 #include <dlfcn.h>
 #include "cpu/difftest.h"
 #include "common.h"//需要NEMU_HOME
 #endif
-
-extern void NpcDifftestGetGpr(uint32_t *gpr);//需要提供
 
 #ifdef NPC_DIFFTEST
 static bool difftest_enabled = false;
@@ -46,7 +45,7 @@ inline bool NpcDifftestCheck(uint32_t pc){
         return true;
     }
     riscv32_CPU_state npc_state;
-    NpcDifftestGetGpr(npc_state.gpr);
+    for(int i=1;i<32;i++){npc_state.gpr[i]=regs[i];}
     npc_state.pc = pc;//这个是下一个的PC
     npc_state.gpr[0] = 0;
 
@@ -57,17 +56,16 @@ inline bool NpcDifftestCheck(uint32_t pc){
 
     bool match = true;
     if (npc_state.pc != ref_state.pc) {
-        printf("[NPC_DIFFTEST] dutNextPc=0x %08x refNextPc=0x %08x\n",npc_state.pc, ref_state.pc);
+        printf("%x dutNextPc=0x %08x refNextPc=0x %08x\n",regs[0],npc_state.pc, ref_state.pc);
         difftest_enabled = false;
     }
 
     for (int i = 1; i < 32; i++) {
         if (npc_state.gpr[i] != ref_state.gpr[i]) {
-            printf("[NPC_DIFFTEST] nextPc=0x %08x reg[%d:%s] dut=0x %08x, ref= %08x\n",pc,i,npcDifftestRegs[i], npc_state.gpr[i], ref_state.gpr[i]);
+            printf("%x  reg[%d:%s] dut=0x %08x, ref= %08x\n",regs[0],i,npcDifftestRegs[i], npc_state.gpr[i], ref_state.gpr[i]);
             difftest_enabled = false;
         }
     }
-    // if(difftest_enabled==false)exit(-1);
     return !difftest_enabled;
 #endif
     return false;

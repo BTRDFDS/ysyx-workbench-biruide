@@ -9,7 +9,7 @@
 #include "capstone/capstone.h"
 
 #include "npcConfig.h"
-#include "npcDevice.h"
+#include "npcDrive.h"
 
 // #define NPC_I_TRACE
 // #define NPC_M_TRACE
@@ -34,8 +34,8 @@ extern char *getFuncName(uint32_t addr);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
-#if defined(NPC_M_TRACE)
-	std::fstream logFile;//输出日志文件：
+#ifdef NPC_M_TRACE
+	inline std::fstream logFile;//输出日志文件：
 	#endif
 inline void logFileInit(const char* logFileName){
 	#if defined(NPC_M_TRACE)
@@ -134,18 +134,9 @@ inline void branchTraceFileClose(){
 	#endif
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
-#if defined(NPC_WAVE)
-	#include "verilated_fst_c.h"
-	VerilatedFstC* tfp;//波形文件
-	#endif
-////////////////////////////////////////////////////////////////////////////////////////
 inline void TraceInit(){
 	iCacheTraceFileInit();
 	dCacheTraceFileInit();
 	branchTraceFileInit();
 	}
-
-
-
-
 #endif

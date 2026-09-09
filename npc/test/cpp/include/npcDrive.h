@@ -5,13 +5,15 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fstream>
+#include <string>
 #include <stdint.h>
-#include "npcDifftest.h"//我只需要difftest
-#include "npcCounter.h"
-#include "npcMem.h"
-#include "npcTrace.h"
 ////////////////////////////////////////////////////////////////////////////////////////
 inline uint32_t regs[32]{};
+#include "npcCounter.h"
+#include "npcTrace.h"
+#include "npcMem.h"
+#include "npcDifftest.h"//我只需要difftest
+#include "npcSdb.h"
 ////////////////////////////////////////////////////////////////////////////////////////
 inline bool stop=false;
 inline uint32_t returnCode=1;
@@ -21,9 +23,6 @@ inline void NpcFinish(const char* msg,int code){
 	stop=true;
 	}
 inline void printOver(){
-	#if defined(NPC_WAVE)
-		tfp->close();
-	#endif
 	printCounter();
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
@@ -45,7 +44,20 @@ inline void printOver(){
 
 
 extern void NpcRun();
-void NpcWave();
+void NpcToDrive(const char* logFileName){
+	logFileInit(logFileName);
+	TraceInit();
+	#ifdef NPC_SDB
+		NpcSdbInit();
+		NpcSdbMainloop();
+	#else
+		for(numCycle=0;(numCycle<RunstopTime||RunstopTime==0)&&(!stop);numCycle++){NpcRun();}
+	#endif
+	printOver();
+}
+void NpcsdbRun(uint32_t times){
+	for(uint32_t i=0;(i<times||times==0)&&(!stop)&&NpcsdbCheck();i++){NpcRun();numCycle++;}
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 extern "C" void ebreakStop(){
 	iCacheTraceFileWrite(regs[0]);
@@ -57,15 +69,6 @@ extern "C" void wbuCheck(int dnpc,int pc,char addr,int value){
 	regs[0]=pc;
 	iCacheTraceFileWrite(regs[0]);
 	if(NpcDifftestCheck(dnpc))return NpcFinish("difftest end",-1);
-	}
-inline void NpcDifftestGetGpr(uint32_t *gpr){
-	if(gpr){
-		for(uint32_t i=1;i<32;i++){gpr[i]=regs[i];}
-		gpr[0]=0;
-	}else{
-		printf("difftest *gpr=Null");
-		stop=true;
-	}
 	}
 ////////////////////////////////////////////////////////////////////////////////////////
 #endif
