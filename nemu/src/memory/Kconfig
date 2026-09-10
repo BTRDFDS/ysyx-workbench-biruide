@@ -8,18 +8,18 @@ config MSIZE
   hex "Memory size"
   default 0x8000000
 
-config SRAM_START
-  hex "SRAM start"
+config MEM_1_START
+  hex "MEM 1 start"
   default 0x0f000000
-config SRAM_END
-  hex "SRAM end"
+config MEM_1_END
+  hex "MEM 1 end"
   default 0x0f001fff
 
-config FLASH_START
-  hex "FLASH start"
+config MEM_2_START
+  hex "MEM 2 start"
   default 0x30000000
 config FLASH_END
-  hex "FLASH end"
+  hex "MEM 2 end"
   default 0x30ffffff
 
 
