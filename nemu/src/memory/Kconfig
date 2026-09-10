@@ -18,7 +18,7 @@ config MEM_1_END
 config MEM_2_START
   hex "MEM 2 start"
   default 0x30000000
-config FLASH_END
+config MEM_2_END
   hex "MEM 2 end"
   default 0x30ffffff
 
