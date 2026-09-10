@@ -17,13 +17,14 @@ const char *npcsdbGprName[32] = {//注意：0号寄存器替代为pc
 "a6", "a7",  "s2",  "s3", "s4", "s5", "s6", "s7",
 "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
 };
+#define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
+#define NR_CMD ARRLEN(cmd_table)
 #include "npcConfig.h"
 #include "npcCounter.h"
 #include "npcMem.h"
 #include "npcSdbExpr.h"
 #include "npcSdbWp.h"
 
-#define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 //提供
 // extern void NpcSdbMainloop();
 // extern void NpcSdbInit();
@@ -190,7 +191,6 @@ static struct {
 	{ "t", "do somr test", cmd_t}
 };
 
-#define NR_CMD ARRLEN(cmd_table)
 
 static int cmd_help(char *args) {
 	/* extract the first argument */
