@@ -1,38 +1,44 @@
-#include <npcTrace.h>
-
-
+#ifndef _NPC_SDB_TRACE_
+#define _NPC_SDB_TRACE_
+#include "npcSdbElf.h"
+#include <elf.h>
 csh handle;
+
+#define NPC_I_TRACE
+#define NPC_F_TRACE
+#define NPC_E_TRACE
+
+
+void NpcTraceInit(char *argv);
+void NpcTraceClose();
+void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc);
+
+#define npcTraceIringSize 256
+#define npcTraceIringMax 16
 
 FILE *npctraceIringsFp=NULL;
 FILE *npctraceFtraceFp=NULL;
 FILE *npctraceEtraceFp=NULL;
-FILE *npctraceDtraceFp=NULL;
 
-const char *npctraceIringsFile={"log/irings.log"};
-const char *npctraceFtraceFile={"log/ftrace.log"};
-const char *npctraceEtraceFile={"log/etrace.log"};
-const char *npctraceDtraceFile={"log/dtrace.log"};
+const char *npctraceIringsFile={"./log/irings.log"};
+const char *npctraceFtraceFile={"./log/ftrace.log"};
+const char *npctraceEtraceFile={"./log/etrace.log"};
 
 void NpcTraceInitFile(){
 #ifdef NPC_I_TRACE
 	npctraceIringsFp = fopen(npctraceIringsFile, "w");
 	if(npctraceIringsFp == NULL){printf("err:open %s",npctraceIringsFile);exit(-1);}
-	printf("\033[1;34m ITRACE\t\033[0m");
+	printf("\033[1;34m ITRACE\033[0m ");
 #endif
 #ifdef NPC_F_TRACE
 	npctraceFtraceFp = fopen(npctraceFtraceFile, "w");
 	if(npctraceFtraceFp == NULL){printf("err:open %s",npctraceFtraceFile);exit(-1);}
-	printf("\033[1;34m FTRACE\t\033[0m");
+	printf("\033[1;34m FTRACE\033[0m ");
 #endif
 #ifdef NPC_E_TRACE
 	npctraceEtraceFp = fopen(npctraceEtraceFile, "w");
 	if(npctraceEtraceFp == NULL){printf("err:open %s",npctraceEtraceFile);exit(-1);}
-	printf("\033[1;34m ETRACE\t\033[0m");
-#endif
-#ifdef NPC_D_TRACE
-	npctraceDtraceFp = fopen(npctraceDtraceFile, "w");
-	if(npctraceDtraceFp == NULL){printf("err:open %s",npctraceDtraceFile);exit(-1);}
-	printf("\033[1;34m DTRACE\t\033[0m");
+	printf("\033[1;34m ETRACE\033[0m ");
 #endif
 }
 
@@ -48,10 +54,6 @@ void NpcTraceCloseFile(){
 	if(npctraceEtraceFp != NULL){
 		printf("ftrace:%s\n",npctraceEtraceFile);
 		fclose(npctraceEtraceFp);
-	}
-	if(npctraceDtraceFp != NULL){
-		printf("ftrace:%s\n",npctraceDtraceFile);
-		fclose(npctraceDtraceFp);
 	}
 }
 
@@ -118,17 +120,6 @@ void NpcTraceIrings(uint32_t pc,uint32_t incode,char*mnemonic,char*op){
 		}
 		fflush(npctraceIringsFp);
 	}
-}
-void NpcTraceDtrace(const char *format, ...){
-#ifdef NPC_D_TRACE
-	if(npctraceDtraceFp!=NULL){
-		va_list args;
-		va_start(args, format);
-		if(vfprintf(npctraceDtraceFp,format,args)<0){printf("dtrace write err\n");exit(-1);}
-		else{fflush(npctraceDtraceFp);}
-		va_end(args);
-	}
-#endif
 }
 
 void NpcTraceFtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
@@ -203,3 +194,4 @@ void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc){
 	NpcTraceEtrace(pc,incode,dnpc);
 #endif
 }
+#endif

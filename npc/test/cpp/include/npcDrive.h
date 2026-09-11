@@ -14,6 +14,7 @@ inline uint32_t regs[32]{};
 #include "npcMem.h"
 #include "npcDifftest.h"//我只需要difftest
 #include "npcSdb.h"
+#include "npcSdbTrace.h"
 ////////////////////////////////////////////////////////////////////////////////////////
 inline bool stop=false;
 inline uint32_t returnCode=1;
@@ -44,15 +45,18 @@ inline void printOver(){
 
 
 extern void NpcRun();
-void NpcToDrive(const char* logFileName){
+void NpcToDrive(const char* logFileName,char *argv){
 	logFileInit(logFileName);
 	TraceInit();
+	NpcTraceInit(argv);
+	printf("\033[1;32m begin \033[0m\n");
 	#ifdef NPC_SDB
 		NpcSdbInit();
 		NpcSdbMainloop();
 	#else
 		for(numCycle=0;(numCycle<RunstopTime||RunstopTime==0)&&(!stop);numCycle++){NpcRun();}
 	#endif
+	NpcTraceClose();
 	printOver();
 }
 void NpcsdbRun(uint32_t times){
@@ -67,6 +71,7 @@ extern "C" void wbuCheck(int dnpc,int pc,char addr,int value){
 	numInst++;
 	regs[addr]=value;
 	regs[0]=pc;
+	NpcTraceWrite(pc,NpcsdbReadMem(pc),dnpc);
 	iCacheTraceFileWrite(regs[0]);
 	if(NpcDifftestCheck(dnpc))return NpcFinish("difftest end",-1);
 	}

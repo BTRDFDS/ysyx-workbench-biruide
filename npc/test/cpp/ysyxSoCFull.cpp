@@ -56,8 +56,8 @@ int main(int argc, char** argv) {
 		top->clock=0;top->reset=1;top->eval();
 		top->clock=1;top->reset=1;top->eval();
 	}	top->clock=0;top->reset=0;top->eval();
-	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m\n",__DATE__,__TIME__);
-	NpcToDrive("./log/ysyxSoCFull.log");
+	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m ",__DATE__,__TIME__);
+	NpcToDrive("./log/ysyxSoCFull.log",argv[1]);
 	if(tfp!=nullptr){
 		tfp->close();
 		delete tfp;

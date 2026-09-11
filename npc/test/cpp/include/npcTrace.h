@@ -11,28 +11,6 @@
 #include "npcConfig.h"
 #include "npcDrive.h"
 
-// #define NPC_I_TRACE
-// #define NPC_M_TRACE
-// #define NPC_F_TRACE
-// #define NPC_E_TRACE
-
-#define npcTraceIringSize 256
-#define npcTraceIringMax 16
-
-// extern FILE *npctraceIringsFp;
-// extern FILE *npctraceFtraceFp;
-// extern FILE *npctraceEtraceFp;
-
-extern void NpcTraceInit(char *argv);
-extern void NpcTraceClose();
-extern void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc);
-extern void NpcTraceDtrace(const char *format, ...);
-
-extern void NpcTraceInitElf(char *img_file);
-extern char *getFuncName(uint32_t addr);
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////
 #ifdef NPC_M_TRACE
 	inline std::fstream logFile;//输出日志文件：

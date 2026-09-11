@@ -1,5 +1,9 @@
-#include <npcTrace.h>
+#ifndef _NPC_SDB_ELF_
+#define _NPC_SDB_ELF_
 #include <elf.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 typedef struct {
     uint32_t start; // 函数起始地址
     uint32_t end;   // 函数结束地址 (start + size)
@@ -11,15 +15,15 @@ typedef struct {
     bool has;
 }funcTracer;
 
-char *strtab=NULL;
-funcTracer fTracer;
+inline char *strtab=NULL;
+inline funcTracer fTracer;
 
-void errCtl(const char *errcode){
+inline void errCtl(const char *errcode){
   fTracer.has=false;
   extern FILE *npctraceFtraceFp;
   fprintf(npctraceFtraceFp,"err %s .ftrace maybe been close or output ???\n",errcode);
 }
-void NpcTraceInitElf(char *img_file){
+inline void NpcTraceInitElf(char *img_file){
 
 FILE *elf_fp=NULL;
 Elf32_Ehdr ehdr;
@@ -124,8 +128,8 @@ err:
   fclose(elf_fp);
 }
 
-char errName[]="???";
-char *getFuncName(uint32_t addr){
+inline char errName[]="???";
+inline char *getFuncName(uint32_t addr){
   if(fTracer.has==false){return errName;}
   for (int i = 0; i < fTracer.funcNumber; i++) {
     if (addr >= fTracer.func[i].start && addr < fTracer.func[i].end){
@@ -134,3 +138,4 @@ char *getFuncName(uint32_t addr){
   }
   return errName;
 }
+#endif
