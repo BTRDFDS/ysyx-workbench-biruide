@@ -165,4 +165,4 @@ bjsim:./test/cpp/bjsim/bjsim.cpp
 	time ./test/cpp/bjsim/bjsim
 
 coverager:
-	lcov --list --rc branch_coverage=1 --rc function_coverage=0 /home/biruide/ysyx-workbench/npc/log/merged.info
+	lcov --list --rc branch_coverage=1 --rc function_coverage=0 $(NPC_HOME)/log/merged.info
