@@ -1,7 +1,7 @@
 test:
 	@mill -i test
 verilog:verilogSta
-	cat $(shell find $(NPC_HOME)/build/ysyxsoc -type f -name "*.sv") > $(NPC_HOME)/build/ysyx_26020046.sv
+	cat $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv") > $(NPC_HOME)/build/ysyx_26020046.sv
 	$(call git_commit, "generate verilog")
 
 srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
