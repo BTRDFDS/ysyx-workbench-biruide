@@ -4,9 +4,9 @@
 #include <elf.h>
 csh handle;
 
-#define NPC_I_TRACE
-#define NPC_F_TRACE
-#define NPC_E_TRACE
+// #define NPC_I_TRACE
+// #define NPC_F_TRACE
+// #define NPC_E_TRACE
 
 
 void NpcTraceInit(char *argv);

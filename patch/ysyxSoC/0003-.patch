@@ -1,0 +1,43 @@
+From 1357749699eff1bad58d7e971b50a3bc6df53606 Mon Sep 17 00:00:00 2001
+From: Bi RuiDe <1776427100@qq.com>
+Date: Fri, 11 Sep 2026 19:22:05 +0800
+Subject: [PATCH 3/3] =?UTF-8?q?=E4=BF=AE=E5=A4=8D=E6=97=B6=E9=92=9F?=
+ =?UTF-8?q?=E6=A0=A1=E5=87=86?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ perip/amba/apb_delayer.v  | 2 +-
+ perip/amba/axi4_delayer.v | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/perip/amba/apb_delayer.v b/perip/amba/apb_delayer.v
+index 87b7fa0f..cd27899a 100644
+--- a/perip/amba/apb_delayer.v
++++ b/perip/amba/apb_delayer.v
+@@ -27,7 +27,7 @@ module apb_delayer(
+ `ifdef Delay
+ logic [31:0] cnt,data;
+ logic has,done,err;
+-localparam rs = 579;//(5.1118-1)*64//TODO
++localparam rs = 592;//(5.1118-1)*64//TODO
+ // localparam s = 6;//2^6
+ always_ff @(posedge clock) begin
+ 	if(reset | ~in_psel | ~in_penable)has <= 0;
+diff --git a/perip/amba/axi4_delayer.v b/perip/amba/axi4_delayer.v
+index dbd80b7d..9b54b598 100644
+--- a/perip/amba/axi4_delayer.v
++++ b/perip/amba/axi4_delayer.v
+@@ -95,7 +95,7 @@ module axi4_delayer(
+ 	// assign in_bid = out_bid;
+ 	// assign in_bresp = out_bresp;
+ 
+-localparam rs = 643;//(5.1118)*64
++localparam rs = 656;//(5.1118)*64
+ 
+ `ifdef DelayW
+ logic wHasAddr,wHasData,wDone;
+-- 
+2.34.1
+

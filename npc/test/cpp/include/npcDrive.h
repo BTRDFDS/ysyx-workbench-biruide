@@ -71,7 +71,9 @@ extern "C" void wbuCheck(int dnpc,int pc,char addr,int value){
 	numInst++;
 	regs[addr]=value;
 	regs[0]=pc;
-	NpcTraceWrite(pc,NpcsdbReadMem(pc),dnpc);
+	#if defined(NPC_I_TRACE) || defined(NPC_F_TRACE) || defined(NPC_E_TRACE)
+		NpcTraceWrite(pc,NpcsdbReadMem(pc),dnpc);
+	#endif
 	iCacheTraceFileWrite(regs[0]);
 	if(NpcDifftestCheck(dnpc))return NpcFinish("difftest end",-1);
 	}
