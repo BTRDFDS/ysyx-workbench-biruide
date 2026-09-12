@@ -1,13 +1,13 @@
 //| mill-version: 1.1.0
 
-// package build
+package build
 
 import mill._
 import mill.scalalib.scalafmt.ScalafmtModule
 import mill.scalalib.TestModule.ScalaTest
 import mill.scalalib._
 
-object root extends RootModule with ScalaModule with ScalafmtModule { m =>
+object `package` extends ScalaModule with ScalafmtModule { m =>
   override def scalaVersion = "2.13.18"
 
   override def scalacOptions = Seq(
