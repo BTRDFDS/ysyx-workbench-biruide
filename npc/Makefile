@@ -8,7 +8,7 @@ srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
 build/%:$(srcScala)
 	@mkdir -p wave
 	@mkdir -p build
-	mill --version
+	./mill --version
 	@mill -i runMain $(notdir $*)
 	@touch $@
 verilogNpc:build/npc/BuilderNpc
