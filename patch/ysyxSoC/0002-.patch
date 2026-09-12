@@ -1,17 +1,26 @@
-From 1357749699eff1bad58d7e971b50a3bc6df53606 Mon Sep 17 00:00:00 2001
+From e789881031be2677c38d6c9cfacd62dfcf89d7d3 Mon Sep 17 00:00:00 2001
 From: Bi RuiDe <1776427100@qq.com>
-Date: Fri, 11 Sep 2026 19:22:05 +0800
-Subject: [PATCH 3/3] =?UTF-8?q?=E4=BF=AE=E5=A4=8D=E6=97=B6=E9=92=9F?=
- =?UTF-8?q?=E6=A0=A1=E5=87=86?=
+Date: Sat, 12 Sep 2026 17:13:43 +0800
+Subject: [PATCH 2/2] =?UTF-8?q?=E5=BB=B6=E8=BF=9F=E6=A0=A1=E5=87=86+?=
+ =?UTF-8?q?=E7=A7=BB=E9=99=A4=E5=A4=A7=E6=96=87=E4=BB=B6?=
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 ---
+ .gitignore                | 1 +
  perip/amba/apb_delayer.v  | 2 +-
  perip/amba/axi4_delayer.v | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/.gitignore b/.gitignore
+index 3c0160d0..315db007 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,2 +1,3 @@
+ build/
+ out/
++patch/firtool/
 diff --git a/perip/amba/apb_delayer.v b/perip/amba/apb_delayer.v
 index 87b7fa0f..cd27899a 100644
 --- a/perip/amba/apb_delayer.v
