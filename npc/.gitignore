@@ -16,6 +16,7 @@ build/
 
 # mill
 !*.mill
+!*.sc
 !.mill-version
 out/
 .bsp/
