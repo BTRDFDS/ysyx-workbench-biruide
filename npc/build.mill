@@ -1,4 +1,4 @@
-//| mill-version: 1.1.0
+//| mill-version: 0.12.4
 
 package build
 
@@ -7,8 +7,9 @@ import mill.scalalib.scalafmt.ScalafmtModule
 import mill.scalalib.TestModule.ScalaTest
 import mill.scalalib._
 
-object `package` extends ScalaModule with ScalafmtModule { m =>
+object npc extends ScalaModule with ScalafmtModule { m =>
   override def scalaVersion = "2.13.18"
+  override def millSourcePath = os.Path(sys.env("MILL_WORKSPACE_ROOT"))
 
   override def scalacOptions = Seq(
     "-language:reflectiveCalls",
@@ -17,6 +18,6 @@ object `package` extends ScalaModule with ScalafmtModule { m =>
     "-Xcheckinit"
   )
 
-  override def mvnDeps             = Seq(mvn"org.chipsalliance::chisel:7.7.0")
-  override def scalacPluginMvnDeps = Seq(mvn"org.chipsalliance:::chisel-plugin:7.7.0")
+  override def ivyDeps             = Agg(ivy"org.chipsalliance::chisel:7.7.0")
+  override def scalacPluginIvyDeps = Agg(ivy"org.chipsalliance:::chisel-plugin:7.7.0")
 }

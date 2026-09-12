@@ -1,5 +1,5 @@
 test:
-	@./mill -i test
+	@mill -i test
 verilog:verilogSta
 	cat $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv") > $(NPC_HOME)/build/ysyx_26020046.sv
 	$(call git_commit, "generate verilog")
@@ -8,8 +8,8 @@ srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
 build/%:$(srcScala)
 	@mkdir -p wave
 	@mkdir -p build
-	./mill --version
-	@./mill -i runMain $(notdir $*)
+# 	mill --version
+	mill -i npc.runMain $(notdir $*)
 	@touch $@
 verilogNpc:build/npc/BuilderNpc
 verilogYsyxSoc:build/ysyxsoc/BuilderYsyxSoc
@@ -20,16 +20,16 @@ verilogNetlist:build/netlist/BuilderNetlist
 
 
 reformat:
-	@./mill -i __.reformat
+	@mill -i __.reformat
 
 checkformat:
-	@./mill -i __.checkFormat
+	@mill -i __.checkFormat
 
 bsp:
-	@./mill -i @./mill.bsp.BSP/install
+	@mill -i mill.bsp.BSP/install
 
 idea:
-	@./mill -i @./mill.idea.GenIdea/idea
+	@mill -i mill.idea.GenIdea/idea
 
 clean:
 	-rm -rf ./build
