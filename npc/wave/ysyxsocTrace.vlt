@@ -1,0 +1,21 @@
+`verilator_config
+tracing_off -scope "ysyxSoCFull"
+tracing_on -scope "ysyxSoCFull.asic.cpu.cpu" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.luart.muart" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.axi4ram.mem_ext" -levels 99
+//tracing_on -scope "ysyxSoCFull.bitrev" -levels 99
+//tracing_on -scope "ysyxSoCFull.flash" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.lspi.mspi" -levels 99
+//tracing_on -scope "ysyxSoCFull.psram" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.lpsram.mpsram" -levels 99
+//tracing_on -scope "ysyxSoCFull.sdram" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.lsdram_apb.msdram.u_sdram_ctrl" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.lsdram_apb.msdram" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.apbxbar" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.axi42apb" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.axi4buf.nodeOut_awdeq_q" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.chipMaster.axi42tl" -levels 99
+//tracing_on -scope "ysyxSoCFull.asic.axi4xbar" -levels 99
+tracing_on -scope "ysyxSoCFull.asic.apbdelay_delayer" -levels 99
+tracing_on -scope "ysyxSoCFull.asic.axi4delay_delayer" -levels 99
+
