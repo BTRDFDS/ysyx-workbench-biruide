@@ -1,13 +1,13 @@
 //| mill-version: 1.1.0
 
-package build
+// package build
 
 import mill._
 import mill.scalalib.scalafmt.ScalafmtModule
 import mill.scalalib.TestModule.ScalaTest
 import mill.scalalib._
 
-object `package` extends ScalaModule with ScalafmtModule { m =>
+object root extends RootModule with ScalaModule with ScalafmtModule { m =>
   override def scalaVersion = "2.13.18"
 
   override def scalacOptions = Seq(
@@ -19,10 +19,4 @@ object `package` extends ScalaModule with ScalafmtModule { m =>
 
   override def mvnDeps             = Seq(mvn"org.chipsalliance::chisel:7.7.0")
   override def scalacPluginMvnDeps = Seq(mvn"org.chipsalliance:::chisel-plugin:7.7.0")
-
-  object test extends ScalaTests with TestModule.ScalaTest with ScalafmtModule {
-    override def mvnDeps = m.mvnDeps() ++ Seq(
-      mvn"org.scalatest::scalatest::3.2.19",
-    )
-  }
 }
