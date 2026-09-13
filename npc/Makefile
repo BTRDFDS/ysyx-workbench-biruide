@@ -74,15 +74,22 @@ runNpc:verilogNpc $(srcCpp) $(srcCppNpc)
 	./build/$(srcNpc)/V$(srcNpc) $(ARG)
 
 srcYsyxSoc = ysyxSoCFull
+YsyxSoc_VLT = $(NPC_HOME)/wave/ysyxsocTrace.vlt
 srcVerilogYsyxSoc += $(shell find $(NPC_HOME)/build/ysyxsoc -type f -name "*.sv")
-srcVerilogYsyxSoc += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
-srcVerilogYsyxSoc += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
 srcCppYsyxSoc = $(NPC_HOME)/test/cpp/ysyxSoCFull.cpp
 
-YsyxSoc_VLT = $(NPC_HOME)/wave/ysyxsocTrace.vlt
-
+ifdef YSYX_SOC_HOME
+srcVerilogYsyxSoc += $(shell find $(YSYX_SOC_HOME)/perip -type f -name "*.v")
+srcVerilogYsyxSoc += $(YSYX_SOC_HOME)/build/ysyxSoCFull.v
 SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/uart16550/rtl
 SOC_CFLAGS += -I$(YSYX_SOC_HOME)/perip/spi/rtl
+else
+srcVerilogYsyxSoc += $(shell find $(YSYX_HOME)/ysyxSoC/perip -type f -name "*.v")
+srcVerilogYsyxSoc += $(YSYX_HOME)/ysyxSoC/build/ysyxSoCFull.v
+SOC_CFLAGS += -I$(YSYX_HOME)/ysyxSoC/perip/uart16550/rtl
+SOC_CFLAGS += -I$(YSYX_HOME)/ysyxSoC/perip/spi/rtl
+endif
+
 SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
 
