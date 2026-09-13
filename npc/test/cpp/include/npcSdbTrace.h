@@ -58,15 +58,18 @@ void NpcTraceCloseFile(){
 }
 
 void NpcTraceInitCapstone(){
+	#ifdef  NPC_I_TRACE
 	cs_err err = cs_open(CS_ARCH_RISCV, CS_MODE_RISCV32, &handle);
 	if (err != CS_ERR_OK) {
 		printf("ERROR Capstone:%s\n", cs_strerror(err));
 		exit(-1);
 	}
 	cs_option(handle, CS_OPT_DETAIL, CS_OPT_OFF);
+	#endif
 }
 
 bool NpcTraceCapstone(uint32_t incode,char*mnemonic,char*op){
+	#ifdef  NPC_I_TRACE
 	if(mnemonic==NULL){printf("err:mnemonic");exit(-1);}
 	if(op==NULL){printf("err:op");exit(-1);}
 	cs_insn *insn;
@@ -81,10 +84,13 @@ bool NpcTraceCapstone(uint32_t incode,char*mnemonic,char*op){
 		if(count!=0){cs_free(insn, count);}
 		return false;
 	}
+	#endif
 }
 
 void NpcTraceCloseCapstone(){
+	#ifdef  NPC_I_TRACE
 	cs_close(&handle);
+	#endif
 }
 
 void NpcTraceInit(char *argv){
@@ -99,6 +105,7 @@ void NpcTraceClose(){
 }
 
 void NpcTraceIrings(uint32_t pc,uint32_t incode,char*mnemonic,char*op){
+	#ifdef  NPC_I_TRACE
 		
 	static int iringbufCount=0;
 	static char npctraceIrings[npcTraceIringMax][npcTraceIringSize]={0};
@@ -120,9 +127,11 @@ void NpcTraceIrings(uint32_t pc,uint32_t incode,char*mnemonic,char*op){
 		}
 		fflush(npctraceIringsFp);
 	}
+	#endif
 }
 
 void NpcTraceFtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
+	#ifdef  NPC_F_TRACE
 	#define FTRACE_COUNT_MAX 10
 	#define FTRACE_COUNT_ULM true
 	// printf("pc=%x incode=%x dnpc=%x incode&0x7FU=%x incode&0xF80U=%x ret=%x call1=%x call2=%x call=%x\n",pc,incode,dnpc,incode&0x7FU,incode&0xF80U,incode==0x00008067,((incode&0x7FU)==0x67U),((incode&0xF80U)==0x80U),((incode&0x7F)==0x67)&&((incode&0xF80)==0x80));
@@ -148,8 +157,10 @@ void NpcTraceFtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
 		fflush(npctraceFtraceFp);
 		// printf(">\n");
 	}
+	#endif
 }
 void NpcTraceEtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
+	#ifdef  NPC_E_TRACE
 	#define ETRACE_COUNT_MAX 10
 	#define ETRACE_COUNT_ULM true
 	// printf("pc=%x incode=%x dnpc=%x incode&0x7FU=%x incode&0xF80U=%x ret=%x call1=%x call2=%x call=%x\n",pc,incode,dnpc,incode&0x7FU,incode&0xF80U,incode==0x00008067,((incode&0x7FU)==0x67U),((incode&0xF80U)==0x80U),((incode&0x7F)==0x67)&&((incode&0xF80)==0x80));
@@ -175,6 +186,7 @@ void NpcTraceEtrace(uint32_t pc,uint32_t incode,uint32_t dnpc){
 		fflush(npctraceEtraceFp);
 		// printf(">\n");
 	}
+	#endif
 }
 void NpcTraceWrite(uint32_t pc,uint32_t incode,uint32_t dnpc){
 #ifdef NPC_I_TRACE
