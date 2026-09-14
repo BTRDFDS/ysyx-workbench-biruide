@@ -31,7 +31,8 @@ inline void printOver(){
 	"a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
 	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
 	};//A=10 B=11
-	if(returnCode!=0){
+	if(returnCode==0){	printf("\33[1;32m HIT GOOD TRAP\n \33[0m");
+	}else{				printf("\33[1;41m HIT BAD TRAP \n \33[0m");
 		for(int i=0;i<32;i++){
 			printf("[%2d %s]%8x ",i,regsName[i],regs[i]);
 			if(i%8==7)printf("\n");
