@@ -85,6 +85,7 @@ bool NpcTraceCapstone(uint32_t incode,char*mnemonic,char*op){
 		return false;
 	}
 	#endif
+	return true;
 }
 
 void NpcTraceCloseCapstone(){
