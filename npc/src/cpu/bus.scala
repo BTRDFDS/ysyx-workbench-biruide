@@ -14,7 +14,7 @@ object  WidthConsts{//const
 	val SizeWidth	= 3
 	val BurstWidth	= 2
 
-	val CacheBit	= 3
+	val CacheBit	= 2
 	val CacheWidth	= 2
 	val CacheNum    = 1 << CacheBit
 	val CacheSize	= 1 << CacheWidth
