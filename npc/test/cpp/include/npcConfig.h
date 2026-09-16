@@ -18,6 +18,6 @@
 // #define NPC_DIFFTEST
 // #define NPC_WAVE
 
-const uint64_t RunstopTime = 0000;//非0时运行到该时间后停止
+const uint64_t RunstopTime = 8345294000L;//非0时运行到该时间后停止
 
 #endif

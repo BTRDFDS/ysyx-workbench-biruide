@@ -15,7 +15,7 @@ class driveMemVerilog extends Module{
 		val data	= Input(UInt(32.W))
 	})
 	val psram = Mem(0x01000000,UInt(8.W))
-	loadMemoryFromFileInline(psram, "./test/iverilog/iverilog.hex")
+	loadMemoryFromFileInline(psram, "./build/iverilog.hex")
 	// val theFirst = RegInit(true.B);when(theFirst){theFirst := false.B
 	// 	printf("%x\n",Cat(psram(0x0003),psram(0x0002),psram(0x0001),psram(0x0000)))
 	// 	printf("%x\n",Cat(psram(0x0007),psram(0x0006),psram(0x0005),psram(0x0004)))
