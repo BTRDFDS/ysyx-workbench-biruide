@@ -110,7 +110,7 @@ iverilog:verilogIverilog
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/build/iverilog.hex
 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
-sim-iverilog:iverilog
+sim-iverilog:verilogIverilog
 	@echo sim-iverilog-begin
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(NPC_HOME)/build/iverilog.hex
 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
