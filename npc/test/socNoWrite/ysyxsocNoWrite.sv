@@ -1,0 +1,1 @@
+`define ysyx_26020046_NO_WRITE

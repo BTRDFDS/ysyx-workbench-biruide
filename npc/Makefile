@@ -73,8 +73,12 @@ runNpc:verilogNpc $(srcCpp) $(srcCppNpc)
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 	./build/$(srcNpc)/V$(srcNpc) $(ARG)
 
+-include build/config.mk
 srcYsyxSoc = ysyxSoCFull
-YsyxSoc_VLT = $(NPC_HOME)/wave/ysyxsocTrace.vlt
+ifdef NPC_NVBroad
+YsyxSoc_Config += $(NPC_HOME)/test/socNoWrite/ysyxsocNoWrite.sv
+endif
+YsyxSoc_Config += $(NPC_HOME)/wave/ysyxsocTrace.vlt
 srcVerilogYsyxSoc += $(shell find $(NPC_HOME)/build/ysyxsoc -type f -name "*.sv")
 srcCppYsyxSoc = $(NPC_HOME)/test/cpp/ysyxSoCFull.cpp
 
@@ -92,10 +96,13 @@ endif
 
 SOC_CFLAGS += --timescale "1ns/1ns"
 SOC_CFLAGS += --no-timing
-
-runYsyxSoc:verilogYsyxSoc $(srcCpp) $(srcCppYsyxSoc)
-	make nvboard-archive
-	@verilator $(VERILATOR_CFLAGS) $(YsyxSoc_VLT) $(srcVerilogYsyxSoc) \
+build/config.mk: $(NPC_HOME)/test/cpp/include/npcConfig.h
+	mkdir -p build
+	clang++ -E -dM $< > $@.raw
+	sed -nE 's/^#define[[:space:]]+(NPC_[A-Za-z0-9_]*).*/\1 := 1/p' $@.raw > $@
+	rm -f $@.raw
+runYsyxSoc:nvboard-archive verilogYsyxSoc build/config.mk $(srcCpp) $(srcCppYsyxSoc)
+	@verilator $(VERILATOR_CFLAGS) $(YsyxSoc_Config) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
 	-CFLAGS -I$(NPC_HOME)/test/cpp/include \
@@ -110,8 +117,9 @@ iverilog:verilogIverilog
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/build/iverilog.hex
 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
-sim-iverilog:verilogIverilog
+sim-iverilog:
 	@echo sim-iverilog-begin
+	make verilogIverilog
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(NPC_HOME)/build/iverilog.hex
 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
 	@echo sim-iverilog-ready

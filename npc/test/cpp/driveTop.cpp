@@ -25,9 +25,10 @@ void NpcRun(){
 	if(contextp->gotFinish()){stop=true;}
 }
 int main(int argc, char** argv) {
+	printf("\033[1;32m Welcome to driveTop[\033[1;36m%s %s\033[1;32m] \033[0m ",__DATE__,__TIME__);
 	FILE *file;
 	if(argc>1&&argv[1]!=NULL){
-		printf("!!bin:%s\n",argv[1]);
+		// printf("!!bin:%s\n",argv[1]);
 		file = fopen(argv[1],"rb");
 	}else{
 		printf("!!shuould input bin\n");
@@ -56,7 +57,6 @@ int main(int argc, char** argv) {
 		top->clock=0;top->reset=1;top->eval();
 		top->clock=1;top->reset=1;top->eval();
 	}	top->clock=0;top->reset=0;top->eval();
-	printf("\033[1;32m Welcome to driveTop[\033[1;36m%s %s\033[1;32m] \033[0m ",__DATE__,__TIME__);
 	NpcToDrive("./log/driveTop.log",argv[1]);
 	if(tfp!=nullptr){
 		tfp->close();

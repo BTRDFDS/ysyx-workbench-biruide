@@ -33,9 +33,10 @@ void NpcRun(){
 	if(contextp->gotFinish()){stop=true;}
 }
 int main(int argc, char** argv) {
+	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m ",__DATE__,__TIME__);
 	FILE *file;
 	if(argc>1&&argv[1]!=NULL){
-		printf("!!bin:%s\n",argv[1]);
+		// printf("!!bin:%s\n",argv[1]);
 		file = fopen(argv[1],"rb");
 	}else{
 		printf("!!shuould input bin\n");
@@ -66,7 +67,7 @@ int main(int argc, char** argv) {
 	}	top->clock=0;top->reset=0;top->eval();
 	#ifdef NPC_NVBroad
 		nvboard_bind_pin(&top->externalPins_uart_rx  ,1,UART_RX);
-		// nvboard_bind_pin(&top->externalPins_uart_tx  ,1,UART_TX);
+		nvboard_bind_pin(&top->externalPins_uart_tx  ,1,UART_TX);
 		nvboard_bind_pin(&top->externalPins_ps2_clk	 ,1,PS2_CLK);
 		nvboard_bind_pin(&top->externalPins_ps2_data ,1,PS2_DAT);
 		nvboard_bind_pin(&top->externalPins_gpio_in  ,16,SW15,SW14,SW13,SW12,SW11,SW10,SW9,SW8,SW7,SW6,SW5,SW4,SW3,SW2,SW1,SW0);
@@ -89,7 +90,6 @@ int main(int argc, char** argv) {
 
 		nvboard_init();
 	#endif
-	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m ",__DATE__,__TIME__);
 	NpcToDrive("./log/ysyxSoCFull.log",argv[1]);
 	#ifdef NPC_NVBroad
 		nvboard_quit();

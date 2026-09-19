@@ -36,6 +36,10 @@ extern char _load_start_,_load_size_,_load_begin_[];
 extern char _imag_start_,_imag_size_,_imag_begin_[];
 extern char _base_start_,_base_size_;
 
+void put_marchid(uint32_t in){
+  if (in >= 10U){put_marchid(in / 10U);}
+  putch((char)('0' + (in % 10U)));
+}
 void _bootloader() {//SSLB
 	uint32_t* data=(uint32_t*)&_imag_start_;
 	while((data-(uint32_t*)&_imag_start_)<=(size_t)&_imag_size_){
@@ -48,6 +52,19 @@ void _bootloader() {//SSLB
 		bss=bss+1;
 	}
 	asm volatile("fence.i");
+	uint32_t mcycle;  asm volatile ("csrrs %0, mcycle, x0" : "=r"(mcycle));
+	uint32_t mcycleh; asm volatile ("csrrs %0, mcycleh,  x0" : "=r"(mcycleh));
+	putch('[');
+	put_marchid(mcycleh);
+	put_marchid(mcycle);
+	putch(']');
+	putch(' ');
+	uint32_t mvendorid;	asm volatile ("csrrs %0, mvendorid, x0" : "=r"(mvendorid));
+	uint32_t marchid;	asm volatile ("csrrs %0, marchid,  x0" : "=r"(marchid));
+	for(int32_t i=24;i>=0;i-=8){putch((char)((mvendorid>>i)&0xff));}
+	putch(' ');
+	put_marchid(marchid);
+	putch('\n');
 	halt(main(mainargs));
 }
 void _trm_init() {//FSLB

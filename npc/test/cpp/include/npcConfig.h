@@ -1,4 +1,4 @@
-#include <cstdint>
+// #include <cstdint>
 #ifndef _NPC_CONFIG_
 #define _NPC_CONFIG_
 
@@ -13,10 +13,10 @@
 #define NPC_D_CACHE_TRACE
 #define NPC_BRACHE_TRACE
 */
-#define NPC_NVBroad
-// #define NPC_M_TRACE
+// #define NPC_NVBroad
+#define NPC_M_TRACE
 // #define NPC_DIFFTEST
-// #define NPC_WAVE
+#define NPC_WAVE
 
 const uint64_t RunstopTime = 8345294000L;//非0时运行到该时间后停止
 
