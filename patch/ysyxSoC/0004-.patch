@@ -1,0 +1,40 @@
+From 8c61babc9c3048d8865712d752b6c0d080758e9d Mon Sep 17 00:00:00 2001
+From: Bi RuiDe <1776427100@qq.com>
+Date: Mon, 21 Sep 2026 22:39:51 +0800
+Subject: [PATCH 4/4] =?UTF-8?q?=E4=B8=B4=E6=97=B6=E5=85=B3=E6=8E=89?=
+ =?UTF-8?q?=E5=BB=B6=E8=BF=9F=EF=BC=8C=E5=8F=8D=E6=AD=A3=E5=90=8E=E9=9D=A2?=
+ =?UTF-8?q?=E8=BF=98=E9=9C=80=E8=A6=81=E8=B0=83=E6=95=B4?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ perip/amba/apb_delayer.v  | 2 +-
+ perip/amba/axi4_delayer.v | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/perip/amba/apb_delayer.v b/perip/amba/apb_delayer.v
+index cd27899a..bc5f9f33 100644
+--- a/perip/amba/apb_delayer.v
++++ b/perip/amba/apb_delayer.v
+@@ -1,4 +1,4 @@
+-`define Delay
++// `define Delay
+ module apb_delayer(
+ 	input         clock,
+ 	input         reset,
+diff --git a/perip/amba/axi4_delayer.v b/perip/amba/axi4_delayer.v
+index 9b54b598..01d3ef69 100644
+--- a/perip/amba/axi4_delayer.v
++++ b/perip/amba/axi4_delayer.v
+@@ -1,5 +1,5 @@
+-`define DelayW
+-`define DelayR
++// `define DelayW
++// `define DelayR
+ module axi4_delayer(
+ 	input         clock,
+ 	input         reset,
+-- 
+2.34.1
+

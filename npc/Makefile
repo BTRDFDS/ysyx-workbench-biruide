@@ -113,16 +113,15 @@ runYsyxSoc:nvboard-archive verilogYsyxSoc build/config.mk $(srcCpp) $(srcCppYsyx
 
 srcVerilogIverilog += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.sv")
 srcVerilogIverilog += $(NPC_HOME)/test/iverilog/iverliog.v
-iverilog:verilogIverilog
-	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/build/iverilog.hex
-	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
-	vvp build/iverilogCpu -fst
+# iverilog:verilogIverilog
+# 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/build/iverilog.hex
+# 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
+# 	vvp build/iverilogCpu -fst
 sim-iverilog:
 	@echo sim-iverilog-begin
 	make verilogIverilog
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(NPC_HOME)/build/iverilog.hex
 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
-	@echo sim-iverilog-ready
 	vvp build/iverilogCpu -fst
 
 srcVerilogNetlist += $(NPC_HOME)/test/iverilog/iverliog.v
@@ -130,10 +129,12 @@ srcVerilogNetlist += $(shell find $(NPC_HOME)/build/netlist -type f -name "*.sv"
 NETLIST ?= $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v.sim
 CELLS	?= $(YOSYS_STA_HOME)/pdk/nangate45/sim/cells.v
 netlist:verilogNetlist sta
+	@echo netlist-begin
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/build/iverilog.hex
 	iverilog -g2012 -o build/netlistCpu $(srcVerilogNetlist) $(NETLIST) $(CELLS)
 	vvp build/netlistCpu -fst
 sim-iverilog-netlist:verilogNetlist
+	@echo sim-iverilog-netlist-begin
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(NPC_HOME)/build/iverilog.hex
 	iverilog -g2012 -o build/netlistCpu $(srcVerilogNetlist) $(NETLIST) $(CELLS)
 	vvp build/netlistCpu -fst
