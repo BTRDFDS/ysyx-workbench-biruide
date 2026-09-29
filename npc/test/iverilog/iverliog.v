@@ -5,6 +5,7 @@ driveTop cpu(clock, reset);
 initial begin
 	// $dumpfile("wave/iverilog.fst");
 	// $dumpvars(0,cpu);
+	$display("iverilog-start");
 	#0  clock = 0;
 	#0  reset = 1;
 	#10 reset = 0;
