@@ -30,7 +30,7 @@ void NpcRun(){
 		tfp->dump(contextp->time());
 	#endif
 	top->clock=0;top->eval();
-	if(contextp->gotFinish()||top->externalPins_uart_rx==0){stop=true;}
+	if(contextp->gotFinish()){stop=true;}
 }
 int main(int argc, char** argv) {
 	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m ",__DATE__,__TIME__);
