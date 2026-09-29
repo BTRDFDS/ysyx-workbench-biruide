@@ -1,11 +1,13 @@
 test:
 	@mill -i test
 verilog:verilogSta
+	@echo build-verilog-begin
 	cat $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv") > $(NPC_HOME)/build/ysyx_26020046.sv
 	$(call git_commit, "generate verilog")
 
 srcScala = $(shell find $(NPC_HOME)/src -type f -name "*.scala")
 build/%:$(srcScala)
+	@echo "Building $*"
 	@mkdir -p wave
 	@mkdir -p build
 # 	mill --version
@@ -102,6 +104,7 @@ build/config.mk: $(NPC_HOME)/test/cpp/include/npcConfig.h
 	sed -nE 's/^#define[[:space:]]+(NPC_[A-Za-z0-9_]*).*/\1 := 1/p' $@.raw > $@
 	rm -f $@.raw
 runYsyxSoc:nvboard-archive verilogYsyxSoc build/config.mk $(srcCpp) $(srcCppYsyxSoc)
+	@echo ysyxsoc-begin
 	@verilator $(VERILATOR_CFLAGS) $(YsyxSoc_Config) $(srcVerilogYsyxSoc) \
 	--exe $(srcCpp) $(srcCppYsyxSoc) --Mdir build/$(srcYsyxSoc) --build $(NVBOARD_ARCHIVE) \
 	--top-module $(srcYsyxSoc) $(SOC_CFLAGS) \
@@ -113,13 +116,13 @@ runYsyxSoc:nvboard-archive verilogYsyxSoc build/config.mk $(srcCpp) $(srcCppYsyx
 
 srcVerilogIverilog += $(shell find $(NPC_HOME)/build/iverilog -type f -name "*.sv")
 srcVerilogIverilog += $(NPC_HOME)/test/iverilog/iverliog.v
-# iverilog:verilogIverilog
-# 	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/build/iverilog.hex
-# 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
-# 	vvp build/iverilogCpu -fst
-sim-iverilog:
+iverilog:verilogIverilog
+	@echo iverilog-begin
+	riscv64-linux-gnu-objcopy -I binary -O verilog $(ARG) $(NPC_HOME)/build/iverilog.hex
+	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
+	vvp build/iverilogCpu -fst
+sim-iverilog:verilogIverilog
 	@echo sim-iverilog-begin
-	make verilogIverilog
 	riscv64-linux-gnu-objcopy -I binary -O verilog $(IMG) $(NPC_HOME)/build/iverilog.hex
 	iverilog -g2012 -o build/iverilogCpu $(srcVerilogIverilog)
 	vvp build/iverilogCpu -fst
@@ -144,10 +147,12 @@ YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 
 srcVerilogSta += $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv")
 sta:verilogSta $(srcVerilogSta)
+	@echo sta-begin
 	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)" $(YOSYS_CONFIG)
 # 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
 
 chk:verilogSta $(srcVerilogSta)
+	@echo chk-begin
 	verilator --lint-only -Wall $(srcVerilogSta) --top-module ysyx_26020046
 
 srcVerilogStaWbu += $(NPC_HOME)/build/sta/ysyx_26020046_Wbu.sv
