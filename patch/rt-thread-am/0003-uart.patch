@@ -1,0 +1,29 @@
+From 7f229ea0cdfa7396effc296f7e1a69e16ab81c70 Mon Sep 17 00:00:00 2001
+From: Bi RuiDe <1776427100@qq.com>
+Date: Wed, 30 Sep 2026 21:22:43 +0800
+Subject: [PATCH 3/3] =?UTF-8?q?=E7=A1=AE=E8=AE=A4uart=E8=82=AF=E5=AE=9A?=
+ =?UTF-8?q?=E6=98=AF=E6=BF=80=E6=B4=BB=E7=9A=84=E4=BA=86?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ bsp/abstract-machine/src/uart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bsp/abstract-machine/src/uart.c b/bsp/abstract-machine/src/uart.c
+index 00fbd38ad..15c9fb05e 100644
+--- a/bsp/abstract-machine/src/uart.c
++++ b/bsp/abstract-machine/src/uart.c
+@@ -42,7 +42,7 @@ static int _uart_getc(struct rt_serial_device *serial) {
+   static bool hasUart = false;
+   if(noInit){
+     hasUart=io_read(AM_UART_CONFIG).present;
+-    printf("hasUart: %s\n",(hasUart?"true":"false"));
++    // printf("hasUart: %s\n",(hasUart?"true":"false"));
+     noInit = false;
+   }
+   static const char *p = "help\ndate\nversion\nfree\nps\npwd\nls\nmemtrace\nmemcheck\nutest_list\n";
+-- 
+2.34.1
+
