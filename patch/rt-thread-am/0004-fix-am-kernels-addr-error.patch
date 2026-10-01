@@ -1,0 +1,26 @@
+From d9ed0954442f3715e4ba6cceb8d8013c695ea472 Mon Sep 17 00:00:00 2001
+From: Bi RuiDe <1776427100@qq.com>
+Date: Thu, 1 Oct 2026 11:21:49 +0800
+Subject: [PATCH 4/4] fix am-kernels addr error
+
+---
+ bsp/abstract-machine/integrate-am-apps.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/bsp/abstract-machine/integrate-am-apps.py b/bsp/abstract-machine/integrate-am-apps.py
+index 016bca6e6..8968df387 100644
+--- a/bsp/abstract-machine/integrate-am-apps.py
++++ b/bsp/abstract-machine/integrate-am-apps.py
+@@ -5,8 +5,7 @@ from pathlib import Path
+ 
+ # global settings
+ AM_HOME = Path(os.environ["AM_HOME"])
+-# AM_KERNELS_HOME = (AM_HOME / ".." / "am-kernels").resolve()
+-AM_KERNELS_HOME = Path(os.environ["AM_KERNELS_HOME"])
++AM_KERNELS_HOME = (AM_HOME / ".." / "am-kernels").resolve()
+ app_dir_list = [
+   AM_KERNELS_HOME / "kernels" / "hello",
+   AM_KERNELS_HOME / "benchmarks" / "microbench",
+-- 
+2.34.1
+

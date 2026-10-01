@@ -32,11 +32,13 @@ void NpcRun(){
 	#endif
 	top->clock=0;top->eval();
 	if(contextp->gotFinish()){stop=true;}
+#ifdef NPC_NVBroad
 	static uint32_t i=1;
 	if(top->externalPins_uart_rx==0)i++;
 	if(i%100==0){
 		printf("rx - %u\n",i);
 	}
+#endif
 }
 int main(int argc, char** argv) {
 	printf("\033[1;32m Welcome to ysyxSoCFull[\033[1;36m%s %s\033[1;32m] \033[0m ",__DATE__,__TIME__);
