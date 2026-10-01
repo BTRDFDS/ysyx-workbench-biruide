@@ -1,0 +1,24 @@
+From faeee912dd0f148cb6a492d7ac03b005c4a65571 Mon Sep 17 00:00:00 2001
+From: Bi RuiDe <1776427100@qq.com>
+Date: Thu, 1 Oct 2026 12:37:18 +0800
+Subject: [PATCH 6/6] remove uart debuger display
+
+---
+ perip/uart16550/rtl/uart_regs.v | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/perip/uart16550/rtl/uart_regs.v b/perip/uart16550/rtl/uart_regs.v
+index b23b32c2..049618ff 100644
+--- a/perip/uart16550/rtl/uart_regs.v
++++ b/perip/uart16550/rtl/uart_regs.v
+@@ -374,7 +374,6 @@ wire [2:0]                      tstate;
+ wire [3:0]                      rstate;
+ wire [9:0]                      counter_t;
+ // Debug print for UART character reception
+-always_ff@(posedge clk)if(rf_push_pulse)$display("uart_input");
+ 
+ wire       thre_set_en; // THRE status is delayed one character time when a character is written to fifo.
+ reg  [7:0] block_cnt;   // While counter counts, THRE status is blocked (delayed one character cycle)
+-- 
+2.34.1
+
