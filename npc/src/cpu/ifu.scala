@@ -6,18 +6,19 @@ class ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val out = IO(new Bundle{val pipe = new PipeIfId()})
 	val ich	= IO(new InstrBus())
 
-	val immePc		= RegNext(in.imme.pc	,0.U)
-	val immeAddr	= RegNext(in.imme.addr	,0.U)
-	val immeReloca	= RegNext(in.imme.reloca,false.B)
-	val immeUpdate	= RegNext(in.imme.update,IfuUpdate.Null)
-	// val immePc		= in.imme.pc
-	// val immeAddr	= in.imme.addr
-	// val immeReloca	= in.imme.reloca
-	// val immeUpdate	= in.imme.update
+	// val immePc		= RegNext(in.imme.pc	,0.U)
+	// val immeAddr	= RegNext(in.imme.addr	,0.U)
+	// val immeReloca	= RegNext(in.imme.reloca,false.B)
+	// val immeUpdate	= RegNext(in.imme.update,IfuUpdate.Null)
+	val immePc		= in.imme.pc
+	val immeAddr	= in.imme.addr
+	val immeReloca	= in.imme.reloca
+	val immeUpdate	= in.imme.update
 
 	//pc更新
 		val pipePc		= RegInit(PcInit(31,2))
-		val pipeValid	= RegNext(!in.imme.reloca,true.B)
+		// val pipeValid	= RegNext(!in.imme.reloca,true.B)
+		val pipeValid	= true.B
 
 		ich.addr	:= pipePc
 		ich.valid	:= pipeValid
