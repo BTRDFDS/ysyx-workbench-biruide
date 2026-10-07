@@ -261,7 +261,7 @@ word_t eval(int p, int q, bool *success) {
       }
     }
     word_t val1, val2,res;
-    if((op==q)){
+    if(op==q){
       printf("Bad expression:without val2\n");
       *success=false;
       return 0;

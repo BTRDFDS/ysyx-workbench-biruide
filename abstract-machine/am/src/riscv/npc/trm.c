@@ -24,7 +24,7 @@ void put_marchid(uint32_t in){
   if (in >= 10U){put_marchid(in / 10U);}
   putch((char)('0' + (in % 10U)));
 }
-void _trm_init() {
+void put_information(){
 	uint32_t mcycle;  asm volatile ("csrrs %0, mcycle, x0" : "=r"(mcycle));
 	uint32_t mcycleh; asm volatile ("csrrs %0, mcycleh,  x0" : "=r"(mcycleh));
 	putch('[');
@@ -40,6 +40,9 @@ void _trm_init() {
   putch(' ');
   put_marchid(marchid);
   putch('\n');
+}
+void _trm_init() {
+  // put_information();
   int ret = main(mainargs);
   halt(ret);
 }
