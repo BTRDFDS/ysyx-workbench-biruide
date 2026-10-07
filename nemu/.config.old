@@ -25,10 +25,10 @@ CONFIG_TARGET_SHARE=y
 #
 # Build Options
 #
-CONFIG_CC_GCC=y
+# CONFIG_CC_GCC is not set
 # CONFIG_CC_GPP is not set
-# CONFIG_CC_CLANG is not set
-CONFIG_CC="gcc"
+CONFIG_CC_CLANG=y
+CONFIG_CC="clang"
 # CONFIG_CC_O0 is not set
 # CONFIG_CC_O1 is not set
 CONFIG_CC_O2=y

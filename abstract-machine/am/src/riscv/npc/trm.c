@@ -42,7 +42,7 @@ void put_information(){
   putch('\n');
 }
 void _trm_init() {
-  // put_information();
+  put_information();
   int ret = main(mainargs);
   halt(ret);
 }
