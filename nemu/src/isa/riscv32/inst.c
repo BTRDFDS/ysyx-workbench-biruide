@@ -17,6 +17,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
+#include <cstdio>
 #include <memory/paddr.h>
 
 #define R(i) gpr(i)
@@ -140,7 +141,7 @@ word_t riscv32zCsrrw(word_t rs1,word_t addr){
   // }
   return old;
 }
-word_t riscv32zCsrrs(word_t rs1,word_t addr){
+word_t riscv32zCsrrs(word_t rs1,word_t addr,Decode *s){
   // printf("csrrs addr=%x rs1=%x ",addr,rs1);
   word_t old=0;
   switch(addr){
@@ -148,7 +149,9 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr){
     case 0x305:old=mtvec;  mtvec  |=rs1;break;
     case 0x341:old=mepc;   mepc   |=rs1;break;
     case 0x342:old=mcause; mcause |=rs1;break;
-    default: panic("csrrs addr=%x",addr);
+    default:
+      printf("s:ins=%8x pc=%8x npc=%8x",s->isa, s->pc,s->dnpc); 
+      panic("csrrs addr=%x",addr);
   }
   // switch(addr){
   //   case 0x300:printf("mstatus %x => %x\n",old,mstatus);break;
