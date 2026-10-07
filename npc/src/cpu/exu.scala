@@ -42,73 +42,62 @@ class exu(val Yosys:Boolean=false) extends Module {
 	out.pipe.csrAddr:= pipeCsrAddr
 	out.pipe.valid	:= pipeValid
 	out.pipe.rdAddr	:= pipeRdAddr
-	out.pipe.result := 0.U
+	// out.pipe.result := 0.U
 	out.pipe.csrMesg:= pipeCsrMesg
 
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))
 	val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
 	val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeResult)
-	switch(pipeAlu){
-		is(ExuAlu.Add)	{result := input1 + input2}
-		is(ExuAlu.Sll)	{result :=(input1 << input2(4,0))(31,0)}
-		is(ExuAlu.Slt)	{result := input1.asSInt < input2.asSInt}
-		is(ExuAlu.Sltu)	{result := input1 < input2}
-		is(ExuAlu.Xor)	{result := input1 ^ input2}
-		is(ExuAlu.Srl)	{result := input1 >> input2(4,0)}
-		is(ExuAlu.Or)	{result := input1 | input2}
-		is(ExuAlu.And)	{result := input1 & input2}
-		is(ExuAlu.Sub)	{result := input1 - input2}
-		is(ExuAlu.Sra)	{result :=(input1.asSInt >> input2(4,0)).asUInt}
-	}
-	switch(pipeBfu){
-		is(ExuBfu.Beq)	{enBfun := pipeR1 === pipeR2}
-		is(ExuBfu.Bne)	{enBfun := pipeR1 =/= pipeR2}
-		is(ExuBfu.Blt)	{enBfun := pipeR1.asSInt < pipeR2.asSInt}
-		is(ExuBfu.Bge)	{enBfun := pipeR1.asSInt >= pipeR2.asSInt}
-		is(ExuBfu.Bltu)	{enBfun := pipeR1 < pipeR2}
-		is(ExuBfu.Bgeu)	{enBfun := pipeR1 >= pipeR2}
-	}
 	switch(pipeCsr){
 		is(ExuCsr.Read)	{out.pipe.csrMesg := pipeR1 | pipeCsrMesg}
 		is(ExuCsr.Write){out.pipe.csrMesg := pipeR1}
 	}
-	switch(pipeRes){
-		is(ExuRes.Alu)	{out.pipe.result := result}
-		is(ExuRes.Null)	{out.pipe.result := 0.U}
-		is(ExuRes.Snpc)	{out.pipe.result := Cat(pipePc+1.U,0.U(2.W))}
-		is(ExuRes.Imm)	{out.pipe.result := pipeResult}//给rd的
-	}
+	result := Mux1H(Seq(
+		(pipeAlu === ExuAlu.Add)	->(input1 + input2),
+		(pipeAlu === ExuAlu.Sll)	->((input1 << input2(4,0))(31,0)),
+		(pipeAlu === ExuAlu.Slt)	->(input1.asSInt < input2.asSInt),
+		(pipeAlu === ExuAlu.Sltu)	->(input1 < input2),
+		(pipeAlu === ExuAlu.Xor)	->(input1 ^ input2),
+		(pipeAlu === ExuAlu.Srl)	->(input1 >> input2(4,0)),
+		(pipeAlu === ExuAlu.Or)		->(input1 | input2),
+		(pipeAlu === ExuAlu.And)	->(input1 & input2),
+		(pipeAlu === ExuAlu.Sub)	->(input1 - input2),
+		(pipeAlu === ExuAlu.Sra)	->((input1.asSInt >> input2(4,0)).asUInt)
+	))
+	enBfun := Mux1H(Seq(
+		(pipeBfu === ExuBfu.Beq)	->(pipeR1 === pipeR2),
+		(pipeBfu === ExuBfu.Bne)	->(pipeR1 =/= pipeR2),
+		(pipeBfu === ExuBfu.Blt)	->(pipeR1.asSInt < pipeR2.asSInt),
+		(pipeBfu === ExuBfu.Bge)	->(pipeR1.asSInt >= pipeR2.asSInt),
+		(pipeBfu === ExuBfu.Bltu)	->(pipeR1 < pipeR2),
+		(pipeBfu === ExuBfu.Bgeu)	->(pipeR1 >= pipeR2),
+		(pipeBfu === ExuBfu.Null)	->(false.B)
+	))
+	out.pipe.result := Mux1H(Seq(
+		(pipeRes === ExuRes.Alu)	->(result),
+		(pipeRes === ExuRes.Null)	->(0.U),
+		(pipeRes === ExuRes.Snpc)	->(Cat(pipePc+1.U,0.U(2.W))),
+		(pipeRes === ExuRes.Imm)	->(pipeResult)
+	))
 
 	val shouldBe = Mux((pipeJump || enBfun),input1+pipeResult,Cat(pipePc+1.U,0.U(2.W)))
 	val noSend = RegInit(true.B)
 	when(out.imme.ready){noSend := true.B}
 	.elsewhen(pipeValid&&(out.imme.reloca || pipeFenceI)){noSend := false.B}
 
-	ich.fenceI	:= false.B
+	ich.fenceI	:= pipeValid&&noSend&&pipeFenceI
 	out.imme.ready	:= in.imme.ready || ~pipeValid
-	out.imme.update	:= IfuUpdate.Null
-	out.imme.reloca	:= false.B
-	when(in.imme.error){
-		out.imme.addr	:= in.imme.addr
-		out.imme.pc		:= in.imme.pc
-		out.imme.reloca	:= true.B
-	}.otherwise{
-		out.imme.addr	:= shouldBe
-		out.imme.pc		:= pipePc
-		when(pipeValid&&noSend){
-			ich.fenceI		:= pipeFenceI
-			when(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI){
-				out.imme.reloca := true.B
-				out.imme.update	:= Mux1H(Seq(
-					(pipeUpdate === IfuUpdate.Jalr)		-> IfuUpdate.Jalr,
-					(pipeUpdate === IfuUpdate.Jal)		-> IfuUpdate.Jal,
-					(pipeUpdate === IfuUpdate.Branch)	-> Mux(enBfun,IfuUpdate.Branch,IfuUpdate.Null),
-					(pipeUpdate === IfuUpdate.Null)		-> IfuUpdate.Null
-				))
-			}
-		}
-	}
+	out.imme.reloca	:= in.imme.error || (pipeValid&&noSend&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI))
+	out.imme.addr	:= Mux(in.imme.error,in.imme.addr,shouldBe)
+	out.imme.pc		:= pipePc
+	val updateMaybe = Mux1H(Seq(
+		(pipeUpdate === IfuUpdate.Jalr)		-> IfuUpdate.Jalr,
+		(pipeUpdate === IfuUpdate.Jal)		-> IfuUpdate.Jal,
+		(pipeUpdate === IfuUpdate.Branch)	-> Mux(enBfun,IfuUpdate.Branch,IfuUpdate.Null),
+		(pipeUpdate === IfuUpdate.Null)		-> IfuUpdate.Null
+	))
+	out.imme.update	:= Mux(pipeValid&&noSend&&(~in.imme.error)&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI),updateMaybe,IfuUpdate.Null)
 
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr
