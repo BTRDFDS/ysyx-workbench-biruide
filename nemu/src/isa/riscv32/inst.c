@@ -17,7 +17,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
-#include <cstdio>
+#include <stdio.h>
 #include <memory/paddr.h>
 
 #define R(i) gpr(i)
@@ -121,6 +121,10 @@ word_t mepc=0;
 word_t mcause=0;
 word_t mstatus=0x1800;
 word_t mtvec=0;
+word_t mcycle=0;
+word_t mcycleh=0;
+word_t mcycleNext;
+word_t mcyclehNext;
 
 word_t riscv32zCsrrw(word_t rs1,word_t addr){
   // printf("csrrw addr=%x rs1=%x ",addr,rs1);
@@ -130,6 +134,10 @@ word_t riscv32zCsrrw(word_t rs1,word_t addr){
     case 0x305:old=mtvec;  mtvec=rs1;  break;
     case 0x341:old=mepc;   mepc=rs1;   break;
     case 0x342:old=mcause; mcause=rs1; break;
+    case 0xF11:old=0x79737978; break;
+    case 0xF12:old=0x018D08CE; break;
+    case 0xB00:old=mcycle; mcycleNext=rs1; break;
+    case 0xB01:old=mcycleh;mcyclehNext=rs1;break;
     default: panic("csrrw addr=%x",addr);
   }
   // switch(addr){
@@ -141,7 +149,7 @@ word_t riscv32zCsrrw(word_t rs1,word_t addr){
   // }
   return old;
 }
-word_t riscv32zCsrrs(word_t rs1,word_t addr,Decode *s){
+word_t riscv32zCsrrs(word_t rs1,word_t addr){
   // printf("csrrs addr=%x rs1=%x ",addr,rs1);
   word_t old=0;
   switch(addr){
@@ -149,9 +157,11 @@ word_t riscv32zCsrrs(word_t rs1,word_t addr,Decode *s){
     case 0x305:old=mtvec;  mtvec  |=rs1;break;
     case 0x341:old=mepc;   mepc   |=rs1;break;
     case 0x342:old=mcause; mcause |=rs1;break;
-    default:
-      printf("s:ins=%8x pc=%8x npc=%8x",s->isa, s->pc,s->dnpc); 
-      panic("csrrs addr=%x",addr);
+    case 0xF11:old=0x79737978; break;
+    case 0xF12:old=0x018D08CE; break;
+    case 0xB00:old=mcycle; mcycleNext |=rs1;break;
+    case 0xB01:old=mcycleh;mcyclehNext|=rs1;break;
+    default:panic("csrrs addr=%x",addr);
   }
   // switch(addr){
   //   case 0x300:printf("mstatus %x => %x\n",old,mstatus);break;
@@ -214,7 +224,8 @@ static int decode_exec(Decode *s) {
   decode_operand(s, &rd, &src1, &src2, &imm, concat(TYPE_, type)); \
   __VA_ARGS__ ; \
 }
-
+  mcycleNext=mcycle+1;
+  mcyclehNext=mcycle==0xffffffff?mcycleh+1:mcycleh;
   INSTPAT_START();
   //RV32I
   INSTPAT("??????? ????? ????? ??? ????? 0110111", lui      , U, R(rd) = imm);
@@ -270,8 +281,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 110 ????? 0110011", REM      , R, R(rd) =  riscv32mRem (( int32_t)src1, ( int32_t)src2));
   INSTPAT("0000001 ????? ????? 111 ????? 0110011", REMU     , R, R(rd) =  riscv32mRemU((uint32_t)src1, (uint32_t)src2));
   //RV32Z
-  INSTPAT("??????? ????? ????? 001 ????? 1110011", csrrw    , I, R(rd) = riscv32zCsrrw((uint32_t)src1, imm));
-  INSTPAT("??????? ????? ????? 010 ????? 1110011", csrrs    , I, R(rd) = riscv32zCsrrs((uint32_t)src1, imm));
+  INSTPAT("??????? ????? ????? 001 ????? 1110011", csrrw    , I, R(rd) = riscv32zCsrrw((uint32_t)src1, imm&0xfff));
+  INSTPAT("??????? ????? ????? 010 ????? 1110011", csrrs    , I, R(rd) = riscv32zCsrrs((uint32_t)src1, imm&0xfff));
   INSTPAT("0011000 00010 00000 000 00000 1110011", mret     , N, s->dnpc=riscv32mret());
   // INSTPAT("0011000 00010 00000 000 00000 1110011", mret     , N, s->dnpc=riscv32mret(),printf("mret %x => %x\n",s->pc,s->dnpc));
   //未能匹配
@@ -279,7 +290,8 @@ static int decode_exec(Decode *s) {
   INSTPAT_END();
 
   R(0) = 0; // reset $zero to 0
-
+  mcycle =mcycleNext;
+  mcycleh=mcyclehNext;
   return 0;
 }
 
