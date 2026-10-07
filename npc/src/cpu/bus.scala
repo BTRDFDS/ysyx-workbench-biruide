@@ -15,7 +15,7 @@ object  WidthConsts{//const
 	val BurstWidth	= 2
 
 	val CacheBit	= 2
-	val CacheWidth	= 2
+	val CacheWidth	= 1
 	val CacheNum    = 1 << CacheBit
 	val CacheSize	= 1 << CacheWidth
 	def PipeReg[T <: Data](pipeNext:T,pipeChange:Bool							): T = {RegEnable(pipeNext							,pipeChange				)}

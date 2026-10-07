@@ -10,6 +10,10 @@ class ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val immeAddr	= RegNext(in.imme.addr	,0.U)
 	val immeReloca	= RegNext(in.imme.reloca,false.B)
 	val immeUpdate	= RegNext(in.imme.update,IfuUpdate.Null)
+	// val immePc		= in.imme.pc
+	// val immeAddr	= in.imme.addr
+	// val immeReloca	= in.imme.reloca
+	// val immeUpdate	= in.imme.update
 
 	//pc更新
 		val pipePc		= RegInit(PcInit(31,2))
@@ -29,7 +33,7 @@ class ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 
 
 
-	val BrBits	= 2
+	val BrBits	= 1
 	val BrSize	= 1 << BrBits
 	val brCnt	= RegInit(0.U(BrBits.W))
 	val brPc	= RegInit(VecInit(Seq.fill(BrSize)(0.U((BitWidth-2).W))))
@@ -38,7 +42,7 @@ class ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val brIndex = PriorityEncoder(brMatch)
 	val brHit	= brMatch.orR
 
-	val JalBits = 1
+	val JalBits = 0
 	val JalSize = 1 << JalBits
 	val jalCnt	= RegInit(0.U(JalBits.W))
 	val jalPc	= RegInit(VecInit(Seq.fill(JalSize)(0.U((BitWidth-2).W))))

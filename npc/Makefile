@@ -146,34 +146,19 @@ YOSYS_CONFIG = CLK_PORT_NAME=clock CLK_FREQ_MHZ=500 PDK=nangate45
 # nangate45 icsprout55
 
 srcVerilogSta += $(shell find $(NPC_HOME)/build/sta -type f -name "*.sv")
-sta:verilogSta $(srcVerilogSta)
+sta:verilogSta
 	@echo sta-begin
 	time make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)" $(YOSYS_CONFIG)
-# 	cp -r $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz ./result
-
-chk:verilogSta $(srcVerilogSta)
+syn:verilogSta
+	@echo sta-begin
+	time make -C $(YOSYS_STA_HOME) syn DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)" $(YOSYS_CONFIG)
+synAll:verilogSta syn
+	for i in $(srcVerilogSta); do \
+		time make -C $(YOSYS_STA_HOME) syn DESIGN=$$(basename $$i .sv) RTL_FILES=$${i} $(YOSYS_CONFIG); \
+	done
+chk:verilogSta
 	@echo chk-begin
 	verilator --lint-only -Wall $(srcVerilogSta) --top-module ysyx_26020046
-
-srcVerilogStaWbu += $(NPC_HOME)/build/sta/ysyx_26020046_Wbu.sv
-srcVerilogStaIdu += $(NPC_HOME)/build/sta/ysyx_26020046_Idu.sv
-srcVerilogStaIdu += $(NPC_HOME)/test/sta/ysyx_26020046_StaIdu.sv
-srcVerilogStaExu += $(NPC_HOME)/build/sta/ysyx_26020046_Exu.sv
-srcVerilogStaExu += $(NPC_HOME)/test/sta/ysyx_26020046_StaExu.sv
-srcVerilogStaIch += $(NPC_HOME)/build/sta/ysyx_26020046_Ich.sv
-srcVerilogStaIfu += $(NPC_HOME)/build/sta/ysyx_26020046_Ifu.sv
-srcVerilogStaLsu += $(NPC_HOME)/build/sta/ysyx_26020046_Lsu.sv
-staExu:verilogSta $(srcVerilogStaExu)
-	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaExu RTL_FILES="$(srcVerilogStaExu)" $(YOSYS_CONFIG)
-staIdu:verilogSta $(srcVerilogStaIdu)
-	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_StaIdu RTL_FILES="$(srcVerilogStaIdu)" $(YOSYS_CONFIG)
-staWbu:verilogSta $(srcVerilogStaWbu)
-	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Wbu RTL_FILES="$(srcVerilogStaWbu)" $(YOSYS_CONFIG)
-staIch:verilogSta $(srcVerilogStaIch)
-	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Ich RTL_FILES="$(srcVerilogStaIch)" $(YOSYS_CONFIG)
-staIfu:verilogSta $(srcVerilogStaIfu)
-	make -C $(YOSYS_STA_HOME) sta DESIGN=ysyx_26020046_Ifu RTL_FILES="$(srcVerilogStaIfu)" $(YOSYS_CONFIG)
-staPart:verilogSta staWbu staIdu staExu staIch staIfu
 
 icachesim:./test/cpp/icachesim/icachesim.cpp
 	clang++ ./test/cpp/icachesim/icachesim.cpp -o ./test/cpp/icachesim/icachesim

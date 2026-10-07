@@ -49,37 +49,35 @@ class exu(val Yosys:Boolean=false) extends Module {
 	val result = WireInit(0.U(BitWidth.W))
 	val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
 	val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeResult)
-	when(pipeValid){
-		switch(pipeAlu){
-			is(ExuAlu.Add)	{result := input1 + input2}
-			is(ExuAlu.Sll)	{result :=(input1 << input2(4,0))(31,0)}
-			is(ExuAlu.Slt)	{result := input1.asSInt < input2.asSInt}
-			is(ExuAlu.Sltu)	{result := input1 < input2}
-			is(ExuAlu.Xor)	{result := input1 ^ input2}
-			is(ExuAlu.Srl)	{result := input1 >> input2(4,0)}
-			is(ExuAlu.Or)	{result := input1 | input2}
-			is(ExuAlu.And)	{result := input1 & input2}
-			is(ExuAlu.Sub)	{result := input1 - input2}
-			is(ExuAlu.Sra)	{result :=(input1.asSInt >> input2(4,0)).asUInt}
-		}
-		switch(pipeBfu){
-			is(ExuBfu.Beq)	{enBfun := pipeR1 === pipeR2}
-			is(ExuBfu.Bne)	{enBfun := pipeR1 =/= pipeR2}
-			is(ExuBfu.Blt)	{enBfun := pipeR1.asSInt < pipeR2.asSInt}
-			is(ExuBfu.Bge)	{enBfun := pipeR1.asSInt >= pipeR2.asSInt}
-			is(ExuBfu.Bltu)	{enBfun := pipeR1 < pipeR2}
-			is(ExuBfu.Bgeu)	{enBfun := pipeR1 >= pipeR2}
-		}
-		switch(pipeCsr){
-			is(ExuCsr.Read)	{out.pipe.csrMesg := pipeR1 | pipeCsrMesg}
-			is(ExuCsr.Write){out.pipe.csrMesg := pipeR1}
-		}
-		switch(pipeRes){
-			is(ExuRes.Alu)	{out.pipe.result := result}
-			is(ExuRes.Null)	{out.pipe.result := 0.U}
-			is(ExuRes.Snpc)	{out.pipe.result := Cat(pipePc+1.U,0.U(2.W))}
-			is(ExuRes.Imm)	{out.pipe.result := pipeResult}//给rd的
-		}
+	switch(pipeAlu){
+		is(ExuAlu.Add)	{result := input1 + input2}
+		is(ExuAlu.Sll)	{result :=(input1 << input2(4,0))(31,0)}
+		is(ExuAlu.Slt)	{result := input1.asSInt < input2.asSInt}
+		is(ExuAlu.Sltu)	{result := input1 < input2}
+		is(ExuAlu.Xor)	{result := input1 ^ input2}
+		is(ExuAlu.Srl)	{result := input1 >> input2(4,0)}
+		is(ExuAlu.Or)	{result := input1 | input2}
+		is(ExuAlu.And)	{result := input1 & input2}
+		is(ExuAlu.Sub)	{result := input1 - input2}
+		is(ExuAlu.Sra)	{result :=(input1.asSInt >> input2(4,0)).asUInt}
+	}
+	switch(pipeBfu){
+		is(ExuBfu.Beq)	{enBfun := pipeR1 === pipeR2}
+		is(ExuBfu.Bne)	{enBfun := pipeR1 =/= pipeR2}
+		is(ExuBfu.Blt)	{enBfun := pipeR1.asSInt < pipeR2.asSInt}
+		is(ExuBfu.Bge)	{enBfun := pipeR1.asSInt >= pipeR2.asSInt}
+		is(ExuBfu.Bltu)	{enBfun := pipeR1 < pipeR2}
+		is(ExuBfu.Bgeu)	{enBfun := pipeR1 >= pipeR2}
+	}
+	switch(pipeCsr){
+		is(ExuCsr.Read)	{out.pipe.csrMesg := pipeR1 | pipeCsrMesg}
+		is(ExuCsr.Write){out.pipe.csrMesg := pipeR1}
+	}
+	switch(pipeRes){
+		is(ExuRes.Alu)	{out.pipe.result := result}
+		is(ExuRes.Null)	{out.pipe.result := 0.U}
+		is(ExuRes.Snpc)	{out.pipe.result := Cat(pipePc+1.U,0.U(2.W))}
+		is(ExuRes.Imm)	{out.pipe.result := pipeResult}//给rd的
 	}
 
 	val shouldBe = Mux((pipeJump || enBfun),input1+pipeResult,Cat(pipePc+1.U,0.U(2.W)))
