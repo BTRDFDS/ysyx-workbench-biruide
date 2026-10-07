@@ -43,16 +43,17 @@ class exu(val Yosys:Boolean=false) extends Module {
 	out.pipe.valid	:= pipeValid
 	out.pipe.rdAddr	:= pipeRdAddr
 	// out.pipe.result := 0.U
-	out.pipe.csrMesg:= pipeCsrMesg
+	// out.pipe.csrMesg:= pipeCsrMesg
 
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))
 	val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
 	val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeResult)
-	switch(pipeCsr){
-		is(ExuCsr.Read)	{out.pipe.csrMesg := pipeR1 | pipeCsrMesg}
-		is(ExuCsr.Write){out.pipe.csrMesg := pipeR1}
-	}
+	out.pipe.csrMesg := Mux1H(Seq(
+		(pipeCsr === ExuCsr.Read)	->(pipeR1 | pipeCsrMesg),
+		(pipeCsr === ExuCsr.Write)	->(pipeR1),
+		(pipeCsr === ExuCsr.Null)	->(pipeCsrMesg)
+	))
 	result := Mux1H(Seq(
 		(pipeAlu === ExuAlu.Add)	->(input1 + input2),
 		(pipeAlu === ExuAlu.Sll)	->((input1 << input2(4,0))(31,0)),

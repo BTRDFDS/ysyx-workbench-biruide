@@ -25,13 +25,13 @@ void put_marchid(uint32_t in){
   putch((char)('0' + (in % 10U)));
 }
 void put_information(){
-	uint32_t mcycle;  asm volatile ("csrrs %0, mcycle, x0" : "=r"(mcycle));
-	uint32_t mcycleh; asm volatile ("csrrs %0, mcycleh,  x0" : "=r"(mcycleh));
-	putch('[');
-	put_marchid(mcycleh);
-	put_marchid(mcycle);
-	putch(']');
-	putch(' ');
+	// uint32_t mcycle;  asm volatile ("csrrs %0, mcycle, x0" : "=r"(mcycle));
+	// uint32_t mcycleh; asm volatile ("csrrs %0, mcycleh,  x0" : "=r"(mcycleh));
+	// putch('[');
+	// put_marchid(mcycleh);
+	// put_marchid(mcycle);
+	// putch(']');
+	// putch(' ');
   uint32_t mvendorid;
   uint32_t marchid;
   asm volatile ("csrrs %0, mvendorid, x0" : "=r"(mvendorid));
