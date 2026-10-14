@@ -103,17 +103,20 @@ class exu(val Yosys:Boolean=false) extends Module {
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr
 	 in.imme.csrAddr:= out.imme.csrAddr
-	out.imme.r1Out	:=  in.imme.r1Out
-	out.imme.r2Out	:=  in.imme.r2Out
-	out.imme.valid	:=  in.imme.valid
-	out.imme.csrOut	:=  in.imme.csrOut
-	when(pipeValid&&pipeRdAddr =/= 0.U){
-		when(out.imme.r1Addr === pipeRdAddr){out.imme.r1Out := out.pipe.result}
-		when(out.imme.r2Addr === pipeRdAddr){out.imme.r2Out := out.pipe.result}
-		when(out.imme.r1Addr === pipeRdAddr || out.imme.r2Addr === pipeRdAddr){out.imme.valid := pipeLsuOp =/= LsuOp.Load}//store理论上也可以
-	}
-	when(pipeValid&&out.imme.csrAddr === pipeCsrAddr){out.imme.csrOut := out.pipe.csrMesg}
-
+	// out.imme.r1Out	:=  in.imme.r1Out
+	// out.imme.r2Out	:=  in.imme.r2Out
+	// out.imme.valid	:=  in.imme.valid
+	// out.imme.csrOut	:=  in.imme.csrOut
+	// when(pipeValid&&pipeRdAddr =/= 0.U){
+	// 	when(out.imme.r1Addr === pipeRdAddr){out.imme.r1Out := out.pipe.result}
+	// 	when(out.imme.r2Addr === pipeRdAddr){out.imme.r2Out := out.pipe.result}
+	// 	when(out.imme.r1Addr === pipeRdAddr || out.imme.r2Addr === pipeRdAddr){out.imme.valid := pipeLsuOp =/= LsuOp.Load}//store理论上也可以
+	// }
+	// when(pipeValid&&out.imme.csrAddr === pipeCsrAddr){out.imme.csrOut := out.pipe.csrMesg}
+	out.imme.r1Out := Mux(pipeValid&&pipeRdAddr === out.imme.r1Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r1Out)
+	out.imme.r2Out := Mux(pipeValid&&pipeRdAddr === out.imme.r2Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r2Out)
+	out.imme.valid := pipeValid&&pipeRdAddr =/= 0.U&&(out.imme.r1Addr === pipeRdAddr || out.imme.r2Addr === pipeRdAddr)&&in.imme.valid
+	out.imme.csrOut := Mux(pipeValid&&out.imme.csrAddr === pipeCsrAddr,out.pipe.csrMesg,in.imme.csrOut)
 	if(Yosys == false){
 		dontTouch(result)
 		dontTouch(shouldBe)
