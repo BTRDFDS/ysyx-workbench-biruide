@@ -2,204 +2,72 @@ import chisel3._
 import chisel3.util._
 import WidthConsts._
 import chisel3.util.experimental.decode._
-
-sealed trait InstPattern extends DecodePattern
-case object InstrLui    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_???_?????_0110111")}
-case object InstrAuipc  extends InstPattern{val bitPat = BitPat("b???????_?????_?????_???_?????_0010111")}
-case object InstrJal    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_???_?????_1101111")}
-case object InstrJalr   extends InstPattern{val bitPat = BitPat("b???????_?????_?????_000_?????_1100111")}
-case object InstrBeq    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_000_?????_1100011")}
-case object InstrBne    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_001_?????_1100011")}
-case object InstrBlt    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_100_?????_1100011")}
-case object InstrBge    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_101_?????_1100011")}
-case object InstrBltu   extends InstPattern{val bitPat = BitPat("b???????_?????_?????_110_?????_1100011")}
-case object InstrBgeu   extends InstPattern{val bitPat = BitPat("b???????_?????_?????_111_?????_1100011")}
-case object InstrLb     extends InstPattern{val bitPat = BitPat("b???????_?????_?????_000_?????_0000011")}
-case object InstrLh     extends InstPattern{val bitPat = BitPat("b???????_?????_?????_001_?????_0000011")}
-case object InstrLw     extends InstPattern{val bitPat = BitPat("b???????_?????_?????_010_?????_0000011")}
-case object InstrLbu    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_100_?????_0000011")}
-case object InstrLhu    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_101_?????_0000011")}
-case object InstrSb     extends InstPattern{val bitPat = BitPat("b???????_?????_?????_000_?????_0100011")}
-case object InstrSh     extends InstPattern{val bitPat = BitPat("b???????_?????_?????_001_?????_0100011")}
-case object InstrSw     extends InstPattern{val bitPat = BitPat("b???????_?????_?????_010_?????_0100011")}
-case object InstrAddi   extends InstPattern{val bitPat = BitPat("b???????_?????_?????_000_?????_0010011")}
-case object InstrSlti   extends InstPattern{val bitPat = BitPat("b???????_?????_?????_010_?????_0010011")}
-case object InstrSltiu  extends InstPattern{val bitPat = BitPat("b???????_?????_?????_011_?????_0010011")}
-case object InstrXori   extends InstPattern{val bitPat = BitPat("b???????_?????_?????_100_?????_0010011")}
-case object InstrOri    extends InstPattern{val bitPat = BitPat("b???????_?????_?????_110_?????_0010011")}
-case object InstrAndi   extends InstPattern{val bitPat = BitPat("b???????_?????_?????_111_?????_0010011")}
-case object InstrSlli   extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_001_?????_0010011")}
-case object InstrSrli   extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_101_?????_0010011")}
-case object InstrSrai   extends InstPattern{val bitPat = BitPat("b0100000_?????_?????_101_?????_0010011")}
-case object InstrAdd    extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_000_?????_0110011")}
-case object InstrSub    extends InstPattern{val bitPat = BitPat("b0100000_?????_?????_000_?????_0110011")}
-case object InstrSll    extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_001_?????_0110011")}
-case object InstrSlt    extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_010_?????_0110011")}
-case object InstrSltu   extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_011_?????_0110011")}
-case object InstrXor    extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_100_?????_0110011")}
-case object InstrSrl    extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_101_?????_0110011")}
-case object InstrSra    extends InstPattern{val bitPat = BitPat("b0100000_?????_?????_101_?????_0110011")}
-case object InstrOr     extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_110_?????_0110011")}
-case object InstrAnd    extends InstPattern{val bitPat = BitPat("b0000000_?????_?????_111_?????_0110011")}
-case object InstrFenceI extends InstPattern{val bitPat = BitPat("b0000000_00000_00000_001_00000_0001111")}
-case object InstrEcall  extends InstPattern{val bitPat = BitPat("b0000000_00000_00000_000_00000_1110011")}
-case object InstrEbreak extends InstPattern{val bitPat = BitPat("b0000000_00001_00000_000_00000_1110011")}
-case object InstrCsrrw  extends InstPattern{val bitPat = BitPat("b???????_?????_?????_001_?????_1110011")}
-case object InstrCsrrs  extends InstPattern{val bitPat = BitPat("b???????_?????_?????_010_?????_1110011")}
-case object InstrMret   extends InstPattern{val bitPat = BitPat("b0011000_00010_00000_000_00000_1110011")}
-object DecoderExuAlu extends DecodeField[InstPattern, ExuAlu.Type] {
-	override def name = "exuAlu"
-	override def chiselType = ExuAlu.Type()
-	override def genTable(i: InstPattern): BitPat = i match {
-		case InstrAuipc	=> BitPat(ExuAlu.Add.asUInt)
-
-		case InstrAddi	=> BitPat(ExuAlu.Add	.asUInt)
-		case InstrSlti	=> BitPat(ExuAlu.Slt	.asUInt)
-		case InstrSltiu	=> BitPat(ExuAlu.Sltu	.asUInt)
-		case InstrXori	=> BitPat(ExuAlu.Xor	.asUInt)
-		case InstrOri	=> BitPat(ExuAlu.Or		.asUInt)
-		case InstrAndi	=> BitPat(ExuAlu.And	.asUInt)
-		case InstrSlli	=> BitPat(ExuAlu.Sll	.asUInt)
-		case InstrSrli	=> BitPat(ExuAlu.Srl	.asUInt)
-		case InstrSrai	=> BitPat(ExuAlu.Sra	.asUInt)
-		case InstrAdd	=> BitPat(ExuAlu.Add	.asUInt)
-		case InstrSub	=> BitPat(ExuAlu.Sub	.asUInt)
-		case InstrSll	=> BitPat(ExuAlu.Sll	.asUInt)
-		case InstrSlt	=> BitPat(ExuAlu.Slt	.asUInt)
-		case InstrSltu	=> BitPat(ExuAlu.Sltu	.asUInt)
-		case InstrXor	=> BitPat(ExuAlu.Xor	.asUInt)
-		case InstrSrl	=> BitPat(ExuAlu.Srl	.asUInt)
-		case InstrSra	=> BitPat(ExuAlu.Sra	.asUInt)
-		case InstrOr	=> BitPat(ExuAlu.Or		.asUInt)
-		case InstrAnd	=> BitPat(ExuAlu.And	.asUInt)
-
-		case InstrLw	=> BitPat(ExuAlu.Add.asUInt)
-		case InstrLh	=> BitPat(ExuAlu.Add.asUInt)
-		case InstrLhu	=> BitPat(ExuAlu.Add.asUInt)
-		case InstrLb	=> BitPat(ExuAlu.Add.asUInt)
-		case InstrLbu	=> BitPat(ExuAlu.Add.asUInt)
-		case InstrSw	=> BitPat(ExuAlu.Add.asUInt)
-		case InstrSh	=> BitPat(ExuAlu.Add.asUInt)
-		case InstrSb	=> BitPat(ExuAlu.Add.asUInt)
-
-		case _ => BitPat.dontCare(ExuAlu.Add.asUInt.getWidth)
-	}
-	override def default: BitPat = BitPat.dontCare(ExuAlu.Add.asUInt.getWidth)
+object BP {
+  private def mk(w: Int, v: BigInt): BitPat = {
+    val s = v.toString(2)
+    require(s.length <= w, s"值 $v 放不进 $w 位")
+    BitPat("b" + ("0" * (w - s.length)) + s)
+  }
+  def apply(e: ChiselEnum#Type): BitPat = mk(e.getWidth, e.litValue)
+  val Y: BitPat = BitPat("b1")
+  val N:  BitPat = BitPat("b0")
 }
-object DecoderExuBfu extends DecodeField[InstPattern, ExuBfu.Type] {
-    override def name = "exuBfu"
-    override def chiselType = ExuBfu.Type()
-    override def genTable(i: InstPattern): BitPat = i match {
-		case InstrBeq	=> BitPat(ExuBfu.Beq	.asUInt)
-		case InstrBne	=> BitPat(ExuBfu.Bne	.asUInt)
-		case InstrBlt	=> BitPat(ExuBfu.Blt	.asUInt)
-		case InstrBge	=> BitPat(ExuBfu.Bge	.asUInt)
-		case InstrBltu	=> BitPat(ExuBfu.Bltu	.asUInt)
-		case InstrBgeu	=> BitPat(ExuBfu.Bgeu	.asUInt)
-		
-		case _ => BitPat.dontCare(ExuBfu.Beq.asUInt.getWidth)
-    }
-    override def default: BitPat = BitPat.dontCare(ExuBfu.Beq.asUInt.getWidth)
-}
-object DecoderExuCsr extends DecodeField[InstPattern, ExuCsr.Type] {
-    override def name = "exuCsr"
-    override def chiselType = ExuCsr.Type()
-    override def genTable(i: InstPattern): BitPat = i match {
-		case InstrCsrrw	=> BitPat(ExuCsr.Write	.asUInt)
-		case InstrCsrrs	=> BitPat(ExuCsr.Read	.asUInt)
-
-		case _ => BitPat.dontCare(ExuCsr.Write.asUInt.getWidth)
-    }
-    override def default: BitPat = BitPat.dontCare(ExuCsr.Write.asUInt.getWidth)
-}
-object DecoderExuRes extends DecodeField[InstPattern, ExuRes.Type] {
-    override def name = "exuRes"
-    override def chiselType = ExuRes.Type()
-    override def genTable(i: InstPattern): BitPat = i match {
-		case InstrLui	=> BitPat(ExuRes.Imm	.asUInt)
-		case InstrCsrrs	=> BitPat(ExuRes.Imm	.asUInt)
-		case InstrCsrrw	=> BitPat(ExuRes.Imm	.asUInt)
-		case InstrJalr	=> BitPat(ExuRes.Snpc	.asUInt)
-		case InstrJal	=> BitPat(ExuRes.Snpc	.asUInt)
-
-		case InstrAddi	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSlti	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSltiu	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrXori	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrOri	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrAndi	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSlli	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSrli	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSrai	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrAdd	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSub	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSll	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSlt	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSltu	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrXor	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSrl	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSra	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrOr	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrAnd	=> BitPat(ExuRes.Alu.asUInt)
-
-		case InstrLw	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrLh	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrLhu	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrLb	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrLbu	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSw	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSh	=> BitPat(ExuRes.Alu.asUInt)
-		case InstrSb	=> BitPat(ExuRes.Alu.asUInt)
-
-		case _ => BitPat.dontCare(ExuRes.Alu.asUInt.getWidth)
-	}
-    override def default: BitPat = BitPat.dontCare(ExuRes.Alu.asUInt.getWidth)
-}
-object DecoderExuIn1 extends DecodeField[InstPattern, ExuIn1.Type] {
-    override def name = "exuIn1"
-    override def chiselType = ExuIn1.Type()
-    override def genTable(i: InstPattern): BitPat = i match {
-		case InstrAuipc	=> BitPat(ExuIn1.Pc.asUInt)
-		case InstrBeq	=> BitPat(ExuIn1.Pc.asUInt)
-		case InstrBne	=> BitPat(ExuIn1.Pc.asUInt)
-		case InstrBlt	=> BitPat(ExuIn1.Pc.asUInt)
-		case InstrBge	=> BitPat(ExuIn1.Pc.asUInt)
-		case InstrBltu	=> BitPat(ExuIn1.Pc.asUInt)
-		case InstrBgeu	=> BitPat(ExuIn1.Pc.asUInt)
-		case InstrJal	=> BitPat(ExuIn1.Pc.asUInt)
-
-		case InstrAddi	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSlti	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSltiu	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrXori	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrOri	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrAndi	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSlli	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSrli	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSrai	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrAdd	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSub	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSll	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSlt	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSltu	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrXor	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSrl	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSra	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrOr	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrAnd	=> BitPat(ExuIn1.R1.asUInt)
-
-		case InstrLw	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrLh	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrLhu	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrLb	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrLbu	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSw	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSh	=> BitPat(ExuIn1.R1.asUInt)
-		case InstrSb	=> BitPat(ExuIn1.R1.asUInt)
-
-		case _ => BitPat.dontCare(ExuIn1.R1.asUInt.getWidth)
-	}
-	override def default: BitPat = BitPat.dontCare(ExuIn1.R1.asUInt.getWidth)
+object ImmOp extends ChiselEnum{val I,S,B,U,J=Value}
+object DC {def apply[E <: ChiselEnum](t: E): BitPat = BitPat.dontCare(t().getWidth)}
+object Decoder{
+	case class Uops(
+		exuAlu:BitPat,exuBfu:BitPat,exuCsr:BitPat,exuIn1:BitPat,exuIn2:BitPat,
+		fence:BitPat,update:BitPat,
+		r1:BitPat,r2:BitPat,rd:BitPat,imme:BitPat,
+		lsuOp:BitPat,lsuAddr:BitPat,
+		// csrOp:BitPat,csrAddr:BitPat,csrMesg:BitPat,//TODO
+		)
+	case class Inst(bitPat: BitPat, mnem: String, p: Uops) extends DecodePattern
+	val insts: Seq[Inst] = Seq(													//ExuAlu		,ExuBfu			,ExuCsr		ExuIn1		 ,ExuIn2		,Fenc,Update				,R1  ,R2  ,Rd  ,Imme       ,LsuOp			,LsuAddr
+		Inst(BitPat("b???????_?????_?????_???_?????_0110111"),"lui"		,Uops(BP(ExuAlu.Imm)	,BP(ExuBfu.Null),DC(ExuCsr),DC(ExuIn1)	 ,DC(ExuIn2)	,BP.N,BP(IfuUpdate.Null)	,BP.N,BP.N,BP.Y,BP(ImmOp.U),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_???_?????_0010111"),"auipc"	,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.Pc),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.N,BP.N,BP.Y,BP(ImmOp.U),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_???_?????_1101111"),"jal"		,Uops(BP(ExuAlu.Snpc)	,BP(ExuBfu.Jump),DC(ExuCsr),BP(ExuIn1.Pc),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Jal)		,BP.N,BP.N,BP.Y,BP(ImmOp.J),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_000_?????_1100111"),"jalr"	,Uops(BP(ExuAlu.Snpc)	,BP(ExuBfu.Jump),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Jalr)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_000_?????_1100011"),"beq"		,Uops(DC(ExuAlu)		,BP(ExuBfu.Beq)	,DC(ExuCsr),BP(ExuIn1.Pc),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Branch)	,BP.Y,BP.Y,BP.N,BP(ImmOp.B),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_001_?????_1100011"),"bne"		,Uops(DC(ExuAlu)		,BP(ExuBfu.Bne)	,DC(ExuCsr),BP(ExuIn1.Pc),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Branch)	,BP.Y,BP.Y,BP.N,BP(ImmOp.B),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_100_?????_1100011"),"blt"		,Uops(DC(ExuAlu)		,BP(ExuBfu.Blt)	,DC(ExuCsr),BP(ExuIn1.Pc),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Branch)	,BP.Y,BP.Y,BP.N,BP(ImmOp.B),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_101_?????_1100011"),"bge"		,Uops(DC(ExuAlu)		,BP(ExuBfu.Bge)	,DC(ExuCsr),BP(ExuIn1.Pc),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Branch)	,BP.Y,BP.Y,BP.N,BP(ImmOp.B),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_110_?????_1100011"),"bltu"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Bltu),DC(ExuCsr),BP(ExuIn1.Pc),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Branch)	,BP.Y,BP.Y,BP.N,BP(ImmOp.B),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_111_?????_1100011"),"bgeu"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Bgeu),DC(ExuCsr),BP(ExuIn1.Pc),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Branch)	,BP.Y,BP.Y,BP.N,BP(ImmOp.B),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_000_?????_0000011"),"lb"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Load)	,BP(LsuAddr.B)	)),
+		Inst(BitPat("b???????_?????_?????_001_?????_0000011"),"lh"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Load)	,BP(LsuAddr.H)	)),
+		Inst(BitPat("b???????_?????_?????_010_?????_0000011"),"lw"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Load)	,BP(LsuAddr.W)	)),
+		Inst(BitPat("b???????_?????_?????_100_?????_0000011"),"lbu"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Load)	,BP(LsuAddr.Bu)	)),
+		Inst(BitPat("b???????_?????_?????_101_?????_0000011"),"lhu"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Load)	,BP(LsuAddr.Hu)	)),
+		Inst(BitPat("b???????_?????_?????_000_?????_0100011"),"sb"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.B)	)),
+		Inst(BitPat("b???????_?????_?????_001_?????_0100011"),"sh"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.H)	)),
+		Inst(BitPat("b???????_?????_?????_010_?????_0100011"),"sw"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.W)	)),
+		Inst(BitPat("b???????_?????_?????_000_?????_0010011"),"addi"	,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_010_?????_0010011"),"slti"	,Uops(BP(ExuAlu.Slt)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_011_?????_0010011"),"sltiu"	,Uops(BP(ExuAlu.Sltu)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_100_?????_0010011"),"xori"	,Uops(BP(ExuAlu.Xor)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_110_?????_0010011"),"ori"		,Uops(BP(ExuAlu.Or)		,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b???????_?????_?????_111_?????_0010011"),"andi"	,Uops(BP(ExuAlu.And)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_001_?????_0010011"),"slli"	,Uops(BP(ExuAlu.Sll)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_101_?????_0010011"),"srli"	,Uops(BP(ExuAlu.Srl)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0100000_?????_?????_101_?????_0010011"),"srai"	,Uops(BP(ExuAlu.Sra)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.Imm),BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_000_?????_0110011"),"add"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0100000_?????_?????_000_?????_0110011"),"sub"		,Uops(BP(ExuAlu.Sub)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_001_?????_0110011"),"sll"		,Uops(BP(ExuAlu.Sll)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_010_?????_0110011"),"slt"		,Uops(BP(ExuAlu.Slt)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_011_?????_0110011"),"sltu"	,Uops(BP(ExuAlu.Sltu)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_100_?????_0110011"),"xor"		,Uops(BP(ExuAlu.Xor)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_101_?????_0110011"),"srl"		,Uops(BP(ExuAlu.Srl)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0100000_?????_?????_101_?????_0110011"),"sra"		,Uops(BP(ExuAlu.Sra)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_110_?????_0110011"),"or"		,Uops(BP(ExuAlu.Or)		,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_?????_?????_111_?????_0110011"),"and"		,Uops(BP(ExuAlu.And)	,BP(ExuBfu.Null),DC(ExuCsr),BP(ExuIn1.R1),BP(ExuIn2.R2)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_00000_00000_001_00000_0001111"),"fenceI"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Jump),DC(ExuCsr),DC(ExuIn1)	 ,DC(ExuIn2)	,BP.Y,BP(IfuUpdate.Null)	,BP.N,BP.N,BP.N,DC(ImmOp)  ,BP(LsuOp.Null)	,DC(LsuAddr)	)),
+		Inst(BitPat("b0000000_00000_00000_000_00000_1110011"),"ecall"	,Uops()),
+		Inst(BitPat("b0000000_00001_00000_000_00000_1110011"),"ebreak"	,Uops()),
+		Inst(BitPat("b???????_?????_?????_001_?????_1110011"),"csrrw"	,Uops()),
+		Inst(BitPat("b???????_?????_?????_010_?????_1110011"),"csrrs"	,Uops()),
+		Inst(BitPat("b0011000_00010_00000_000_00000_1110011"),"mret"	,Uops()),
+	)
 }
 
 class idu(val Yosys:Boolean=false) extends Module{
@@ -279,9 +147,53 @@ class idu(val Yosys:Boolean=false) extends Module{
 		(opEnum === Op.Ralu)	-> 0.U,
 	))
 	out.pipe.jump := opEnum === Op.Jal || opEnum === Op.Ijalr || Cat(pipeInstr(14,12),pipeInstr(6,0))===0x73.U(10.W)
-
+	switch(opEnum){
+		is(Op.Uauipc){out.pipe.alu := ExuAlu.Add}
+		is(Op.Ialu){
+			val (aluEnum,_) = ExuAlu.safe(Cat(0.U(1.W),funct3))
+			out.pipe.alu := aluEnum
+			switch(aluEnum){
+				is(ExuAlu.Sll){aluValid := funct7 === 0.U(7.W)}
+				is(ExuAlu.Srl){
+					aluValid := funct7===0b0000000.U || funct7===0b0100000.U
+					switch(funct7){
+						is(0b0000000.U){out.pipe.alu := ExuAlu.Srl}
+						is(0b0100000.U){out.pipe.alu := ExuAlu.Sra}
+					}
+				}
+			}
+		}
+		is(Op.Fence)	{out.pipe.alu := ExuAlu.Null}
+		is(Op.Ralu){
+			val (aluEnum,_) = ExuAlu.safe(funct3)
+			aluValid := false.B
+			switch(funct7){
+				is(0b0000000.U){out.pipe.alu := aluEnum;aluValid := true.B}
+				is(0b0100000.U){switch(aluEnum){
+						is(ExuAlu.Add){out.pipe.alu := ExuAlu.Sub;aluValid := true.B}
+						is(ExuAlu.Srl){out.pipe.alu := ExuAlu.Sra;aluValid := true.B}
+					}
+				}
+			}
+		}
+		is(Op.Ijalr)	{out.pipe.alu := ExuAlu.Null}
+		is(Op.Jal)		{out.pipe.alu := ExuAlu.Null}
+		is(Op.Icsr)		{out.pipe.alu := ExuAlu.Null}
+		is(Op.Iload)	{out.pipe.alu := ExuAlu.Add}
+		is(Op.Branch)	{out.pipe.alu := ExuAlu.Null}
+		is(Op.Store)	{out.pipe.alu := ExuAlu.Add}
+	}
+	out.pipe.in1 := Mux(opEnum === Op.Uauipc || opEnum === Op.Branch || opEnum === Op.Jal,ExuIn1.Pc,ExuIn1.R1)
 	out.pipe.in2 := Mux(opEnum===Op.Ialu || opEnum===Op.Store || opEnum===Op.Iload || opEnum===Op.Uauipc,ExuIn2.Imm,ExuIn2.R2)//best
-
+	switch(opEnum){//best
+		is(Op.Ului,Op.Icsr)		{out.pipe.res := ExuRes.Imm}
+		is(Op.Ijalr,Op.Jal)		{out.pipe.res := ExuRes.Snpc}
+	}
+	when(opEnum === Op.Branch){
+		val (bfuEnum,bfuValidAll) = ExuBfu.safe(funct3)
+		bfuValid := bfuValidAll & funct3 =/= ExuBfu.Null.asUInt
+		when(bfuValid){out.pipe.bfu := bfuEnum}
+	}
 	switch(opEnum){//best
 		is(Op.Iload){out.pipe.lsuOp := LsuOp.Load}
 		is(Op.Store){out.pipe.lsuOp := LsuOp.Store}
