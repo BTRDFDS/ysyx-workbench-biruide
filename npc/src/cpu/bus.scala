@@ -45,18 +45,29 @@ class PipeExLs extends PipeLsWb(){
 	val lsuAddr	= Output(LsuAddr())
 	val r2		= Output(UInt(BitWidth.W))
 }
-class PipeIdEx extends PipeExLs(){
+class PipeIdEx extends Bundle(){
+	val valid	= Output(Bool())
+	
 	val alu = Output(ExuAlu())
 	val bfu = Output(ExuBfu())
 	val csr = Output(ExuCsr())
 	val res = Output(ExuRes())
 	val in1 = Output(ExuIn1())
 	val in2 = Output(ExuIn2())
-	val r1		= Output(UInt(BitWidth.W))
-
 	val fenceI	= Output(Bool())
-	val jump	= Output(Bool())
 	val update	= Output(IfuUpdate())
+
+	val r1		= Output(UInt(BitWidth.W))
+	val r2		= Output(UInt(BitWidth.W))
+	val pc		= Output(UInt((BitWidth-2).W))
+	val imm		= Output(UInt(BitWidth.W))
+
+	val lsuOp	= Output(LsuOp())
+	val lsuAddr	= Output(LsuAddr())
+	
+	val rdAddr	= Output(UInt(RegWidth.W))
+	val csrOp	= Output(CsrOp())
+	val csrAddr	= Output(UInt(CsrWidth.W))
 }
 class ImmeData extends Bundle{
 	val addr	= Output(UInt((BitWidth).W))
@@ -68,7 +79,8 @@ class ImmeData extends Bundle{
 	val r2Out	= Output(UInt(BitWidth.W))
 	val csrAddr	= Input(UInt(CsrWidth.W))
 	val csrOut	= Output(UInt(BitWidth.W))
-	val valid	= Output(Bool())
+	val r1Valid	= Output(Bool())
+	val r2Valid	= Output(Bool())
 }
 class ImmeWbLs extends ImmeData{val error = Output(Bool())}
 class ImmeLsEx extends ImmeWbLs{val ready = Output(Bool())}

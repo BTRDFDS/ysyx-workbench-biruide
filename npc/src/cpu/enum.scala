@@ -18,7 +18,7 @@ object ExuAlu extends ChiselEnum {val Add,Sll,Slt,Sltu,Xor,Srl,Or,And,Sub,Sra,Sn
 // 	val Bgeu= Value(0b111.U)
 // }
 object ExuBfu extends ChiselEnum {val Beq,Bne,Null,Jump,Blt,Bge,Bltu,Bgeu = Value}
-object ExuCsr extends ChiselEnum {val Read,Write,Null = Value}
+object ExuCsr extends ChiselEnum {val Rs,Rw,Null = Value}
 // object ExuRes extends ChiselEnum {val Alu,Snpc,Imm,Null = Value}
 object ExuIn1 extends ChiselEnum {val R1,Pc = Value}
 object ExuIn2 extends ChiselEnum {val R2,Imm = Value}

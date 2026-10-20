@@ -19,10 +19,9 @@ class exu(val Yosys:Boolean=false) extends Module {
 	val pipeJump	= PipeReg(in.pipe.jump		,out.imme.ready)
 	val pipeUpdate	= PipeReg(in.pipe.update	,out.imme.ready)
 	val pipeRdAddr	= PipeReg(in.pipe.rdAddr	,out.imme.ready)
-	val pipeResult	= PipeReg(in.pipe.result	,out.imme.ready)
+	val pipeImm		= PipeReg(in.pipe.imm		,out.imme.ready)
 	val pipePc		= PipeReg(in.pipe.pc		,out.imme.ready)
 	val pipeCsrAddr	= PipeReg(in.pipe.csrAddr	,out.imme.ready)
-	val pipeCsrMesg	= PipeReg(in.pipe.csrMesg	,out.imme.ready)
 	val pipeR1		= PipeReg(in.pipe.r1		,out.imme.ready)
 	val pipeR2		= PipeReg(in.pipe.r2		,out.imme.ready)
 	val pipeLsuOp	= PipeReg(in.pipe.lsuOp		,out.imme.ready,LsuOp.Null	,pipeReset)
@@ -42,20 +41,15 @@ class exu(val Yosys:Boolean=false) extends Module {
 	out.pipe.csrAddr:= pipeCsrAddr
 	out.pipe.valid	:= pipeValid
 	out.pipe.rdAddr	:= pipeRdAddr
-	// out.pipe.result := 0.U
-	// out.pipe.csrMesg:= pipeCsrMesg
 
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))
 	val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
-	val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeResult)
-	out.pipe.csrMesg := Mux1H(Seq(
-		(pipeCsr === ExuCsr.Read)	->(pipeR1 | pipeCsrMesg),
-		(pipeCsr === ExuCsr.Write)	->(pipeR1),
-		(pipeCsr === ExuCsr.Null)	->(pipeCsrMesg)
-	))
-	result := Mux1H(Seq(
-		(pipeAlu === ExuAlu.Add)	->(input1 + input2),
+	val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeImm)
+	val resultAdd = input1 + input2
+	val snpc = Cat(pipePc+1.U,0.U(2.W))
+	out.pipe.result := Mux1H(Seq(
+		(pipeAlu === ExuAlu.Add)	->(resultAdd),//input1 + input2
 		(pipeAlu === ExuAlu.Sll)	->((input1 << input2(4,0))(31,0)),
 		(pipeAlu === ExuAlu.Slt)	->(input1.asSInt < input2.asSInt),
 		(pipeAlu === ExuAlu.Sltu)	->(input1 < input2),
@@ -64,7 +58,9 @@ class exu(val Yosys:Boolean=false) extends Module {
 		(pipeAlu === ExuAlu.Or)		->(input1 | input2),
 		(pipeAlu === ExuAlu.And)	->(input1 & input2),
 		(pipeAlu === ExuAlu.Sub)	->(input1 - input2),
-		(pipeAlu === ExuAlu.Sra)	->((input1.asSInt >> input2(4,0)).asUInt)
+		(pipeAlu === ExuAlu.Sra)	->((input1.asSInt >> input2(4,0)).asUInt),
+		(pipeAlu === ExuAlu.Snpc)	->(snpc),
+		(pipeAlu === ExuAlu.Imm)	->(pipeImm),
 	))
 	enBfun := Mux1H(Seq(
 		(pipeBfu === ExuBfu.Beq)	->(pipeR1 === pipeR2),
@@ -73,16 +69,15 @@ class exu(val Yosys:Boolean=false) extends Module {
 		(pipeBfu === ExuBfu.Bge)	->(pipeR1.asSInt >= pipeR2.asSInt),
 		(pipeBfu === ExuBfu.Bltu)	->(pipeR1 < pipeR2),
 		(pipeBfu === ExuBfu.Bgeu)	->(pipeR1 >= pipeR2),
-		(pipeBfu === ExuBfu.Null)	->(false.B)
+		(pipeBfu === ExuBfu.Null)	->(false.B),
+		(pipeBfu === ExuBfu.Jump)	->(true.B),
 	))
-	out.pipe.result := Mux1H(Seq(
-		(pipeRes === ExuRes.Alu)	->(result),
-		(pipeRes === ExuRes.Null)	->(0.U),
-		(pipeRes === ExuRes.Snpc)	->(Cat(pipePc+1.U,0.U(2.W))),
-		(pipeRes === ExuRes.Imm)	->(pipeResult)
+	out.pipe.csrMesg := Mux1H(Seq(
+		(pipeCsr === ExuCsr.Read)	->(pipeR1 | pipeImm),
+		(pipeCsr === ExuCsr.Write)	->(pipeR1),
+		(pipeCsr === ExuCsr.Null)	->(pipeImm),
 	))
-
-	val shouldBe = Mux((pipeJump || enBfun),input1+pipeResult,Cat(pipePc+1.U,0.U(2.W)))
+	val shouldBe = Mux((pipeJump || enBfun),resultAdd,snpc)
 	val noSend = RegInit(true.B)
 	when(out.imme.ready){noSend := true.B}
 	.elsewhen(pipeValid&&(out.imme.reloca || pipeFenceI)){noSend := false.B}
@@ -103,20 +98,11 @@ class exu(val Yosys:Boolean=false) extends Module {
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr
 	 in.imme.csrAddr:= out.imme.csrAddr
-	// out.imme.r1Out	:=  in.imme.r1Out
-	// out.imme.r2Out	:=  in.imme.r2Out
-	// out.imme.valid	:=  in.imme.valid
-	// out.imme.csrOut	:=  in.imme.csrOut
-	// when(pipeValid&&pipeRdAddr =/= 0.U){
-	// 	when(out.imme.r1Addr === pipeRdAddr){out.imme.r1Out := out.pipe.result}
-	// 	when(out.imme.r2Addr === pipeRdAddr){out.imme.r2Out := out.pipe.result}
-	// 	when(out.imme.r1Addr === pipeRdAddr || out.imme.r2Addr === pipeRdAddr){out.imme.valid := pipeLsuOp =/= LsuOp.Load}//store理论上也可以
-	// }
-	// when(pipeValid&&out.imme.csrAddr === pipeCsrAddr){out.imme.csrOut := out.pipe.csrMesg}
-	out.imme.r1Out := Mux(pipeValid&&pipeRdAddr === out.imme.r1Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r1Out)
-	out.imme.r2Out := Mux(pipeValid&&pipeRdAddr === out.imme.r2Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r2Out)
-	out.imme.valid := pipeValid&&pipeRdAddr =/= 0.U&&(out.imme.r1Addr === pipeRdAddr || out.imme.r2Addr === pipeRdAddr)&&in.imme.valid
-	out.imme.csrOut := Mux(pipeValid&&out.imme.csrAddr === pipeCsrAddr,out.pipe.csrMesg,in.imme.csrOut)
+	out.imme.r1Out	:= Mux(pipeValid&&pipeRdAddr === out.imme.r1Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r1Out)
+	out.imme.r2Out	:= Mux(pipeValid&&pipeRdAddr === out.imme.r2Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r2Out)
+	out.imme.csrOut	:= Mux(pipeValid&&out.imme.csrAddr === pipeCsrAddr,out.pipe.csrMesg,in.imme.csrOut)
+	out.imme.r1Valid:= pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r1Addr === pipeRdAddr&&in.imme.valid
+	out.imme.r2Valid:= pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r2Addr === pipeRdAddr&&in.imme.valid
 	if(Yosys == false){
 		dontTouch(result)
 		dontTouch(shouldBe)
