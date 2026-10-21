@@ -270,7 +270,7 @@ static int decode_exec(Decode *s) {
   // INSTPAT("1000001 10011 00000 000 00000 0001111", fence.tso,);
   // INSTPAT("0000000 10000 00000 000 00000 0001111", pause    ,);
   INSTPAT("0000000 00000 00000 000 00000 1110011", ecall    , N, s->dnpc=riscv32ecall(s->pc));
-  INSTPAT("0000000 00001 00000 000 00000 1110011", ebreak   , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
+  INSTPAT("0000000 00001 00000 000 00000 1110011", ebreak   , N, s->dnpc=riscv32ecall(s->pc);NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   //RV32M
   INSTPAT("0000001 ????? ????? 000 ????? 0110011", MUL      , R, R(rd) =  (uint32_t)src1 * (uint32_t)src2);
   INSTPAT("0000001 ????? ????? 001 ????? 0110011", MULH     , R, R(rd) = (( int64_t)SEXT(src1,32) * ( int64_t)SEXT(src2,32))>>32);

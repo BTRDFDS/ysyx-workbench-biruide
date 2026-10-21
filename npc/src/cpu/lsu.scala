@@ -30,7 +30,7 @@ class lsu(val Yosys:Boolean=false) extends Module{
 	val backError = bar.error && bar.ready
 	out.pipe.valid	:= false.B
 	out.pipe.rdAddr	:= pipeRdAddr
-	out.pipe.result	:= pipeResult
+	// out.pipe.result	:= pipeResult
 	out.pipe.pc		:= pipePc
 	out.pipe.csrOp	:= pipeCsrOp
 	out.pipe.csrAddr:= pipeCsrAddr
@@ -46,55 +46,35 @@ class lsu(val Yosys:Boolean=false) extends Module{
 		}
 	}
 
-	bar.size	:= 0b11.U
-	bar.wdata	:= 0.U
-	bar.wstrb	:= 0.U
-	bar.write	:= false.B
-	bar.addr	:= 0.U
-	when(pipeValid && state === MemStatus.Call){//发出
-		when(pipeLsuOp === LsuOp.Load){
-			switch(pipeLsuAddr){
-				is(LsuAddr.B ){bar.size := 0b00.U}
-				is(LsuAddr.Bu){bar.size := 0b00.U}
-				is(LsuAddr.H ){bar.size := 0b01.U}
-				is(LsuAddr.Hu){bar.size := 0b01.U}
-				is(LsuAddr.W ){bar.size := 0b10.U}
-			}
-			bar.addr	:= pipeResult
-		}
-		when(pipeLsuOp === LsuOp.Store){
-			bar.write	:= true.B
-			switch(pipeLsuAddr){
-				is(LsuAddr.B ){bar.size := 0b00.U}
-				is(LsuAddr.H ){bar.size := 0b01.U}
-				is(LsuAddr.W ){bar.size := 0b10.U}
-			}
-			bar.addr	:= pipeResult
-			switch(pipeLsuAddr){
-				is(LsuAddr.B){bar.wstrb := (0b0001.U << pipeResult(1,0))}
-				is(LsuAddr.H){bar.wstrb := Mux(pipeResult(1),0b1100.U,0b0011.U)}
-				is(LsuAddr.W){bar.wstrb := 0b1111.U}
-			}
-			switch(pipeLsuAddr){
-				is(LsuAddr.B){bar.wdata	:= Fill(4,pipeR2(7,0))}
-				is(LsuAddr.H){bar.wdata	:= Fill(2,pipeR2(15,0))}
-				is(LsuAddr.W){bar.wdata	:= pipeR2}
-			}
-		}
-	}
-	when(pipeValid && ~backError){//接收
-		when(pipeLsuOp === LsuOp.Load){
-			val rdata = RegInit(0.U(BitWidth.W))
-			when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> (8.U * pipeResult(1,0))}
-			switch(pipeLsuAddr){
-				is(LsuAddr.B ){out.pipe.result := Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0))}
-				is(LsuAddr.H ){out.pipe.result := Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0))}
-				is(LsuAddr.W ){out.pipe.result := rdata}
-				is(LsuAddr.Bu){out.pipe.result := Cat(0.U((BitWidth- 8).W),rdata( 7,0))}
-				is(LsuAddr.Hu){out.pipe.result := Cat(0.U((BitWidth-16).W),rdata(15,0))}
-			}
-		}
-	}
+	bar.write	:= pipeLsuOp === LsuOp.Store
+	bar.addr	:= pipeResult
+	bar.wstrb	:= Mux1H(Seq(
+		(pipeLsuAddr === LsuAddr.B)	-> (0b0001.U << pipeResult(1,0)),
+		(pipeLsuAddr === LsuAddr.H)	-> Mux(pipeResult(1),0b1100.U,0b0011.U),
+		(pipeLsuAddr === LsuAddr.W)	-> 0b1111.U,
+	))
+	bar.wdata := Mux1H(Seq(
+		(pipeLsuAddr === LsuAddr.B) -> Fill(4,pipeR2(7,0)),
+		(pipeLsuAddr === LsuAddr.H) -> Fill(2,pipeR2(15,0)),
+		(pipeLsuAddr === LsuAddr.W) -> pipeR2,
+	))
+	// bar.size	:= 0b11.U
+	bar.size := Mux(pipeValid && state===MemStatus.Call && pipeLsuOp=/=LsuOp.Null,Mux1H(Seq(
+		(pipeLsuAddr === LsuAddr.B)	-> 0b00.U,
+		(pipeLsuAddr === LsuAddr.Bu)-> 0b00.U,
+		(pipeLsuAddr === LsuAddr.H)	-> 0b01.U,
+		(pipeLsuAddr === LsuAddr.Hu)-> 0b01.U,
+		(pipeLsuAddr === LsuAddr.W)	-> 0b10.U,
+	)),0b11.U)
+	val rdata = Reg(UInt(BitWidth.W))
+	when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> (8.U * pipeResult(1,0))}
+	out.pipe.result := Mux(pipeLsuOp =/= LsuOp.Load,pipeResult,Mux1H(Seq(
+		(pipeLsuAddr === LsuAddr.B)	-> Cat(Fill(BitWidth- 8,rdata( 7)),rdata( 7,0)),
+		(pipeLsuAddr === LsuAddr.H)	-> Cat(Fill(BitWidth-16,rdata(15)),rdata(15,0)),
+		(pipeLsuAddr === LsuAddr.W)	-> rdata,
+		(pipeLsuAddr === LsuAddr.Bu)-> Cat(0.U((BitWidth- 8).W),rdata( 7,0)),
+		(pipeLsuAddr === LsuAddr.Hu)-> Cat(0.U((BitWidth-16).W),rdata(15,0)),
+	)))
 	out.pipe.valid := (pipeLsuOp === LsuOp.Null || state === MemStatus.Back) && pipeValid && ~backError
 	out.pipe.csrOp := Mux(backError,CsrOp.Trap,pipeCsrOp)
 	// when(addrError){switch(pipeLsuOp){

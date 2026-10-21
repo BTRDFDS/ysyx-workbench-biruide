@@ -144,13 +144,13 @@ class cpu(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) extends Module 
 		chk.storeWait	:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Store
 		chk.addr		:= Get(lsu.pipeResult)
 
-		chk.ebreak := (Get(wbu.pipeCsrOp) === CsrOp.Trap)&(Get(wbu.pipeValid))&(Get(wbu.pipeCsrMesg) === 0x3L.U) ||Get(wbu.error)
+		chk.ebreak := (Get(wbu.pipeCsrOp) === CsrOp.Trap)&(Get(wbu.pipeValid))&(Get(wbu.pipeCsrMesg) === 0x3L.U)
 		chk.check := Get(wbu.pipeValid)
 		chk.rdAddr	:= Get(wbu.pipeRdAddr)
 		chk.rdValue	:= Get(wbu.pipeResult)
 		chk.pc		:= Cat(Get(wbu.pipePc),0.U(2.W))
 		chk.dnpc := 0.U(32.W)
-		when(chk.ebreak){chk.dnpc := Cat(Get(wbu.pipePc)+1.U,0.U(2.W))}
+		when(Get(wbu.out.imme.error)){chk.dnpc := Get(ifu.in.imme.addr)}
 		.elsewhen(Get(lsu.pipeValid)){chk.dnpc := Cat(Get(lsu.pipePc),0.U(2.W))}
 		.elsewhen(Get(exu.pipeValid)){chk.dnpc := Cat(Get(exu.pipePc),0.U(2.W))}
 		.elsewhen(Get(idu.pipeRes)===IfuRes.Valid){chk.dnpc := Cat(Get(idu.pipePc),0.U(2.W))}
