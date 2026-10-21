@@ -58,14 +58,14 @@ class lsu(val Yosys:Boolean=false) extends Module{
 		(pipeLsuAddr === LsuAddr.H) -> Fill(2,pipeR2(15,0)),
 		(pipeLsuAddr === LsuAddr.W) -> pipeR2,
 	))
-	// bar.size	:= 0b11.U
-	bar.size := Mux(pipeValid && state===MemStatus.Call && pipeLsuOp=/=LsuOp.Null,Mux1H(Seq(
+	bar.valid	:= pipeValid && state===MemStatus.Call && pipeLsuOp=/=LsuOp.Null
+	bar.size	:= Mux1H(Seq(
 		(pipeLsuAddr === LsuAddr.B)	-> 0b00.U,
 		(pipeLsuAddr === LsuAddr.Bu)-> 0b00.U,
 		(pipeLsuAddr === LsuAddr.H)	-> 0b01.U,
 		(pipeLsuAddr === LsuAddr.Hu)-> 0b01.U,
 		(pipeLsuAddr === LsuAddr.W)	-> 0b10.U,
-	)),0b11.U)
+	))
 	val rdata = Reg(UInt(BitWidth.W))
 	when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> (8.U * pipeResult(1,0))}
 	out.pipe.result := Mux(pipeLsuOp =/= LsuOp.Load,pipeResult,Mux1H(Seq(

@@ -39,69 +39,67 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	val nextMcycle	= Wire(UInt(BitWidth.W));nextMcycle	:= mcycle + 1.U
 	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= Mux(mcycle === (Fill(BitWidth,1.U)),mcycleh + 1.U,mcycleh)
 	val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
-	val error = pipeValid && ((pipeCsrOp === CsrOp.Mret) || (pipeCsrOp === CsrOp.Trap) || (pipeCsrOp === CsrOp.Write && ~csrWriteValid))
-	when(pipeValid){//合法处理
-		switch(pipeCsrOp){
-			is(CsrOp.Mret){
-				// mstatus := Cat(mstatus(31,13),0b00.U(2.W),mstatus(10,3),mstatus(1),mstatus(2),1.U(1.W),mstatus(0))
-				}
-			is(CsrOp.Trap){
-				// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
-				mcause	:= pipeCsrMesg
-				mepc 	:= Cat(pipePc,0.U(2.W))
-			}
-			is(CsrOp.Write){
-				when(csrWriteValid){
-					switch(csrWriteAddr){
-						is(CsrAddr.Mcycle)		{nextMcycle	:= pipeCsrMesg}
-						is(CsrAddr.Mcycleh)		{nextMcycleh:= pipeCsrMesg}
-						is(CsrAddr.Mepc)		{mepc		:= pipeCsrMesg}
-						is(CsrAddr.Mtvec)		{mtvec		:= pipeCsrMesg}
-						is(CsrAddr.Mcause)		{mcause		:= pipeCsrMesg}
-						is(CsrAddr.Mstatus)		{mstatus	:= pipeCsrMesg}
-					}
-				}
-			}
-			// is(CsrOp.Null){}//空，这里4个全覆盖了
-		}
-		when((pipeRdAddr =/= 0.U)&(error === false.B)){gpr(pipeRdAddr) := pipeResult}
+	val error = pipeValid && ((pipeCsrOp === CsrOp.Mret) || (pipeCsrOp === CsrOp.Write && ~csrWriteValid))
+	val mret = pipeValid && pipeCsrOp === CsrOp.Mret
+	// when(pipeValid){//合法处理
+	// 	switch(pipeCsrOp){
+	// 		is(CsrOp.Mret){
+	// 			mstatus := Cat(mstatus(31,13),0b00.U(2.W),mstatus(10,3),mstatus(1),mstatus(2),1.U(1.W),mstatus(0))
+	// 			}
+			// is(CsrOp.Trap){
+			// 	mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
+			// 	mcause	:= pipeCsrMesg
+			// 	mepc 	:= Cat(pipePc,0.U(2.W))
+			// }//TODO
+	// 		is(CsrOp.Write){
+	// 			when(csrWriteValid){
+	// 				switch(csrWriteAddr){
+	// 					is(CsrAddr.Mcycle)		{nextMcycle	:= pipeCsrMesg}
+	// 					is(CsrAddr.Mcycleh)		{nextMcycleh:= pipeCsrMesg}
+	// 					is(CsrAddr.Mepc)		{mepc		:= pipeCsrMesg}
+	// 					is(CsrAddr.Mtvec)		{mtvec		:= pipeCsrMesg}
+	// 					is(CsrAddr.Mcause)		{mcause		:= pipeCsrMesg}
+	// 					is(CsrAddr.Mstatus)		{mstatus	:= pipeCsrMesg}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+		
+	// }
+
+	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mcycle)	{nextMcycle	:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mcycleh)	{nextMcycleh:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mcause)	{mcause		:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mstatus)	{mstatus	:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mepc)	{mepc		:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mtvec)	{mtvec		:= pipeCsrMesg}
+	when(pipeValid && pipeRdAddr=/=0.U && ~csrWriteValid){gpr(pipeRdAddr) := pipeResult}
+	when(error){
+		// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
+		mcause	:= pipeCsrMesg
+		mepc 	:= Cat(pipePc,0.U(2.W))
 	}
+
 	mcycle := nextMcycle;mcycleh := nextMcycleh
 	out.imme.addr	:= Mux(pipeCsrOp === CsrOp.Mret,mepc,mtvec)
 	out.imme.pc		:= pipePc
-	out.imme.error	:= error
+	out.imme.error	:= error || mret
 //提供数据
 	out.imme.r1Valid	:= true.B
 	out.imme.r2Valid	:= true.B
 	out.imme.csrOut := 0.U
 	out.imme.r1Out	:= Mux(out.imme.r1Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r1Addr===pipeRdAddr,pipeResult,gpr(out.imme.r1Addr)))
 	out.imme.r2Out	:= Mux(out.imme.r2Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r2Addr===pipeRdAddr,pipeResult,gpr(out.imme.r2Addr)))
-	val (csrReadAddr,csrReadValid)=CsrAddr.safe(out.imme.csrAddr)
-	when(csrReadValid){
-		when(pipeValid&&out.imme.csrAddr===pipeCsrAddr){out.imme.csrOut := pipeCsrMesg}
-		.otherwise{
-			switch(csrReadAddr){
-			is(CsrAddr.Mcycle)		{out.imme.csrOut := mcycle}
-			is(CsrAddr.Mcycleh)		{out.imme.csrOut := mcycleh}
-			is(CsrAddr.Mepc)		{out.imme.csrOut := mepc}
-			is(CsrAddr.Mtvec)		{out.imme.csrOut := mtvec}
-			is(CsrAddr.Mcause)		{out.imme.csrOut := mcause}
-			is(CsrAddr.Mstatus)		{out.imme.csrOut := mstatus}
-			is(CsrAddr.Marchid)		{out.imme.csrOut := marchid}
-			is(CsrAddr.Mvendorid)	{out.imme.csrOut := mvendorid}
-		}
-			// out.imme.csrOut := Mux1H(Seq(
-			// 	(csrReadAddr===CsrAddr.Mcycle)		-> mcycle,
-			// 	(csrReadAddr===CsrAddr.Mcycleh)		-> mcycleh,
-			// 	(csrReadAddr===CsrAddr.Mepc)		-> mepc,
-			// 	(csrReadAddr===CsrAddr.Mtvec)		-> mtvec,
-			// 	(csrReadAddr===CsrAddr.Mcause)		-> mcause,
-			// 	(csrReadAddr===CsrAddr.Mstatus)		-> mstatus,
-			// 	(csrReadAddr===CsrAddr.Marchid)		-> marchid,
-			// 	(csrReadAddr===CsrAddr.Mvendorid)	-> mvendorid,
-			// ))
-		}
-	}
+	out.imme.csrOut := Mux1H(Seq(
+		(out.imme.csrAddr===CsrAddr.Mcycle.asUInt)		-> mcycle,
+		(out.imme.csrAddr===CsrAddr.Mcycleh.asUInt)		-> mcycleh,
+		(out.imme.csrAddr===CsrAddr.Mepc.asUInt)		-> mepc,
+		(out.imme.csrAddr===CsrAddr.Mtvec.asUInt)		-> mtvec,
+		(out.imme.csrAddr===CsrAddr.Mcause.asUInt)		-> mcause,
+		(out.imme.csrAddr===CsrAddr.Mstatus.asUInt)		-> mstatus,
+		(out.imme.csrAddr===CsrAddr.Marchid.asUInt)		-> marchid,
+		(out.imme.csrAddr===CsrAddr.Mvendorid.asUInt)	-> mvendorid,
+	))
 	if(Yosys == false){
 		when(pipeCsrMesg =/= 3.U && pipeCsrMesg =/= 11.U && error && pipeCsrOp =/= CsrOp.Mret){
 			when(pipeValid === true.B & pipeCsrOp === CsrOp.Trap){printf("pipe err catch\n")}

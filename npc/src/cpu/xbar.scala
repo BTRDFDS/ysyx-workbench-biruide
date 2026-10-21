@@ -12,16 +12,15 @@ object BarRstate	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack=Val
 	val rAddr 		= RegInit(0.U(32.W))
 	switch(rState){
 		is(BarRstate.Idle){
-			when(lsu.size =/= 0b11.U){
-				rState	:= Mux(lsu.write,BarRstate.Idle,BarRstate.LsuCall)
-				rAddr	:= lsu.addr
-			}.elsewhen(ifu.valid){rState := BarRstate.IfuCall;rAddr := Cat(ifu.addr,0.U(2.W))}
+			when(lsu.valid&& ~lsu.write){rState:= BarRstate.LsuCall}
+			.elsewhen(ifu.valid)		{rState := BarRstate.IfuCall}
 		}
 		is(BarRstate.IfuCall){when(out.arready)													{rState := BarRstate.IfuBack}}
 		is(BarRstate.IfuBack){when(out.rlast)													{rState := BarRstate.Idle	}}
 		is(BarRstate.LsuCall){when(Mux(rAddr(31,24) === 0x02.U(8.W),clt.arready,out.arready))	{rState := BarRstate.LsuBack}}
 		is(BarRstate.LsuBack){when(Mux(rAddr(31,24) === 0x02.U(8.W),clt.rvalid,out.rvalid))		{rState := BarRstate.Idle	}}
 	}
+	when(rState === BarRstate.Idle){rAddr := Mux(lsu.valid&& ~lsu.write,lsu.addr,Cat(ifu.addr,0.U(2.W)))}
 	out.arvalid := (rState === BarRstate.IfuCall || rState === BarRstate.LsuCall) && rAddr(31,24) =/= 0x02.U(8.W)
 	out.rready  := (rState === BarRstate.IfuBack || rState === BarRstate.LsuBack) && rAddr(31,24) =/= 0x02.U(8.W)
 	out.araddr  := rAddr
@@ -52,10 +51,11 @@ object BarWstate	extends ChiselEnum{val Idle,Call,Back=Value}
 	val finishData = hasData || out.wready
 
 	switch(wState){
-		is(BarWstate.Idle){when(lsu.write & lsu.size =/= 0b11.U){wState := BarWstate.Call;wAddr := lsu.addr}}
-		is(BarWstate.Call){when(finishAddr || finishData)		{wState := BarWstate.Back	}}
-		is(BarWstate.Back){when(out.bvalid)						{wState := BarWstate.Idle	}}
+		is(BarWstate.Idle){when(lsu.write && lsu.valid)		{wState := BarWstate.Call}}
+		is(BarWstate.Call){when(finishAddr || finishData)	{wState := BarWstate.Back}}
+		is(BarWstate.Back){when(out.bvalid)					{wState := BarWstate.Idle}}
 	}
+	when(wState === BarWstate.Idle){wAddr := lsu.addr}
 	when(wState === BarWstate.Call){
 		when(out.awready)	{hasAddr := true.B}
 		when(out.wready)	{hasData := true.B}

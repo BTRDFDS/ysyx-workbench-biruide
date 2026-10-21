@@ -151,6 +151,7 @@ class BurstBus extends Bundle{
 	val res		= Input(BurstRes())
 }
 class MemBus extends Bundle{
+	val valid	= Output(Bool())
 	val addr	= Output(UInt(BitWidth.W))
 	val rdata	=  Input(UInt(BitWidth.W))
 	val wdata	= Output(UInt(BitWidth.W))
