@@ -42,9 +42,9 @@ object Decoder{
 		Inst(BitPat("b???????_?????_?????_010_?????_0000011"),"lw"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Load)	,BP(LsuAddr.W)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
 		Inst(BitPat("b???????_?????_?????_100_?????_0000011"),"lbu"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Load)	,BP(LsuAddr.Bu)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
 		Inst(BitPat("b???????_?????_?????_101_?????_0000011"),"lhu"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Load)	,BP(LsuAddr.Hu)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
-		Inst(BitPat("b???????_?????_?????_000_?????_0100011"),"sb"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.B)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
-		Inst(BitPat("b???????_?????_?????_001_?????_0100011"),"sh"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.H)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
-		Inst(BitPat("b???????_?????_?????_010_?????_0100011"),"sw"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.Y,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.W)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
+		Inst(BitPat("b???????_?????_?????_000_?????_0100011"),"sb"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.N,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.B)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
+		Inst(BitPat("b???????_?????_?????_001_?????_0100011"),"sh"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.N,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.H)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
+		Inst(BitPat("b???????_?????_?????_010_?????_0100011"),"sw"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.Y,BP.N,BP(ImmOp.S),BP(LsuOp.Store)	,BP(LsuAddr.W)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
 		Inst(BitPat("b???????_?????_?????_000_?????_0010011"),"addi"	,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
 		Inst(BitPat("b???????_?????_?????_010_?????_0010011"),"slti"	,Uops(BP(ExuAlu.Slt)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
 		Inst(BitPat("b???????_?????_?????_011_?????_0010011"),"sltiu"	,Uops(BP(ExuAlu.Sltu)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N,BP(IfuUpdate.Null)	,BP.Y,BP.N,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
@@ -134,7 +134,7 @@ object Decoder{
 	}
 	val csrOp = new DecodeField[Inst, CsrOp.Type] {
 		def name = "csrOp"; def chiselType = CsrOp()
-		def genTable(i: Inst) = i.p.update
+		def genTable(i: Inst) = i.p.csrOp
 		override def default = DC(CsrOp)
 	}
 	val immT = new DecodeField[Inst, UInt] {
@@ -201,8 +201,8 @@ class idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.in1	:= decoder(Decoder.exuIn1)
 	out.pipe.in2	:= decoder(Decoder.exuIn2)
 
-	val r1Ready = ~((decoder(Decoder.r1)&&pipeInstr(14+RegWidth,15)=/=0.U)^in.imme.r1Valid)
-	val r2Ready = ~((decoder(Decoder.r2)&&pipeInstr(19+RegWidth,20)=/=0.U)^in.imme.r2Valid)
+	val r1Ready = ~((decoder(Decoder.r1)) && pipeInstr(14+RegWidth,15)=/=0.U && ~in.imme.r1Valid)
+	val r2Ready = ~((decoder(Decoder.r2)) && pipeInstr(19+RegWidth,20)=/=0.U && ~in.imme.r2Valid)
 	out.pipe.valid	:= pipeRes=/=IfuRes.Null && ((r1Ready && r2Ready) || ~decoder(Decoder.valid))
 
 	in.imme.csrAddr:= pipeInstr(31,20)
@@ -217,9 +217,10 @@ class idu(val Yosys:Boolean=false) extends Module{
 	out.imme.update	:= in.imme.update
 
 	if(Yosys == false){
-		val chkValid = decoder(Decoder.valid)
-		dontTouch(chkValid)
+		dontTouch(decoder)
 		dontTouch(pipeReset)
+		dontTouch(r1Ready)
+		dontTouch(r2Ready)
 	}
 
 }

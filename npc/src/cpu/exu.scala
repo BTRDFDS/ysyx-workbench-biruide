@@ -99,8 +99,8 @@ class exu(val Yosys:Boolean=false) extends Module {
 	out.imme.r1Out	:= Mux(pipeValid&&pipeRdAddr === out.imme.r1Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r1Out)
 	out.imme.r2Out	:= Mux(pipeValid&&pipeRdAddr === out.imme.r2Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r2Out)
 	out.imme.csrOut	:= Mux(pipeValid&&out.imme.csrAddr === pipeCsrAddr,out.pipe.csrMesg,in.imme.csrOut)
-	out.imme.r1Valid:= pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r1Addr === pipeRdAddr&&in.imme.r1Valid
-	out.imme.r2Valid:= pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r2Addr === pipeRdAddr&&in.imme.r2Valid
+	out.imme.r1Valid:= (~pipeValid&&in.imme.r1Valid)||(pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r1Addr === pipeRdAddr&&pipeLsuOp===LsuOp.Null)
+	out.imme.r2Valid:= (~pipeValid&&in.imme.r2Valid)||(pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r2Addr === pipeRdAddr&&pipeLsuOp===LsuOp.Null)
 	if(Yosys == false){
 		dontTouch(result)
 		dontTouch(shouldBe)
