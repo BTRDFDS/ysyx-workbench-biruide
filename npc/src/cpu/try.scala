@@ -1,3 +1,4 @@
+/*
 // 三种等价译码实现：DecodeTable / Mux1H / switch，接口完全一致，便于综合对比。
 // 覆盖指令：add addi lw lb sw sb jal lui beq bne
 import chisel3._
@@ -187,3 +188,4 @@ class TrySwitch extends Module {
     }
   }
 }
+*/

@@ -51,7 +51,6 @@ class PipeIdEx extends Bundle(){
 	val alu = Output(ExuAlu())
 	val bfu = Output(ExuBfu())
 	val csr = Output(ExuCsr())
-	val res = Output(ExuRes())
 	val in1 = Output(ExuIn1())
 	val in2 = Output(ExuIn2())
 	val fenceI	= Output(Bool())

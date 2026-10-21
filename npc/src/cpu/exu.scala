@@ -16,7 +16,6 @@ class exu(val Yosys:Boolean=false) extends Module {
 	val pipeValid	= PipeReg(in.pipe.valid		,out.imme.ready,false.B		,pipeReset)
 	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,out.imme.ready,CsrOp.Null	,pipeReset)
 	val pipeFenceI	= PipeReg(in.pipe.fenceI	,out.imme.ready)
-	val pipeJump	= PipeReg(in.pipe.jump		,out.imme.ready)
 	val pipeUpdate	= PipeReg(in.pipe.update	,out.imme.ready)
 	val pipeRdAddr	= PipeReg(in.pipe.rdAddr	,out.imme.ready)
 	val pipeImm		= PipeReg(in.pipe.imm		,out.imme.ready)
@@ -29,7 +28,6 @@ class exu(val Yosys:Boolean=false) extends Module {
 	val pipeAlu		= PipeReg(in.pipe.alu		,out.imme.ready)
 	val pipeBfu		= PipeReg(in.pipe.bfu		,out.imme.ready)
 	val pipeCsr		= PipeReg(in.pipe.csr		,out.imme.ready)
-	val pipeRes		= PipeReg(in.pipe.res		,out.imme.ready)
 	val pipeIn1		= PipeReg(in.pipe.in1		,out.imme.ready)
 	val pipeIn2		= PipeReg(in.pipe.in2		,out.imme.ready)
 
@@ -73,11 +71,11 @@ class exu(val Yosys:Boolean=false) extends Module {
 		(pipeBfu === ExuBfu.Jump)	->(true.B),
 	))
 	out.pipe.csrMesg := Mux1H(Seq(
-		(pipeCsr === ExuCsr.Read)	->(pipeR1 | pipeImm),
-		(pipeCsr === ExuCsr.Write)	->(pipeR1),
+		(pipeCsr === ExuCsr.Rs)	->(pipeR1 | pipeImm),
+		(pipeCsr === ExuCsr.Rw)	->(pipeR1),
 		(pipeCsr === ExuCsr.Null)	->(pipeImm),
 	))
-	val shouldBe = Mux((pipeJump || enBfun),resultAdd,snpc)
+	val shouldBe = Mux(enBfun && ~pipeFenceI,resultAdd,snpc)
 	val noSend = RegInit(true.B)
 	when(out.imme.ready){noSend := true.B}
 	.elsewhen(pipeValid&&(out.imme.reloca || pipeFenceI)){noSend := false.B}
@@ -101,8 +99,8 @@ class exu(val Yosys:Boolean=false) extends Module {
 	out.imme.r1Out	:= Mux(pipeValid&&pipeRdAddr === out.imme.r1Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r1Out)
 	out.imme.r2Out	:= Mux(pipeValid&&pipeRdAddr === out.imme.r2Addr&&pipeRdAddr =/= 0.U,out.pipe.result,in.imme.r2Out)
 	out.imme.csrOut	:= Mux(pipeValid&&out.imme.csrAddr === pipeCsrAddr,out.pipe.csrMesg,in.imme.csrOut)
-	out.imme.r1Valid:= pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r1Addr === pipeRdAddr&&in.imme.valid
-	out.imme.r2Valid:= pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r2Addr === pipeRdAddr&&in.imme.valid
+	out.imme.r1Valid:= pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r1Addr === pipeRdAddr&&in.imme.r1Valid
+	out.imme.r2Valid:= pipeValid&&pipeRdAddr =/= 0.U&&out.imme.r2Addr === pipeRdAddr&&in.imme.r2Valid
 	if(Yosys == false){
 		dontTouch(result)
 		dontTouch(shouldBe)

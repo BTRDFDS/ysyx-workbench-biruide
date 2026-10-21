@@ -26,11 +26,11 @@ object FirtoolOptions{
 import FirtoolOptions._
 import circt.stage.ChiselStage.emitSystemVerilogFile
 import chisel3._
-object BuilderTry extends App {
-  emitSystemVerilogFile(new TryDecode,  Array("--target-dir", "build/try"))
-  emitSystemVerilogFile(new TryMux1H,   Array("--target-dir", "build/try"))
-  emitSystemVerilogFile(new TrySwitch,  Array("--target-dir", "build/try"))
-}
+// object BuilderTry extends App {
+//   emitSystemVerilogFile(new TryDecode,  Array("--target-dir", "build/try"))
+//   emitSystemVerilogFile(new TryMux1H,   Array("--target-dir", "build/try"))
+//   emitSystemVerilogFile(new TrySwitch,  Array("--target-dir", "build/try"))
+// }
 object BuilderYsyxSoc	extends App	{emitSystemVerilogFile(new cpu(0x30000000L.U,false)	,Array("--target-dir","./build/ysyxsoc")	,firtoolOptions)}
 object BuilderSta		extends App	{emitSystemVerilogFile(new cpu(0x30000000L.U,true)	,Array("--target-dir","./build/sta")		,firtoolOptions)}
 object BuilderIcache	extends App	{emitSystemVerilogFile(new icache(true)				,Array("--target-dir","./build/icache")		,firtoolOptions)}

@@ -115,7 +115,7 @@ class cpu(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) extends Module 
 
 		val chkIdu = Seq(chk.cal,chk.jump,chk.imm,chk.ls,chk.csr,chk.br);chkIdu.foreach(_ := false.B)
 		when(Get(idu.in.imme.ready) && (~Get(idu.in.imme.reloca)) && Get(idu.out.pipe.valid)){
-			switch(Get(idu.opEnum)){
+			switch(Get(idu.pipeInstr)(6,0).asTypeOf(Op())){
 				is(Op.Ialu)		{chk.cal	:= true.B}
 				is(Op.Ralu)		{chk.cal	:= true.B}
 				is(Op.Jal)		{chk.jump	:= true.B}
@@ -136,7 +136,7 @@ class cpu(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) extends Module 
 		chk.jlr		:= Get(exu.pipeValid)&& Get(exu.out.imme.ready) && Get(exu.pipeUpdate) === IfuUpdate.Jalr && noEbreak
 		chk.jumpAddr:= Get(exu.out.imme.addr)
 		chk.jumpPc 	:= Cat(Get(exu.pipePc),0.U(2.W))
-		chk.sext	:= Get(exu.pipeResult)(31)
+		chk.sext	:= Get(exu.pipeImm)(31)
 
 		chk.load		:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Load	&& Get(lsu.bar.ready)
 		chk.loadWait	:= Get(lsu.pipeValid) && Get(lsu.pipeLsuOp) === LsuOp.Load

@@ -36,9 +36,10 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	val marchid		= 0x018D08CE.U
 	val mvendorid	= 0x79737978.U
 
-	val error = WireInit(false.B)
 	val nextMcycle	= Wire(UInt(BitWidth.W));nextMcycle	:= mcycle + 1.U
 	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= Mux(mcycle === (Fill(BitWidth,1.U)),mcycleh + 1.U,mcycleh)
+	val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
+	val error = pipeValid && ((pipeCsrOp === CsrOp.Mret) || (pipeCsrOp === CsrOp.Trap) || (pipeCsrOp === CsrOp.Write && ~csrWriteValid))
 	when(pipeValid){//合法处理
 		switch(pipeCsrOp){
 			is(CsrOp.Mret){
@@ -46,11 +47,10 @@ class wbu(val Yosys:Boolean=false) extends Module {
 				}
 			is(CsrOp.Trap){
 				// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
-				mcause	:= pipeCsrMesg
-				mepc 	:= Cat(pipePc,0.U(2.W))
+				// mcause	:= pipeCsrMesg
+				// mepc 	:= Cat(pipePc,0.U(2.W))
 			}
 			is(CsrOp.Write){
-				val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
 				when(csrWriteValid){
 					switch(csrWriteAddr){
 						is(CsrAddr.Mcycle)		{nextMcycle	:= pipeCsrMesg}
@@ -60,22 +60,20 @@ class wbu(val Yosys:Boolean=false) extends Module {
 						is(CsrAddr.Mcause)		{mcause		:= pipeCsrMesg}
 						is(CsrAddr.Mstatus)		{mstatus	:= pipeCsrMesg}
 					}
-				}otherwise{error := true.B}
+				}
 			}
 			// is(CsrOp.Null){}//空，这里4个全覆盖了
 		}
 		when((pipeRdAddr =/= 0.U)&(error === false.B)){gpr(pipeRdAddr) := pipeResult}
 	}
 	mcycle := nextMcycle;mcycleh := nextMcycleh
-
-	out.imme.addr	:= mtvec
+	out.imme.addr	:= Mux(pipeCsrOp === CsrOp.Mret,mepc,mtvec)
 	out.imme.pc		:= pipePc
-	out.imme.error	:= false.B
-	when((pipeValid === false.B & pipeCsrOp === CsrOp.Trap) || error){
+	out.imme.error	:= error
+	when(error){
 		// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
-		mcause			:= Mux(error,ErrorMesg,pipeCsrMesg)
+		mcause			:= Mux(pipeCsrOp === CsrOp.Write,ErrorMesg,pipeCsrMesg)
 		mepc 			:= Cat(pipePc,0.U(2.W))
-		out.imme.error	:= true.B
 		if(Yosys == false){
 			when(pipeValid === false.B & pipeCsrOp === CsrOp.Trap){printf("pipe err catch\n")}
 			when(error){printf("wbu err catch\n")}
@@ -95,7 +93,8 @@ class wbu(val Yosys:Boolean=false) extends Module {
 		}
 	}
 //提供数据
-	out.imme.valid	:= true.B
+	out.imme.r1Valid	:= true.B
+	out.imme.r2Valid	:= true.B
 	out.imme.csrOut := 0.U
 	out.imme.r1Out	:= Mux(out.imme.r1Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r1Addr===pipeRdAddr,pipeResult,gpr(out.imme.r1Addr)))
 	out.imme.r2Out	:= Mux(out.imme.r2Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r2Addr===pipeRdAddr,pipeResult,gpr(out.imme.r2Addr)))

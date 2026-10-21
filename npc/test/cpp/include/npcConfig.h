@@ -16,8 +16,8 @@
 #define NPC_NVBroad
 #define NPC_M_TRACE
 #define NPC_DIFFTEST
-// #define NPC_WAVE
+#define NPC_WAVE
 
-const uint64_t RunstopTime = 3345294000L;//非0时运行到该时间后停止 8345294000L
+const uint64_t RunstopTime = 1000;//非0时运行到该时间后停止 3345294000L
 
 #endif
