@@ -47,7 +47,6 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	// 			mstatus := Cat(mstatus(31,13),0b00.U(2.W),mstatus(10,3),mstatus(1),mstatus(2),1.U(1.W),mstatus(0))
 	// 			}
 			// is(CsrOp.Trap){
-			// 	mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
 			// 	mcause	:= pipeCsrMesg
 			// 	mepc 	:= Cat(pipePc,0.U(2.W))
 			// }//TODO
@@ -66,19 +65,21 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	// 	}
 		
 	// }
+	// when(error){
+	// 	// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
+	// 	mcause	:= pipeCsrMesg
+	// 	mepc 	:= Cat(pipePc,0.U(2.W))
+	// }
 
-	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mcycle)	{nextMcycle	:= pipeCsrMesg}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mcycleh)	{nextMcycleh:= pipeCsrMesg}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mcause)	{mcause		:= pipeCsrMesg}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mstatus)	{mstatus	:= pipeCsrMesg}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mepc)	{mepc		:= pipeCsrMesg}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && csrWriteValid && csrWriteAddr === CsrAddr.Mtvec)	{mtvec		:= pipeCsrMesg}
+	//TODO mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
+	//TODO mstatus := Cat(mstatus(31,13),0b00.U(2.W),mstatus(10,3),mstatus(1),mstatus(2),1.U(1.W),mstatus(0))
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycle.asUInt)		{nextMcycle	:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycleh.asUInt)	{nextMcycleh:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mstatus	:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mtvec.asUInt)		{mtvec		:= pipeCsrMesg}
+	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mepc.asUInt)  || error)){mepc	:= Mux(pipeCsrOp===CsrOp.Write,pipeCsrMesg,Cat(pipePc,0.U(2.W)))}
+	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcause.asUInt)|| error)){mcause	:= Mux(pipeCsrOp===CsrOp.Write,pipeCsrMesg,ErrorMesg)}
 	when(pipeValid && pipeRdAddr=/=0.U && ~csrWriteValid){gpr(pipeRdAddr) := pipeResult}
-	when(error){
-		// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
-		mcause	:= pipeCsrMesg
-		mepc 	:= Cat(pipePc,0.U(2.W))
-	}
 
 	mcycle := nextMcycle;mcycleh := nextMcycleh
 	out.imme.addr	:= Mux(pipeCsrOp === CsrOp.Mret,mepc,mtvec)
