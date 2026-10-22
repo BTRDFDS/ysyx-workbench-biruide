@@ -36,15 +36,15 @@ class driveLinker(val Yosys:Boolean=false,val Netlist:Boolean=false) extends Mod
 			interrupt	<> cpu.io.interrupt
 			val pc = Cat(Get(cpu.ifu.pipePc),0.U(2.W));dontTouch(pc)
 			val shouldStop = RegInit(false.B);when(shouldStop){stop()}	
-			when((Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap && Get(cpu.wbu.pipeValid) && Get(cpu.wbu.pipeCsrMesg) === 0x3L.U) || Get(cpu.wbu.error)){
+			when((Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap && Get(cpu.wbu.pipeValid) && Get(cpu.wbu.pipeCsrMesg)===0x3L.U) || (Get(cpu.wbu.error) && Get(cpu.wbu.pipeValid) && Get(cpu.wbu.pipeCsrMesg)=/=0x3L.U && Get(cpu.wbu.pipeCsrMesg)===0x11L.U)){
 				printf("Ebreak at 0x%8x a0=%8x\n",Cat(Get(cpu.wbu.pipePc),0.U(2.W)),Get(cpu.wbu.gpr)(10))
 				shouldStop := true.B
 				printf("HIT GOOD TRAP\n");
 				// printf("HIT BAD TRAP\n");
 			}
-			when((Get(cpu.wbu.pipeValid) === false.B & Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap) || Get(cpu.wbu.error)){
-				when(Get(cpu.wbu.pipeValid) === false.B & Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap){printf("pipe err catch\n")}
-				when(Get(cpu.wbu.error)){printf("wbu err catch\n")}
+			when((Get(cpu.wbu.error) && Get(cpu.wbu.pipeValid) && Get(cpu.wbu.pipeCsrMesg)=/=0x3L.U && Get(cpu.wbu.pipeCsrMesg)===0x11L.U)){
+				when(Get(cpu.wbu.pipeCsrOp) === CsrOp.Trap){printf("pipe err catch\n")}
+				.otherwise{printf("wbu err catch\n")}
 				printf("error,stop!!! %x ",Get(cpu.wbu.pipeCsrMesg))//tval
 				switch(Get(cpu.wbu.pipeCsrMesg)){
 					is(3.U	){printf("ebreak\n")}

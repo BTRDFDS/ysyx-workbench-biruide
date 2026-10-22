@@ -217,6 +217,7 @@ class idu(val Yosys:Boolean=false) extends Module{
 	out.imme.update	:= in.imme.update
 
 	if(Yosys == false){
+		// val chk = pipeInstr( 6+RegWidth, 7);dontTouch(chk)
 		dontTouch(decoder)
 		dontTouch(pipeReset)
 		dontTouch(r1Ready)

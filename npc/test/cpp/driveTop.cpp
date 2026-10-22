@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 		top->trace(tfp, 99);
 		tfp->open("./wave/driveTop.fst");
 	#endif
-	NpcDifftestInit8(psramSize,psram,psramAddr,"./test/cpp/lib/riscv32-nemu-interpreter-so-driveTop");
+	NpcDifftestInit8(psramSize,psram,psramAddr,"./test/cpp/lib/riscv32-nemu-interpreter-so-npc");
 	//初始化
 	for(int i=0;i<12;i++){
 		top->clock=0;top->reset=1;top->eval();
