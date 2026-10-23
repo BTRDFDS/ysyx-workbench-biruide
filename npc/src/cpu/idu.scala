@@ -201,8 +201,8 @@ class idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.in1	:= decoder(Decoder.exuIn1)
 	out.pipe.in2	:= decoder(Decoder.exuIn2)
 
-	val r1Ready = ~((decoder(Decoder.r1)) && pipeInstr(14+RegWidth,15)=/=0.U && ~in.imme.r1Valid)
-	val r2Ready = ~((decoder(Decoder.r2)) && pipeInstr(19+RegWidth,20)=/=0.U && ~in.imme.r2Valid)
+	val r1Ready = ~((decoder(Decoder.r1)) && ~in.imme.r1Valid)
+	val r2Ready = ~((decoder(Decoder.r2)) && ~in.imme.r2Valid)
 	out.pipe.valid	:= pipeRes=/=IfuRes.Null && ((r1Ready && r2Ready) || ~decoder(Decoder.valid))
 
 	in.imme.csrAddr:= pipeInstr(31,20)

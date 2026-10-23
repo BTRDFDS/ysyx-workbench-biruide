@@ -97,7 +97,8 @@ class lsu(val Yosys:Boolean=false) extends Module{
 	out.imme.csrOut	:= Mux(pipeValid && out.imme.csrAddr === pipeCsrAddr,out.pipe.csrMesg,in.imme.csrOut)
 	out.imme.r1Out	:= Mux(pipeValid && pipeRdAddr=/=0.U && out.imme.r1Addr === pipeRdAddr,out.pipe.result,in.imme.r1Out)
 	out.imme.r2Out	:= Mux(pipeValid && pipeRdAddr=/=0.U && out.imme.r2Addr === pipeRdAddr,out.pipe.result,in.imme.r2Out)
-	out.imme.r1Valid:= ~pipeValid || (pipeRdAddr=/=0.U && out.imme.r1Addr === pipeRdAddr && (state === MemStatus.Back || ~(pipeLsuOp === LsuOp.Load)))
-	out.imme.r2Valid:= ~pipeValid || (pipeRdAddr=/=0.U && out.imme.r2Addr === pipeRdAddr && (state === MemStatus.Back || ~(pipeLsuOp === LsuOp.Load)))
+	out.imme.r1Valid:= Mux(pipeValid && pipeRdAddr=/=0.U && out.imme.r1Addr === pipeRdAddr,state===MemStatus.Back || pipeLsuOp =/= LsuOp.Load,true.B)
+	out.imme.r2Valid:= Mux(pipeValid && pipeRdAddr=/=0.U && out.imme.r2Addr === pipeRdAddr,state===MemStatus.Back || pipeLsuOp =/= LsuOp.Load,true.B)
+
 	if(Yosys == false){}
 }
