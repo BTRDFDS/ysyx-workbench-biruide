@@ -129,7 +129,8 @@ sim-iverilog:verilogIverilog
 
 srcVerilogNetlist += $(NPC_HOME)/test/iverilog/iverliog.v
 srcVerilogNetlist += $(shell find $(NPC_HOME)/build/netlist -type f -name "*.sv")
-NETLIST ?= $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v.sim
+# NETLIST ?= $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.v.sim
+NETLIST ?= $(YOSYS_STA_HOME)/result/ysyx_26020046-500MHz/ysyx_26020046.netlist.fixed.v
 CELLS	?= $(YOSYS_STA_HOME)/pdk/nangate45/sim/cells.v
 netlist:verilogNetlist sta
 	@echo netlist-begin
