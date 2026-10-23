@@ -14,7 +14,7 @@ class lsu(val Yosys:Boolean=false) extends Module{
 	val bar		= IO(new MemBus())
 	val state	= RegInit(MemStatus.Call)
 
-	val pipeReset	= reset.asBool||in.imme.error
+	val pipeReset	= reset.asBool||in.imme.reloca
 	val pipeValid	= PipeReg(in.pipe.valid		,out.imme.ready,false.B		,pipeReset)
 	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,out.imme.ready,CsrOp.Null	,pipeReset)
 	val pipeLsuOp	= PipeReg(in.pipe.lsuOp		,out.imme.ready,LsuOp.Null	,pipeReset)
@@ -88,7 +88,7 @@ class lsu(val Yosys:Boolean=false) extends Module{
 	//处理回传
 	out.imme.addr	:= in.imme.addr
 	out.imme.pc		:= in.imme.pc
-	out.imme.error	:= in.imme.error
+	out.imme.reloca	:= in.imme.reloca
 	out.imme.ready	:= (~pipeValid) || pipeLsuOp === LsuOp.Null || state === MemStatus.Back
 
 	 in.imme.r1Addr	:= out.imme.r1Addr

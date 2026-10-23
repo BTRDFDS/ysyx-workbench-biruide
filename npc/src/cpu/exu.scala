@@ -12,11 +12,11 @@ class exu(val Yosys:Boolean=false) extends Module {
 		val pipe = new PipeExLs()
 	})
 	val ich		= IO(new FecneBus())
-	val pipeReset	= reset.asBool||(out.imme.reloca && in.imme.ready)//||in.imme.error error被包含在jump里面了
+	val pipeReset	= reset.asBool||(out.imme.reloca && in.imme.reloca)//||in.imme.reloca error被包含在jump里面了
 	val pipeValid	= PipeReg(in.pipe.valid		,out.imme.ready,false.B		,pipeReset)
 	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,out.imme.ready,CsrOp.Null	,pipeReset)
 	val pipeFenceI	= PipeReg(in.pipe.fenceI	,out.imme.ready)
-	val pipeUpdate	= PipeReg(in.pipe.update	,out.imme.ready)
+	// val pipeUpdate	= PipeReg(in.pipe.update	,out.imme.ready)
 	val pipeRdAddr	= PipeReg(in.pipe.rdAddr	,out.imme.ready)
 	val pipeImm		= PipeReg(in.pipe.imm		,out.imme.ready)
 	val pipePc		= PipeReg(in.pipe.pc		,out.imme.ready)
@@ -82,16 +82,17 @@ class exu(val Yosys:Boolean=false) extends Module {
 
 	ich.fenceI	:= pipeValid&&noSend&&pipeFenceI
 	out.imme.ready	:= in.imme.ready || ~pipeValid
-	out.imme.reloca	:= in.imme.error || (pipeValid&&noSend&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI))
-	out.imme.addr	:= Mux(in.imme.error,in.imme.addr,shouldBe)
+	out.imme.reloca	:= in.imme.reloca || pipeValid&&(noSend&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI))
+	out.imme.addr	:= Mux(in.imme.reloca,in.imme.addr,shouldBe)
 	out.imme.pc		:= pipePc
-	val updateMaybe = Mux1H(Seq(
-		(pipeUpdate === IfuUpdate.Jalr)		-> IfuUpdate.Jalr,
-		(pipeUpdate === IfuUpdate.Jal)		-> IfuUpdate.Jal,
-		(pipeUpdate === IfuUpdate.Branch)	-> Mux(enBfun,IfuUpdate.Branch,IfuUpdate.Null),
-		(pipeUpdate === IfuUpdate.Null)		-> IfuUpdate.Null
-	))
-	out.imme.update	:= Mux(pipeValid&&noSend&&(~in.imme.error)&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI),updateMaybe,IfuUpdate.Null)
+	// val updateMaybe = Mux1H(Seq(
+	// 	(pipeUpdate === IfuUpdate.Jalr)		-> IfuUpdate.Jalr,
+	// 	(pipeUpdate === IfuUpdate.Jal)		-> IfuUpdate.Jal,
+	// 	(pipeUpdate === IfuUpdate.Branch)	-> Mux(enBfun,IfuUpdate.Branch,IfuUpdate.Null),
+	// 	(pipeUpdate === IfuUpdate.Null)		-> IfuUpdate.Null
+	// ))
+	// out.imme.update	:= Mux(pipeValid&&noSend&&(~in.imme.reloca)&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI),updateMaybe,IfuUpdate.Null)
+	out.imme.update	:= pipeValid&&noSend&&(~in.imme.reloca)&&(in.pipe.pc =/= shouldBe(31,2))&&enBfun
 
 	 in.imme.r1Addr	:= out.imme.r1Addr
 	 in.imme.r2Addr	:= out.imme.r2Addr

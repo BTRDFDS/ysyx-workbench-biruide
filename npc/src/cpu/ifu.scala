@@ -43,50 +43,29 @@ class ifu(val PcInit:UInt,val Yosys:Boolean=false) extends Module{
 	val brIndex = PriorityEncoder(brMatch)
 	val brHit	= brMatch.orR
 
-	val JalBits = 0
-	val JalSize = 1 << JalBits
-	val jalCnt	= RegInit(0.U(JalBits.W))
-	val jalPc	= RegInit(VecInit(Seq.fill(JalSize)(0.U((BitWidth-2).W))))
-	val jalAddr	= RegInit(VecInit(Seq.fill(JalSize)(0.U((BitWidth-2).W))))
-	val jalMatch= VecInit(jalPc.map(_ === pipePc)).asUInt
-	val jalIndex= PriorityEncoder(jalMatch)
-	val jalHit	= jalMatch.orR
-	
-	val jalrPc	= RegInit(0.U((BitWidth-2).W))
-	val jalrAddr= RegInit(0.U((BitWidth-2).W))
-	val JalrHit	= jalrPc === pipePc	
-
-	when(immeReloca){
-		pipePc := immeAddr(31,2)
-	}.elsewhen(in.imme.ready&&ich.ready){
-		pipePc := MuxCase(pipePc+1.U,Seq(
-			brHit	-> brAddr(brIndex),
-			jalHit	-> jalAddr(jalIndex),
-			JalrHit	-> jalrAddr
-		))
-	}
-	when(immeUpdate===IfuUpdate.Branch){
+	// when(immeReloca){
+	// 	pipePc := immeAddr(31,2)
+	// }.elsewhen(in.imme.ready&&ich.ready){
+	// 	pipePc := MuxCase(pipePc+1.U,Seq(
+	// 		brHit	-> brAddr(brIndex),
+	// 		jalHit	-> jalAddr(jalIndex),
+	// 		JalrHit	-> jalrAddr
+	// 	))
+	// }
+	pipePc := Mux(immeReloca,immeAddr(31,2),Mux(brHit,brAddr(brIndex),pipePc+1.U))
+	when(immeUpdate){
 		brPc(brCnt)	:= immePc
 		brAddr(brCnt) := immeAddr(31,2)
 		brCnt := brCnt + 1.U
-	}
-	when(immeUpdate===IfuUpdate.Jal){
-		jalPc(jalCnt)	:= immePc
-		jalAddr(jalCnt) := immeAddr(31,2)
-		jalCnt := jalCnt + 1.U
-	}
-	when(immeUpdate===IfuUpdate.Jalr){
-		jalrPc	:= immePc
-		jalrAddr:= immeAddr(31,2)
 	}
 	if(Yosys == false){
 		dontTouch(brCnt)
 		dontTouch(brPc)
 		dontTouch(brAddr)
-		dontTouch(jalCnt)
-		dontTouch(jalPc)
-		dontTouch(jalAddr)
-		dontTouch(jalrPc)
-		dontTouch(jalrAddr)
+		// dontTouch(jalCnt)
+		// dontTouch(jalPc)
+		// dontTouch(jalAddr)
+		// dontTouch(jalrPc)
+		// dontTouch(jalrAddr)
 	}
 }

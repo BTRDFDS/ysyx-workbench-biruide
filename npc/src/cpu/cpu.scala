@@ -130,10 +130,10 @@ class cpu(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) extends Module 
 		}
 
 		val chkExu = Seq(chk.bnj,chk.bij,chk.jum,chk.jlr,chk.sext);chkExu.foreach(_ := false.B)
-		chk.bnj		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&& ~Get(exu.enBfun) && Get(exu.out.imme.ready) && noEbreak
-		chk.bij		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&&  Get(exu.enBfun) && Get(exu.out.imme.ready) && noEbreak
-		chk.jum		:= Get(exu.pipeValid)&& Get(exu.out.imme.ready) && Get(exu.pipeUpdate) === IfuUpdate.Jal  && noEbreak
-		chk.jlr		:= Get(exu.pipeValid)&& Get(exu.out.imme.ready) && Get(exu.pipeUpdate) === IfuUpdate.Jalr && noEbreak
+		// chk.bnj		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&& ~Get(exu.enBfun) && Get(exu.out.imme.ready) && noEbreak
+		// chk.bij		:= Get(exu.pipeValid)&&Get(exu.pipeBfu)=/=ExuBfu.Null&&  Get(exu.enBfun) && Get(exu.out.imme.ready) && noEbreak
+		// chk.jum		:= Get(exu.pipeValid)&& Get(exu.out.imme.ready) && Get(exu.pipeUpdate) === IfuUpdate.Jal  && noEbreak
+		// chk.jlr		:= Get(exu.pipeValid)&& Get(exu.out.imme.ready) && Get(exu.pipeUpdate) === IfuUpdate.Jalr && noEbreak
 		chk.jumpAddr:= Get(exu.out.imme.addr)
 		chk.jumpPc 	:= Cat(Get(exu.pipePc),0.U(2.W))
 		chk.sext	:= Get(exu.pipeImm)(31)
@@ -150,7 +150,7 @@ class cpu(val PcInit:UInt=0x30000000L.U,val Yosys:Boolean=false) extends Module 
 		chk.rdValue	:= Get(wbu.pipeResult)
 		chk.pc		:= Cat(Get(wbu.pipePc),0.U(2.W))
 		chk.dnpc := 0.U(32.W)
-		when(Get(wbu.out.imme.error)){chk.dnpc := Get(ifu.in.imme.addr)}
+		when(Get(wbu.out.imme.reloca)){chk.dnpc := Get(ifu.in.imme.addr)}
 		.elsewhen(Get(lsu.pipeValid)){chk.dnpc := Cat(Get(lsu.pipePc),0.U(2.W))}
 		.elsewhen(Get(exu.pipeValid)){chk.dnpc := Cat(Get(exu.pipePc),0.U(2.W))}
 		.elsewhen(Get(idu.pipeRes)===IfuRes.Valid){chk.dnpc := Cat(Get(idu.pipePc),0.U(2.W))}

@@ -13,7 +13,7 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	val out = IO(new Bundle {
 		val imme = new ImmeWbLs()
 	})
-	val pipeReset	= reset.asBool||out.imme.error
+	val pipeReset	= reset.asBool||out.imme.reloca
 	val pipeValid	= PipeReg(in.pipe.valid		,false.B	,pipeReset)
 	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,CsrOp.Null	,pipeReset)
 	val pipeRdAddr	= PipeReg(in.pipe.rdAddr	)
@@ -53,7 +53,7 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	mcycle := nextMcycle;mcycleh := nextMcycleh
 	out.imme.addr	:= Mux(pipeCsrOp === CsrOp.Mret,mepc,mtvec)
 	out.imme.pc		:= pipePc
-	out.imme.error	:= trap || mret
+	out.imme.reloca	:= trap || mret
 //提供数据
 	out.imme.r1Valid	:= true.B
 	out.imme.r2Valid	:= true.B
