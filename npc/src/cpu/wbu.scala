@@ -24,13 +24,10 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	
 
 	val gpr = Reg(Vec(RegNum, UInt(BitWidth.W)))
-
-	// val mepc		= RegInit(PcReset)
-	// val mtvec		= RegInit(PcReset)
 	val mtvec		= Reg(UInt(BitWidth.W))
 	val mepc		= Reg(UInt(BitWidth.W))
 	val mstatus		= RegInit(MstatuseReset)
-	val mcause		= RegInit(0xffffffffL.U(BitWidth.W))
+	val mcause		= RegInit(0.U(BitWidth.W))
 	val mcycle		= RegInit(0.U(BitWidth.W))
 	val mcycleh		= RegInit(0.U(BitWidth.W))
 	val marchid		= 0x018D08CE.U
@@ -38,7 +35,7 @@ class wbu(val Yosys:Boolean=false) extends Module {
 
 	val nextMcycle	= Wire(UInt(BitWidth.W));nextMcycle	:= mcycle + 1.U
 	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= Mux(mcycle === (Fill(BitWidth,1.U)),mcycleh + 1.U,mcycleh)
-	val (csrWriteAddr,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
+	val (_,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
 	val trap = pipeValid && ((pipeCsrOp === CsrOp.Trap) || (pipeCsrOp === CsrOp.Write && ~csrWriteValid))
 	val mret = pipeValid && pipeCsrOp === CsrOp.Mret
 
@@ -46,13 +43,12 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycleh.asUInt)	{nextMcycleh:= pipeCsrMesg}
 	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mstatus	:= pipeCsrMesg}
 	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mtvec.asUInt)		{mtvec		:= pipeCsrMesg}
-	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mepc.asUInt)  || trap)){mepc	:= Mux(trap											,Cat(pipePc,0.U(2.W))	,pipeCsrMesg)}
-	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcause.asUInt)|| trap)){mcause	:= Mux(pipeCsrOp===CsrOp.Write && ~csrWriteValid,ErrorMesg				,pipeCsrMesg)}
-	when(pipeValid && pipeRdAddr=/=0.U && (pipeCsrOp=/=CsrOp.Write || csrWriteValid)){gpr(pipeRdAddr) := pipeResult}
+	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mepc.asUInt)  || trap)){mepc	:= Mux(trap										,Cat(pipePc,0.U(2.W))	,pipeCsrMesg)}
+	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mcause.asUInt)|| trap)){mcause	:= Mux(pipeCsrOp===CsrOp.Write && ~csrWriteValid,ErrorMesg				,pipeCsrMesg)}
+	when(pipeValid && pipeRdAddr=/=0.U && (pipeCsrOp===CsrOp.Null || (pipeCsrOp===CsrOp.Write && csrWriteValid))){gpr(pipeRdAddr) := pipeResult}
 
 	mcycle := nextMcycle;mcycleh := nextMcycleh
 	out.imme.addr	:= Mux(pipeCsrOp === CsrOp.Mret,mepc,mtvec)
-	out.imme.pc		:= pipePc
 	out.imme.reloca	:= trap || mret
 //提供数据
 	out.imme.r1Valid	:= true.B

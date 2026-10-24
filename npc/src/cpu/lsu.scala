@@ -38,10 +38,7 @@ class lsu(val Yosys:Boolean=false) extends Module{
 
 	when(pipeValid){//状态机
 		switch(state){
-			is(MemStatus.Call){switch(pipeLsuOp){
-				is(LsuOp.Load)	{when(bar.ready){state := MemStatus.Back}}
-				is(LsuOp.Store)	{when(bar.ready){state := MemStatus.Back}}
-			}}
+			is(MemStatus.Call){when((pipeLsuOp===LsuOp.Load || pipeLsuOp===LsuOp.Store) && bar.ready){state := MemStatus.Back}}
 			is(MemStatus.Back){state := MemStatus.Call}//WBU无需等待
 		}
 	}
@@ -80,14 +77,11 @@ class lsu(val Yosys:Boolean=false) extends Module{
 	// when(addrError){switch(pipeLsuOp){
 	// 	is(LsuOp.Load)	{out.pipe.csrMesg := 4.U;out.pipe.csrAddr := pipeResult}//读取地址不对齐
 	// 	is(LsuOp.Store)	{out.pipe.csrMesg := 6.U;out.pipe.csrAddr := pipeResult}//写入地址不对齐
-	// }}.
-	when(backError){switch(pipeLsuOp){
-		is(LsuOp.Load)	{out.pipe.csrMesg := 5.U}//读取故障
-		is(LsuOp.Store)	{out.pipe.csrMesg := 7.U}//写入故障
-	}}
+	// }}
+	out.pipe.csrMesg := Mux(backError && pipeLsuOp=/=LsuOp.Null,Mux(pipeLsuOp===LsuOp.Load,5.U,7.U),pipeCsrMesg)
 	//处理回传
 	out.imme.addr	:= in.imme.addr
-	out.imme.pc		:= in.imme.pc
+	// out.imme.pc		:= in.imme.pc
 	out.imme.reloca	:= in.imme.reloca
 	out.imme.ready	:= (~pipeValid) || pipeLsuOp === LsuOp.Null || state === MemStatus.Back
 

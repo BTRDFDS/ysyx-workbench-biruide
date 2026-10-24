@@ -12,7 +12,7 @@ class exu(val Yosys:Boolean=false) extends Module {
 		val pipe = new PipeExLs()
 	})
 	val ich		= IO(new FecneBus())
-	val pipeReset	= reset.asBool||(out.imme.reloca && in.imme.reloca)//||in.imme.reloca error被包含在jump里面了
+	val pipeReset	= reset.asBool||(out.imme.reloca && in.imme.ready)//||in.imme.reloca error被包含在jump里面了
 	val pipeValid	= PipeReg(in.pipe.valid		,out.imme.ready,false.B		,pipeReset)
 	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,out.imme.ready,CsrOp.Null	,pipeReset)
 	val pipeFenceI	= PipeReg(in.pipe.fenceI	,out.imme.ready)
@@ -85,13 +85,6 @@ class exu(val Yosys:Boolean=false) extends Module {
 	out.imme.reloca	:= in.imme.reloca || pipeValid&&(noSend&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI))
 	out.imme.addr	:= Mux(in.imme.reloca,in.imme.addr,shouldBe)
 	out.imme.pc		:= pipePc
-	// val updateMaybe = Mux1H(Seq(
-	// 	(pipeUpdate === IfuUpdate.Jalr)		-> IfuUpdate.Jalr,
-	// 	(pipeUpdate === IfuUpdate.Jal)		-> IfuUpdate.Jal,
-	// 	(pipeUpdate === IfuUpdate.Branch)	-> Mux(enBfun,IfuUpdate.Branch,IfuUpdate.Null),
-	// 	(pipeUpdate === IfuUpdate.Null)		-> IfuUpdate.Null
-	// ))
-	// out.imme.update	:= Mux(pipeValid&&noSend&&(~in.imme.reloca)&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI),updateMaybe,IfuUpdate.Null)
 	out.imme.update	:= pipeValid&&noSend&&(~in.imme.reloca)&&(in.pipe.pc =/= shouldBe(31,2))&&enBfun
 
 	 in.imme.r1Addr	:= out.imme.r1Addr

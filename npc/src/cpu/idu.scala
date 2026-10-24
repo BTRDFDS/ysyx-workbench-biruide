@@ -65,11 +65,11 @@ object Decoder{
 		Inst(BitPat("b0000000_?????_?????_110_?????_0110011"),"or"		,Uops(BP(ExuAlu.Or)		,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
 		Inst(BitPat("b0000000_?????_?????_111_?????_0110011"),"and"		,Uops(BP(ExuAlu.And)	,BP(ExuBfu.Null),DC(ExuCsr)		,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
 		Inst(BitPat("b0000000_00000_00000_001_00000_0001111"),"fenceI"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Null),DC(ExuCsr)		,DC(ExuIn1)		,DC(ExuIn2)		,BP.Y	,BP.N,BP.N,BP.N,DC(ImmOp)  ,BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Null)	,BitPat.dontCare(32))),
-		Inst(BitPat("b0000000_00000_00000_000_00000_1110011"),"ecall"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Null),BP(ExuCsr.Null),DC(ExuIn1)		,DC(ExuIn2)		,BP.N	,BP.N,BP.N,BP.N,BP(ImmOp.T),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Trap)	,BP.hex("b",32)	 )),
-		Inst(BitPat("b0000000_00001_00000_000_00000_1110011"),"ebreak"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Null),BP(ExuCsr.Null),DC(ExuIn1)		,DC(ExuIn2)		,BP.N	,BP.N,BP.N,BP.N,BP(ImmOp.T),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Trap)	,BP.hex("3",32)	 )),
+		Inst(BitPat("b0000000_00000_00000_000_00000_1110011"),"ecall"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Null),BP(ExuCsr.Null),DC(ExuIn1)		,DC(ExuIn2)		,BP.N	,BP.N,BP.N,BP.X,BP(ImmOp.T),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Trap)	,BP.hex("b",32)	 )),
+		Inst(BitPat("b0000000_00001_00000_000_00000_1110011"),"ebreak"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Null),BP(ExuCsr.Null),DC(ExuIn1)		,DC(ExuIn2)		,BP.N	,BP.N,BP.N,BP.X,BP(ImmOp.T),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Trap)	,BP.hex("3",32)	 )),
 		Inst(BitPat("b???????_?????_?????_001_?????_1110011"),"csrrw"	,Uops(BP(ExuAlu.Imm)	,BP(ExuBfu.Null),BP(ExuCsr.Rw)	,DC(ExuIn1)		,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.C),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Write),BitPat.dontCare(32))),
 		Inst(BitPat("b???????_?????_?????_010_?????_1110011"),"csrrs"	,Uops(BP(ExuAlu.Imm)	,BP(ExuBfu.Null),BP(ExuCsr.Rs)	,DC(ExuIn1)		,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.C),BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Write),BitPat.dontCare(32))),
-		Inst(BitPat("b0011000_00010_00000_000_00000_1110011"),"mret"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Null),BP(ExuCsr.Null),DC(ExuIn1)		,DC(ExuIn2)		,BP.N	,BP.N,BP.N,BP.N,DC(ImmOp)  ,BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Mret)	,BitPat.dontCare(32))),
+		Inst(BitPat("b0011000_00010_00000_000_00000_1110011"),"mret"	,Uops(DC(ExuAlu)		,BP(ExuBfu.Null),BP(ExuCsr.Null),DC(ExuIn1)		,DC(ExuIn2)		,BP.N	,BP.N,BP.N,BP.X,DC(ImmOp)  ,BP(LsuOp.Null)	,DC(LsuAddr)	,BP(CsrOp.Mret)	,BitPat.dontCare(32))),
 	)
 	val exuAlu = new DecodeField[Inst, ExuAlu.Type] {
 		def name = "exuAlu"; def chiselType = ExuAlu()

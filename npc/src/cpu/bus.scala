@@ -70,7 +70,6 @@ class PipeIdEx extends Bundle(){
 }
 class ImmeData extends Bundle{
 	val addr	= Output(UInt((BitWidth).W))
-	val pc		= Output(UInt((BitWidth-2).W))
 
 	val r1Addr	= Input(UInt(RegWidth.W))
 	val r2Addr	= Input(UInt(RegWidth.W))
@@ -83,7 +82,10 @@ class ImmeData extends Bundle{
 }
 class ImmeWbLs extends ImmeData{val reloca	= Output(Bool())}
 class ImmeLsEx extends ImmeWbLs{val ready	= Output(Bool())}
-class ImmeExId extends ImmeLsEx{val update	= Output(Bool())}
+class ImmeExId extends ImmeLsEx{
+	val update	= Output(Bool())
+	val pc		= Output(UInt((BitWidth-2).W))
+}
 class ImmeIdIf extends Bundle{
 	val ready	= Output(Bool())
 	val reloca	= Output(Bool())
