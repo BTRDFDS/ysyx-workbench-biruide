@@ -16,7 +16,6 @@ class exu(val Yosys:Boolean=false) extends Module {
 	val pipeValid	= PipeReg(in.pipe.valid		,out.imme.ready,false.B		,pipeReset)
 	val pipeCsrOp	= PipeReg(in.pipe.csrOp		,out.imme.ready,CsrOp.Null	,pipeReset)
 	val pipeFenceI	= PipeReg(in.pipe.fenceI	,out.imme.ready)
-	// val pipeUpdate	= PipeReg(in.pipe.update	,out.imme.ready)
 	val pipeRdAddr	= PipeReg(in.pipe.rdAddr	,out.imme.ready)
 	val pipeImm		= PipeReg(in.pipe.imm		,out.imme.ready)
 	val pipePc		= PipeReg(in.pipe.pc		,out.imme.ready)
@@ -71,8 +70,8 @@ class exu(val Yosys:Boolean=false) extends Module {
 		(pipeBfu === ExuBfu.Jump)	->(true.B),
 	))
 	out.pipe.csrMesg := Mux1H(Seq(
-		(pipeCsr === ExuCsr.Rs)	->(pipeR1 | pipeImm),
-		(pipeCsr === ExuCsr.Rw)	->(pipeR1),
+		(pipeCsr === ExuCsr.Rs)		->(pipeR1 | pipeImm),
+		(pipeCsr === ExuCsr.Rw)		->(pipeR1),
 		(pipeCsr === ExuCsr.Null)	->(pipeImm),
 	))
 	val shouldBe = Mux(enBfun && ~pipeFenceI,resultAdd,snpc)
@@ -80,7 +79,7 @@ class exu(val Yosys:Boolean=false) extends Module {
 	when(out.imme.ready){noSend := true.B}
 	.elsewhen(pipeValid&&(out.imme.reloca || pipeFenceI)){noSend := false.B}
 
-	ich.fenceI	:= pipeValid&&noSend&&pipeFenceI
+	ich.fenceI		:= pipeValid&&noSend&&pipeFenceI
 	out.imme.ready	:= in.imme.ready || ~pipeValid
 	out.imme.reloca	:= in.imme.reloca || pipeValid&&(noSend&&(in.pipe.pc =/= shouldBe(31,2)||pipeFenceI))
 	out.imme.addr	:= Mux(in.imme.reloca,in.imme.addr,shouldBe)

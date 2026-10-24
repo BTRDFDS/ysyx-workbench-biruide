@@ -100,11 +100,6 @@ object Decoder{
 		def name = "fence"; def genTable(i: Inst) = i.p.fence
 		override def default = BitPat.dontCare(1)
 	}
-	// val update = new DecodeField[Inst, IfuUpdate.Type] {
-	// 	def name = "update"; def chiselType = IfuUpdate()
-	// 	def genTable(i: Inst) = i.p.update
-	// 	override def default = DC(IfuUpdate)
-	// }
 	val r1 = new BoolDecodeField[Inst] {
 		def name = "r1"; def genTable(i: Inst) = i.p.r1
 		override def default = BitPat.dontCare(1)
@@ -192,7 +187,6 @@ class idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.csrAddr:= pipeInstr(31,20)
 	out.pipe.lsuOp	:= Mux(pipeRes===IfuRes.Valid && decoder(Decoder.valid),decoder(Decoder.lsuOp),LsuOp.Null)
 	out.pipe.lsuAddr:= decoder(Decoder.lsuAddr)
-	// out.pipe.update := decoder(Decoder.update)
 	out.pipe.fenceI := decoder(Decoder.fence)
 
 	out.pipe.alu	:= decoder(Decoder.exuAlu)
