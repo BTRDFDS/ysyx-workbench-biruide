@@ -42,7 +42,12 @@ class exu(val Yosys:Boolean=false) extends Module {
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))
 	val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
-	val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeImm)
+	// val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeImm)
+	val input2 = Mux1H(Seq(
+		(pipeIn2 === ExuIn2.R2)	->(pipeR2),
+		(pipeIn2 === ExuIn2.Imm)->(pipeImm),
+		(pipeIn2 === ExuIn2.Sub)->((~pipeR2)+1.U),
+	))
 	val resultAdd = input1 + input2
 	val snpc = Cat(pipePc+1.U,0.U(2.W))
 	out.pipe.result := Mux1H(Seq(
@@ -54,7 +59,7 @@ class exu(val Yosys:Boolean=false) extends Module {
 		(pipeAlu === ExuAlu.Srl)	->(input1 >> input2(4,0)),
 		(pipeAlu === ExuAlu.Or)		->(input1 | input2),
 		(pipeAlu === ExuAlu.And)	->(input1 & input2),
-		(pipeAlu === ExuAlu.Sub)	->(input1 - input2),
+		// (pipeAlu === ExuAlu.Sub)	->(input1 - input2),
 		(pipeAlu === ExuAlu.Sra)	->((input1.asSInt >> input2(4,0)).asUInt),
 		(pipeAlu === ExuAlu.Snpc)	->(snpc),
 		(pipeAlu === ExuAlu.Imm)	->(pipeImm),

@@ -5,7 +5,7 @@ import WidthConsts._
 class wbu(val Yosys:Boolean=false) extends Module {
 	val PcReset:UInt=0x80000000L.U(BitWidth.W)
 	val MstatuseReset = 0x1800.U(BitWidth.W)
-	val ErrorMesg = 2.U(BitWidth.W)
+	val ErrorMesg = 2.U(4.W)
 
 	val in = IO(new Bundle {
 		val pipe = Flipped(new PipeLsWb())
@@ -27,7 +27,7 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	val mtvec		= Reg(UInt(BitWidth.W))
 	val mepc		= Reg(UInt(BitWidth.W))
 	val mstatus		= RegInit(MstatuseReset)
-	val mcause		= RegInit(0.U(BitWidth.W))
+	val mcause		= RegInit(0.U(4.W))
 	val mcycle		= RegInit(0.U(BitWidth.W))
 	val mcycleh		= RegInit(0.U(BitWidth.W))
 	val marchid		= 0x018D08CE.U
@@ -44,7 +44,7 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mstatus	:= pipeCsrMesg}
 	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mtvec.asUInt)		{mtvec		:= pipeCsrMesg}
 	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mepc.asUInt)  || trap)){mepc	:= Mux(trap										,Cat(pipePc,0.U(2.W))	,pipeCsrMesg)}
-	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mcause.asUInt)|| trap)){mcause	:= Mux(pipeCsrOp===CsrOp.Write && ~csrWriteValid,ErrorMesg				,pipeCsrMesg)}
+	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mcause.asUInt)|| trap)){mcause	:= Mux(pipeCsrOp===CsrOp.Write && ~csrWriteValid,ErrorMesg				,pipeCsrMesg(3,0))}
 	when(pipeValid && pipeRdAddr=/=0.U && (pipeCsrOp===CsrOp.Null || (pipeCsrOp===CsrOp.Write && csrWriteValid))){gpr(pipeRdAddr) := pipeResult}
 
 	mcycle := nextMcycle;mcycleh := nextMcycleh
@@ -61,7 +61,7 @@ class wbu(val Yosys:Boolean=false) extends Module {
 		(out.imme.csrAddr===CsrAddr.Mcycleh.asUInt)		-> mcycleh,
 		(out.imme.csrAddr===CsrAddr.Mepc.asUInt)		-> mepc,
 		(out.imme.csrAddr===CsrAddr.Mtvec.asUInt)		-> mtvec,
-		(out.imme.csrAddr===CsrAddr.Mcause.asUInt)		-> mcause,
+		(out.imme.csrAddr===CsrAddr.Mcause.asUInt)		-> Cat(0.U(28.W),mcause),
 		(out.imme.csrAddr===CsrAddr.Mstatus.asUInt)		-> mstatus,
 		(out.imme.csrAddr===CsrAddr.Marchid.asUInt)		-> marchid,
 		(out.imme.csrAddr===CsrAddr.Mvendorid.asUInt)	-> mvendorid,
