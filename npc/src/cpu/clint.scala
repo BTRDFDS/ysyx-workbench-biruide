@@ -29,7 +29,7 @@ class clint extends Module{
 		(addr===ClintAddr.Mtime .asUInt) -> mtime,
 		(addr===ClintAddr.Mtimeh.asUInt) -> mtimeh
 	))
-	axi4.rresp := clintValid
+	axi4.rresp := ~clintValid
 	axi4.arready:= status === ClintStatus.Idle
 	axi4.rvalid := status === ClintStatus.Read
 	//写通道无效
