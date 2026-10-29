@@ -33,8 +33,9 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	val marchid		= 0x018D08CE.U
 	val mvendorid	= 0x79737978.U
 
-	val nextMcycle	= Wire(UInt(BitWidth.W));nextMcycle	:= mcycle + 1.U
-	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= Mux(mcycle === (Fill(BitWidth,1.U)),mcycleh + 1.U,mcycleh)
+	val mcycleAdd = mcycle +& 1.U
+	val nextMcycle	= Wire(UInt(BitWidth.W));nextMcycle	:= mcycleAdd(BitWidth-1,0)
+	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= mcycleh + mcycleAdd(32)
 	val (_,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
 	val trap = pipeValid && ((pipeCsrOp === CsrOp.Trap) || (pipeCsrOp === CsrOp.Write && ~csrWriteValid))
 	val mret = pipeValid && pipeCsrOp === CsrOp.Mret

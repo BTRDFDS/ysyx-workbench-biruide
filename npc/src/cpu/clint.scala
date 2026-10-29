@@ -25,19 +25,11 @@ class clint extends Module{
 	axi4.arready := status === ClintStatus.Idle
 	when(status === ClintStatus.Idle & axi4.arvalid){addr := axi4.araddr}
 	val (clintEnum,clintValid) = ClintAddr.safe(addr)
-	axi4.rdata := 0.U
-	axi4.rresp := 0.U
-	when(clintValid){
-		switch(clintEnum){
-			is(ClintAddr.Mtime)	{axi4.rdata	:= mtime }
-			is(ClintAddr.Mtimeh){axi4.rdata	:= mtimeh}
-		}
-	}otherwise{
-		switch(status){
-			is(ClintStatus.Read){axi4.rresp := 0.U}
-			is(ClintStatus.Idle){axi4.rresp := 1.U}
-		}
-	}
+	axi4.rdata := Mux1H(Seq(
+		(addr===ClintAddr.Mtime .asUInt) -> mtime,
+		(addr===ClintAddr.Mtimeh.asUInt) -> mtimeh
+	))
+	axi4.rresp := clintValid
 	axi4.arready:= status === ClintStatus.Idle
 	axi4.rvalid := status === ClintStatus.Read
 	//写通道无效
