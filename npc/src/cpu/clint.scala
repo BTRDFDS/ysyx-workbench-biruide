@@ -33,7 +33,7 @@ class clint extends Module{
 	axi4.arready:= status === ClintStatus.Idle
 	axi4.rvalid := status === ClintStatus.Read
 	//写通道无效
-	axi4.awready	:= false.B
+	axi4.awready:= false.B
 	axi4.wready	:= false.B
 	axi4.bvalid	:= false.B
 	axi4.bresp	:= 1.U//但凡想写就都是false
