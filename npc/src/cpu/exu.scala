@@ -24,6 +24,7 @@ class exu(val Yosys:Boolean=false) extends Module {
 	val pipeR2		= PipeReg(in.pipe.r2		,out.imme.ready)
 	val pipeLsuOp	= PipeReg(in.pipe.lsuOp		,out.imme.ready,LsuOp.Null	,pipeReset)
 	val pipeLsuAddr	= PipeReg(in.pipe.lsuAddr	,out.imme.ready)
+	val pipelsuSext	= PipeReg(in.pipe.lsuSext	,out.imme.ready)
 	val pipeAlu		= PipeReg(in.pipe.alu		,out.imme.ready)
 	val pipeBfu		= PipeReg(in.pipe.bfu		,out.imme.ready)
 	val pipeCsr		= PipeReg(in.pipe.csr		,out.imme.ready)
@@ -32,6 +33,7 @@ class exu(val Yosys:Boolean=false) extends Module {
 
 	out.pipe.lsuAddr:= pipeLsuAddr
 	out.pipe.lsuOp	:= pipeLsuOp
+	out.pipe.lsuSext:= pipelsuSext
 	out.pipe.r2		:= pipeR2
 	out.pipe.pc		:= pipePc
 	out.pipe.csrOp	:= pipeCsrOp

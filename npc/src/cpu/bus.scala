@@ -43,6 +43,7 @@ class PipeLsWb extends Bundle{
 class PipeExLs extends PipeLsWb(){
 	val lsuOp	= Output(LsuOp())
 	val lsuAddr	= Output(LsuAddr())
+	val lsuSext	= Output(Bool())
 	val r2		= Output(UInt(BitWidth.W))
 }
 class PipeIdEx extends Bundle(){
@@ -63,7 +64,8 @@ class PipeIdEx extends Bundle(){
 
 	val lsuOp	= Output(LsuOp())
 	val lsuAddr	= Output(LsuAddr())
-	
+	val lsuSext	= Output(Bool())
+
 	val rdAddr	= Output(UInt(RegWidth.W))
 	val csrOp	= Output(CsrOp())
 	val csrAddr	= Output(UInt(CsrWidth.W))
