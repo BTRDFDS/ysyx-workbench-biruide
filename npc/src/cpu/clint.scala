@@ -13,8 +13,9 @@ class clint extends Module{
 
 	val mtime  = RegInit(0.U((BitWidth).W))
 	val mtimeh = RegInit(0.U((BitWidth).W))
-	mtime  := mtime + 1.U
-	mtimeh := Mux(mtime === (Fill(BitWidth,1.U)),mtimeh + 1.U,mtimeh)
+	val mtimeAdd = mtime +& 1.U
+	mtime  := mtimeAdd(31,0)
+	mtimeh := mtimeh + mtimeAdd(32)
 
 	val status = RegInit(ClintStatus.Idle)
 	val addr = RegInit(0.U(BitWidth.W))
