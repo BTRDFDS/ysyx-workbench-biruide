@@ -153,7 +153,7 @@ sta:verilogSta
 syn:verilogSta
 	@echo sta-begin
 	time make -C $(YOSYS_STA_HOME) syn DESIGN=ysyx_26020046 RTL_FILES="$(srcVerilogSta)" $(YOSYS_CONFIG)
-synAll:verilogSta syn
+synAll:verilogSta sta
 	for i in $(srcVerilogSta); do \
 		time make -C $(YOSYS_STA_HOME) syn DESIGN=$$(basename $$i .sv) RTL_FILES=$${i} $(YOSYS_CONFIG); \
 	done

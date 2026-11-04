@@ -24,7 +24,6 @@ inline void NpcFinish(const char* msg,int code){
 	stop=true;
 	}
 inline void printOver(){
-	printCounter();
 	const char *regsName[] = {
 	"pc", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
 	"s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
@@ -32,6 +31,7 @@ inline void printOver(){
 	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
 	};//A=10 B=11
 	if(returnCode==0){	printf("\33[1;32m HIT GOOD TRAP\33[0m\n");
+		printCounter();
 	}else{				printf("\33[1;41m HIT BAD TRAP \33[0m\n");
 		for(int i=0;i<32;i++){
 			printf("[%2d %s]%8x ",i,regsName[i],regs[i]);

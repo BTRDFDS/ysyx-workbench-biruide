@@ -26,7 +26,12 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	val gpr = Reg(Vec(RegNum, UInt(BitWidth.W)))
 	val mtvec		= Reg(UInt(BitWidth.W))
 	val mepc		= Reg(UInt(BitWidth.W))
-	val mstatus		= RegInit(MstatuseReset)
+	
+	// val mstatus		= RegInit(MstatuseReset)
+	val mpie		= RegInit(0.U(1.W))
+	val mie			= RegInit(0.U(1.W))
+	val mstatus = Cat(0.U(19.W),0b11.U(2.W),0.U(3.W),mpie,0.U(3.W),mie,0.U(3.W))
+
 	val mcause		= RegInit(0.U(4.W))
 	val mcycle		= RegInit(0.U(BitWidth.W))
 	val mcycleh		= RegInit(0.U(BitWidth.W))
@@ -42,11 +47,21 @@ class wbu(val Yosys:Boolean=false) extends Module {
 
 	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycle.asUInt)		{nextMcycle	:= pipeCsrMesg}
 	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycleh.asUInt)	{nextMcycleh:= pipeCsrMesg}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mstatus	:= pipeCsrMesg}
+	// when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mstatus	:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mpie		:= pipeCsrMesg(7)}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mie		:= pipeCsrMesg(3)}
 	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mtvec.asUInt)		{mtvec		:= pipeCsrMesg}
 	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mepc.asUInt)  || trap)){mepc	:= Mux(trap										,Cat(pipePc,0.U(2.W))	,pipeCsrMesg)}
 	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mcause.asUInt)|| trap)){mcause	:= Mux(pipeCsrOp===CsrOp.Write && ~csrWriteValid,ErrorMesg				,pipeCsrMesg(3,0))}
 	when(pipeValid && pipeRdAddr=/=0.U && (pipeCsrOp===CsrOp.Null || (pipeCsrOp===CsrOp.Write && csrWriteValid))){gpr(pipeRdAddr) := pipeResult}
+
+
+//TODO
+// mstatus := Cat(mstatus(31,13),0b11.U(2.W),mstatus(10,3),0.U(1.W),mstatus(2),mstatus(3),mstatus(0))
+// mstatus := Cat(mstatus(31,13),0b00.U(2.W),mstatus(10,3),mstatus(1),mstatus(2),1.U(1.W),mstatus(0))
+
+
+
 
 	mcycle := nextMcycle;mcycleh := nextMcycleh
 	out.imme.addr	:= Mux(pipeCsrOp === CsrOp.Mret,mepc,mtvec)
