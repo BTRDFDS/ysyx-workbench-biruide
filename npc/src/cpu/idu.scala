@@ -18,7 +18,6 @@ object BP {
 	def dc(w: Int): BitPat = BitPat.dontCare(w)
 }
 object ImmOp extends ChiselEnum{val I,S,B,U,J,C,E,T=Value}
-object DC {def apply[E <: ChiselEnum](t: E): BitPat = BitPat.dontCare(t().getWidth)}
 object Decoder{
 	case class Uops(
 		exuAlu:BitPat,exuBfu:BitPat,exuCsr:BitPat,exuIn1:BitPat,exuIn2:BitPat,
@@ -29,7 +28,7 @@ object Decoder{
 		)
 	case class Inst(bitPat: BitPat, mnem: String, p: Uops) extends DecodePattern
 	val insts: Seq[Inst] = Seq(													//ExuAlu		,ExuBfu			,ExuCsr			,ExuIn1			,ExuIn2			,Fenc	,R1  ,R2  ,Rd  ,Imme		,LsuOp			,LsuAddr		,sext,CsrOp			,ImmE
-		Inst(BitPat("b???????_?????_?????_???_?????_0110111"),"lui"		,Uops(BP(ExuAlu.Imm)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,DC(ExuIn1)		,DC(ExuIn2)		,BP.N	,BP.N,BP.N,BP.Y,BP(ImmOp.U)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
+		Inst(BitPat("b???????_?????_?????_???_?????_0110111"),"lui"		,Uops(BP(ExuAlu.Imm)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP.dc(ExuIn1)	,BP.dc(ExuIn2)	,BP.N	,BP.N,BP.N,BP.Y,BP(ImmOp.U)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b???????_?????_?????_???_?????_0010111"),"auipc"	,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.Pc)	,BP(ExuIn2.Imm)	,BP.N	,BP.N,BP.N,BP.Y,BP(ImmOp.U)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b???????_?????_?????_???_?????_1101111"),"jal"		,Uops(BP(ExuAlu.Snpc)	,BP(ExuBfu.Jump),BP.dc(ExuCsr)	,BP(ExuIn1.Pc)	,BP(ExuIn2.Imm)	,BP.N	,BP.N,BP.N,BP.Y,BP(ImmOp.J)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b???????_?????_?????_000_?????_1100111"),"jalr"	,Uops(BP(ExuAlu.Snpc)	,BP(ExuBfu.Jump),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
@@ -76,27 +75,27 @@ object Decoder{
 	val exuAlu = new DecodeField[Inst, ExuAlu.Type] {
 		def name = "exuAlu"; def chiselType = ExuAlu()
 		def genTable(i: Inst) = i.p.exuAlu
-		override def default = DC(ExuAlu)
+		override def default = BP.dc(ExuAlu)
 	}
 	val exuBfu = new DecodeField[Inst, ExuBfu.Type] {
 		def name = "exuBfu"; def chiselType = ExuBfu()
 		def genTable(i: Inst) = i.p.exuBfu
-		override def default = DC(ExuBfu)
+		override def default = BP.dc(ExuBfu)
 	}
 	val exuCsr = new DecodeField[Inst, ExuCsr.Type] {
 		def name = "exuCsr"; def chiselType = ExuCsr()
 		def genTable(i: Inst) = i.p.exuCsr
-		override def default = DC(ExuCsr)
+		override def default = BP.dc(ExuCsr)
 	}
 	val exuIn1 = new DecodeField[Inst, ExuIn1.Type] {
 		def name = "exuIn1"; def chiselType = ExuIn1()
 		def genTable(i: Inst) = i.p.exuIn1
-		override def default = DC(ExuIn1)
+		override def default = BP.dc(ExuIn1)
 	}
 	val exuIn2 = new DecodeField[Inst, ExuIn2.Type] {
 		def name = "exuIn2"; def chiselType = ExuIn2()
 		def genTable(i: Inst) = i.p.exuIn2
-		override def default = DC(ExuIn2)
+		override def default = BP.dc(ExuIn2)
 	}
 	val fence = new BoolDecodeField[Inst] {
 		def name = "fence"; def genTable(i: Inst) = i.p.fence
@@ -117,17 +116,17 @@ object Decoder{
 	val imm = new DecodeField[Inst, ImmOp.Type] {
 		def name = "imm"; def chiselType = ImmOp()
 		def genTable(i: Inst) = i.p.imm
-		override def default = DC(ImmOp)
+		override def default = BP.dc(ImmOp)
 	}
 	val lsuOp = new DecodeField[Inst, LsuOp.Type] {
 		def name = "lsuOp"; def chiselType = LsuOp()
 		def genTable(i: Inst) = i.p.lsuOp
-		override def default = DC(LsuOp)
+		override def default = BP.dc(LsuOp)
 	}
 	val lsuAddr = new DecodeField[Inst, LsuAddr.Type] {
 		def name = "lsuAddr"; def chiselType = LsuAddr()
 		def genTable(i: Inst) = i.p.lsuAddr
-		override def default = DC(LsuAddr)
+		override def default = BP.dc(LsuAddr)
 	}
 	val sext = new BoolDecodeField[Inst] {
 		def name = "sext"; def genTable(i: Inst) = i.p.sext
@@ -136,7 +135,7 @@ object Decoder{
 	val csrOp = new DecodeField[Inst, CsrOp.Type] {
 		def name = "csrOp"; def chiselType = CsrOp()
 		def genTable(i: Inst) = i.p.csrOp
-		override def default = DC(CsrOp)
+		override def default = BP.dc(CsrOp)
 	}
 	val immT = new DecodeField[Inst, UInt] {
 		def name = "immT"
