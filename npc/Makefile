@@ -56,7 +56,7 @@ VERILATOR_CFLAGS += --trace-fst --trace-structs --trace-params --no-trace-top
 
 LDFLAGS += -lreadline
 LDFLAGS += -L$(NPC_HOME)/test/cpp/lib
-# LDFLAGS += -lcapstone
+LDFLAGS += -lcapstone
 LDFLAGS += -ldl
 
 CXXFLAGS += -I/$(NEMU_HOME)/include

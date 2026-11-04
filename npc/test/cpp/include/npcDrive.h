@@ -31,8 +31,8 @@ inline void printOver(){
 	"a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
 	"s8", "s9", "sA", "sB", "t3", "t4", "t5", "t6"
 	};//A=10 B=11
-	if(returnCode==0){	printf("\33[1;32m HIT GOOD TRAP\n \33[0m");
-	}else{				printf("\33[1;41m HIT BAD TRAP \n \33[0m");
+	if(returnCode==0){	printf("\33[1;32m HIT GOOD TRAP\33[0m\n");
+	}else{				printf("\33[1;41m HIT BAD TRAP \33[0m\n");
 		for(int i=0;i<32;i++){
 			printf("[%2d %s]%8x ",i,regsName[i],regs[i]);
 			if(i%8==7)printf("\n");
@@ -57,8 +57,8 @@ void NpcToDrive(const char* logFileName,char *argv){
 	#else
 		for(numCycle=0;(numCycle<RunstopTime||RunstopTime==0)&&(!stop);numCycle++){NpcRun();}
 	#endif
-	NpcTraceClose();
 	printOver();
+	NpcTraceClose();
 }
 void NpcsdbRun(uint32_t times){
 	for(uint32_t i=0;(i<times||times==0)&&(!stop)&&NpcsdbCheck();i++){NpcRun();numCycle++;}

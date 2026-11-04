@@ -58,7 +58,7 @@ void NpcTraceCloseFile(){
 }
 
 void NpcTraceInitCapstone(){
-	#ifdef  NPC_I_TRACE
+	#if  defined(NPC_I_TRACE) || defined(NPC_DIFFTEST)
 	cs_err err = cs_open(CS_ARCH_RISCV, CS_MODE_RISCV32, &handle);
 	if (err != CS_ERR_OK) {
 		printf("ERROR Capstone:%s\n", cs_strerror(err));
@@ -69,7 +69,7 @@ void NpcTraceInitCapstone(){
 }
 
 bool NpcTraceCapstone(uint32_t incode,char*mnemonic,char*op){
-	#ifdef  NPC_I_TRACE
+	#if  defined(NPC_I_TRACE) || defined(NPC_DIFFTEST)
 	if(mnemonic==NULL){printf("err:mnemonic");exit(-1);}
 	if(op==NULL){printf("err:op");exit(-1);}
 	cs_insn *insn;
@@ -89,7 +89,7 @@ bool NpcTraceCapstone(uint32_t incode,char*mnemonic,char*op){
 }
 
 void NpcTraceCloseCapstone(){
-	#ifdef  NPC_I_TRACE
+	#if  defined(NPC_I_TRACE) || defined(NPC_DIFFTEST)
 	cs_close(&handle);
 	#endif
 }
