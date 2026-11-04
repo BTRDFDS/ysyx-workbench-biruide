@@ -64,7 +64,7 @@ class lsu(val Yosys:Boolean=false) extends Module{
 	// ))
 	bar.size	:= pipeLsuAddr.asUInt
 	val rdata = Reg(UInt(BitWidth.W))
-	when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> (8.U * pipeResult(1,0))}
+	when(state === MemStatus.Call && bar.ready){rdata := bar.rdata >> Cat(pipeResult(1,0),0.U(3.W))}
 	out.pipe.result := Mux(pipeLsuOp =/= LsuOp.Load,pipeResult,Mux1H(Seq(
 		(pipeLsuAddr === LsuAddr.B)	-> Cat(Fill(BitWidth- 8,pipeSext&rdata( 7)),rdata( 7,0)),
 		(pipeLsuAddr === LsuAddr.H)	-> Cat(Fill(BitWidth-16,pipeSext&rdata(15)),rdata(15,0)),
