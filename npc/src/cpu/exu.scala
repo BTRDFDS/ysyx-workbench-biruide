@@ -24,7 +24,7 @@ class exu(val Yosys:Boolean=false) extends Module {
 	val pipeR2		= PipeReg(in.pipe.r2		,out.imme.ready)
 	val pipeLsuOp	= PipeReg(in.pipe.lsuOp		,out.imme.ready,LsuOp.Null	,pipeReset)
 	val pipeLsuAddr	= PipeReg(in.pipe.lsuAddr	,out.imme.ready)
-	val pipelsuSext	= PipeReg(in.pipe.lsuSext	,out.imme.ready)
+	val pipeSext	= PipeReg(in.pipe.sext	,out.imme.ready)
 	val pipeAlu		= PipeReg(in.pipe.alu		,out.imme.ready)
 	val pipeBfu		= PipeReg(in.pipe.bfu		,out.imme.ready)
 	val pipeCsr		= PipeReg(in.pipe.csr		,out.imme.ready)
@@ -33,7 +33,7 @@ class exu(val Yosys:Boolean=false) extends Module {
 
 	out.pipe.lsuAddr:= pipeLsuAddr
 	out.pipe.lsuOp	:= pipeLsuOp
-	out.pipe.lsuSext:= pipelsuSext
+	out.pipe.sext:= pipeSext
 	out.pipe.r2		:= pipeR2
 	out.pipe.pc		:= pipePc
 	out.pipe.csrOp	:= pipeCsrOp
@@ -43,8 +43,13 @@ class exu(val Yosys:Boolean=false) extends Module {
 
 	val enBfun = WireInit(false.B)
 	val result = WireInit(0.U(BitWidth.W))
-	val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
+	// val input1 = Mux(pipeIn1 === ExuIn1.R1, pipeR1, Cat(pipePc,0.U(2.W)))
 	// val input2 = Mux(pipeIn2 === ExuIn2.R2, pipeR2, pipeImm)
+	val input1 = Mux1H(Seq(
+		(pipeIn1 === ExuIn1.R1)	->(pipeR1),
+		(pipeIn1 === ExuIn1.Pc)	->(Cat(pipePc,0.U(2.W))),
+		(pipeIn1 === ExuIn1.Sll)->(Reverse(pipeR1)),
+	))
 	val input2 = Mux1H(Seq(
 		(pipeIn2 === ExuIn2.R2)	->(pipeR2),
 		(pipeIn2 === ExuIn2.Imm)->(pipeImm),
@@ -52,17 +57,19 @@ class exu(val Yosys:Boolean=false) extends Module {
 	))
 	val resultAdd = input1 + input2
 	val snpc = Cat(pipePc+1.U,0.U(2.W))
+	val sraInput = Cat(pipeSext&&input1(31),input1)
+	val sraOutput= (sraInput.asSInt >> input2(4,0))(31,0).asUInt
 	out.pipe.result := Mux1H(Seq(
 		(pipeAlu === ExuAlu.Add)	->(resultAdd),//input1 + input2
-		(pipeAlu === ExuAlu.Sll)	->((input1 << input2(4,0))(31,0)),
+		(pipeAlu === ExuAlu.Sll)	->(Reverse(sraOutput)),//(input1 << input2(4,0))(31,0)
 		(pipeAlu === ExuAlu.Slt)	->(input1.asSInt < input2.asSInt),
 		(pipeAlu === ExuAlu.Sltu)	->(input1 < input2),
 		(pipeAlu === ExuAlu.Xor)	->(input1 ^ input2),
-		(pipeAlu === ExuAlu.Srl)	->(input1 >> input2(4,0)),
+		(pipeAlu === ExuAlu.Srl)	->(sraOutput),//input1 >> input2(4,0)
 		(pipeAlu === ExuAlu.Or)		->(input1 | input2),
 		(pipeAlu === ExuAlu.And)	->(input1 & input2),
 		// (pipeAlu === ExuAlu.Sub)	->(input1 - input2),
-		(pipeAlu === ExuAlu.Sra)	->((input1.asSInt >> input2(4,0)).asUInt),
+		// (pipeAlu === ExuAlu.Sra)	->((input1.asSInt >> input2(4,0)).asUInt),
 		(pipeAlu === ExuAlu.Snpc)	->(snpc),
 		(pipeAlu === ExuAlu.Imm)	->(pipeImm),
 	))
@@ -105,5 +112,7 @@ class exu(val Yosys:Boolean=false) extends Module {
 		dontTouch(result)
 		dontTouch(shouldBe)
 		dontTouch(noSend)
+		dontTouch(sraInput)
+		dontTouch(sraOutput)
 	}
 }

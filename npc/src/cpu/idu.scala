@@ -24,11 +24,11 @@ object Decoder{
 		exuAlu:BitPat,exuBfu:BitPat,exuCsr:BitPat,exuIn1:BitPat,exuIn2:BitPat,
 		fence:BitPat,//update:BitPat,
 		r1:BitPat,r2:BitPat,rd:BitPat,imm:BitPat,
-		lsuOp:BitPat,lsuAddr:BitPat,lsuSext:BitPat,
+		lsuOp:BitPat,lsuAddr:BitPat,sext:BitPat,
 		csrOp:BitPat,immT:BitPat,
 		)
 	case class Inst(bitPat: BitPat, mnem: String, p: Uops) extends DecodePattern
-	val insts: Seq[Inst] = Seq(													//ExuAlu		,ExuBfu			,ExuCsr			,ExuIn1			,ExuIn2			,Fenc	,R1  ,R2  ,Rd  ,Imme		,LsuOp			,LsuAddr		,lsUs,CsrOp			,ImmE
+	val insts: Seq[Inst] = Seq(													//ExuAlu		,ExuBfu			,ExuCsr			,ExuIn1			,ExuIn2			,Fenc	,R1  ,R2  ,Rd  ,Imme		,LsuOp			,LsuAddr		,sext,CsrOp			,ImmE
 		Inst(BitPat("b???????_?????_?????_???_?????_0110111"),"lui"		,Uops(BP(ExuAlu.Imm)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,DC(ExuIn1)		,DC(ExuIn2)		,BP.N	,BP.N,BP.N,BP.Y,BP(ImmOp.U)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b???????_?????_?????_???_?????_0010111"),"auipc"	,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.Pc)	,BP(ExuIn2.Imm)	,BP.N	,BP.N,BP.N,BP.Y,BP(ImmOp.U)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b???????_?????_?????_???_?????_1101111"),"jal"		,Uops(BP(ExuAlu.Snpc)	,BP(ExuBfu.Jump),BP.dc(ExuCsr)	,BP(ExuIn1.Pc)	,BP(ExuIn2.Imm)	,BP.N	,BP.N,BP.N,BP.Y,BP(ImmOp.J)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
@@ -53,17 +53,17 @@ object Decoder{
 		Inst(BitPat("b???????_?????_?????_100_?????_0010011"),"xori"	,Uops(BP(ExuAlu.Xor)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b???????_?????_?????_110_?????_0010011"),"ori"		,Uops(BP(ExuAlu.Or)		,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b???????_?????_?????_111_?????_0010011"),"andi"	,Uops(BP(ExuAlu.And)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
-		Inst(BitPat("b0000000_?????_?????_001_?????_0010011"),"slli"	,Uops(BP(ExuAlu.Sll)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
-		Inst(BitPat("b0000000_?????_?????_101_?????_0010011"),"srli"	,Uops(BP(ExuAlu.Srl)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
-		Inst(BitPat("b0100000_?????_?????_101_?????_0010011"),"srai"	,Uops(BP(ExuAlu.Sra)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
+		Inst(BitPat("b0000000_?????_?????_001_?????_0010011"),"slli"	,Uops(BP(ExuAlu.Sll)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.Sll)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.N,BP(CsrOp.Null)	,BP.dc(32)		)),
+		Inst(BitPat("b0000000_?????_?????_101_?????_0010011"),"srli"	,Uops(BP(ExuAlu.Srl)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.N,BP(CsrOp.Null)	,BP.dc(32)		)),
+		Inst(BitPat("b0100000_?????_?????_101_?????_0010011"),"srai"	,Uops(BP(ExuAlu.Srl)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.Y,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b0000000_?????_?????_000_?????_0110011"),"add"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b0100000_?????_?????_000_?????_0110011"),"sub"		,Uops(BP(ExuAlu.Add)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.Sub)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
-		Inst(BitPat("b0000000_?????_?????_001_?????_0110011"),"sll"		,Uops(BP(ExuAlu.Sll)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
+		Inst(BitPat("b0000000_?????_?????_001_?????_0110011"),"sll"		,Uops(BP(ExuAlu.Sll)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.Sll)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.N,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b0000000_?????_?????_010_?????_0110011"),"slt"		,Uops(BP(ExuAlu.Slt)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b0000000_?????_?????_011_?????_0110011"),"sltu"	,Uops(BP(ExuAlu.Sltu)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b0000000_?????_?????_100_?????_0110011"),"xor"		,Uops(BP(ExuAlu.Xor)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
-		Inst(BitPat("b0000000_?????_?????_101_?????_0110011"),"srl"		,Uops(BP(ExuAlu.Srl)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
-		Inst(BitPat("b0100000_?????_?????_101_?????_0110011"),"sra"		,Uops(BP(ExuAlu.Sra)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
+		Inst(BitPat("b0000000_?????_?????_101_?????_0110011"),"srl"		,Uops(BP(ExuAlu.Srl)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.N,BP(CsrOp.Null)	,BP.dc(32)		)),
+		Inst(BitPat("b0100000_?????_?????_101_?????_0110011"),"sra"		,Uops(BP(ExuAlu.Srl)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.Y,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b0000000_?????_?????_110_?????_0110011"),"or"		,Uops(BP(ExuAlu.Or)		,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b0000000_?????_?????_111_?????_0110011"),"and"		,Uops(BP(ExuAlu.And)	,BP(ExuBfu.Null),BP.dc(ExuCsr)	,BP(ExuIn1.R1)	,BP(ExuIn2.R2)	,BP.N	,BP.Y,BP.Y,BP.Y,BP(ImmOp.I)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Null)	,BP.dc(32)		)),
 		Inst(BitPat("b???????_?????_?????_001_?????_1110011"),"csrrw"	,Uops(BP(ExuAlu.Imm)	,BP(ExuBfu.Null),BP(ExuCsr.Rw)	,BP.dc(ExuIn1)	,BP(ExuIn2.Imm)	,BP.N	,BP.Y,BP.N,BP.Y,BP(ImmOp.C)	,BP(LsuOp.Null)	,BP.dc(LsuAddr)	,BP.X,BP(CsrOp.Write),BP.dc(32)		)),
@@ -129,8 +129,8 @@ object Decoder{
 		def genTable(i: Inst) = i.p.lsuAddr
 		override def default = DC(LsuAddr)
 	}
-	val lsuSext = new BoolDecodeField[Inst] {
-		def name = "lsuSext"; def genTable(i: Inst) = i.p.lsuSext
+	val sext = new BoolDecodeField[Inst] {
+		def name = "sext"; def genTable(i: Inst) = i.p.sext
 		override def default = BitPat.dontCare(1)
 	}
 	val csrOp = new DecodeField[Inst, CsrOp.Type] {
@@ -193,7 +193,7 @@ class idu(val Yosys:Boolean=false) extends Module{
 	out.pipe.csrAddr:= pipeInstr(31,20)
 	out.pipe.lsuOp	:= Mux(pipeRes===IfuRes.Valid && decoder(Decoder.valid),decoder(Decoder.lsuOp),LsuOp.Null)
 	out.pipe.lsuAddr:= decoder(Decoder.lsuAddr)
-	out.pipe.lsuSext	:= decoder(Decoder.lsuSext)
+	out.pipe.sext	:= decoder(Decoder.sext)
 	out.pipe.fenceI := decoder(Decoder.fence)
 
 	out.pipe.alu	:= decoder(Decoder.exuAlu)

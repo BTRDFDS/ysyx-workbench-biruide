@@ -6,7 +6,7 @@ object MemStatus extends ChiselEnum{val Call,Back = Value}
 object IfuRes extends ChiselEnum {val Null,Valid,Un4b,Fall=Value}
 object IfuUpdate extends ChiselEnum {val Null,Branch,Jal,Jalr=Value}
 object Jump extends ChiselEnum {val Null,Suce,Chag,Nchg=Value}
-object ExuAlu extends ChiselEnum {val Add,Sll,Slt,Sltu,Xor,Srl,Or,And,Sra,Snpc,Imm = Value}
+object ExuAlu extends ChiselEnum {val Add,Sll,Slt,Sltu,Xor,Srl,Or,And,Snpc,Imm = Value}//,Sub,Sra
 // object ExuBfu extends ChiselEnum {
 // 	val Beq	= Value(0b000.U)
 // 	val Bne	= Value(0b001.U)
@@ -20,7 +20,7 @@ object ExuAlu extends ChiselEnum {val Add,Sll,Slt,Sltu,Xor,Srl,Or,And,Sra,Snpc,I
 object ExuBfu extends ChiselEnum {val Beq,Bne,Null,Jump,Blt,Bge,Bltu,Bgeu = Value}
 object ExuCsr extends ChiselEnum {val Rs,Rw,Null = Value}
 // object ExuRes extends ChiselEnum {val Alu,Snpc,Imm,Null = Value}
-object ExuIn1 extends ChiselEnum {val R1,Pc = Value}
+object ExuIn1 extends ChiselEnum {val R1,Pc,Sll = Value}
 object ExuIn2 extends ChiselEnum {val R2,Imm,Sub = Value}
 object LsuAddr extends ChiselEnum {
 	// val B	= Value(0b000.U)
