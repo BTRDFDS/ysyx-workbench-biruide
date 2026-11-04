@@ -149,7 +149,7 @@ object Decoder{
 		override def default = n
 	}
 
-	val fields: Seq[DecodeField[Inst, _ <: Data]] = Seq(exuAlu,exuBfu,exuCsr,exuIn1,exuIn2,fence,r1,r2,rd,imm,lsuOp,lsuAddr,lsuSext,csrOp,immT,valid)
+	val fields: Seq[DecodeField[Inst, _ <: Data]] = Seq(exuAlu,exuBfu,exuCsr,exuIn1,exuIn2,fence,r1,r2,rd,imm,lsuOp,lsuAddr,sext,csrOp,immT,valid)
 	val table = new DecodeTable(insts, fields)
 }
 
