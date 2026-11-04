@@ -36,15 +36,15 @@ object LsuAddr extends ChiselEnum {
 }
 object LsuOp extends ChiselEnum {val Null,Load,Store = Value}
 object CsrOp extends ChiselEnum {val Mret,Trap,Write,Null = Value}
-object CsrAddr extends ChiselEnum {
-	val Mstatus		=Value(0x300.U)
-	val Mtvec		=Value(0x305.U)
-	val Mepc		=Value(0x341.U)
-	val Mcause		=Value(0x342.U)
-    val Mcycle		=Value(0xB00.U)
-	val Mcycleh		=Value(0xB80.U)
-	val Mvendorid	=Value(0xF11.U)
-	val Marchid		=Value(0xF12.U)
+object CsrAddr extends ChiselEnum {val Mstatus,Mtvec,Mepc,Mcause,Mcycle,Mcycleh,Mvendorid,Marchid = Value
+	// val Mstatus		=Value(0x300.U)
+	// val Mtvec		=Value(0x305.U)
+	// val Mepc		=Value(0x341.U)
+	// val Mcause		=Value(0x342.U)
+    // val Mcycle		=Value(0xB00.U)
+	// val Mcycleh		=Value(0xB80.U)
+	// val Mvendorid	=Value(0xF11.U)
+	// val Marchid		=Value(0xF12.U)
 }
 object Op extends ChiselEnum {
 	val Iload	= Value(0b0000011.U)

@@ -41,19 +41,20 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	val mcycleAdd = mcycle +& 1.U
 	val nextMcycle	= Wire(UInt(BitWidth.W));nextMcycle	:= mcycleAdd(BitWidth-1,0)
 	val nextMcycleh	= Wire(UInt(BitWidth.W));nextMcycleh:= mcycleh + mcycleAdd(32)
-	val (_,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
-	val trap = pipeValid && ((pipeCsrOp === CsrOp.Trap) || (pipeCsrOp === CsrOp.Write && ~csrWriteValid))
+	// val (_,csrWriteValid)=CsrAddr.safe(pipeCsrAddr(CsrWidth-1,0))
+	// val trap = pipeValid && ((pipeCsrOp === CsrOp.Trap) || (pipeCsrOp === CsrOp.Write && ~csrWriteValid))
+	val trap = pipeValid && pipeCsrOp === CsrOp.Trap
 	val mret = pipeValid && pipeCsrOp === CsrOp.Mret
 
-	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycle.asUInt)		{nextMcycle	:= pipeCsrMesg}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycleh.asUInt)	{nextMcycleh:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycle)	{nextMcycle	:= pipeCsrMesg}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mcycleh)	{nextMcycleh:= pipeCsrMesg}
 	// when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mstatus	:= pipeCsrMesg}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mpie		:= pipeCsrMesg(7)}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus.asUInt)	{mie		:= pipeCsrMesg(3)}
-	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mtvec.asUInt)		{mtvec		:= pipeCsrMesg}
-	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mepc.asUInt)  || trap)){mepc	:= Mux(trap										,Cat(pipePc,0.U(2.W))	,pipeCsrMesg)}
-	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mcause.asUInt)|| trap)){mcause	:= Mux(pipeCsrOp===CsrOp.Write && ~csrWriteValid,ErrorMesg				,pipeCsrMesg(3,0))}
-	when(pipeValid && pipeRdAddr=/=0.U && (pipeCsrOp===CsrOp.Null || (pipeCsrOp===CsrOp.Write && csrWriteValid))){gpr(pipeRdAddr) := pipeResult}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus)	{mpie		:= pipeCsrMesg(7)}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mstatus)	{mie		:= pipeCsrMesg(3)}
+	when(pipeValid && pipeCsrOp===CsrOp.Write && pipeCsrAddr === CsrAddr.Mtvec)		{mtvec		:= pipeCsrMesg}
+	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mepc)  || trap)){mepc	:= Mux(trap,Cat(pipePc,0.U(2.W)),pipeCsrMesg)}
+	when(pipeValid && ((pipeCsrOp===CsrOp.Write && pipeCsrAddr===CsrAddr.Mcause)|| trap)){mcause	:= pipeCsrMesg(3,0)}
+	when(pipeValid && pipeRdAddr=/=0.U && (pipeCsrOp===CsrOp.Null || pipeCsrOp===CsrOp.Write)){gpr(pipeRdAddr) := pipeResult}
 
 
 //TODO
@@ -73,14 +74,14 @@ class wbu(val Yosys:Boolean=false) extends Module {
 	out.imme.r1Out	:= Mux(out.imme.r1Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r1Addr===pipeRdAddr,pipeResult,gpr(out.imme.r1Addr)))
 	out.imme.r2Out	:= Mux(out.imme.r2Addr === 0.U, 0.U,Mux(pipeValid&&out.imme.r2Addr===pipeRdAddr,pipeResult,gpr(out.imme.r2Addr)))
 	out.imme.csrOut := Mux1H(Seq(
-		(out.imme.csrAddr===CsrAddr.Mcycle.asUInt)		-> mcycle,
-		(out.imme.csrAddr===CsrAddr.Mcycleh.asUInt)		-> mcycleh,
-		(out.imme.csrAddr===CsrAddr.Mepc.asUInt)		-> mepc,
-		(out.imme.csrAddr===CsrAddr.Mtvec.asUInt)		-> mtvec,
-		(out.imme.csrAddr===CsrAddr.Mcause.asUInt)		-> Cat(0.U(28.W),mcause),
-		(out.imme.csrAddr===CsrAddr.Mstatus.asUInt)		-> mstatus,
-		(out.imme.csrAddr===CsrAddr.Marchid.asUInt)		-> marchid,
-		(out.imme.csrAddr===CsrAddr.Mvendorid.asUInt)	-> mvendorid,
+		(out.imme.csrAddr===CsrAddr.Mcycle		)-> mcycle,
+		(out.imme.csrAddr===CsrAddr.Mcycleh		)-> mcycleh,
+		(out.imme.csrAddr===CsrAddr.Mepc		)-> mepc,
+		(out.imme.csrAddr===CsrAddr.Mtvec		)-> mtvec,
+		(out.imme.csrAddr===CsrAddr.Mcause		)-> Cat(0.U(28.W),mcause),
+		(out.imme.csrAddr===CsrAddr.Mstatus		)-> mstatus,
+		(out.imme.csrAddr===CsrAddr.Marchid		)-> marchid,
+		(out.imme.csrAddr===CsrAddr.Mvendorid	)-> mvendorid,
 	))
 	if(Yosys == false){
 		when(pipeCsrMesg =/= 3.U && pipeCsrMesg =/= 11.U && trap && pipeCsrOp =/= CsrOp.Mret){

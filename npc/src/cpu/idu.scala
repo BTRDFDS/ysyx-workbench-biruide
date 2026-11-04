@@ -189,7 +189,18 @@ class idu(val Yosys:Boolean=false) extends Module{
 		(immOp === ImmOp.E)->immE
 	))
 	out.pipe.csrOp	:= Mux(pipeRes===IfuRes.Valid && decoder(Decoder.valid),decoder(Decoder.csrOp),CsrOp.Trap)
-	out.pipe.csrAddr:= pipeInstr(31,20)
+	// out.pipe.csrAddr:= pipeInstr(31,20)
+	val csrAddr = Mux1H(Seq(
+		(pipeInstr(31,20)===0x300.U(12.W))->(CsrAddr.Mstatus	),
+		(pipeInstr(31,20)===0x305.U(12.W))->(CsrAddr.Mtvec		),
+		(pipeInstr(31,20)===0x341.U(12.W))->(CsrAddr.Mepc		),
+		(pipeInstr(31,20)===0x342.U(12.W))->(CsrAddr.Mcause		),
+		(pipeInstr(31,20)===0xB00.U(12.W))->(CsrAddr.Mcycle		),
+		(pipeInstr(31,20)===0xB80.U(12.W))->(CsrAddr.Mcycleh	),
+		(pipeInstr(31,20)===0xF11.U(12.W))->(CsrAddr.Mvendorid	),
+		(pipeInstr(31,20)===0xF12.U(12.W))->(CsrAddr.Marchid	),
+	))
+	out.pipe.csrAddr:= csrAddr
 	out.pipe.lsuOp	:= Mux(pipeRes===IfuRes.Valid && decoder(Decoder.valid),decoder(Decoder.lsuOp),LsuOp.Null)
 	out.pipe.lsuAddr:= decoder(Decoder.lsuAddr)
 	out.pipe.sext	:= decoder(Decoder.sext)
@@ -205,7 +216,8 @@ class idu(val Yosys:Boolean=false) extends Module{
 	val r2Ready = ~((decoder(Decoder.r2)) && ~in.imme.r2Valid)
 	out.pipe.valid	:= pipeRes=/=IfuRes.Null && ((r1Ready && r2Ready) || ~decoder(Decoder.valid))
 
-	in.imme.csrAddr:= pipeInstr(31,20)
+	// in.imme.csrAddr:= pipeInstr(31,20)
+	in.imme.csrAddr:= csrAddr
 	in.imme.r1Addr := pipeInstr(14+RegWidth,15)
 	in.imme.r2Addr := pipeInstr(19+RegWidth,20)
 
