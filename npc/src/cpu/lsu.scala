@@ -46,11 +46,14 @@ class lsu(val Yosys:Boolean=false) extends Module{
 
 	bar.write	:= pipeLsuOp === LsuOp.Store
 	bar.addr	:= pipeResult
-	bar.wstrb	:= Mux1H(Seq(
-		(pipeLsuAddr === LsuAddr.B)	-> (0b0001.U << pipeResult(1,0)),
-		(pipeLsuAddr === LsuAddr.H)	-> Mux(pipeResult(1),0b1100.U,0b0011.U),
-		(pipeLsuAddr === LsuAddr.W)	-> 0b1111.U,
-	))
+	// bar.wstrb	:= Mux1H(Seq(
+	// 	(pipeLsuAddr === LsuAddr.B)	-> (0b0001.U << pipeResult(1,0)),
+	// 	(pipeLsuAddr === LsuAddr.H)	-> Mux(pipeResult(1),0b1100.U,0b0011.U),
+	// 	(pipeLsuAddr === LsuAddr.W)	-> 0b1111.U,
+	// ))
+	val size = pipeLsuAddr.asUInt                          // B=00, H=01, W=10
+	bar.wstrb := Cat(size(1), size(1), size(1) | size(0), 1.U(1.W)) << pipeResult(1,0)
+	
 	bar.wdata := Mux1H(Seq(
 		(pipeLsuAddr === LsuAddr.B) -> Fill(4,pipeR2(7,0)),
 		(pipeLsuAddr === LsuAddr.H) -> Fill(2,pipeR2(15,0)),
