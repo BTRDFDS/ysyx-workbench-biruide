@@ -34,8 +34,8 @@ object BarRstate	extends ChiselEnum{val Idle,IfuCall,IfuBack,LsuCall,LsuBack=Val
 	out.arlen	:= Mux(rState === BarRstate.IfuCall,(CacheSize-1).U,0.U)//只有ifu能突发
 	out.arsize	:= Mux(rState === BarRstate.IfuCall,2.U,lsu.size)
 	out.arburst := Mux(rState === BarRstate.IfuCall,2.U,0.U)
-	clt.arvalid := (rState === BarRstate.IfuCall || rState === BarRstate.LsuCall) && rAddr(31,24) === 0x02.U(8.W)
-	clt.rready  := (rState === BarRstate.IfuBack || rState === BarRstate.LsuBack) && rAddr(31,24) === 0x02.U(8.W)
+	clt.arvalid := (rState === BarRstate.LsuCall) && rAddr(31,24) === 0x02.U(8.W)
+	clt.rready  := (rState === BarRstate.LsuBack) && rAddr(31,24) === 0x02.U(8.W)
 	clt.araddr  := rAddr
 	clt.arlen	:= 0.U
 	clt.arsize	:= 0.U//用不到
